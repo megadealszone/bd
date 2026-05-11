@@ -1,1 +1,757 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Multi Menu Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f4f4;
+      overflow-x:hidden;
+    }
+
+    /* HEADER */
+    header{
+      background: linear-gradient(90deg,#0f2027,#203a43,#2c5364);
+      box-shadow:0 2px 10px rgba(0,0,0,0.3);
+      position:relative;
+      z-index:999;
+      width:100%;
+    }
+
+    .navbar{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      width:100%;
+      position:relative;
+    }
+
+
+/* নিচে সাদা অংশ 100% লাভ করা*/
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+footer{
+    margin-top: auto;
+}
+
+/* পুরো পেজ ফুল স্ক্রিন */
+html, body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* মূল কন্টেইনার */
+.container{
+    width: 100%;
+    max-width: 100%;
+}
+
+/* ইমেজ responsive */
+img{
+    max-width: 100%;
+    height: auto;
+}
+
+/* সেকশন responsive */
+section{
+    width: 100%;
+}
+
+/* মোবাইল responsive */
+@media screen and (max-width: 768px){
+    
+    body{
+        overflow-x: hidden;
+    }
+
+    .hero{
+        height: auto;
+        padding: 40px 15px;
+    }
+
+    h1{
+        font-size: 28px;
+    }
+
+    p{
+        font-size: 16px;
+    }
+}
+
+
+    /* MOBILE MENU BUTTON */
+    .menu-toggle{
+      display:none;
+      position:absolute;
+      right:20px;
+      top:15px;
+      font-size:30px;
+      color:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .menu{
+      list-style:none;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      width:100%;
+      transition:0.4s ease;
+    }
+
+    .menu li{
+      position:relative;
+    }
+
+    .menu li a{
+      display:block;
+      padding:18px 22px;
+      color:white;
+      text-decoration:none;
+      transition:0.3s;
+      font-size:16px;
+      font-weight:bold;
+      white-space:nowrap;
+    }
+
+    .menu li a:hover{
+      background:linear-gradient(90deg,#ff512f,#dd2476);
+      color:#fff;
+    }
+
+    /* SUB MENU */
+    .submenu{
+      display:none;
+      position:absolute;
+      top:100%;
+      left:0;
+      background:#203a43;
+      min-width:220px;
+      list-style:none;
+      z-index:1000;
+      animation:fadeIn 0.4s ease;
+    }
+
+    .submenu li{
+      position:relative;
+      width:100%;
+    }
+
+    .submenu li a{
+      padding:14px 18px;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+      width:100%;
+    }
+
+    .menu li:hover > .submenu{
+      display:block;
+    }
+
+    /* SUB SUB MENU */
+    .submenu .submenu{
+      top:0;
+      left:100%;
+      background:#2c5364;
+    }
+
+    /* HERO SECTION */
+    .hero{
+      height:500px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      color:white;
+      padding:20px;
+    }
+
+    /* SMOOTH IMAGE SLIDER */
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:center;
+  animation:slider 40s infinite ease-in-out;
+  z-index:-3;
+  opacity:0;
+  transition:opacity 2s ease-in-out;
+}
+
+.hero::before{
+  animation-delay:0s;
+}
+
+.hero::after{
+  animation-delay:20s;
+}
+
+/* EXTRA SMOOTH KEYFRAMES */
+@keyframes slider{
+
+  0%{
+    opacity:0;
+    background-image:url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop');
+    transform:scale(1);
+  }
+
+  5%{
+    opacity:1;
+    transform:scale(1.03);
+  }
+
+  20%{
+    opacity:1;
+    background-image:url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600&auto=format&fit=crop');
+    transform:scale(1.05);
+  }
+
+  25%{
+    opacity:0;
+    transform:scale(1);
+  }
+
+  30%{
+    opacity:1;
+    background-image:url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600&auto=format&fit=crop');
+    transform:scale(1.03);
+  }
+
+  45%{
+    opacity:1;
+    transform:scale(1.05);
+  }
+
+  50%{
+    opacity:0;
+    transform:scale(1);
+  }
+
+  55%{
+    opacity:1;
+    background-image:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1600&auto=format&fit=crop');
+    transform:scale(1.03);
+  }
+
+  70%{
+    opacity:1;
+    transform:scale(1.05);
+  }
+
+  75%{
+    opacity:0;
+    transform:scale(1);
+  }
+
+  80%{
+    opacity:1;
+    background-image:url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1600&auto=format&fit=crop');
+    transform:scale(1.03);
+  }
+
+  95%{
+    opacity:1;
+    transform:scale(1.05);
+  }
+
+  100%{
+    opacity:0;
+    background-image:url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1600&auto=format&fit=crop');
+    transform:scale(1);
+  }
+    }
+
+    /* DARK OVERLAY */
+    .hero-overlay{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.55);
+      z-index:-1;
+    }
+
+    .hero-content{
+      position:relative;
+      z-index:2;
+      width:100%;
+      max-width:900px;
+      padding:20px;
+      animation:fadeIn 1.2s ease;
+    }
+
+    .hero-content h1{
+      font-size:60px;
+      margin-bottom:20px;
+      line-height:1.2;
+    }
+
+    .hero-content p{
+      font-size:22px;
+      margin-bottom:30px;
+      line-height:1.6;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:14px 35px;
+      background:linear-gradient(90deg,#ff512f,#dd2476);
+      color:white;
+      text-decoration:none;
+      border-radius:30px;
+      transition:0.3s;
+      font-weight:bold;
+      font-size:16px;
+    }
+
+    .btn:hover{
+      transform:scale(1.05);
+    }
+
+    /* CONTENT */
+    .content{
+      padding:60px 20px;
+      text-align:center;
+      background:#fff;
+    }
+
+    .content h2{
+      margin-bottom:20px;
+      color:#203a43;
+      font-size:36px;
+    }
+
+    .content p{
+      max-width:900px;
+      margin:auto;
+      line-height:1.8;
+      font-size:18px;
+      color:#444;
+    }
+
+    /* FOOTER */
+    footer{
+      background: linear-gradient(90deg,#141e30,#243b55);
+      color:white;
+      text-align:center;
+      padding:25px 15px;
+      margin-top:40px;
+    }
+
+    footer a{
+      color:#ffcc70;
+      text-decoration:none;
+    }
+
+    /* FADE ANIMATION */
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    /* TABLET */
+    @media(max-width:992px){
+
+      .menu li a{
+        padding:15px 16px;
+        font-size:15px;
+      }
+
+      .hero{
+        height:450px;
+      }
+
+      .hero-content h1{
+        font-size:42px;
+      }
+
+      .hero-content p{
+        font-size:18px;
+      }
+    }
+
+    /* MOBILE */
+    @media(max-width:768px){
+
+      .navbar{
+        flex-direction:column;
+        align-items:flex-start;
+        padding-top:60px;
+      }
+
+      .menu-toggle{
+        display:block;
+      }
+
+      .menu{
+        flex-direction:column;
+        width:100%;
+        max-height:0;
+        overflow:hidden;
+        background:#203a43;
+      }
+
+      .menu.active{
+        max-height:2000px;
+      }
+
+      .menu li{
+        width:100%;
+      }
+
+      .menu li a{
+        width:100%;
+        padding:15px 20px;
+        border-bottom:1px solid rgba(255,255,255,0.08);
+        font-size:15px;
+      }
+
+      .submenu{
+        position:static;
+        width:100%;
+        min-width:100%;
+      }
+
+      .submenu .submenu{
+        left:0;
+      }
+
+      .menu li:hover > .submenu{
+        display:block;
+      }
+
+      .hero{
+        min-height:420px;
+        height:auto;
+        padding:80px 20px;
+      }
+
+      .hero-content h1{
+        font-size:34px;
+      }
+
+      .hero-content p{
+        font-size:16px;
+      }
+
+      .btn{
+        padding:12px 28px;
+        font-size:15px;
+      }
+
+      .content{
+        padding:50px 15px;
+      }
+
+      .content h2{
+        font-size:28px;
+      }
+
+      .content p{
+        font-size:16px;
+        line-height:1.7;
+      }
+
+      footer{
+        font-size:14px;
+        line-height:1.8;
+      }
+    }
+
+    /* SMALL MOBILE */
+    @media(max-width:480px){
+
+      .hero-content h1{
+        font-size:28px;
+      }
+
+      .hero-content p{
+        font-size:15px;
+      }
+
+      .btn{
+        width:100%;
+        max-width:220px;
+      }
+
+      .content h2{
+        font-size:24px;
+      }
+
+      .content p{
+        font-size:15px;
+      }
+
+      .menu li a{
+        font-size:14px;
+        padding:14px 16px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header>
+
+    <nav class="navbar">
+
+      <!-- THREE DOT MENU -->
+      <div class="menu-toggle" onclick="toggleMenu()">
+        ⋮
+      </div>
+
+      <ul class="menu" id="mobileMenu">
+
+        <!-- HOME -->
+        <li>
+          <a href="index.html">Home</a>
+        </li>
+
+        <!-- SOCIAL MEDIA -->
+        <li>
+          <a href="#">Social Media</a>
+
+          <ul class="submenu">
+
+            <li>
+              <a href="https://www.facebook.com/megadealszone" target="_blank">
+                Facebook
+              </a>
+            </li>
+
+            <li>
+              <a href="https://www.youtube.com/@somoyershikha" target="_blank">
+                YouTube
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+        <!-- AFFILIATE -->
+        <li>
+          <a href="#">Affiliate</a>
+
+          <ul class="submenu">
+
+            <li>
+              <a href="#">Accounts Open</a>
+
+              <ul class="submenu">
+
+                <li>
+                  <a href="https://www.amazon.com" target="_blank">
+                    Amazon Account
+                  </a>
+                </li>
+
+                <li>
+                  <a href="https://www.daraz.com.bd" target="_blank">
+                    Daraz Seller
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
+            <li>
+              <a href="#">Marketing</a>
+
+              <ul class="submenu">
+
+                <li>
+                  <a href="https://ads.google.com" target="_blank">
+                    Google Ads
+                  </a>
+                </li>
+
+                <li>
+                  <a href="https://www.facebook.com/megadealszone" target="_blank">
+                    Facebook Marketing
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
+          </ul>
+        </li>
+
+        <!-- DOWNLOAD -->
+        <li>
+          <a href="#">Download</a>
+        </li>
+
+        <!-- SHOPPING ZONE -->
+        <li>
+          <a href="#">Shopping Zone</a>
+
+          <ul class="submenu">
+
+            <li>
+              <a href="https://www.amazon.com" target="_blank">
+                Amazon
+              </a>
+            </li>
+
+            <li>
+              <a href="https://www.aliexpress.com" target="_blank">
+                AliExpress
+              </a>
+            </li>
+
+            <li>
+              <a href="https://www.daraz.com.bd" target="_blank">
+                Daraz
+              </a>
+            </li>
+
+          </ul>
+        </li>
+
+        <li>
+          <a href="#">API</a>
+        </li>
+
+        <li>
+          <a href="#">Software</a>
+        </li>
+
+        <li>
+          <a href="#">Galary</a>
+        </li>
+
+        <li>
+          <a href="#">About US</a>
+        </li>
+
+        <!-- ADMIN PANEL -->
+        <li>
+          <a href="#">Admin Panel</a>
+        </li>
+
+      </ul>
+
+    </nav>
+
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+      <h1>Welcome To My Website</h1>
+
+      <p>
+        Modern Multi Level Menu Website Design with Gradient Color
+      </p>
+
+      <a href="#" class="btn">Explore More</a>
+
+    </div>
+
+  </section>
+
+  <!-- CONTENT -->
+  <section class="content">
+
+    <h2>Professional Website Design</h2>
+
+    <p>
+      এই ওয়েবসাইটে Multi Level Dropdown Menu, সুন্দর Gradient Header ও Footer,
+      Responsive Design, এবং Professional Layout ব্যবহার করা হয়েছে।
+      আপনি সহজেই এই কোড কপি করে VS Code বা যেকোনো Hosting এ ব্যবহার করতে পারবেন।
+    </p>
+
+    <!-- AD CODE START -->
+  <div style="margin-top:30px; text-align:center;">
+
+    <a href='https://s.click.aliexpress.com/e/_c3ZEJ7uL?bz=725*90' target='_parent'>
+
+      <img 
+        width='950'
+        height='150'
+        src='https://ae-pic-a1.aliexpress-media.com/kf/S11021df81fb04a6f81b2458c2633430ar.png'
+        style="max-width:100%; height:auto; border-radius:10px;"
+      />
+
+    </a>
+
+  </div>
+  <!-- AD CODE END -->
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+
+    <p>
+      © 2026 My Website | Developer By Md Roman Islam Habib
+    </p>
+
+    <p>
+      Visit:
+      <a href="https://www.google.com" target="_blank">
+        Google,
+      </a>
+
+      <a href="https://www.facebook.com/megadealszone" target="_blank">
+        Facebook,
+      </a>
+
+      <a href="https://www.youtube.com/@somoyershikha" target="_blank">
+        Youtube
+      </a>
+    </p>
+
+  </footer>
+
+  <!-- MOBILE MENU SCRIPT -->
+  <script>
+
+    function toggleMenu(){
+      document.getElementById("mobileMenu").classList.toggle("active");
+    }
+
+  </script>
+
+</body>
+</html>
