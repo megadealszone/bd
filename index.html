@@ -942,19 +942,30 @@ loadNews();
 <!-- Digital Clock Container -->
 <div style="
   background-color: black;
-  padding: 30px 10px;
-  max-width: 300px;
-  margin: auto;
+  padding: 15px 20px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: 20px;
   border: 6px solid #00ff00;
   border-radius: 10px;
   box-shadow: 0 0 25px lime;
-  text-align: center;
   font-family: 'Orbitron', monospace;
   color: lime;
+
+  /* এক রোতে রাখার জন্য */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 25px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
 ">
 
   <!-- Day -->
-  <div id="day" style="font-size: 28px; margin-bottom: 18px;"></div>
+  <div id="day" style="
+    font-size: 28px;
+    white-space: nowrap;
+  "></div>
 
   <!-- 12-hour Time -->
   <div id="time12-time" style="
@@ -962,14 +973,13 @@ loadNews();
     min-width: 200px;
     display: inline-block;
     letter-spacing: 2px;
+    white-space: nowrap;
   "></div>
 
   <!-- AM/PM -->
   <div id="time12-ampm" style="
     font-size: 28px;
-    margin-top: 5px;
-    margin-bottom: 18px;
-    display: block;
+    white-space: nowrap;
   "></div>
 
   <!-- 24-hour Time -->
@@ -977,12 +987,16 @@ loadNews();
     font-size: 34px;
     min-width: 200px;
     display: inline-block;
-    margin-bottom: 18px;
     letter-spacing: 2px;
+    white-space: nowrap;
   "></div>
 
   <!-- Date -->
-  <div id="date" style="font-size: 28px;"></div>
+  <div id="date" style="
+    font-size: 28px;
+    white-space: nowrap;
+  "></div>
+
 </div>
 
 <!-- JavaScript -->
