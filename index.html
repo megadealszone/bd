@@ -820,6 +820,118 @@ section{
 
   </section>
 
+<!-- Latest News Start Point-------------------------------  -->
+<!-- Bengali News Ticker Start -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali&display=swap" rel="stylesheet" />
+
+<style>
+#news-ticker {
+  background: #fcd303;
+  color: #000;
+  padding: 10px 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Noto Sans Bengali', Arial, sans-serif;
+  border: 2px solid #e6b800;
+  border-radius: 5px;
+  position: relative;
+}
+
+#breaking-news-wrapper {
+  display: flex;
+  width: max-content;
+  animation: tickerScroll 120s linear infinite;
+}
+
+#breaking-news-container {
+  display: flex;
+  gap: 30px;
+  white-space: nowrap;
+}
+
+#breaking-news-container a {
+  text-decoration: none;
+  color: inherit;
+  padding: 0 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+#breaking-news-container a:hover {
+  background: #ffdddd;
+  color: #b30000;
+}
+
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+</style>
+
+<div id="news-ticker">
+  <div id="breaking-news-wrapper">
+    <div id="breaking-news-container">🔄 লোড হচ্ছে...</div>
+    <div id="breaking-news-container" class="clone">🔄 লোড হচ্ছে...</div>
+  </div>
+</div>
+
+<script>
+function decodeHTMLEntities(text) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = text;
+  return txt.value;
+}
+
+async function fetchRSS(url, count = 10) {
+  const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
+  const resp = await fetch(proxy + encodeURIComponent(url));
+  const data = await resp.json();
+  return (data.items || []).slice(0, count);
+}
+
+async function loadNews() {
+  try {
+    const sources = await Promise.all([
+      fetchRSS('https://www.prothomalo.com/feed', 5),
+      fetchRSS('https://thedhakapost.com/rss.xml', 5),
+      fetchRSS('https://www.jagonews24.com/rss/allnews', 5),
+      fetchRSS('https://feeds.bbci.co.uk/bengali/rss.xml', 5),
+      fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5)
+    ]);
+
+    const all = sources.flat();
+
+    const headlines = all.map(item => {
+      const title = decodeHTMLEntities(item.title);
+      return `<a href="${item.link}" target="_blank" rel="noopener noreferrer">🟢 ${title}</a>`;
+    });
+
+    const finalHTML = headlines.join(' 🔸 ');
+
+    document.querySelectorAll('#breaking-news-container').forEach(container => {
+      container.innerHTML = finalHTML;
+    });
+
+  } catch (err) {
+    console.error('News load error:', err);
+    document.querySelectorAll('#breaking-news-container').forEach(container => {
+      container.textContent = '❌ নিউজ পাওয়া যায়নি!';
+    });
+  }
+}
+
+loadNews();
+</script>
+<!-- Bengali News Ticker End -->
+<!-- Latest News End Point---------------------------------- -->
+
+  
   <!-- CONTENT -->
   <section class="content">
 
