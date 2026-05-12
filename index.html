@@ -935,6 +935,104 @@ loadNews();
   <!-- CONTENT -->
   <section class="content">
 
+<!-- Desital Clock Start Point------------------------------------------ -->
+    <!-- Orbitron ফন্ট -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+
+<!-- Digital Clock Container -->
+<div style="
+  background-color: black;
+  padding: 30px 10px;
+  max-width: 300px;
+  margin: auto;
+  border: 6px solid #00ff00;
+  border-radius: 10px;
+  box-shadow: 0 0 25px lime;
+  text-align: center;
+  font-family: 'Orbitron', monospace;
+  color: lime;
+">
+
+  <!-- Day -->
+  <div id="day" style="font-size: 28px; margin-bottom: 18px;"></div>
+
+  <!-- 12-hour Time -->
+  <div id="time12-time" style="
+    font-size: 34px;
+    min-width: 200px;
+    display: inline-block;
+    letter-spacing: 2px;
+  "></div>
+
+  <!-- AM/PM -->
+  <div id="time12-ampm" style="
+    font-size: 28px;
+    margin-top: 5px;
+    margin-bottom: 18px;
+    display: block;
+  "></div>
+
+  <!-- 24-hour Time -->
+  <div id="time24" style="
+    font-size: 34px;
+    min-width: 200px;
+    display: inline-block;
+    margin-bottom: 18px;
+    letter-spacing: 2px;
+  "></div>
+
+  <!-- Date -->
+  <div id="date" style="font-size: 28px;"></div>
+</div>
+
+<!-- JavaScript -->
+<script>
+function updateClock() {
+  const now = new Date();
+
+  // Day
+  const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+  // 12-hour Time
+  let hours12 = now.getHours() % 12 || 12;
+  let minutes = String(now.getMinutes()).padStart(2, '0');
+  let seconds = String(now.getSeconds()).padStart(2, '0');
+  let ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+  const time12 = `${String(hours12).padStart(2, '0')}:${minutes}:${seconds}`;
+
+  // 24-hour Time
+  const time24 = now.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
+  // Date
+  const day = String(now.getDate()).padStart(2, '0');
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+  const dateStr = `${day}/${month}/${year}`;
+
+  // Display
+  document.getElementById('day').textContent = dayName;
+  document.getElementById('time12-time').textContent = time12;
+  document.getElementById('time12-ampm').textContent = ampm;
+  document.getElementById('time24').textContent = time24;
+  document.getElementById('date').textContent = dateStr;
+}
+
+// Run clock
+window.onload = () => {
+  updateClock();
+  setInterval(updateClock, 1000);
+};
+</script>
+<!-- Desital Clock End Point ------------------------------------------- -->
+
+
+
+    
  <!-- PRODUCT PROMOTION SECTION START -->
 
 <section class="product-promo">
