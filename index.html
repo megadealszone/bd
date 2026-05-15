@@ -949,18 +949,7 @@ body{
     color:lime;
 }
 
-/* MAIN BOX */
-.box{
-    width:95%;
-    max-width:1100px;
-    margin:5px auto;
-    padding:5px;
-    border:2px solid lime;
-    border-radius:10px;
-    box-shadow:0 0 15px lime;
-}
-
-/* ROW */
+/* ROW ONLY (BOX REMOVED) */
 .row{
     display:flex;
     align-items:center;
@@ -1000,7 +989,7 @@ body{
     color:black;
 }
 
-/* TRACK (REAL SEAMLESS METHOD) */
+/* TRACK */
 .track{
     display:flex;
     width:max-content;
@@ -1008,7 +997,6 @@ body{
     will-change: transform;
 }
 
-/* KEY FIX: smooth infinite motion */
 @keyframes scroll{
     0%{
         transform:translateX(0);
@@ -1018,7 +1006,7 @@ body{
     }
 }
 
-/* ITEM (EQUAL SPACING FIX) */
+/* ITEM */
 .item{
     display:flex;
     gap:50px;
@@ -1028,62 +1016,46 @@ body{
     flex-shrink:0;
 }
 
-/* WELCOME STYLE */
 .welcome{
     font-weight:bold;
     color:blue;
 }
 
-/* MOBILE */
-@media(max-width:480px){
-    .box{
-        padding:4px;
-    }
-}
-
 </style>
 
-<div class="box">
+<div class="row">
 
-    <div class="row">
+    <div class="live">
+        <span class="dot"></span>
+        LIVE CLOCK
+    </div>
 
-        <!-- FIXED LEFT -->
-        <div class="live">
-            <span class="dot"></span>
-            LIVE CLOCK
-        </div>
+    <div class="scroll">
+        <div class="track">
 
-        <!-- SCROLL AREA -->
-        <div class="scroll">
-            <div class="track">
-
-                <!-- GROUP A -->
-                <div class="item">
-                    <span id="day"></span>
-                    <span id="date"></span>
-                    <span id="time"></span>
-                    <span id="ampm"></span>
-                </div>
-
-                <div class="item">
-                    <span class="welcome">Welcome to our Website</span>
-                </div>
-
-                <!-- GROUP B (DUPLICATE FOR SEAMLESS LOOP) -->
-                <div class="item">
-                    <span id="day2"></span>
-                    <span id="date2"></span>
-                    <span id="time2"></span>
-                    <span id="ampm2"></span>
-                </div>
-
-                <div class="item">
-                    <span class="welcome">Welcome to our Website</span>
-                </div>
-
+            <div class="item">
+                <span id="day"></span>
+                <span id="date"></span>
+                <span id="time"></span>
+                <span id="ampm"></span>
             </div>
-        </div>
 
+            <div class="item">
+                <span class="welcome">Welcome to our Website</span>
+            </div>
+
+            <div class="item">
+                <span id="day2"></span>
+                <span id="date2"></span>
+                <span id="time2"></span>
+                <span id="ampm2"></span>
+            </div>
+
+            <div class="item">
+                <span class="welcome">Welcome to our Website</span>
+            </div>
+
+        </div>
     </div>
 
 </div>
