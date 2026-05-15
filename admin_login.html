@@ -56,10 +56,10 @@
 
   <!-- লগইন ফর্ম -->
   <div id="loginSection">
-    <h2>পাসওয়ার্ড দিয়ে ডাউনলোড পেজে প্রবেশ করুন</h2>
+    <h2> পাসওয়ার্ড দিয়ে লগইন করুন  </h2>
     <form id="loginForm">
       <input type="password" id="passInput" placeholder="পাসওয়ার্ড লিখুন" required />
-      <button type="submit">SUBMIT</button>
+      <button type="submit">Login</button>
       <p id="error"></p>
     </form>
   </div>
@@ -74,7 +74,7 @@
       const pass = loginForm.passInput.value.trim();
       if(pass === correctPass) {
         // সঠিক পাসওয়ার্ড হলে নির্দিষ্ট লিংকে নিয়ে যাবে
-        window.location.href = "https://megadealszone.github.io/bd/admin_login.html";
+        window.location.href = "https://megadealszone.github.io/bd/sub_admin.html";
       } else {
         errorEl.innerText = "❌ Wrong password! Enter the correct word password";
       }
