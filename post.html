@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Post Page</title>
+</head>
+<body>
 
+<!-- HEADER LOAD হবে এখানে -->
+<div id="header"></div>
+
+<!-- POST CONTENT -->
+<div class="content">
+  <h2>Amazon Product Post</h2>
+
+  <p>এখানে তুমি ম্যানুয়ালি Amazon প্রোডাক্ট বসাবে</p>
+
+  <!-- Example Product -->
+  <div class="product">
+    <h3>Product Name</h3>
+    <img src="product.jpg" width="200">
+    <p>Price: $20</p>
+    <a href="https://amazon.com" target="_blank">Buy Now</a>
+  </div>
+</div>
+
+<!-- FOOTER LOAD হবে এখানে -->
+<div id="footer"></div>
+
+<script>
+  fetch("header.html")
+    .then(res => res.text())
+    .then(data => document.getElementById("header").innerHTML = data);
+
+  fetch("footer.html")
+    .then(res => res.text())
+    .then(data => document.getElementById("footer").innerHTML = data);
+</script>
+
+</body>
+</html>
