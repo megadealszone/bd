@@ -937,111 +937,288 @@ loadNews();
   <section class="content">
 
 <!-- Desital Clock Start Point------------------------------------------ -->
-    <!-- Orbitron ফন্ট -->
+<!-- Desital Clock Start Point------------------------------------------ -->
+
+<!-- Orbitron Font -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
 
-<!-- Digital Clock Container -->
-<div style="
-  background-color: black;
-  padding: 15px 20px;
-  max-width: 1000px;
+<style>
+.digital-clock-container{
+  background: #000;
+  width: 100%;
+  max-width: 1100px;
   margin: auto;
-  border: 6px solid #00ff00;
-  border-radius: 10px;
+  padding: 12px 15px;
+
+  border: 5px solid #00ff00;
+  border-radius: 14px;
   box-shadow: 0 0 25px lime;
+
   font-family: 'Orbitron', monospace;
   color: lime;
 
-  /* এক রোতে রাখার জন্য */
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* =========================
+   Smooth Infinite Marquee
+========================= */
+.clock-marquee{
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.clock-track{
+  display: flex;
+  width: max-content;
+
+  animation: smoothSlide 20s linear infinite;
+}
+
+/* Duplicate Content */
+.clock-group{
+  display: flex;
+  align-items: center;
   gap: 25px;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-">
+  padding-right: 25px;
+  white-space: nowrap;
+}
 
-  <!-- Day -->
-  <div id="day" style="
+@keyframes smoothSlide{
+
+  0%{
+    transform: translateX(0);
+  }
+
+  100%{
+    transform: translateX(-50%);
+  }
+}
+
+/* Text Style */
+.clock-small{
+  font-size: 28px;
+  white-space: nowrap;
+}
+
+.clock-time{
+  font-size: 42px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.clock-ampm{
+  font-size: 30px;
+  white-space: nowrap;
+}
+
+/* =========================
+   Visit Box
+========================= */
+.visit-box{
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  font-size: 24px;
+  color: #00ff00;
+
+  border-left: 2px solid lime;
+  padding-left: 18px;
+}
+
+/* =========================
+   Tablet
+========================= */
+@media (max-width: 768px){
+
+  .clock-group{
+    gap: 15px;
+  }
+
+  .clock-small{
+    font-size: 18px;
+  }
+
+  .clock-time{
     font-size: 28px;
-    white-space: nowrap;
-  "></div>
+  }
 
-  <!-- 12-hour Time -->
-  <div id="time12-time" style="
-    font-size: 34px;
-    min-width: 200px;
-    display: inline-block;
-    letter-spacing: 2px;
-    white-space: nowrap;
-  "></div>
+  .clock-ampm{
+    font-size: 20px;
+  }
 
-  <!-- AM/PM -->
-  <div id="time12-ampm" style="
-    font-size: 28px;
-    white-space: nowrap;
-  "></div>
+  .visit-box{
+    font-size: 18px;
+    padding-left: 12px;
+  }
+}
 
-  <!-- 24-hour Time -->
-  <div id="time24" style="
-    font-size: 34px;
-    min-width: 200px;
-    display: inline-block;
-    letter-spacing: 2px;
-    white-space: nowrap;
-  "></div>
+/* =========================
+   Mobile
+========================= */
+@media (max-width: 480px){
 
-  <!-- Date -->
-  <div id="date" style="
-    font-size: 28px;
-    white-space: nowrap;
-  "></div>
+  .digital-clock-container{
+    padding: 8px 10px;
+  }
+
+  .clock-group{
+    gap: 10px;
+  }
+
+  .clock-small{
+    font-size: 14px;
+  }
+
+  .clock-time{
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+
+  .clock-ampm{
+    font-size: 15px;
+  }
+
+  .visit-box{
+    font-size: 14px;
+    padding-left: 10px;
+  }
+}
+</style>
+
+<!-- Digital Clock -->
+<div class="digital-clock-container">
+
+  <!-- Smooth Sliding Area -->
+  <div class="clock-marquee">
+
+    <div class="clock-track">
+
+      <!-- First Loop -->
+      <div class="clock-group">
+
+        <div id="day" class="clock-small"></div>
+
+        <div id="time12-time" class="clock-time"></div>
+
+        <div id="time12-ampm" class="clock-ampm"></div>
+
+        <div id="date" class="clock-small"></div>
+
+      </div>
+
+      <!-- Duplicate Loop -->
+      <div class="clock-group">
+
+        <div id="day2" class="clock-small"></div>
+
+        <div id="time12-time2" class="clock-time"></div>
+
+        <div id="time12-ampm2" class="clock-ampm"></div>
+
+        <div id="date2" class="clock-small"></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Visit Counter -->
+  <div class="visit-box">
+    VISIT : <span id="visit-count">0</span>
+  </div>
 
 </div>
 
 <!-- JavaScript -->
 <script>
 function updateClock() {
+
   const now = new Date();
 
   // Day
-  const dayName = now.toLocaleDateString('en-US', { weekday: 'long' });
-
-  // 12-hour Time
-  let hours12 = now.getHours() % 12 || 12;
-  let minutes = String(now.getMinutes()).padStart(2, '0');
-  let seconds = String(now.getSeconds()).padStart(2, '0');
-  let ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-  const time12 = `${String(hours12).padStart(2, '0')}:${minutes}:${seconds}`;
-
-  // 24-hour Time
-  const time24 = now.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
+  const dayName = now.toLocaleDateString('en-US', {
+    weekday: 'long'
   });
+
+  // Time
+  let hours = now.getHours() % 12 || 12;
+
+  let minutes = String(now.getMinutes()).padStart(2, '0');
+
+  let seconds = String(now.getSeconds()).padStart(2, '0');
+
+  let ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+
+  const time12 =
+    `${String(hours).padStart(2,'0')}:${minutes}:${seconds}`;
 
   // Date
   const day = String(now.getDate()).padStart(2, '0');
+
   const month = String(now.getMonth() + 1).padStart(2, '0');
+
   const year = now.getFullYear();
+
   const dateStr = `${day}/${month}/${year}`;
 
-  // Display
+  // First Loop
   document.getElementById('day').textContent = dayName;
   document.getElementById('time12-time').textContent = time12;
   document.getElementById('time12-ampm').textContent = ampm;
-  document.getElementById('time24').textContent = time24;
   document.getElementById('date').textContent = dateStr;
+
+  // Duplicate Loop
+  document.getElementById('day2').textContent = dayName;
+  document.getElementById('time12-time2').textContent = time12;
+  document.getElementById('time12-ampm2').textContent = ampm;
+  document.getElementById('date2').textContent = dateStr;
 }
 
-// Run clock
+/* =========================
+   VISIT COUNTER
+========================= */
+
+function updateVisitCounter(){
+
+  let totalVisits =
+    localStorage.getItem("website_total_visits");
+
+  if(!totalVisits){
+    totalVisits = 0;
+  }
+
+  totalVisits++;
+
+  localStorage.setItem(
+    "website_total_visits",
+    totalVisits
+  );
+
+  document.getElementById("visit-count")
+    .textContent = totalVisits;
+}
+
+// Start
 window.onload = () => {
+
   updateClock();
+
   setInterval(updateClock, 1000);
+
+  updateVisitCounter();
 };
 </script>
+
+<!-- Desital Clock End Point------------------------------------------- -->
 <!-- Desital Clock End Point ------------------------------------------- -->
 
 
