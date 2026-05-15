@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Modern Multi Menu Website</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  /*-- ঘড়ি জন্য ---শুরু শেষ --*/
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
-  /*-- ঘড়ি জন্য --- শেষ --*/
+
   <style>
 
     *{
@@ -648,10 +646,6 @@ section{
 /* PRODUCT SECTION END */
 
 
-/*-- ঘড়ি জন্য ---শুরু শেষ --*/
-
-  /*-- ঘড়ি জন্য --- শেষ --*/
-
     
     
   </style>
@@ -948,165 +942,6 @@ loadNews();
 <!-- Desital Clock Start Point------------------------Start -👉----------------- -->
 
 
-
-<style>
-
-body{
-    margin:0;
-    background:black;
-    font-family:'Orbitron', monospace;
-    color:lime;
-}
-
-/* ROW ONLY (BOX REMOVED) */
-.row{
-    display:flex;
-    align-items:center;
-    border:1px solid lime;
-    border-radius:6px;
-    overflow:hidden;
-}
-
-/* LEFT FIXED */
-.live{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:6px 10px;
-    white-space:nowrap;
-    flex-shrink:0;
-    background:black;
-}
-
-.dot{
-    width:8px;
-    height:8px;
-    background:red;
-    border-radius:50%;
-    animation:blink 1s infinite;
-}
-
-@keyframes blink{
-    50%{opacity:0.2;}
-}
-
-/* SCROLL AREA */
-.scroll{
-    flex:1;
-    overflow:hidden;
-    background:white;
-    color:black;
-}
-
-/* TRACK */
-.track{
-    display:flex;
-    width:max-content;
-    animation:scroll 12s linear infinite;
-    will-change: transform;
-}
-
-@keyframes scroll{
-    0%{
-        transform:translateX(0);
-    }
-    100%{
-        transform:translateX(-50%);
-    }
-}
-
-/* ITEM */
-.item{
-    display:flex;
-    gap:50px;
-    padding:0 60px;
-    font-size:clamp(12px, 2vw, 17px);
-    white-space:nowrap;
-    flex-shrink:0;
-}
-
-.welcome{
-    font-weight:bold;
-    color:blue;
-}
-
-</style>
-
-<div class="row">
-
-    <div class="live">
-        <span class="dot"></span>
-        LIVE CLOCK
-    </div>
-
-    <div class="scroll">
-        <div class="track">
-
-            <div class="item">
-                <span id="day"></span>
-                <span id="date"></span>
-                <span id="time"></span>
-                <span id="ampm"></span>
-            </div>
-
-            <div class="item">
-                <span class="welcome">Welcome to our Website</span>
-            </div>
-
-            <div class="item">
-                <span id="day2"></span>
-                <span id="date2"></span>
-                <span id="time2"></span>
-                <span id="ampm2"></span>
-            </div>
-
-            <div class="item">
-                <span class="welcome">Welcome to our Website</span>
-            </div>
-
-        </div>
-    </div>
-
-</div>
-
-<script>
-
-function updateClock(){
-
-    const now=new Date();
-
-    const day=now.toLocaleDateString('en-US',{weekday:'long'});
-
-    const date=`${String(now.getDate()).padStart(2,'0')}/${
-        String(now.getMonth()+1).padStart(2,'0')
-    }/${now.getFullYear()}`;
-
-    let h=now.getHours()%12||12;
-    let m=String(now.getMinutes()).padStart(2,'0');
-    let s=String(now.getSeconds()).padStart(2,'0');
-    let ampm=now.getHours()>=12?'PM':'AM';
-
-    const time=`${String(h).padStart(2,'0')}:${m}:${s}`;
-
-    set("day",day);
-    set("date",date);
-    set("time",time);
-    set("ampm",ampm);
-
-    set("day2",day);
-    set("date2",date);
-    set("time2",time);
-    set("ampm2",ampm);
-}
-
-function set(id,val){
-    document.getElementById(id).textContent=val;
-}
-
-updateClock();
-setInterval(updateClock,1000);
-
-</script>
 
 <!-- Desital Clock End Point ---------------------------END Clock---------------- -->
 
