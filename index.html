@@ -940,270 +940,185 @@ loadNews();
 
 
 
-<!-- Orbitron Font -->
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
 
 <style>
 
-.digital-clock-container{
-    background:#000;
-    width:100%;
-    max-width:1100px;
-    margin:auto;
-    padding:8px 12px;
+body{
+    margin:0;
+    background:black;
+    font-family:'Orbitron', monospace;
+    color:lime;
+}
 
-    border:3px solid #00ff00;
+.box{
+    max-width:1100px;
+    margin:5px auto;
+    padding:5px;
+    border:2px solid lime;
     border-radius:10px;
     box-shadow:0 0 15px lime;
-
-    font-family:'Orbitron', monospace;
-    color:#00ff00;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:15px;
-
-    overflow:hidden;
-    box-sizing:border-box;
 }
 
-/* =========================
-   MARQUEE
-========================= */
+/* ROW */
+.row{
+    display:flex;
+    align-items:center;
+    border:1px solid lime;
+    border-radius:6px;
+    overflow:hidden;
+}
 
-.clock-marquee{
+/* LEFT FIXED */
+.live{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    white-space:nowrap;
+    flex-shrink:0;
+    background:black;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    background:red;
+    border-radius:50%;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{opacity:0.2;}
+}
+
+/* SCROLL AREA */
+.scroll{
     flex:1;
     overflow:hidden;
-    position:relative;
+    background:white;
+    color:black;
 }
 
-.clock-track{
+/* VERY LONG TRACK FOR SMOOTH LOOP */
+.track{
     display:flex;
     width:max-content;
-
-    animation:scrollLoop 18s linear infinite;
+    animation:scroll 15s linear infinite;
 }
 
-.clock-group{
+/* MOVE FULL WIDTH (no jump) */
+@keyframes scroll{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+}
+
+/* ITEM STYLE */
+.item{
     display:flex;
-    align-items:center;
-    gap:25px;
-
-    padding-right:40px;
-
+    gap:30px;
+    padding-right:80px;
+    font-size:17px;
     white-space:nowrap;
 }
 
-/* Infinite Smooth Scroll */
-
-@keyframes scrollLoop{
-
-    0%{
-        transform:translateX(0);
-    }
-
-    100%{
-        transform:translateX(-50%);
-    }
+.welcome{
+    font-weight:bold;
+    color:blue;
 }
 
-/* =========================
-   ALL TEXT 14PX
-========================= */
-
-.clock-small,
-.clock-time,
-.clock-ampm,
-.visit-box{
-
-    font-size:14px;
-    white-space:nowrap;
-}
-
-.clock-time{
-    letter-spacing:1px;
-}
-
-/* =========================
-   VISIT BOX
-========================= */
-
-.visit-box{
-    border-left:1px solid lime;
-    padding-left:12px;
-    flex-shrink:0;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
+/* MOBILE */
 @media(max-width:480px){
-
-    .digital-clock-container{
-        padding:6px 8px;
-    }
-
-    .clock-group{
-        gap:15px;
-        padding-right:25px;
-    }
+    .item{font-size:12px;gap:15px;}
 }
 
 </style>
 
-<!-- CLOCK START -->
+<div class="box">
 
-<div class="digital-clock-container">
+    <div class="row">
 
-    <!-- Sliding Area -->
-
-    <div class="clock-marquee">
-
-        <div class="clock-track">
-
-            <!-- LOOP 1 -->
-
-            <div class="clock-group">
-
-                <div id="day" class="clock-small"></div>
-
-                <div id="time" class="clock-time"></div>
-
-                <div id="ampm" class="clock-ampm"></div>
-
-                <div id="date" class="clock-small"></div>
-
-            </div>
-
-            <!-- LOOP 2 -->
-
-            <div class="clock-group">
-
-                <div id="day2" class="clock-small"></div>
-
-                <div id="time2" class="clock-time"></div>
-
-                <div id="ampm2" class="clock-ampm"></div>
-
-                <div id="date2" class="clock-small"></div>
-
-            </div>
-
+        <!-- FIXED LEFT -->
+        <div class="live">
+            <span class="dot"></span>
+            LIVE CLOCK
         </div>
 
-    </div>
+        <!-- SCROLL -->
+        <div class="scroll">
+            <div class="track">
 
-    <!-- LIVE VISITOR -->
+                <!-- LOOP SET 1 -->
+                <div class="item">
+                    <span id="day"></span>
+                    <span id="date"></span>
+                    <span id="time"></span>
+                    <span id="ampm"></span>
+                </div>
 
-    <div class="visit-box">
+                <!-- LOOP SET 2 -->
+                <div class="item">
+                    <span class="welcome">Welcome to our Website</span>
+                </div>
 
-        VISITOR :
-        <span id="visitor-count">0</span>
+                <!-- DUPLICATE SET 1 -->
+                <div class="item">
+                    <span id="day2"></span>
+                    <span id="date2"></span>
+                    <span id="time2"></span>
+                    <span id="ampm2"></span>
+                </div>
+
+                <!-- DUPLICATE SET 2 -->
+                <div class="item">
+                    <span class="welcome">Welcome to our Website</span>
+                </div>
+
+            </div>
+        </div>
 
     </div>
 
 </div>
 
-<!-- SCRIPT -->
-
 <script>
-
-/* =========================
-   CLOCK
-========================= */
 
 function updateClock(){
 
-    const now = new Date();
+    const now=new Date();
 
-    // DAY
+    const day=now.toLocaleDateString('en-US',{weekday:'long'});
 
-    const dayName = now.toLocaleDateString('en-US',{
-        weekday:'long'
-    });
+    const date=`${String(now.getDate()).padStart(2,'0')}/${
+        String(now.getMonth()+1).padStart(2,'0')
+    }/${now.getFullYear()}`;
 
-    // TIME
+    let h=now.getHours()%12||12;
+    let m=String(now.getMinutes()).padStart(2,'0');
+    let s=String(now.getSeconds()).padStart(2,'0');
+    let ampm=now.getHours()>=12?'PM':'AM';
 
-    let hours = now.getHours() % 12 || 12;
+    const time=`${String(h).padStart(2,'0')}:${m}:${s}`;
 
-    let minutes = String(now.getMinutes()).padStart(2,'0');
+    set("day",day);
+    set("date",date);
+    set("time",time);
+    set("ampm",ampm);
 
-    let seconds = String(now.getSeconds()).padStart(2,'0');
-
-    let ampm = now.getHours() >= 12 ? 'PM' : 'AM';
-
-    let timeString =
-        `${String(hours).padStart(2,'0')}:${minutes}:${seconds}`;
-
-    // DATE
-
-    const day = String(now.getDate()).padStart(2,'0');
-
-    const month = String(now.getMonth()+1).padStart(2,'0');
-
-    const year = now.getFullYear();
-
-    const dateString = `${day}/${month}/${year}`;
-
-    // LOOP 1
-
-    document.getElementById('day').textContent = dayName;
-    document.getElementById('time').textContent = timeString;
-    document.getElementById('ampm').textContent = ampm;
-    document.getElementById('date').textContent = dateString;
-
-    // LOOP 2
-
-    document.getElementById('day2').textContent = dayName;
-    document.getElementById('time2').textContent = timeString;
-    document.getElementById('ampm2').textContent = ampm;
-    document.getElementById('date2').textContent = dateString;
+    set("day2",day);
+    set("date2",date);
+    set("time2",time);
+    set("ampm2",ampm);
 }
 
-/* =========================
-   LIVE VISITOR COUNTER
-========================= */
-
-async function updateVisitor(){
-
-    try{
-
-        const response = await fetch(
-            'https://api.countapi.xyz/hit/myclockwebsite/visits'
-        );
-
-        const data = await response.json();
-
-        document.getElementById('visitor-count')
-            .textContent = data.value;
-
-    }catch(error){
-
-        document.getElementById('visitor-count')
-            .textContent = '000';
-
-    }
+function set(id,val){
+    document.getElementById(id).textContent=val;
 }
 
-/* =========================
-   START
-========================= */
-
-window.onload = () => {
-
-    updateClock();
-
-    setInterval(updateClock,1000);
-
-    updateVisitor();
-};
+updateClock();
+setInterval(updateClock,1000);
 
 </script>
-
-<!-- END -->
-
 
 
 <!-- Desital Clock End Point ---------------------------END Clock---------------- -->
