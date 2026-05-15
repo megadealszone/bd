@@ -936,293 +936,277 @@ loadNews();
 
 
 <!-- Desital Clock Start Point------------------------------------------ -->
+<!-- Desital Clock Start Point------------------------Start -👉----------------- -->
 
 
-<!-- Desital Clock Start Point-------------------------👉----------------- -->
-
-<!-- Desital Clock Start Point--------------------------Delet---------------- -->
 
 <!-- Orbitron Font -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
 
 <style>
+
 .digital-clock-container{
-  background: #000;
-  width: 100%;
-  max-width: 1100px;
-  margin: auto;
-  padding: 12px 15px;
+    background:#000;
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+    padding:8px 12px;
 
-  border: 5px solid #00ff00;
-  border-radius: 14px;
-  box-shadow: 0 0 25px lime;
+    border:3px solid #00ff00;
+    border-radius:10px;
+    box-shadow:0 0 15px lime;
 
-  font-family: 'Orbitron', monospace;
-  color: lime;
+    font-family:'Orbitron', monospace;
+    color:#00ff00;
 
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
 
-  overflow: hidden;
-  box-sizing: border-box;
+    overflow:hidden;
+    box-sizing:border-box;
 }
 
 /* =========================
-   Smooth Infinite Marquee
+   MARQUEE
 ========================= */
+
 .clock-marquee{
-  flex: 1;
-  overflow: hidden;
-  position: relative;
+    flex:1;
+    overflow:hidden;
+    position:relative;
 }
 
 .clock-track{
-  display: flex;
-  width: max-content;
+    display:flex;
+    width:max-content;
 
-  animation: smoothSlide 20s linear infinite;
+    animation:scrollLoop 18s linear infinite;
 }
 
-/* Duplicate Content */
 .clock-group{
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  padding-right: 25px;
-  white-space: nowrap;
+    display:flex;
+    align-items:center;
+    gap:25px;
+
+    padding-right:40px;
+
+    white-space:nowrap;
 }
 
-@keyframes smoothSlide{
+/* Infinite Smooth Scroll */
 
-  0%{
-    transform: translateX(0);
-  }
+@keyframes scrollLoop{
 
-  100%{
-    transform: translateX(-50%);
-  }
+    0%{
+        transform:translateX(0);
+    }
+
+    100%{
+        transform:translateX(-50%);
+    }
 }
 
-/* Text Style */
-.clock-small{
-  font-size: 28px;
-  white-space: nowrap;
+/* =========================
+   ALL TEXT 14PX
+========================= */
+
+.clock-small,
+.clock-time,
+.clock-ampm,
+.visit-box{
+
+    font-size:14px;
+    white-space:nowrap;
 }
 
 .clock-time{
-  font-size: 42px;
-  letter-spacing: 2px;
-  white-space: nowrap;
-}
-
-.clock-ampm{
-  font-size: 30px;
-  white-space: nowrap;
+    letter-spacing:1px;
 }
 
 /* =========================
-   Visit Box
+   VISIT BOX
 ========================= */
+
 .visit-box{
-  white-space: nowrap;
-  flex-shrink: 0;
-
-  font-size: 24px;
-  color: #00ff00;
-
-  border-left: 2px solid lime;
-  padding-left: 18px;
+    border-left:1px solid lime;
+    padding-left:12px;
+    flex-shrink:0;
 }
 
 /* =========================
-   Tablet
+   MOBILE
 ========================= */
-@media (max-width: 768px){
 
-  .clock-group{
-    gap: 15px;
-  }
+@media(max-width:480px){
 
-  .clock-small{
-    font-size: 18px;
-  }
+    .digital-clock-container{
+        padding:6px 8px;
+    }
 
-  .clock-time{
-    font-size: 28px;
-  }
-
-  .clock-ampm{
-    font-size: 20px;
-  }
-
-  .visit-box{
-    font-size: 18px;
-    padding-left: 12px;
-  }
+    .clock-group{
+        gap:15px;
+        padding-right:25px;
+    }
 }
 
-/* =========================
-   Mobile
-========================= */
-@media (max-width: 480px){
-
-  .digital-clock-container{
-    padding: 8px 10px;
-  }
-
-  .clock-group{
-    gap: 10px;
-  }
-
-  .clock-small{
-    font-size: 14px;
-  }
-
-  .clock-time{
-    font-size: 20px;
-    letter-spacing: 1px;
-  }
-
-  .clock-ampm{
-    font-size: 15px;
-  }
-
-  .visit-box{
-    font-size: 14px;
-    padding-left: 10px;
-  }
-}
 </style>
 
-<!-- Digital Clock -->
+<!-- CLOCK START -->
+
 <div class="digital-clock-container">
 
-  <!-- Smooth Sliding Area -->
-  <div class="clock-marquee">
+    <!-- Sliding Area -->
 
-    <div class="clock-track">
+    <div class="clock-marquee">
 
-      <!-- First Loop -->
-      <div class="clock-group">
+        <div class="clock-track">
 
-        <div id="day" class="clock-small"></div>
+            <!-- LOOP 1 -->
 
-        <div id="time12-time" class="clock-time"></div>
+            <div class="clock-group">
 
-        <div id="time12-ampm" class="clock-ampm"></div>
+                <div id="day" class="clock-small"></div>
 
-        <div id="date" class="clock-small"></div>
+                <div id="time" class="clock-time"></div>
 
-      </div>
+                <div id="ampm" class="clock-ampm"></div>
 
-      <!-- Duplicate Loop -->
-      <div class="clock-group">
+                <div id="date" class="clock-small"></div>
 
-        <div id="day2" class="clock-small"></div>
+            </div>
 
-        <div id="time12-time2" class="clock-time"></div>
+            <!-- LOOP 2 -->
 
-        <div id="time12-ampm2" class="clock-ampm"></div>
+            <div class="clock-group">
 
-        <div id="date2" class="clock-small"></div>
+                <div id="day2" class="clock-small"></div>
 
-      </div>
+                <div id="time2" class="clock-time"></div>
+
+                <div id="ampm2" class="clock-ampm"></div>
+
+                <div id="date2" class="clock-small"></div>
+
+            </div>
+
+        </div>
 
     </div>
 
-  </div>
+    <!-- LIVE VISITOR -->
 
-  <!-- Visit Counter -->
-  <div class="visit-box">
-    VISIT : <span id="visit-count">0</span>
-  </div>
+    <div class="visit-box">
+
+        VISITOR :
+        <span id="visitor-count">0</span>
+
+    </div>
 
 </div>
 
-<!-- JavaScript -->
+<!-- SCRIPT -->
+
 <script>
-function updateClock() {
 
-  const now = new Date();
+/* =========================
+   CLOCK
+========================= */
 
-  // Day
-  const dayName = now.toLocaleDateString('en-US', {
-    weekday: 'long'
-  });
+function updateClock(){
 
-  // Time
-  let hours = now.getHours() % 12 || 12;
+    const now = new Date();
 
-  let minutes = String(now.getMinutes()).padStart(2, '0');
+    // DAY
 
-  let seconds = String(now.getSeconds()).padStart(2, '0');
+    const dayName = now.toLocaleDateString('en-US',{
+        weekday:'long'
+    });
 
-  let ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+    // TIME
 
-  const time12 =
-    `${String(hours).padStart(2,'0')}:${minutes}:${seconds}`;
+    let hours = now.getHours() % 12 || 12;
 
-  // Date
-  const day = String(now.getDate()).padStart(2, '0');
+    let minutes = String(now.getMinutes()).padStart(2,'0');
 
-  const month = String(now.getMonth() + 1).padStart(2, '0');
+    let seconds = String(now.getSeconds()).padStart(2,'0');
 
-  const year = now.getFullYear();
+    let ampm = now.getHours() >= 12 ? 'PM' : 'AM';
 
-  const dateStr = `${day}/${month}/${year}`;
+    let timeString =
+        `${String(hours).padStart(2,'0')}:${minutes}:${seconds}`;
 
-  // First Loop
-  document.getElementById('day').textContent = dayName;
-  document.getElementById('time12-time').textContent = time12;
-  document.getElementById('time12-ampm').textContent = ampm;
-  document.getElementById('date').textContent = dateStr;
+    // DATE
 
-  // Duplicate Loop
-  document.getElementById('day2').textContent = dayName;
-  document.getElementById('time12-time2').textContent = time12;
-  document.getElementById('time12-ampm2').textContent = ampm;
-  document.getElementById('date2').textContent = dateStr;
+    const day = String(now.getDate()).padStart(2,'0');
+
+    const month = String(now.getMonth()+1).padStart(2,'0');
+
+    const year = now.getFullYear();
+
+    const dateString = `${day}/${month}/${year}`;
+
+    // LOOP 1
+
+    document.getElementById('day').textContent = dayName;
+    document.getElementById('time').textContent = timeString;
+    document.getElementById('ampm').textContent = ampm;
+    document.getElementById('date').textContent = dateString;
+
+    // LOOP 2
+
+    document.getElementById('day2').textContent = dayName;
+    document.getElementById('time2').textContent = timeString;
+    document.getElementById('ampm2').textContent = ampm;
+    document.getElementById('date2').textContent = dateString;
 }
 
 /* =========================
-   VISIT COUNTER
+   LIVE VISITOR COUNTER
 ========================= */
 
-function updateVisitCounter(){
+async function updateVisitor(){
 
-  let totalVisits =
-    localStorage.getItem("website_total_visits");
+    try{
 
-  if(!totalVisits){
-    totalVisits = 0;
-  }
+        const response = await fetch(
+            'https://api.countapi.xyz/hit/myclockwebsite/visits'
+        );
 
-  totalVisits++;
+        const data = await response.json();
 
-  localStorage.setItem(
-    "website_total_visits",
-    totalVisits
-  );
+        document.getElementById('visitor-count')
+            .textContent = data.value;
 
-  document.getElementById("visit-count")
-    .textContent = totalVisits;
+    }catch(error){
+
+        document.getElementById('visitor-count')
+            .textContent = '000';
+
+    }
 }
 
-// Start
+/* =========================
+   START
+========================= */
+
 window.onload = () => {
 
-  updateClock();
+    updateClock();
 
-  setInterval(updateClock, 1000);
+    setInterval(updateClock,1000);
 
-  updateVisitCounter();
+    updateVisitor();
 };
+
 </script>
 
-<!-- Desital Clock End Point----------------------Delete --------------------- -->
-<!-- Desital Clock End Point ------------------------------------------- -->
+<!-- END -->
+
+
+
+<!-- Desital Clock End Point ---------------------------END Clock---------------- -->
 
   <!-- CONTENT -->
   <section class="content">
