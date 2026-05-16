@@ -6,8 +6,6 @@
 <title>Dashboard</title>
 
 <style>
-
-/* ================= BASIC ================= */
 body{
     font-family:Arial;
     background:#f4f4f4;
@@ -22,7 +20,6 @@ body{
     border-radius:10px;
 }
 
-/* ================= INPUT ================= */
 input{
     width:100%;
     padding:10px;
@@ -31,7 +28,6 @@ input{
     border-radius:6px;
 }
 
-/* ================= BIG BUTTON ================= */
 button{
     padding:8px 12px;
     background:#0528f3;
@@ -43,31 +39,21 @@ button{
     transition:0.2s;
 }
 
-/* hover all buttons */
 button:hover{
-    transform:scale(1.05);
     background:#ffb300;
+    transform:scale(1.05);
 }
 
-/* ================= SMALL BUTTONS ================= */
 .small{
     padding:5px 8px;
     font-size:12px;
     margin:3px;
-    border-radius:4px;
 }
 
 .edit{background:green;}
 .delete{background:red;}
 .update{background:orange;}
 
-/* hover effect small */
-.small:hover{
-    opacity:0.8;
-    transform:scale(1.05);
-}
-
-/* ================= RESULT BOX ================= */
 .item{
     background:#f1f1f1;
     padding:10px;
@@ -75,21 +61,16 @@ button:hover{
     border-radius:6px;
 }
 
-/* ================= UPDATE BUTTON HIDE ================= */
 #updateBtn{
     display:none;
-    background:orange;
     margin-top:10px;
+    background:orange;
 }
 
-/* ================= MESSAGE ================= */
 .msg{
     text-align:center;
-    margin:10px 0;
     font-weight:bold;
-    color:#333;
 }
-
 </style>
 </head>
 
@@ -98,33 +79,28 @@ button:hover{
 <div class="box">
 
 <h2>Dashboard</h2>
-
 <div class="msg" id="msg"></div>
 
-<!-- ================= ADD PRODUCT ================= -->
 <input id="title" placeholder="Product Title">
 <input id="price" placeholder="Price">
-<input id="image" placeholder="Image URL">
+<input id="image" placeholder="Image URL (GitHub/Drive supported)">
 <input id="link" placeholder="Affiliate Link">
 
 <button onclick="addProduct()">Submit</button>
 
 <hr>
 
-<!-- ================= SEARCH ================= -->
 <input id="search" placeholder="Search Product Title">
 <button onclick="searchProduct()">Search</button>
 
 <div id="result"></div>
 
-<!-- UPDATE BUTTON (ONLY SHOW AFTER EDIT) -->
 <button id="updateBtn" onclick="updateProduct()">Update Product</button>
 
 </div>
 
 <script type="module">
 
-/* ================= FIREBASE ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
 getFirestore,
@@ -136,28 +112,41 @@ doc,
 updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔥 CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyDKhxr7tDwWyVH-lO-iJsToZhkw5i_tclU",
   authDomain: "megadealszone-49103.firebaseapp.com",
   projectId: "megadealszone-49103",
   storageBucket: "megadealszone-49103.firebasestorage.app",
-  messagingSenderId: "457042872489",  
-  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8",
-  measurementId: "G-76JTYK936Q"
+  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* ================= MESSAGE ================= */
-function msg(text,color="black"){
-document.getElementById("msg").innerText = text;
-document.getElementById("msg").style.color = color;
+function msg(t,c="black"){
+document.getElementById("msg").innerText=t;
+document.getElementById("msg").style.color=c;
+setTimeout(()=>document.getElementById("msg").innerText="",2000);
+}
 
-setTimeout(()=>{
-document.getElementById("msg").innerText="";
-},2000);
+/* ================= IMAGE FIX (GitHub + Drive) ================= */
+function fixImage(url){
+
+// GitHub fix
+if(url.includes("github.com") && url.includes("/blob/")){
+return url
+.replace("github.com","raw.githubusercontent.com")
+.replace("/blob/","");
+}
+
+// Google Drive fix
+if(url.includes("drive.google.com")){
+let id = url.match(/\/d\/([^/]+)/);
+if(id) return `https://drive.google.com/uc?export=view&id=${id[1]}`;
+}
+
+return url;
 }
 
 /* ================= ADD PRODUCT ================= */
@@ -165,58 +154,48 @@ window.addProduct = async function(){
 
 let title = document.getElementById("title").value.trim();
 let price = document.getElementById("price").value.trim();
-let image = document.getElementById("image").value.trim();
+let image = fixImage(document.getElementById("image").value.trim());
 let link  = document.getElementById("link").value.trim();
 
-/* warning check */
-if(!title || !price || !image){
-msg("⚠️ Fill all required fields","red");
+if(!title || !price || !image || !link){
+msg("⚠️ Fill all fields","red");
 return;
 }
 
-/* affiliate link warning */
-if(!link){
-msg("⚠️ Affiliate Link Required","red");
-return;
-}
-
-/* save */
 await addDoc(collection(db,"products"),{
 title,price,image,link,time:Date.now()
 });
 
-msg("✔ Product Saved Successfully","green");
+msg("✔ Saved Successfully","green");
 
-/* clear */
 document.getElementById("title").value="";
 document.getElementById("price").value="";
 document.getElementById("image").value="";
 document.getElementById("link").value="";
-
 }
 
 /* ================= SEARCH ================= */
 window.searchProduct = async function(){
 
-let q = document.getElementById("search").value.trim().toLowerCase();
+let q=document.getElementById("search").value.trim().toLowerCase();
 
 if(!q){
-msg("⚠️ Search box is empty","red");
+msg("⚠️ Search empty","red");
 return;
 }
 
-let result = document.getElementById("result");
+let result=document.getElementById("result");
 result.innerHTML="";
 
-let snap = await getDocs(collection(db,"products"));
+let snap=await getDocs(collection(db,"products"));
 
 snap.forEach(d=>{
 
-let p = d.data();
+let p=d.data();
 
 if(p.title.toLowerCase().includes(q)){
 
-result.innerHTML += `
+result.innerHTML+=`
 <div class="item">
 
 <b>${p.title}</b><br>
@@ -236,60 +215,42 @@ ${p.price}<br>
 }
 
 /* ================= DELETE ================= */
-window.deleteProduct = async function(id){
+window.deleteProduct=async function(id){
 await deleteDoc(doc(db,"products",id));
-msg("Deleted ✔","red");
+msg("Deleted","red");
 searchProduct();
 }
 
 /* ================= EDIT ================= */
-window.editProduct = function(id,title,price,image,link){
+window.editProduct=function(id,title,price,image,link){
 
-document.getElementById("title").value = title;
-document.getElementById("price").value = price;
-document.getElementById("image").value = image;
-document.getElementById("link").value = link;
+document.getElementById("title").value=title;
+document.getElementById("price").value=price;
+document.getElementById("image").value=image;
+document.getElementById("link").value=link;
 
-/* show update button */
-window.editId = id;
+window.editId=id;
 document.getElementById("updateBtn").style.display="block";
-
-msg("Editing Mode ON","orange");
-
 }
 
 /* ================= UPDATE ================= */
-window.updateProduct = async function(){
+window.updateProduct=async function(){
 
-if(!window.editId){
-msg("⚠️ No product selected","red");
-return;
-}
+let title=document.getElementById("title").value;
+let price=document.getElementById("price").value;
+let image=fixImage(document.getElementById("image").value);
+let link=document.getElementById("link").value;
 
-let title = document.getElementById("title").value.trim();
-let price = document.getElementById("price").value.trim();
-let image = document.getElementById("image").value.trim();
-let link  = document.getElementById("link").value.trim();
-
-/* validation */
-if(!title || !price || !image || !link){
-msg("⚠️ Fill all fields","red");
-return;
-}
-
-/* update */
 await updateDoc(doc(db,"products",window.editId),{
 title,price,image,link
 });
 
-msg("✔ Updated Successfully","green");
+msg("Updated","green");
 
-/* hide update button */
 document.getElementById("updateBtn").style.display="none";
 window.editId=null;
 
 searchProduct();
-
 }
 
 </script>
