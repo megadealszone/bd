@@ -1,66 +1,1247 @@
 <!DOCTYPE html>
-<html>
+<html lang="bn">
 <head>
-  <title>Post Page</title>
-</head>
-<body>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Multi Menu Website</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f4f4;
+      overflow-x:hidden;
+    }
+
+    /* HEADER */
+    header{
+      background: linear-gradient(90deg,#0f2027,#203a43,#2c5364);
+      box-shadow:0 2px 10px rgba(0,0,0,0.3);
+      position:relative;
+      z-index:999;
+      width:100%;
+    }
+
+    .navbar{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      width:100%;
+      position:relative;
+    }
 
 
-<div id="header"></div>
+/* নিচে সাদা অংশ 100% লাভ করা*/
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 
-<!-- POST CONTENT -->
-<div class="content">
-  <h2>My Post Page</h2>
-</div>
+footer{
+    margin-top: auto;
+}
 
-<div id="footer"></div>
+/* পুরো পেজ ফুল স্ক্রিন */
+html, body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
 
-<script>
-fetch("header.html")
-  .then(res => res.text())
-  .then(data => document.getElementById("header").innerHTML = data);
+/* মূল কন্টেইনার */
+.container{
+    width: 100%;
+    max-width: 100%;
+}
 
-fetch("footer.html")
-  .then(res => res.text())
-  .then(data => document.getElementById("footer").innerHTML = data);
-</script>
+/* ইমেজ responsive */
+img{
+    max-width: 100%;
+    height: auto;
+}
+
+/* সেকশন responsive */
+section{
+    width: 100%;
+}
+
+/* মোবাইল responsive */
+@media screen and (max-width: 768px){
+    
+    body{
+        overflow-x: hidden;
+    }
+
+    .hero{
+        height: auto;
+        padding: 40px 15px;
+    }
+
+    h1{
+        font-size: 28px;
+    }
+
+    p{
+        font-size: 16px;
+    }
+}
+
+
+    /* MOBILE MENU BUTTON */
+    .menu-toggle{
+      display:none;
+      position:absolute;
+      right:20px;
+      top:15px;
+      font-size:30px;
+      color:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .menu{
+      list-style:none;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      width:100%;
+      transition:0.4s ease;
+    }
+
+    .menu li{
+      position:relative;
+    }
+
+    .menu li a{
+      display:block;
+      padding:18px 22px;
+      color:white;
+      text-decoration:none;
+      transition:0.3s;
+      font-size:16px;
+      font-weight:bold;
+      white-space:nowrap;
+    }
+
+    .menu li a:hover{
+      background:linear-gradient(90deg,#ff512f,#dd2476);
+      color:#fff;
+    }
+
+    /* SUB MENU */
+    .submenu{
+      display:none;
+      position:absolute;
+      top:100%;
+      left:0;
+      background:#203a43;
+      min-width:220px;
+      list-style:none;
+      z-index:1000;
+      animation:fadeIn 0.4s ease;
+    }
+
+    .submenu li{
+      position:relative;
+      width:100%;
+    }
+
+    .submenu li a{
+      padding:14px 18px;
+      border-bottom:1px solid rgba(255,255,255,0.1);
+      width:100%;
+    }
+
+    .menu li:hover > .submenu{
+      display:block;
+    }
+
+    /* SUB SUB MENU */
+    .submenu .submenu{
+      top:0;
+      left:100%;
+      background:#2c5364;
+    }
+
+    /* HERO SECTION */
+    .hero{
+      height:500px;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      color:white;
+      padding:20px;
+    }
+
+    /* SMOOTH IMAGE SLIDER */
+.hero::before,
+.hero::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:center;
+  animation:slider 360s infinite ease-in-out;
+  z-index:-2;
+  opacity:0;
+  transition:opacity 2s ease-in-out;
+}
+
+.hero::before{
+  animation-delay:20s;
+  background: transparent;
+}
+
+.hero::after{
+  animation-delay:0s;
+}
+
+/* EXTRA SMOOTH KEYFRAMES */
+@keyframes slider{
+
+  0%{
+    opacity:1;
+    background-image:url('https://raw.githubusercontent.com/megadealszone/bd/71a89956e5a7cc4127aba9a29657f95d8478ba9c/Images/HD%20Roza%20Mubarik%20Islamic%20Wallpaper%20Khana%20Kaba.jpg');
+    transform:scale(1);
+  }
+
+  5%{
+    opacity:1;
+    transform:scale(1.05);
+  }
+
+  20%{
+    opacity:0;
+    background-image:url('https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Resolution%20Genre%20World%20Wallpaper%20Islamic%20Mosques.jpg');
+    transform:scale(1.12);
+  }
+
+  25%{
+    opacity:1;
+    transform:scale(1.20);
+  }
+
+  30%{
+    opacity:1;
+    background-image:url('https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Mitsubishi%20Lancer%20Evolution%20Wallpaper%20And%20Image.jpg');
+    transform:scale(1.28);
+  }
+
+  45%{
+    opacity:1;
+    transform:scale(1.18);
+  }
+
+  50%{
+    opacity:1;
+    transform:scale(1.10);
+  }
+
+  55%{
+    opacity:1;
+    background-image:url('https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/HD%20Widescreen%20Wallpaper%20Right%20Click%20The%20Select%20Set%20As.jpg');
+    transform:scale(1.03);
+  }
+
+  70%{
+    opacity:0;
+    transform:scale(1.05);
+  }
+
+  75%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  80%{
+    opacity:1;
+    background-image:url('https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Resolution%20Genre%20World%20Wallpaper%20Islamic%20Mosques.jpg');
+    transform:scale(1.03);
+  }
+
+  95%{
+    opacity:0;
+    transform:scale(1.05);
+  }
+
+  100%{
+    opacity:1;
+    background-image:url('https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/beingboring-travel-4604499_1920.jpg');
+    transform:scale(1);
+  }
+    }
+
+    /* DARK OVERLAY */
+    .hero-overlay{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.55);
+      z-index:-1;
+    }
+
+    .hero-content{
+      position:relative;
+      z-index:2;
+      width:100%;
+      max-width:900px;
+      padding:20px;
+      animation:fadeIn 1.2s ease;
+    }
+
+    .hero-content h1{
+      font-size:60px;
+      margin-bottom:20px;
+      line-height:1.2;
+    }
+
+    .hero-content p{
+      font-size:22px;
+      margin-bottom:30px;
+      line-height:1.6;
+    }
+
+    .btn{
+      display:inline-block;
+      padding:14px 35px;
+      background:linear-gradient(90deg,#ff512f,#dd2476);
+      color:white;
+      text-decoration:none;
+      border-radius:30px;
+      transition:0.3s;
+      font-weight:bold;
+      font-size:16px;
+    }
+
+    .btn:hover{
+      transform:scale(1.05);
+    }
+
+    /* CONTENT */
+    .content{
+      padding:60px 20px;
+      text-align:center;
+      background:#fff;
+    }
+
+    .content h2{
+      margin-bottom:20px;
+      color:#203a43;
+      font-size:36px;
+    }
+
+    .content p{
+      max-width:900px;
+      margin:auto;
+      line-height:1.8;
+      font-size:18px;
+      color:#444;
+    }
+
+    /* FOOTER */
+    footer{
+      background: linear-gradient(90deg,#141e30,#243b55);
+      color:white;
+      text-align:center;
+      padding:25px 15px;
+      margin-top:40px;
+    }
+
+    footer a{
+      color:#ffcc70;
+      text-decoration:none;
+    }
+
+    /* FADE ANIMATION */
+    @keyframes fadeIn{
+      from{
+        opacity:0;
+        transform:translateY(10px);
+      }
+      to{
+        opacity:1;
+        transform:translateY(0);
+      }
+    }
+
+    /* TABLET */
+    @media(max-width:992px){
+
+      .menu li a{
+        padding:15px 16px;
+        font-size:15px;
+      }
+
+      .hero{
+        height:450px;
+      }
+
+      .hero-content h1{
+        font-size:42px;
+      }
+
+      .hero-content p{
+        font-size:18px;
+      }
+    }
+
+    /* MOBILE */
+    @media(max-width:768px){
+
+      .navbar{
+        flex-direction:column;
+        align-items:flex-start;
+        padding-top:60px;
+      }
+
+      .menu-toggle{
+        display:block;
+      }
+
+      .menu{
+        flex-direction:column;
+        width:100%;
+        max-height:0;
+        overflow:hidden;
+        background:#203a43;
+      }
+
+      .menu.active{
+        max-height:2000px;
+      }
+
+      .menu li{
+        width:100%;
+      }
+
+      .menu li a{
+        width:100%;
+        padding:15px 20px;
+        border-bottom:1px solid rgba(255,255,255,0.08);
+        font-size:15px;
+      }
+
+      .submenu{
+        position:static;
+        width:100%;
+        min-width:100%;
+      }
+
+      .submenu .submenu{
+        left:0;
+      }
+
+      .menu li:hover > .submenu{
+        display:block;
+      }
+
+      .hero{
+        min-height:420px;
+        height:auto;
+        padding:80px 20px;
+      }
+
+      .hero-content h1{
+        font-size:34px;
+      }
+
+      .hero-content p{
+        font-size:16px;
+      }
+
+      .btn{
+        padding:12px 28px;
+        font-size:15px;
+      }
+
+      .content{
+        padding:50px 15px;
+      }
+
+      .content h2{
+        font-size:28px;
+      }
+
+      .content p{
+        font-size:16px;
+        line-height:1.7;
+      }
+
+      footer{
+        font-size:14px;
+        line-height:1.8;
+      }
+    }
+
+    /* SMALL MOBILE */
+    @media(max-width:480px){
+
+      .hero-content h1{
+        font-size:28px;
+      }
+
+      .hero-content p{
+        font-size:15px;
+      }
+
+      .btn{
+        width:100%;
+        max-width:220px;
+      }
+
+      .content h2{
+        font-size:24px;
+      }
+
+      .content p{
+        font-size:15px;
+      }
+
+      .menu li a{
+        font-size:14px;
+        padding:14px 16px;
+      }
+    }
+
+/* PRODUCT PROMOTION SECTION Start */
 
 
 
+/* PRODUCT SECTION */
+
+.product-promo{
+    width:100%;
+    padding:60px 20px;
+    background:#dde5ed;
+    text-align:center;
+}
+
+.product-promo h2{
+    font-size:38px;
+    margin-bottom:40px;
+    color:#203a43;
+}
+
+/* GRID */
+
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:25px;
+    max-width:1400px;
+    margin:auto;
+}
+
+/* CARD */
+
+.product-card{
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
+    text-decoration:none;
+    transition:0.3s ease;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    border:1px solid #eee;
+}
+
+.product-card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* IMAGE */
+
+.product-card img{
+    width:100%;
+    height:260px;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+    transition:0.4s ease;
+    background:#fff;
+}
+
+.product-card:hover img{
+    transform:scale(1.04);
+}
+
+/* PRODUCT TITLE */
+
+.product-card h3{
+    font-size:17px;
+    color:#222;
+    margin:15px 12px 8px;
+    line-height:1.5;
+    transition:0.3s ease;
+}
+
+/* AMAZON STYLE RED HOVER */
+
+.product-card:hover h3{
+    color:#e63946;
+}
+
+/* PRICE */
+
+.product-card .price{
+    color:#111;
+    font-size:22px;
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+/* TABLET */
+
+@media(max-width:992px){
+
+    .product-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+    .product-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:15px;
+    }
+
+    .product-card img{
+        height:220px;
+    }
+
+}
+
+/* SMALL MOBILE */
+
+@media(max-width:480px){
+
+    .product-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+/* PRODUCT SECTION END */
 
 
     
+    
+  </style>
 
-<!-- HEADER LOAD হবে এখানে -->
-<div id="header"></div>
 
-<!-- POST CONTENT -->
-<div class="content">
-  <h2>Amazon Product Post</h2>
+<meta name="google-site-verification" content="gJTIuSaJpH2jwKGQ4kLtdwj8B61OyxUun5I5-5sAMww" />
 
-  <p>এখানে তুমি ম্যানুয়ালি Amazon প্রোডাক্ট বসাবে</p>
+  
+</head>
 
-  <!-- Example Product -->
-  <div class="product">
-    <h3>Product Name</h3>
-    <img src="product.jpg" width="200">
-    <p>Price: $20</p>
-    <a href="https://amazon.com" target="_blank">Buy Now</a>
+  
+<body>
+
+  <!-- HEADER -->
+  <header>
+
+    <nav class="navbar">
+
+      <!-- THREE DOT MENU -->
+      <div class="menu-toggle" onclick="toggleMenu()">
+        ⋮
+      </div>
+
+      <ul class="menu" id="mobileMenu">
+
+        <!-- HOME -->
+        <li>
+          <a href="index.html">Home</a>
+        </li>
+
+        <!-- SOCIAL MEDIA -->
+        <li><a href="#">Social Media</a>
+          
+          <ul class="submenu">
+            <li><a href="https://www.facebook.com/megadealszone" >Facebook </a></li>
+            <li> <a href="https://www.youtube.com/@somoyershikha">YouTube</a></li>
+          </ul>
+          
+        </li>
+
+        <!-- AFFILIATE -->
+        <li>
+          <a href="#">Affiliate</a>
+
+          <ul class="submenu">
+
+            <li>
+              <a href="#">Accounts Open</a>
+
+              <ul class="submenu">
+
+                <li>
+                  <a href="https://www.amazon.com" >
+                    Amazon Account
+                  </a>
+                </li>
+
+                <li>
+                  <a href="https://www.daraz.com.bd" >
+                    Daraz Seller
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
+            <li>
+              <a href="#">Marketing</a>
+
+              <ul class="submenu">
+
+                <li>
+                  <a href="https://ads.google.com" target="_blank">
+                    Google Ads
+                  </a>
+                </li>
+
+                <li>
+                  <a href="https://www.facebook.com/megadealszone" >
+                    Facebook Marketing
+                  </a>
+                </li>
+
+              </ul>
+            </li>
+
+          </ul>
+        </li>
+
+        <!-- DOWNLOAD -->
+        <li>
+          <a href="#">Download</a>
+        </li>
+
+<!-- Amanzon, Aliexpress, Daraz-----------------Start--------------------- -->
+<li>
+    <a href="#">Share Market</a>
+
+    <ul class="submenu">
+        <li><a href="https://www.aliexpress.com/item/1005008856903228.html">Aliexpress Affiliate</a></li>
+        <li><a href="https://www.amazon.com/ref=nav_logo">Amazon Affiliate</a></li>
+        <li><a href="https://www.daraz.com.bd/#?">Daraz Affiliate</a></li>
+         <li><a href="https://portals.aliexpress.com/affiportals/web/home.htm">Aliexpress Deshboard</a></li>
+        <li><a href="https://affiliate-program.amazon.com/home">Amazon Deshboard</a></li>
+        <li><a href="https://adsense.daraz.com.bd/index.htm#!/">Daraz Deshboard</a></li>
+    </ul>
+  
+</li>
+<!-- Amanzon, Aliexpress, Daraz-----------------End--------------------- -->
+
+        <li><a href="#">API</a></li>
+
+        <li><a href="https://megadealszone.github.io/bd/admin_login.html">Software</a></li>
+
+<!-- Share Market-----Start------------------------------- -->
+<li>
+    <a href="#">Share Market</a>
+
+    <ul class="submenu">
+        <li><a href="https://www.dsebd.org/">Dhaka Stock Exchange</a></li>
+        <li><a href="https://www.cse.com.bd/">Chittagong Stock Exchange</a></li>
+        <li><a href="https://ibroker.lbsbd.com/">iBroker</a></li>
+        <li><a href="https://itrade.lbsbd.com/">TradeXpress</a></li>
+        <li><a href="https://www.amarstock.com/">Amar Stock</a></li>
+    </ul>
+  
+</li>
+<!-- Share Market-----End------------------------------- -->
+        
+        <!-- ADMIN PANEL -->
+        <li><a href="https://megadealszone.github.io/bd/admin_login.html">Admin Login</a></li>
+
+      </ul>
+
+    </nav>
+
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+      <h1>لَا إِلٰهَ إِلَّا اللّٰهُ مُحَمَّدٌ رَّسُولُ اللّٰهِ</h1>
+
+      <p>
+        “দুনিয়ার সৌন্দর্য ক্ষণিকের, কিন্তু আখিরাতের শান্তি চিরদিনের। তাই আল্লাহর পথে চলাই সবচেয়ে বড় সফলতা। 🌙✨”
+      </p>
+
+      <a href="https://sites.google.com/view/islamic-side/home" class="btn">See More</a>
+
+    </div>
+
+  </section>
+
+<!-- Latest News Start Point-------------------------------  -->
+<!-- Bengali News Ticker Start -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali&display=swap" rel="stylesheet" />
+
+<style>
+#news-ticker {
+  background: #fcd303;
+  color: #000;
+  padding: 10px 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'Noto Sans Bengali', Arial, sans-serif;
+  border: 2px solid #e6b800;
+  border-radius: 5px;
+  position: relative;
+}
+
+#breaking-news-wrapper {
+  display: flex;
+  width: max-content;
+  animation: tickerScroll 120s linear infinite;
+}
+
+#breaking-news-container {
+  display: flex;
+  gap: 30px;
+  white-space: nowrap;
+}
+
+#breaking-news-container a {
+  text-decoration: none;
+  color: inherit;
+  padding: 0 5px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+#breaking-news-container a:hover {
+  background: #ffdddd;
+  color: #b30000;
+}
+
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+</style>
+
+<div id="news-ticker">
+  <div id="breaking-news-wrapper">
+    <div id="breaking-news-container">🔄 লোড হচ্ছে...</div>
+    <div id="breaking-news-container" class="clone">🔄 লোড হচ্ছে...</div>
   </div>
 </div>
 
-<!-- FOOTER LOAD হবে এখানে -->
-<div id="footer"></div>
+<script>
+function decodeHTMLEntities(text) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = text;
+  return txt.value;
+}
+
+async function fetchRSS(url, count = 10) {
+  const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
+  const resp = await fetch(proxy + encodeURIComponent(url));
+  const data = await resp.json();
+  return (data.items || []).slice(0, count);
+}
+
+async function loadNews() {
+  try {
+    const sources = await Promise.all([
+      fetchRSS('https://www.prothomalo.com/feed', 5),
+      fetchRSS('https://thedhakapost.com/rss.xml', 5),
+      fetchRSS('https://www.jagonews24.com/rss/allnews', 5),
+      fetchRSS('https://feeds.bbci.co.uk/bengali/rss.xml', 5),
+      fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5)
+    ]);
+
+    const all = sources.flat();
+
+    const headlines = all.map(item => {
+      const title = decodeHTMLEntities(item.title);
+      return `<a href="${item.link}" target="_blank" rel="noopener noreferrer">🟢 ${title}</a>`;
+    });
+
+    const finalHTML = headlines.join(' 🔸 ');
+
+    document.querySelectorAll('#breaking-news-container').forEach(container => {
+      container.innerHTML = finalHTML;
+    });
+
+  } catch (err) {
+    console.error('News load error:', err);
+    document.querySelectorAll('#breaking-news-container').forEach(container => {
+      container.textContent = '❌ নিউজ পাওয়া যায়নি!';
+    });
+  }
+}
+
+loadNews();
+</script>
+<!-- Bengali News Ticker End -->
+<!-- Latest News End Point---------------------------------- -->
+
+  
+
+
+<!-- Desital Clock Start Point------------------------------------------ -->
+<!-- Desital Clock Start Point------------------------Start -👉----------------- -->
+
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+    margin:0;
+    background:black;
+    font-family:'Orbitron', monospace;
+    color:lime;
+}
+
+/* ROW ONLY (BOX REMOVED) */
+.row{
+    display:flex;
+    align-items:center;
+    border:1px solid lime;
+    border-radius:6px;
+    overflow:hidden;
+}
+
+/* LEFT FIXED */
+.live{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    white-space:nowrap;
+    flex-shrink:0;
+    background:black;
+}
+
+.dot{
+    width:8px;
+    height:8px;
+    background:red;
+    border-radius:50%;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{opacity:0.2;}
+}
+
+/* SCROLL AREA */
+.scroll{
+    flex:1;
+    overflow:hidden;
+    background:white;
+    color:black;
+}
+
+/* TRACK */
+.track{
+    display:flex;
+    width:max-content;
+    animation:scroll 35s linear infinite;
+    will-change: transform;
+}
+
+@keyframes scroll{
+    0%{
+        transform:translateX(0);
+    }
+    100%{
+        transform:translateX(-50%);
+    }
+}
+
+/* ITEM */
+.item{
+    display:flex;
+    gap:50px;
+    padding:0 60px;
+    font-size:clamp(12px, 2vw, 17px);
+    white-space:nowrap;
+    flex-shrink:0;
+}
+
+.welcome{
+    font-weight:bold;
+    color:blue;
+}
+
+</style>
+
+<div class="row">
+
+    <div class="live">
+        <span class="dot"></span>
+        LIVE CLOCK
+    </div>
+
+    <div class="scroll">
+        <div class="track">
+
+            <div class="item">
+                <span id="day"></span>
+                <span id="date"></span>
+                <span id="time"></span>
+                <span id="ampm"></span>
+            </div>
+
+            <div class="item">
+                <span class="welcome">Welcome to our Website</span>
+            </div>
+
+            <div class="item">
+                <span id="day2"></span>
+                <span id="date2"></span>
+                <span id="time2"></span>
+                <span id="ampm2"></span>
+            </div>
+
+            <div class="item">
+                <span class="welcome">Welcome to our Website</span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
 
 <script>
-  fetch("header.html")
-    .then(res => res.text())
-    .then(data => document.getElementById("header").innerHTML = data);
 
-  fetch("footer.html")
-    .then(res => res.text())
-    .then(data => document.getElementById("footer").innerHTML = data);
+function updateClock(){
+
+    const now=new Date();
+
+    const day=now.toLocaleDateString('en-US',{weekday:'long'});
+
+    const date=`${String(now.getDate()).padStart(2,'0')}/${
+        String(now.getMonth()+1).padStart(2,'0')
+    }/${now.getFullYear()}`;
+
+    let h=now.getHours()%12||12;
+    let m=String(now.getMinutes()).padStart(2,'0');
+    let s=String(now.getSeconds()).padStart(2,'0');
+    let ampm=now.getHours()>=12?'PM':'AM';
+
+    const time=`${String(h).padStart(2,'0')}:${m}:${s}`;
+
+    set("day",day);
+    set("date",date);
+    set("time",time);
+    set("ampm",ampm);
+
+    set("day2",day);
+    set("date2",date);
+    set("time2",time);
+    set("ampm2",ampm);
+}
+
+function set(id,val){
+    document.getElementById(id).textContent=val;
+}
+
+updateClock();
+setInterval(updateClock,1000);
+
 </script>
 
+
+<!-- Desital Clock End Point ---------------------------END Clock---------------- -->
+
+  <!-- CONTENT -->
+  <section class="content">
+
+    
+ <!-- PRODUCT PROMOTION SECTION START -->
+
+<section class="product-promo">
+
+    <h2>Featured Products</h2>
+
+    <div class="product-grid">
+
+        <!-- PRODUCT 1 -->
+        <a href="https://s.click.aliexpress.com/e/_example"
+           class="product-card"
+           target="_blank">
+
+            <img
+            src="https://raw.githubusercontent.com/megadealszone/bd/b62e00b59f67bf6303866468981ea6a23bc7ce0f/Images/Untsssssitled-1.jpg"
+            alt="Basketball Shoes">
+
+            <h3>Top Basketball Shoes</h3>
+
+            <p class="price">$16.44</p>
+
+        </a>
+
+        <!-- PRODUCT 2 -->
+        <a href="https://s.click.aliexpress.com/e/_c3S7rcwj"
+           class="product-card"
+           target="_blank">
+
+            <img
+            src="https://raw.githubusercontent.com/megadealszone/bd/08a072231a0002b9675fe6e8158a4bf1e155de2c/Images/shoes1.JPG"
+            alt="Shoes 1">
+
+            <h3>Men's New Skateboard Shoes</h3>
+
+            <p class="price">$19.51</p>
+
+        </a>
+
+        <!-- PRODUCT 3 -->
+        <a href="https://s.click.aliexpress.com/e/_c4NXVup1"
+           class="product-card"
+           target="_blank">
+
+            <img
+            src="https://raw.githubusercontent.com/megadealszone/bd/315c1514a24307e363a637e1401f4ce948d6535a/Images/shoes2.JPG"
+            alt="Shoes 2">
+
+            <h3>Men's High-Top Basketball Shoes</h3>
+
+            <p class="price">$22.38</p>
+
+        </a>
+
+      <!-- PRODUCT 4 -->
+        <a href="https://s.click.aliexpress.com/e/_c3Q7C9KJ"
+           class="product-card"
+           target="_blank">
+
+            <img
+            src="https://raw.githubusercontent.com/megadealszone/bd/a832914981801c42d616600542553d75bf6909b8/Images/shoes3.JPG"
+            alt="Shoes 3">
+
+            <h3>Children's Autumn Winter New Rotating Buckle Leather Sneaker Boys Lightweight Comfortable Running Shoes Fashion Trendy Footwear</h3>
+
+            <p class="price">$25.44</p>
+        </a>
+      
+      <!-- PRODUCT 5 -->
+        <a href="https://s.click.aliexpress.com/e/_c4D4oB5H"
+           class="product-card"
+           target="_blank">
+
+            <img
+            src="https://raw.githubusercontent.com/megadealszone/bd/d29966a5bc1ede13f60904b5e22e0a73097d3d4b/Images/shoes4.JPG"
+            alt="Shoes 3">
+
+            <h3>USB C Hub 8In1 7in2 7in1 Type C 3.1 To 4K HDMI Adapter with RJ45 SD/TF Card Reader PD Fast Charge for MacBook Notebook Laptop</h3>
+
+            <p class="price">BDT588.21</p>
+        </a>
+
+      <!-- PRODUCT 6-->
+        <a href="https://s.click.aliexpress.com/e/_c3XwnO2F"
+           class="product-card"
+           target="_blank">
+
+            <img
+            src="https://raw.githubusercontent.com/megadealszone/bd/37310c9f2364d6b5388a886f3f5065e38d12c322/Images/lt1.JPG"
+            alt="Shoes 3">
+
+            <h3>2026 New Core i9 9880H Windows 11 Pro Laptop 32GB RAM 2TB SSD for Gaming Office Studio High-Speed Notebook 5000mAh</h3>
+
+            <p class="price">BDT34,372.37</p>
+        </a>
+
+      
+    </div>
+</section>
+    
+<!-- PRODUCT PROMOTION SECTION END ---------------------------------- -->
+
+    <!-- AD CODE START -->
+  <div style="margin-top:20px; text-align:center;">
+
+    <a href='https://s.click.aliexpress.com/e/_c3ZEJ7uL?bz=725*90' target='_parent'>
+
+      <img 
+        width='1000'
+        height='250'
+        src='https://ae-pic-a1.aliexpress-media.com/kf/S11021df81fb04a6f81b2458c2633430ar.png'
+        style="max-width:100%; height:auto; border-radius:5px;"
+      />
+
+    </a>
+
+  </div>
+  <!-- AD CODE END -->
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+
+    <p>
+      © 2026 My Website | Developer By Md Roman Islam Habib
+    </p>
+
+    <p>
+      Visit:
+      <a href="https://www.google.com" target="_blank">
+        Google,
+      </a>
+
+      <a href="https://www.facebook.com/megadealszone" target="_blank">
+        Facebook,
+      </a>
+
+      <a href="https://www.youtube.com/@somoyershikha" target="_blank">
+        Youtube
+      </a>
+    </p>
+
+  </footer>
+
+  <!-- MOBILE MENU SCRIPT -->
+  <script>
+
+    function toggleMenu(){
+      document.getElementById("mobileMenu").classList.toggle("active");
+    }
+
+  </script>
+
+
+  
 </body>
 </html>
