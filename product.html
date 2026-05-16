@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,37 +8,66 @@
 
 <style>
 
-/* 🔥 তোমার DESIGN SAME */
+/* ================= DESIGN (UNCHANGED STYLE) ================= */
 
-.product-grid{
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f4f4f4;
+}
+
+h2{
+    text-align:center;
+    padding:15px;
+}
+
+/* GRID */
+.grid{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
     gap:12px;
+    padding:10px;
 }
 
-.product-card{
+/* CARD */
+.card{
     background:#fff;
     border-radius:10px;
     overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
 }
 
-.product-image img{
+/* IMAGE */
+.card img{
     width:100%;
     height:160px;
     object-fit:cover;
 }
 
+/* TITLE */
+.info{
+    padding:8px;
+    font-size:12px;
+}
+
+/* PRICE */
 .price{
     color:#B12704;
     font-weight:bold;
+    padding:0 8px;
 }
 
-.buy-btn{
-    background:#FFD814;
-    padding:10px;
+/* BUTTON */
+.btn{
     display:block;
+    background:#FFD814;
     text-align:center;
+    padding:10px;
     text-decoration:none;
+    font-weight:bold;
+    color:#111;
 }
 
 </style>
@@ -45,30 +75,43 @@
 
 <body>
 
-<h2 style="text-align:center;">Products</h2>
+<h2>🔥 Featured Products</h2>
 
-<div class="product-grid" id="grid"></div>
+<!-- PRODUCTS SHOW AREA -->
+<div class="grid" id="grid"></div>
+
+<!-- ======================================================
+🔥 FIREBASE SCRIPT START (IMPORTANT SECTION)
+👉 এখানে product data load হবে
+====================================================== -->
 
 <script type="module">
 
+/* ================= FIREBASE IMPORT ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔥 same config */
+/* ======================================================
+🔥 STEP 1: SAME CONFIG (dashboard এর মতোই)
+====================================================== */
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "YOUR_AUTH_DOMAIN_HERE",
+  projectId: "YOUR_PROJECT_ID_HERE",
+  appId: "YOUR_APP_ID_HERE"
 };
 
+/* ================= INIT FIREBASE ================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ================= GRID ELEMENT ================= */
 let grid = document.getElementById("grid");
 
+/* ======================================================
+🔥 STEP 2: LIVE DATA LOAD (REAL TIME)
+👉 Firebase থেকে product auto load হবে
+====================================================== */
 onSnapshot(collection(db, "products"), (snap)=>{
 
 grid.innerHTML = "";
@@ -78,17 +121,17 @@ snap.forEach(doc=>{
 let p = doc.data();
 
 grid.innerHTML += `
-<div class="product-card">
+<div class="card">
 
-<div class="product-image">
 <img src="${p.image}">
-</div>
 
-<h3>${p.title}</h3>
+<div class="info">
+${p.title}
+</div>
 
 <div class="price">${p.price}</div>
 
-<a class="buy-btn" href="${p.link}" target="_blank">Buy Now</a>
+<a class="btn" href="${p.link}" target="_blank">Buy Now</a>
 
 </div>
 `;
