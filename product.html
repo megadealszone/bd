@@ -1,4 +1,4 @@
-```html
+```html id="1r8f32"
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -93,16 +93,25 @@ function fixImage(url){
     // Google Drive image
     if(url.includes("drive.google.com")){
 
-        // file/d/ID/view
-        let match = url.match(/\/d\/([^\/]+)/);
+        let fileId = "";
 
-        // open?id=ID
-        if(!match){
-            match = url.match(/[?&]id=([^&]+)/);
+        // file/d/FILE_ID/view
+        let match1 = url.match(/\/d\/([^\/]+)/);
+
+        if(match1 && match1[1]){
+            fileId = match1[1];
         }
 
-        if(match && match[1]){
-            return `https://drive.google.com/uc?export=view&id=${match[1]}`;
+        // open?id=FILE_ID
+        let match2 = url.match(/[?&]id=([^&]+)/);
+
+        if(!fileId && match2 && match2[1]){
+            fileId = match2[1];
+        }
+
+        // direct image link
+        if(fileId){
+            return `https://lh3.googleusercontent.com/d/${fileId}`;
         }
     }
 
@@ -114,7 +123,7 @@ products.forEach(p => {
 grid.innerHTML += `
 <div class="card">
 
-<img src="${fixImage(p.image)}">
+<img src="${fixImage(p.image)}" alt="${p.title}">
 
 <h3>
 <a href="${p.link}" target="_blank">
