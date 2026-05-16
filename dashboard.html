@@ -33,6 +33,42 @@ button{
     font-weight:bold;
     cursor:pointer;
 }
+
+/* search box */
+.search-box{
+    margin-top:20px;
+}
+
+/* result box */
+.result{
+    margin-top:20px;
+    background:#fff;
+    padding:10px;
+    border-radius:10px;
+}
+
+.item{
+    border-bottom:1px solid #ddd;
+    padding:10px 0;
+}
+
+.small-btn{
+    padding:6px;
+    margin-top:5px;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.edit{
+    background:#4caf50;
+    color:white;
+}
+
+.delete{
+    background:#f44336;
+    color:white;
+}
 </style>
 </head>
 
@@ -43,19 +79,28 @@ button{
 <h2>Add Product</h2>
 
 <input type="text" id="title" placeholder="Product Title">
-
 <input type="text" id="price" placeholder="Price">
-
-<input type="text" id="image" placeholder="Image URL (GitHub link)">
-
+<input type="text" id="image" placeholder="Image URL">
 <input type="text" id="link" placeholder="Affiliate Link">
 
 <button onclick="addProduct()">Submit</button>
+
+<hr>
+
+<h3>Search Product</h3>
+
+<input type="text" id="search" placeholder="Search by Title">
+<button onclick="searchProduct()">Search</button>
+
+<div id="result" class="result"></div>
 
 </div>
 
 <script>
 
+/* =========================
+   ADD PRODUCT
+========================= */
 function addProduct(){
 
 let title = document.getElementById("title").value;
@@ -65,18 +110,86 @@ let link = document.getElementById("link").value;
 
 let products = JSON.parse(localStorage.getItem("products")) || [];
 
-products.push({
-    title,
-    price,
-    image,
-    link
-});
+products.push({ title, price, image, link });
 
 localStorage.setItem("products", JSON.stringify(products));
 
 alert("Product Added!");
-window.location.href = "product.html";
+}
 
+/* =========================
+   SEARCH PRODUCT
+========================= */
+function searchProduct(){
+
+let query = document.getElementById("search").value.toLowerCase();
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+let resultBox = document.getElementById("result");
+
+resultBox.innerHTML = "";
+
+products.forEach((p, index) => {
+
+if(p.title.toLowerCase().includes(query)){
+
+resultBox.innerHTML += `
+<div class="item">
+<b>${p.title}</b><br>
+${p.price}<br>
+
+<button class="small-btn edit" onclick="editProduct(${index})">Edit</button>
+<button class="small-btn delete" onclick="deleteProduct(${index})">Delete</button>
+</div>
+`;
+
+}
+
+});
+
+}
+
+/* =========================
+   EDIT PRODUCT (REPLACE SAME)
+========================= */
+function editProduct(index){
+
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+let p = products[index];
+
+let newTitle = prompt("Edit Title", p.title);
+let newPrice = prompt("Edit Price", p.price);
+let newImage = prompt("Edit Image", p.image);
+let newLink = prompt("Edit Link", p.link);
+
+products[index] = {
+    title: newTitle,
+    price: newPrice,
+    image: newImage,
+    link: newLink
+};
+
+/* replace same product */
+localStorage.setItem("products", JSON.stringify(products));
+
+alert("Product Updated!");
+searchProduct();
+}
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+function deleteProduct(index){
+
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+products.splice(index, 1);
+
+localStorage.setItem("products", JSON.stringify(products));
+
+alert("Product Deleted!");
+searchProduct();
 }
 
 </script>
