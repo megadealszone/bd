@@ -1,8 +1,11 @@
-```html id="1r8f32"
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
+
+<!-- ✅ Mobile support fix -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Products</title>
 
 <style>
@@ -10,13 +13,15 @@
 body{
     font-family:Arial;
     background:#f4f4f4;
+    margin:0;
 }
 
+/* Responsive grid */
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
-    padding:20px;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+    padding:12px;
 }
 
 .card{
@@ -25,9 +30,10 @@ body{
     overflow:hidden;
 }
 
+/* Image responsive */
 .card img{
     width:100%;
-    height:150px;
+    height:140px;
     object-fit:cover;
 }
 
@@ -55,7 +61,7 @@ body{
     color:red;
 }
 
-/* ✅ ONLY Buy Now button style */
+/* Buy button */
 .buy-btn{
     display:block;
     background:#ffcc00;
@@ -63,6 +69,27 @@ body{
     padding:10px;
     text-decoration:none;
     font-weight:bold;
+}
+
+/* ✅ Extra mobile tuning */
+@media (max-width: 480px){
+    .card img{
+        height:120px;
+    }
+
+    .grid{
+        gap:10px;
+        padding:10px;
+    }
+
+    .card h3{
+        font-size:11px;
+    }
+
+    .buy-btn{
+        padding:8px;
+        font-size:13px;
+    }
 }
 
 </style>
@@ -144,4 +171,3 @@ ${p.title}
 
 </body>
 </html>
-```
