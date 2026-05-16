@@ -6,6 +6,8 @@
 <title>Dashboard</title>
 
 <style>
+
+/* ================= BASIC ================= */
 body{
     font-family:Arial;
     background:#f4f4f4;
@@ -13,44 +15,81 @@ body{
 }
 
 .box{
-    max-width:500px;
+    max-width:520px;
     margin:auto;
     background:#fff;
     padding:20px;
     border-radius:10px;
 }
 
+/* ================= INPUT ================= */
 input{
     width:100%;
-    padding:12px;
-    margin:8px 0;
+    padding:10px;
+    margin:6px 0;
+    border:1px solid #ddd;
+    border-radius:6px;
 }
 
+/* ================= BIG BUTTON ================= */
 button{
-    width:100%;
-    padding:12px;
-    margin-top:5px;
+    padding:8px 12px;
     background:#0528f3;
     color:#fff;
     border:none;
     font-weight:bold;
     cursor:pointer;
+    border-radius:5px;
+    transition:0.2s;
 }
 
-.item{
-    background:#eee;
-    padding:10px;
-    margin-top:10px;
-    border-radius:8px;
+/* hover all buttons */
+button:hover{
+    transform:scale(1.05);
+    background:#ffb300;
 }
+
+/* ================= SMALL BUTTONS ================= */
 .small{
-    padding:5px;
-    margin:3px;
+    padding:5px 8px;
     font-size:12px;
+    margin:3px;
+    border-radius:4px;
 }
+
 .edit{background:green;}
 .delete{background:red;}
 .update{background:orange;}
+
+/* hover effect small */
+.small:hover{
+    opacity:0.8;
+    transform:scale(1.05);
+}
+
+/* ================= RESULT BOX ================= */
+.item{
+    background:#f1f1f1;
+    padding:10px;
+    margin-top:10px;
+    border-radius:6px;
+}
+
+/* ================= UPDATE BUTTON HIDE ================= */
+#updateBtn{
+    display:none;
+    background:orange;
+    margin-top:10px;
+}
+
+/* ================= MESSAGE ================= */
+.msg{
+    text-align:center;
+    margin:10px 0;
+    font-weight:bold;
+    color:#333;
+}
+
 </style>
 </head>
 
@@ -58,23 +97,28 @@ button{
 
 <div class="box">
 
-<h2>Add / Search Product</h2>
+<h2>Dashboard</h2>
 
-<!-- ADD PRODUCT -->
+<div class="msg" id="msg"></div>
+
+<!-- ================= ADD PRODUCT ================= -->
 <input id="title" placeholder="Product Title">
 <input id="price" placeholder="Price">
 <input id="image" placeholder="Image URL">
 <input id="link" placeholder="Affiliate Link">
 
-<button onclick="addProduct()">Add Product</button>
+<button onclick="addProduct()">Submit</button>
 
 <hr>
 
-<!-- SEARCH -->
-<input id="search" placeholder="Search by Title">
+<!-- ================= SEARCH ================= -->
+<input id="search" placeholder="Search Product Title">
 <button onclick="searchProduct()">Search</button>
 
 <div id="result"></div>
+
+<!-- UPDATE BUTTON (ONLY SHOW AFTER EDIT) -->
+<button id="updateBtn" onclick="updateProduct()">Update Product</button>
 
 </div>
 
@@ -92,7 +136,7 @@ doc,
 updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔥 CONFIG (REPLACE THIS) */
+/* 🔥 CONFIG */
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -103,33 +147,63 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ================= MESSAGE ================= */
+function msg(text,color="black"){
+document.getElementById("msg").innerText = text;
+document.getElementById("msg").style.color = color;
+
+setTimeout(()=>{
+document.getElementById("msg").innerText="";
+},2000);
+}
+
 /* ================= ADD PRODUCT ================= */
 window.addProduct = async function(){
 
-let title = document.getElementById("title").value;
-let price = document.getElementById("price").value;
-let image = document.getElementById("image").value;
-let link  = document.getElementById("link").value;
+let title = document.getElementById("title").value.trim();
+let price = document.getElementById("price").value.trim();
+let image = document.getElementById("image").value.trim();
+let link  = document.getElementById("link").value.trim();
 
+/* warning check */
+if(!title || !price || !image){
+msg("⚠️ Fill all required fields","red");
+return;
+}
+
+/* affiliate link warning */
+if(!link){
+msg("⚠️ Affiliate Link Required","red");
+return;
+}
+
+/* save */
 await addDoc(collection(db,"products"),{
-    title,
-    price,
-    image,
-    link,
-    time: Date.now()
+title,price,image,link,time:Date.now()
 });
 
-alert("Saved ✔");
+msg("✔ Product Saved Successfully","green");
+
+/* clear */
+document.getElementById("title").value="";
+document.getElementById("price").value="";
+document.getElementById("image").value="";
+document.getElementById("link").value="";
 
 }
 
 /* ================= SEARCH ================= */
 window.searchProduct = async function(){
 
-let q = document.getElementById("search").value.toLowerCase();
-let result = document.getElementById("result");
+let q = document.getElementById("search").value.trim().toLowerCase();
 
-result.innerHTML = "";
+if(!q){
+msg("⚠️ Search box is empty","red");
+return;
+}
+
+let result = document.getElementById("result");
+result.innerHTML="";
 
 let snap = await getDocs(collection(db,"products"));
 
@@ -161,11 +235,11 @@ ${p.price}<br>
 /* ================= DELETE ================= */
 window.deleteProduct = async function(id){
 await deleteDoc(doc(db,"products",id));
-alert("Deleted ✔");
+msg("Deleted ✔","red");
 searchProduct();
 }
 
-/* ================= EDIT + UPDATE ================= */
+/* ================= EDIT ================= */
 window.editProduct = function(id,title,price,image,link){
 
 document.getElementById("title").value = title;
@@ -173,42 +247,49 @@ document.getElementById("price").value = price;
 document.getElementById("image").value = image;
 document.getElementById("link").value = link;
 
-/* change button */
-window.updateId = id;
+/* show update button */
+window.editId = id;
+document.getElementById("updateBtn").style.display="block";
+
+msg("Editing Mode ON","orange");
 
 }
 
 /* ================= UPDATE ================= */
 window.updateProduct = async function(){
 
-if(!window.updateId){
-alert("Select product first");
+if(!window.editId){
+msg("⚠️ No product selected","red");
 return;
 }
 
-let title = document.getElementById("title").value;
-let price = document.getElementById("price").value;
-let image = document.getElementById("image").value;
-let link  = document.getElementById("link").value;
+let title = document.getElementById("title").value.trim();
+let price = document.getElementById("price").value.trim();
+let image = document.getElementById("image").value.trim();
+let link  = document.getElementById("link").value.trim();
 
-await updateDoc(doc(db,"products",window.updateId),{
-title,
-price,
-image,
-link
+/* validation */
+if(!title || !price || !image || !link){
+msg("⚠️ Fill all fields","red");
+return;
+}
+
+/* update */
+await updateDoc(doc(db,"products",window.editId),{
+title,price,image,link
 });
 
-alert("Updated ✔");
+msg("✔ Updated Successfully","green");
 
-window.updateId = null;
+/* hide update button */
+document.getElementById("updateBtn").style.display="none";
+window.editId=null;
 
 searchProduct();
+
 }
 
 </script>
-
-<!-- UPDATE BUTTON -->
-<button onclick="updateProduct()" style="background:orange;">Update Product</button>
 
 </body>
 </html>
