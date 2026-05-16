@@ -1,118 +1,297 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Products</title>
+<title>Mega Deals Zone</title>
 
 <style>
 
-*{box-sizing:border-box;}
+/* ================= GLOBAL ================= */
 
-body{
+*{
     margin:0;
-    font-family:Arial;
-    background:#f4f4f4;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
 }
 
-.grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
+body{
+    background:#f4f4f4;
+    overflow-x:hidden;
+}
+
+/* ================= HEADER ================= */
+
+header{
+    background:linear-gradient(90deg,#0f2027,#203a43,#2c5364);
+    position:sticky;
+    top:0;
+    z-index:999;
+}
+
+.navbar{
+    display:flex;
+    align-items:center;
     padding:10px;
 }
 
-.card{
+.menu{
+    list-style:none;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.menu li a{
+    color:#fff;
+    text-decoration:none;
+    padding:10px 14px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    height:220px;
+    background:
+    linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),
+    url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200');
+    background-size:cover;
+    background-position:center;
+}
+
+/* ================= TITLE ================= */
+
+.product-title{
+    text-align:center;
+    font-size:24px;
+    margin:20px 0;
+    color:#222;
+}
+
+/* ================= GRID ================= */
+
+.product-grid{
+    width:100%;
+    max-width:1400px;
+    margin:auto;
+    padding:10px;
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+}
+
+/* ================= CARD (AMAZON STYLE) ================= */
+
+.product-card{
     background:#fff;
     border-radius:10px;
     overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    transition:0.2s;
 }
 
-.card img{
+.product-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* IMAGE */
+
+.product-image{
     width:100%;
-    height:120px;
+    height:160px;
+    overflow:hidden;
+}
+
+.product-image img{
+    width:100%;
+    height:100%;
     object-fit:cover;
-    display:block;
 }
 
-.card h3{
-    font-size:12px;
-    margin:0;
+/* TITLE */
+
+.product-info{
     padding:8px;
+    flex:1;
 }
 
-.card h3 a{
-    text-decoration:none;
-    color:black;
+.product-info h3{
+    font-size:12px;
+    line-height:1.4;
+    color:#222;
+
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+
+    overflow:hidden;
+}
+
+/* PRICE + BUTTON AREA */
+
+.bottom-area{
+    margin-top:auto;
+    padding:8px;
 }
 
 .price{
-    padding:0 8px;
-    color:red;
+    font-size:18px;
     font-weight:bold;
+    color:#B12704;
+    margin-bottom:8px;
 }
+
+/* BUTTON */
 
 .buy-btn{
     display:block;
-    background:#ffcc00;
     text-align:center;
-    padding:8px;
-    text-decoration:none;
+    background:#FFD814;
+    color:#111;
+    padding:10px;
+    border-radius:6px;
     font-weight:bold;
+    text-decoration:none;
+    transition:0.2s;
+}
+
+.buy-btn:hover{
+    background:#F7CA00;
+}
+
+/* ================= RESPONSIVE ================= */
+
+/* tablet */
+@media(max-width:768px){
+    .product-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+}
+
+/* mobile */
+@media(max-width:480px){
+    .product-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .product-image{
+        height:130px;
+    }
+}
+
+/* very small phones */
+@media(max-width:360px){
+    .product-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    background:#111;
+    color:#fff;
+    margin-top:20px;
 }
 
 </style>
+
 </head>
 
 <body>
 
-<h2 style="text-align:center;">All Products</h2>
+<header>
+<nav class="navbar">
+<ul class="menu">
+<li><a href="#">Home</a></li>
+<li><a href="#">Deals</a></li>
+<li><a href="#">Affiliate</a></li>
+</ul>
+</nav>
+</header>
 
-<div class="grid" id="grid"></div>
+<section class="hero"></section>
 
-<script>
+<h2 class="product-title">🔥 Featured Products</h2>
 
-let products = JSON.parse(localStorage.getItem("products")) || [];
+<div class="product-grid">
 
-let grid = document.getElementById("grid");
+<!-- PRODUCT CARD TEMPLATE -->
 
-function render(){
+<div class="product-card">
+<div class="product-image">
+<img src="https://raw.githubusercontent.com/megadealszone/bd/b62e00b59f67bf6303866468981ea6a23bc7ce0f/Images/Untsssssitled-1.jpg">
+</div>
 
-    if(products.length === 0){
-        grid.innerHTML = "<p style='padding:10px'>No products found</p>";
-        return;
-    }
+<div class="product-info">
+<h3>Top Basketball Shoes Premium Comfortable Lightweight Design</h3>
+</div>
 
-    let html = "";
+<div class="bottom-area">
+<div class="price">$16.44</div>
+<a class="buy-btn" href="#">Buy Now</a>
+</div>
+</div>
 
-    products.forEach(p => {
+<div class="product-card">
+<div class="product-image">
+<img src="https://raw.githubusercontent.com/megadealszone/bd/08a072231a0002b9675fe6e8158a4bf1e155de2c/Images/shoes1.JPG">
+</div>
 
-        html += `
-        <div class="card">
+<div class="product-info">
+<h3>Men Skateboard Shoes Fashion Durable Outdoor Sneakers</h3>
+</div>
 
-            <img src="${p.image}" alt="">
+<div class="bottom-area">
+<div class="price">$19.51</div>
+<a class="buy-btn" href="#">Buy Now</a>
+</div>
+</div>
 
-            <h3>
-                <a href="${p.link}" target="_blank">
-                    ${p.title}
-                </a>
-            </h3>
+<div class="product-card">
+<div class="product-image">
+<img src="https://raw.githubusercontent.com/megadealszone/bd/315c1514a24307e363a637e1401f4ce948d6535a/Images/shoes2.JPG">
+</div>
 
-            <div class="price">${p.price}</div>
+<div class="product-info">
+<h3>High Top Basketball Shoes Premium Comfort Running Shoes</h3>
+</div>
 
-            <a class="buy-btn" href="${p.link}" target="_blank">Buy Now</a>
+<div class="bottom-area">
+<div class="price">$22.38</div>
+<a class="buy-btn" href="#">Buy Now</a>
+</div>
+</div>
 
-        </div>
-        `;
-    });
+<div class="product-card">
+<div class="product-image">
+<img src="https://raw.githubusercontent.com/megadealszone/bd/a832914981801c42d616600542553d75bf6909b8/Images/shoes3.JPG">
+</div>
 
-    grid.innerHTML = html;
-}
+<div class="product-info">
+<h3>Kids Rotating Buckle Leather Sneakers Fashion Trend</h3>
+</div>
 
-render();
+<div class="bottom-area">
+<div class="price">$25.44</div>
+<a class="buy-btn" href="#">Buy Now</a>
+</div>
+</div>
 
-</script>
+</div>
+
+<footer>
+© 2026 Mega Deals Zone
+</footer>
 
 </body>
 </html>
