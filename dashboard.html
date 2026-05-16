@@ -13,7 +13,7 @@ body{
 }
 
 .box{
-    max-width:520px;
+    max-width:500px;
     margin:auto;
     background:#fff;
     padding:20px;
@@ -24,52 +24,20 @@ input{
     width:100%;
     padding:10px;
     margin:6px 0;
-    border:1px solid #ddd;
-    border-radius:6px;
 }
 
 button{
-    padding:8px 12px;
+    padding:10px;
+    width:100%;
     background:#0528f3;
     color:#fff;
     border:none;
-    font-weight:bold;
     cursor:pointer;
-    border-radius:5px;
-    transition:0.2s;
+    font-weight:bold;
 }
 
 button:hover{
     background:#ffb300;
-    transform:scale(1.05);
-}
-
-.small{
-    padding:5px 8px;
-    font-size:12px;
-    margin:3px;
-}
-
-.edit{background:green;}
-.delete{background:red;}
-.update{background:orange;}
-
-.item{
-    background:#f1f1f1;
-    padding:10px;
-    margin-top:10px;
-    border-radius:6px;
-}
-
-#updateBtn{
-    display:none;
-    margin-top:10px;
-    background:orange;
-}
-
-.msg{
-    text-align:center;
-    font-weight:bold;
 }
 </style>
 </head>
@@ -78,179 +46,77 @@ button:hover{
 
 <div class="box">
 
-<h2>Dashboard</h2>
-<div class="msg" id="msg"></div>
+<h2>Add Product</h2>
 
-<input id="title" placeholder="Product Title">
+<input id="title" placeholder="Title">
 <input id="price" placeholder="Price">
-<input id="image" placeholder="Image URL (GitHub/Drive supported)">
+<input id="image" placeholder="Image URL">
 <input id="link" placeholder="Affiliate Link">
 
 <button onclick="addProduct()">Submit</button>
 
-<hr>
-
-<input id="search" placeholder="Search Product Title">
-<button onclick="searchProduct()">Search</button>
-
-<div id="result"></div>
-
-<button id="updateBtn" onclick="updateProduct()">Update Product</button>
-
 </div>
 
+<!-- ================= FIREBASE V12 ================= -->
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
 import {
 getFirestore,
 collection,
-addDoc,
-getDocs,
-deleteDoc,
-doc,
-updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+addDoc
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+/* ================= CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDKhxr7tDwWyVH-lO-iJsToZhkw5i_tclU",
   authDomain: "megadealszone-49103.firebaseapp.com",
   projectId: "megadealszone-49103",
-  storageBucket: "megadealszone-49103.firebasestorage.app",
-  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8"
+  storageBucket: "megadealszone-49103.appspot.com",
+  messagingSenderId: "457042872489",
+  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8",
+  measurementId: "G-76JTYK936Q"
 };
 
 const app = initializeApp(firebaseConfig);
+getAnalytics(app);
 const db = getFirestore(app);
-
-/* ================= MESSAGE ================= */
-function msg(t,c="black"){
-document.getElementById("msg").innerText=t;
-document.getElementById("msg").style.color=c;
-setTimeout(()=>document.getElementById("msg").innerText="",2000);
-}
-
-/* ================= IMAGE FIX (GitHub + Drive) ================= */
-function fixImage(url){
-
-// GitHub fix
-if(url.includes("github.com") && url.includes("/blob/")){
-return url
-.replace("github.com","raw.githubusercontent.com")
-.replace("/blob/","");
-}
-
-// Google Drive fix
-if(url.includes("drive.google.com")){
-let id = url.match(/\/d\/([^/]+)/);
-if(id) return `https://drive.google.com/uc?export=view&id=${id[1]}`;
-}
-
-return url;
-}
 
 /* ================= ADD PRODUCT ================= */
 window.addProduct = async function(){
 
-let title = document.getElementById("title").value.trim();
-let price = document.getElementById("price").value.trim();
-let image = fixImage(document.getElementById("image").value.trim());
-let link  = document.getElementById("link").value.trim();
+let title = document.getElementById("title").value;
+let price = document.getElementById("price").value;
+let image = document.getElementById("image").value;
+let link  = document.getElementById("link").value;
 
 if(!title || !price || !image || !link){
-msg("⚠️ Fill all fields","red");
+alert("Fill all fields");
 return;
 }
 
+try{
+
 await addDoc(collection(db,"products"),{
-title,price,image,link,time:Date.now()
+title,
+price,
+image,
+link,
+time: Date.now()
 });
 
-msg("✔ Saved Successfully","green");
+alert("Saved ✔");
 
 document.getElementById("title").value="";
 document.getElementById("price").value="";
 document.getElementById("image").value="";
 document.getElementById("link").value="";
+
+}catch(e){
+alert("Error: " + e.message);
 }
 
-/* ================= SEARCH ================= */
-window.searchProduct = async function(){
-
-let q=document.getElementById("search").value.trim().toLowerCase();
-
-if(!q){
-msg("⚠️ Search empty","red");
-return;
-}
-
-let result=document.getElementById("result");
-result.innerHTML="";
-
-let snap=await getDocs(collection(db,"products"));
-
-snap.forEach(d=>{
-
-let p=d.data();
-
-if(p.title.toLowerCase().includes(q)){
-
-result.innerHTML+=`
-<div class="item">
-
-<b>${p.title}</b><br>
-${p.price}<br>
-
-<button class="small edit" onclick="editProduct('${d.id}','${p.title}','${p.price}','${p.image}','${p.link}')">Edit</button>
-
-<button class="small delete" onclick="deleteProduct('${d.id}')">Delete</button>
-
-</div>
-`;
-
-}
-
-});
-
-}
-
-/* ================= DELETE ================= */
-window.deleteProduct=async function(id){
-await deleteDoc(doc(db,"products",id));
-msg("Deleted","red");
-searchProduct();
-}
-
-/* ================= EDIT ================= */
-window.editProduct=function(id,title,price,image,link){
-
-document.getElementById("title").value=title;
-document.getElementById("price").value=price;
-document.getElementById("image").value=image;
-document.getElementById("link").value=link;
-
-window.editId=id;
-document.getElementById("updateBtn").style.display="block";
-}
-
-/* ================= UPDATE ================= */
-window.updateProduct=async function(){
-
-let title=document.getElementById("title").value;
-let price=document.getElementById("price").value;
-let image=fixImage(document.getElementById("image").value);
-let link=document.getElementById("link").value;
-
-await updateDoc(doc(db,"products",window.editId),{
-title,price,image,link
-});
-
-msg("Updated","green");
-
-document.getElementById("updateBtn").style.display="none";
-window.editId=null;
-
-searchProduct();
 }
 
 </script>
