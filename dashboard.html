@@ -4,37 +4,89 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
+
+<style>
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+    padding:20px;
+}
+
+.form-box{
+    max-width:500px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:1px solid #ddd;
+    border-radius:8px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#0528f3;
+    color:#fff;
+    border:none;
+    font-weight:bold;
+    border-radius:8px;
+    cursor:pointer;
+}
+</style>
 </head>
 
 <body>
 
+<div class="form-box">
+
 <h2>Add Product</h2>
 
-<input id="title" placeholder="Title"><br><br>
-<input id="price" placeholder="Price"><br><br>
-<input id="image" placeholder="Image URL"><br><br>
-<input id="link" placeholder="Affiliate Link"><br><br>
+<!-- ================= INPUT FIELD ================= -->
+<input id="title" placeholder="Product Title">
+<input id="price" placeholder="Price">
+<input id="image" placeholder="Image URL">
+<input id="link" placeholder="Affiliate Link">
 
 <button onclick="addProduct()">Submit</button>
 
+</div>
+
+<!-- ======================================================
+🔥 FIREBASE SCRIPT START (IMPORTANT SECTION)
+👉 এখানে Firebase CDN + App connect হবে
+====================================================== -->
+
 <script type="module">
 
+/* ================= FIREBASE IMPORT ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-/* 🔥 তোমার Firebase config এখানে বসাবে */
+/* ======================================================
+🔥 STEP 1: এখানে তোমার Firebase config বসাবে
+👉 Firebase Console → Web App → Config copy paste
+====================================================== */
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "YOUR_API_KEY_HERE",
+  authDomain: "YOUR_AUTH_DOMAIN_HERE",
+  projectId: "YOUR_PROJECT_ID_HERE",
+  appId: "YOUR_APP_ID_HERE"
 };
 
+/* ================= INIT FIREBASE ================= */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+/* ======================================================
+🔥 STEP 2: ADD PRODUCT FUNCTION
+👉 Submit click করলে Firebase এ save হবে
+====================================================== */
 window.addProduct = async function(){
 
 let title = document.getElementById("title").value;
@@ -42,15 +94,28 @@ let price = document.getElementById("price").value;
 let image = document.getElementById("image").value;
 let link  = document.getElementById("link").value;
 
+/* validation */
+if(!title || !price || !image || !link){
+    alert("সব ফিল্ড পূরণ করুন");
+    return;
+}
+
+/* ================= SAVE TO FIREBASE ================= */
 await addDoc(collection(db, "products"), {
-    title,
-    price,
-    image,
-    link,
+    title: title,
+    price: price,
+    image: image,
+    link: link,
     time: Date.now()
 });
 
 alert("Product Saved ✔");
+
+/* clear input */
+document.getElementById("title").value="";
+document.getElementById("price").value="";
+document.getElementById("image").value="";
+document.getElementById("link").value="";
 
 }
 
