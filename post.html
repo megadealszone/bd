@@ -3,12 +3,7 @@
 
 <head>
 
-<!-- ======================================================
-     HEAD SECTION START
-====================================================== -->
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Mega Deals Zone</title>
@@ -34,17 +29,9 @@ html,body{
 
 body{
     background:#f4f4f4;
-
-    /* Footer নিচে রাখার জন্য */
     display:flex;
     flex-direction:column;
 }
-
-/* ======================================================
-   GLOBAL CSS END
-====================================================== */
-
-
 
 /* ======================================================
    HEADER SECTION START
@@ -58,58 +45,19 @@ header{
     z-index:999;
 }
 
-/* ======================================================
-   NAVBAR START
-====================================================== */
-
 .navbar{
     display:flex;
-
-    /* Menu বাম পাশ থেকে শুরু হবে */
     justify-content:flex-start;
-
     align-items:center;
-
     width:100%;
-
     position:relative;
-
     padding-left:10px;
 }
-
-/* ======================================================
-   MOBILE MENU BUTTON START
-====================================================== */
-
-.menu-toggle{
-    display:none;
-    position:absolute;
-    right:20px;
-    top:15px;
-    font-size:30px;
-    color:#fff;
-    cursor:pointer;
-    user-select:none;
-}
-
-/* ======================================================
-   MOBILE MENU BUTTON END
-====================================================== */
-
-
-
-/* ======================================================
-   MENU START
-====================================================== */
 
 .menu{
     list-style:none;
     display:flex;
     flex-wrap:wrap;
-}
-
-.menu li{
-    position:relative;
 }
 
 .menu li a{
@@ -127,66 +75,20 @@ header{
 }
 
 /* ======================================================
-   SUB MENU START
-====================================================== */
-
-.submenu{
-    display:none;
-    position:absolute;
-    top:100%;
-    left:0;
-    background:#203a43;
-    min-width:220px;
-    list-style:none;
-    z-index:1000;
-}
-
-.submenu li a{
-    padding:14px 18px;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-}
-
-.menu li:hover > .submenu{
-    display:block;
-}
-
-/* ======================================================
-   SUB MENU END
-====================================================== */
-
-/* ======================================================
-   MENU END
-====================================================== */
-
-/* ======================================================
-   HEADER SECTION END
-====================================================== */
-
-
-
-/* ======================================================
-   HERO SECTION START
+   HERO SECTION
 ====================================================== */
 
 .hero{
     height:260px;
-
     background:
     linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),
     url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200');
-
     background-size:cover;
     background-position:center;
 }
 
 /* ======================================================
-   HERO SECTION END
-====================================================== */
-
-
-
-/* ======================================================
-   CONTENT SECTION START
+   CONTENT SECTION
 ====================================================== */
 
 .content{
@@ -195,13 +97,7 @@ header{
 }
 
 /* ======================================================
-   CONTENT SECTION END
-====================================================== */
-
-
-
-/* ======================================================
-   AFFILIATE PRODUCT SECTION START
+   PRODUCT SECTION
 ====================================================== */
 
 .product-section{
@@ -217,37 +113,27 @@ header{
     margin-bottom:35px;
 }
 
-/* ======================================================
-   PRODUCT GRID START
-====================================================== */
-
 .product-grid{
     display:grid;
-
-    /* Card Size Control */
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-
     gap:20px;
 }
 
 /* ======================================================
-   PRODUCT GRID END
-====================================================== */
-
-
-
-/* ======================================================
-   PRODUCT CARD START
+   PRODUCT CARD FIX (IMPORTANT)
 ====================================================== */
 
 .product-card{
     background:#fff;
     border-radius:10px;
     overflow:hidden;
-    text-decoration:none;
     border:1px solid #ddd;
-    transition:.3s;
     box-shadow:0 2px 8px rgba(0,0,0,.08);
+    transition:.3s;
+
+    display:flex;
+    flex-direction:column;
+    height:100%;
 }
 
 .product-card:hover{
@@ -255,75 +141,59 @@ header{
     box-shadow:0 10px 25px rgba(0,0,0,.15);
 }
 
-/* ======================================================
-   PRODUCT IMAGE START
-====================================================== */
+/* IMAGE */
 
 .product-image{
     width:100%;
-    height:180px;
+    height:147px;
     overflow:hidden;
     background:#fff;
+    flex-shrink:0;
 }
 
 .product-image img{
     width:100%;
     height:100%;
     object-fit:cover;
-    transition:.4s;
 }
 
-.product-card:hover img{
-    transform:scale(1.05);
-}
-
-/* ======================================================
-   PRODUCT IMAGE END
-====================================================== */
-
-
-
-/* ======================================================
-   PRODUCT INFO START
-====================================================== */
+/* INFO */
 
 .product-info{
     padding:12px;
+    display:flex;
+    flex-direction:column;
+    flex:1;
 }
+
+/* TITLE */
 
 .product-info h3{
-    font-size:15px;
+    font-size:8px;
     color:#222;
-    line-height:1.5;
-    height:45px;
-    overflow:hidden;
+    line-height:1.6;
     margin-bottom:10px;
-}
-
-.product-card:hover h3{
-    color:#c7511f;
+    word-break:break-word;
 }
 
 /* ======================================================
-   PRODUCT PRICE START
+   BOTTOM FIX AREA (THIS IS MAIN FIX)
 ====================================================== */
+
+.bottom-area{
+    margin-top:auto;   /* 👈 সব নিচে ফিক্স */
+}
+
+/* PRICE */
 
 .price{
     font-size:22px;
     font-weight:bold;
     color:#B12704;
-    margin-bottom:12px;
+    margin-bottom:10px;
 }
 
-/* ======================================================
-   PRODUCT PRICE END
-====================================================== */
-
-
-
-/* ======================================================
-   BUY BUTTON START
-====================================================== */
+/* BUY BUTTON */
 
 .buy-btn{
     display:block;
@@ -343,32 +213,14 @@ header{
 }
 
 /* ======================================================
-   BUY BUTTON END
-====================================================== */
-
-/* ======================================================
-   PRODUCT CARD END
-====================================================== */
-
-/* ======================================================
-   AFFILIATE PRODUCT SECTION END
-====================================================== */
-
-
-
-/* ======================================================
-   FOOTER SECTION START
+   FOOTER
 ====================================================== */
 
 footer{
     margin-top:auto;
-
     background:linear-gradient(90deg,#141e30,#243b55);
-
     color:#fff;
-
     text-align:center;
-
     padding:25px 15px;
 }
 
@@ -378,585 +230,170 @@ footer a{
 }
 
 /* ======================================================
-   FOOTER SECTION END
-====================================================== */
-
-
-
-/* ======================================================
-   RESPONSIVE SECTION START
+   RESPONSIVE
 ====================================================== */
 
 @media(max-width:768px){
-
-    /* ================= MOBILE NAVBAR ================= */
-
-    .navbar{
-        flex-direction:column;
-        align-items:flex-start;
-        padding-top:60px;
-    }
-
-    .menu-toggle{
-        display:block;
-    }
-
-    .menu{
-        flex-direction:column;
-        width:100%;
-        max-height:0;
-        overflow:hidden;
-        background:#203a43;
-        transition:.4s;
-    }
-
-    .menu.active{
-        max-height:2000px;
-    }
-
-    .menu li{
-        width:100%;
-    }
-
-    .menu li a{
-        width:100%;
-        border-bottom:1px solid rgba(255,255,255,0.08);
-    }
-
-    .submenu{
-        position:static;
-        width:100%;
-    }
-
-    /* ================= HERO ================= */
-
-    .hero{
-        height:200px;
-    }
-
-    /* ================= PRODUCT TITLE ================= */
-
-    .product-title{
-        font-size:28px;
-    }
-
-    /* ================= PRODUCT GRID ================= */
-
     .product-grid{
         grid-template-columns:repeat(2,1fr);
     }
-
 }
 
-/* ======================================================
-   SMALL MOBILE START
-====================================================== */
-
 @media(max-width:480px){
-
     .product-grid{
         grid-template-columns:1fr;
     }
-
-    .hero{
-        height:180px;
-    }
-
-    .product-title{
-        font-size:24px;
-    }
-
 }
 
-/* ======================================================
-   SMALL MOBILE END
-====================================================== */
-
-/* ======================================================
-   RESPONSIVE SECTION END
-====================================================== */
-
 </style>
-
-<!-- ======================================================
-     HEAD SECTION END
-====================================================== -->
 
 </head>
 
 <body>
 
-<!-- ======================================================
-     HEADER SECTION START
-====================================================== -->
-
+<!-- HEADER -->
 <header>
-
-<!-- ======================================================
-     NAVBAR START
-====================================================== -->
-
 <nav class="navbar">
 
-<!-- ======================================================
-     MOBILE MENU BUTTON START
-====================================================== -->
-
-<div class="menu-toggle" onclick="toggleMenu()">
-⋮
-</div>
-
-<!-- ======================================================
-     MOBILE MENU BUTTON END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     MENU START
-====================================================== -->
-
-<ul class="menu" id="mobileMenu">
-
-<!-- HOME MENU -->
-
-<li>
-<a href="https://megadealszone.github.io/bd/">
-Home
-</a>
-</li>
-
-<!-- SOCIAL MEDIA MENU -->
-
-<li>
-
-<a href="#">
-Social Media
-</a>
-
-<!-- SUBMENU START -->
-
-<ul class="submenu">
-
-<li>
-<a href="https://www.facebook.com/megadealszone">
-Facebook
-</a>
-</li>
-
-<li>
-<a href="https://www.youtube.com/@somoyershikha">
-YouTube
-</a>
-</li>
-
+<ul class="menu">
+<li><a href="https://megadealszone.github.io/bd/">Home</a></li>
+<li><a href="#">Social Media</a></li>
+<li><a href="#">Admin Login</a></li>
 </ul>
-
-<!-- SUBMENU END -->
-
-</li>
-
-<!-- ADMIN LOGIN -->
-
-<li>
-<a href="https://megadealszone.github.io/bd/admin_login.html">
-Admin Login
-</a>
-</li>
-
-</ul>
-
-<!-- ======================================================
-     MENU END
-====================================================== -->
 
 </nav>
-
-<!-- ======================================================
-     NAVBAR END
-====================================================== -->
-
 </header>
 
-<!-- ======================================================
-     HEADER SECTION END
-====================================================== -->
+<!-- HERO -->
+<section class="hero"></section>
 
-
-
-<!-- ======================================================
-     HERO SECTION START
-====================================================== -->
-
-<section class="hero">
-
-</section>
-
-<!-- ======================================================
-     HERO SECTION END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     CONTENT SECTION START
-====================================================== -->
-
+<!-- PRODUCTS -->
 <section class="content">
 
-<!-- ======================================================
-     AFFILIATE PRODUCT SECTION START
-====================================================== -->
+<div class="product-section">
 
-<section class="product-section">
-
-<h2 class="product-title">
-Featured Products
-</h2>
-
-<!-- ======================================================
-     PRODUCT GRID START
-====================================================== -->
+<h2 class="product-title">Featured Products</h2>
 
 <div class="product-grid">
 
-<!-- ======================================================
-     PRODUCT CARD 1 START
-====================================================== -->
-
+<!-- PRODUCT 1 -->
 <div class="product-card">
 
 <div class="product-image">
-
-<img
-src="https://raw.githubusercontent.com/megadealszone/bd/b62e00b59f67bf6303866468981ea6a23bc7ce0f/Images/Untsssssitled-1.jpg"
-alt="Basketball Shoes">
-
+<img src="https://raw.githubusercontent.com/megadealszone/bd/b62e00b59f67bf6303866468981ea6a23bc7ce0f/Images/Untsssssitled-1.jpg">
 </div>
 
 <div class="product-info">
+<h3>Top Basketball Shoes Premium Comfortable Lightweight Design</h3>
 
-<h3>
-Top Basketball Shoes
-</h3>
-
-<div class="price">
-$16.44
-</div>
-
-<a
-href="https://s.click.aliexpress.com/e/_example"
-class="buy-btn"
-target="_blank">
-
-Buy Now
-
-</a>
-
+<div class="bottom-area">
+<div class="price">$16.44</div>
+<a class="buy-btn" href="#">Buy Now</a>
 </div>
 
 </div>
+</div>
 
-<!-- ======================================================
-     PRODUCT CARD 1 END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     PRODUCT CARD 2 START
-====================================================== -->
-
+<!-- PRODUCT 2 -->
 <div class="product-card">
 
 <div class="product-image">
-
-<img
-src="https://raw.githubusercontent.com/megadealszone/bd/08a072231a0002b9675fe6e8158a4bf1e155de2c/Images/shoes1.JPG"
-alt="Shoes">
-
+<img src="https://raw.githubusercontent.com/megadealszone/bd/08a072231a0002b9675fe6e8158a4bf1e155de2c/Images/shoes1.JPG">
 </div>
 
 <div class="product-info">
+<h3>Men Skateboard Shoes Fashion Durable Outdoor Style</h3>
 
-<h3>
-Men's New Skateboard Shoes
-</h3>
-
-<div class="price">
-$19.51
-</div>
-
-<a
-href="https://s.click.aliexpress.com/e/_c3S7rcwj"
-class="buy-btn"
-target="_blank">
-
-Buy Now
-
-</a>
-
+<div class="bottom-area">
+<div class="price">$19.51</div>
+<a class="buy-btn" href="#">Buy Now</a>
 </div>
 
 </div>
+</div>
 
-<!-- ======================================================
-     PRODUCT CARD 2 END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     PRODUCT CARD 3 START
-====================================================== -->
-
+<!-- PRODUCT 3 -->
 <div class="product-card">
 
 <div class="product-image">
-
-<img
-src="https://raw.githubusercontent.com/megadealszone/bd/315c1514a24307e363a637e1401f4ce948d6535a/Images/shoes2.JPG"
-alt="Basketball Shoes">
-
+<img src="https://raw.githubusercontent.com/megadealszone/bd/315c1514a24307e363a637e1401f4ce948d6535a/Images/shoes2.JPG">
 </div>
 
 <div class="product-info">
+<h3>Men High Top Basketball Shoes Sports Running Shoes</h3>
 
-<h3>
-Men's High-Top Basketball Shoes
-</h3>
-
-<div class="price">
-$22.38
-</div>
-
-<a
-href="https://s.click.aliexpress.com/e/_c4NXVup1"
-class="buy-btn"
-target="_blank">
-
-Buy Now
-
-</a>
-
+<div class="bottom-area">
+<div class="price">$22.38</div>
+<a class="buy-btn" href="#">Buy Now</a>
 </div>
 
 </div>
+</div>
 
-<!-- ======================================================
-     PRODUCT CARD 3 END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     PRODUCT CARD 4 START
-====================================================== -->
-
+<!-- PRODUCT 4 -->
 <div class="product-card">
 
 <div class="product-image">
-
-<img
-src="https://raw.githubusercontent.com/megadealszone/bd/a832914981801c42d616600542553d75bf6909b8/Images/shoes3.JPG"
-alt="Kids Shoes">
-
+<img src="https://raw.githubusercontent.com/megadealszone/bd/a832914981801c42d616600542553d75bf6909b8/Images/shoes3.JPG">
 </div>
 
 <div class="product-info">
+<h3>Kids Rotating Buckle Leather Sneakers Comfortable Shoes</h3>
 
-<h3>
-Children's Lightweight Running Shoes
-</h3>
-
-<div class="price">
-$25.44
-</div>
-
-<a
-href="https://s.click.aliexpress.com/e/_c3Q7C9KJ"
-class="buy-btn"
-target="_blank">
-
-Buy Now
-
-</a>
-
+<div class="bottom-area">
+<div class="price">$25.44</div>
+<a class="buy-btn" href="#">Buy Now</a>
 </div>
 
 </div>
+</div>
 
-<!-- ======================================================
-     PRODUCT CARD 4 END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     PRODUCT CARD 5 START
-====================================================== -->
-
+<!-- PRODUCT 5 -->
 <div class="product-card">
 
 <div class="product-image">
-
-<img
-src="https://raw.githubusercontent.com/megadealszone/bd/d29966a5bc1ede13f60904b5e22e0a73097d3d4b/Images/shoes4.JPG"
-alt="USB Hub">
-
+<img src="https://raw.githubusercontent.com/megadealszone/bd/d29966a5bc1ede13f60904b5e22e0a73097d3d4b/Images/shoes4.JPG">
 </div>
 
 <div class="product-info">
+<h3>USB C Hub 8in1 HDMI RJ45 SD TF Card Reader Adapter</h3>
 
-<h3>
-USB C Hub HDMI Adapter
-</h3>
-
-<div class="price">
-BDT 588
-</div>
-
-<a
-href="https://s.click.aliexpress.com/e/_c4D4oB5H"
-class="buy-btn"
-target="_blank">
-
-Buy Now
-
-</a>
-
+<div class="bottom-area">
+<div class="price">BDT 588</div>
+<a class="buy-btn" href="#">Buy Now</a>
 </div>
 
 </div>
+</div>
 
-<!-- ======================================================
-     PRODUCT CARD 5 END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     PRODUCT CARD 6 START
-====================================================== -->
-
+<!-- PRODUCT 6 -->
 <div class="product-card">
 
 <div class="product-image">
-
-<img
-src="https://raw.githubusercontent.com/megadealszone/bd/37310c9f2364d6b5388a886f3f5065e38d12c322/Images/lt1.JPG"
-alt="Laptop">
-
+<img src="https://raw.githubusercontent.com/megadealszone/bd/37310c9f2364d6b5388a886f3f5065e38d12c322/Images/lt1.JPG">
 </div>
 
 <div class="product-info">
+<h3>Core i9 Gaming Laptop 32GB RAM 2TB SSD High Speed</h3>
 
-<h3>
-Core i9 Gaming Laptop
-</h3>
-
-<div class="price">
-BDT 34,372
+<div class="bottom-area">
+<div class="price">BDT 34,372</div>
+<a class="buy-btn" href="#">Buy Now</a>
 </div>
 
-<a
-href="https://s.click.aliexpress.com/e/_c3XwnO2F"
-class="buy-btn"
-target="_blank">
-
-Buy Now
-
-</a>
-
+</div>
 </div>
 
 </div>
 
-<!-- ======================================================
-     PRODUCT CARD 6 END
-====================================================== -->
-
 </div>
-
-<!-- ======================================================
-     PRODUCT GRID END
-====================================================== -->
 
 </section>
 
-<!-- ======================================================
-     AFFILIATE PRODUCT SECTION END
-====================================================== -->
-
-</section>
-
-<!-- ======================================================
-     CONTENT SECTION END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     FOOTER SECTION START
-====================================================== -->
-
+<!-- FOOTER -->
 <footer>
-
-<p>
-© 2026 My Website | Developer By Md Roman Islam Habib
-</p>
-
-<br>
-
-<p>
-
-Visit :
-
-<a href="https://www.google.com" target="_blank">
-Google
-</a>
-
-,
-
-<a href="https://www.facebook.com/megadealszone" target="_blank">
-Facebook
-</a>
-
-,
-
-<a href="https://www.youtube.com/@somoyershikha" target="_blank">
-YouTube
-</a>
-
-</p>
-
+<p>© 2026 Mega Deals Zone</p>
 </footer>
-
-<!-- ======================================================
-     FOOTER SECTION END
-====================================================== -->
-
-
-
-<!-- ======================================================
-     MOBILE MENU SCRIPT START
-====================================================== -->
-
-<script>
-
-function toggleMenu(){
-
-document
-.getElementById("mobileMenu")
-.classList.toggle("active");
-
-}
-
-</script>
-
-<!-- ======================================================
-     MOBILE MENU SCRIPT END
-====================================================== -->
 
 </body>
 </html>
