@@ -33,11 +33,19 @@ body{
 .card h3{
     font-size:12px;
     padding:10px;
+    margin:0;
 }
 
+/* ✅ Title link style */
 .card h3 a{
     text-decoration:none;
     color:black;
+    transition:0.2s;
+}
+
+/* ✅ Hover effect (light red) */
+.card h3 a:hover{
+    color:#ff4d4d;
 }
 
 .price{
@@ -46,6 +54,7 @@ body{
     color:red;
 }
 
+/* ❌ NO yellow under title now (removed global a styling effect) */
 a{
     display:block;
     background:#ffcc00;
@@ -70,7 +79,6 @@ let products = JSON.parse(localStorage.getItem("products")) || [];
 
 let grid = document.getElementById("grid");
 
-// GitHub RAW image fix helper (optional but useful)
 function fixGitHubImage(url){
     if(url.includes("github.com") && url.includes("/blob/")){
         return url
