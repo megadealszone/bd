@@ -6,9 +6,16 @@
 <title>Products</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f4f4;}
+body{
+margin:0;
+font-family:Arial;
+background:#f4f4f4;
+}
 
-h2{text-align:center;padding:15px;}
+h2{
+text-align:center;
+padding:15px;
+}
 
 .grid{
 display:grid;
@@ -21,8 +28,6 @@ padding:10px;
 background:#fff;
 border-radius:10px;
 overflow:hidden;
-display:flex;
-flex-direction:column;
 }
 
 .card img{
@@ -31,9 +36,16 @@ height:160px;
 object-fit:cover;
 }
 
-.info{padding:8px;font-size:12px;}
+.info{
+padding:8px;
+font-size:12px;
+}
 
-.price{color:#B12704;font-weight:bold;padding:0 8px;}
+.price{
+color:#B12704;
+font-weight:bold;
+padding:0 8px;
+}
 
 .btn{
 display:block;
@@ -42,6 +54,7 @@ text-align:center;
 padding:10px;
 text-decoration:none;
 font-weight:bold;
+color:#111;
 }
 </style>
 </head>
@@ -51,33 +64,42 @@ font-weight:bold;
 <h2>🔥 Featured Products</h2>
 <div class="grid" id="grid"></div>
 
+<!-- ================= FIREBASE V12 ================= -->
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import {
+getFirestore,
+collection,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
+/* ================= CONFIG ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyDKhxr7tDwWyVH-lO-iJsToZhkw5i_tclU",
   authDomain: "megadealszone-49103.firebaseapp.com",
   projectId: "megadealszone-49103",
-  storageBucket: "megadealszone-49103.firebasestorage.app",
-  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8"
+  storageBucket: "megadealszone-49103.appspot.com",
+  messagingSenderId: "457042872489",
+  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8",
+  measurementId: "G-76JTYK936Q"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let grid=document.getElementById("grid");
+let grid = document.getElementById("grid");
 
+/* ================= LIVE LOAD ================= */
 onSnapshot(collection(db,"products"),(snap)=>{
 
 grid.innerHTML="";
 
 snap.forEach(doc=>{
 
-let p=doc.data();
+let p = doc.data();
 
-grid.innerHTML+=`
+grid.innerHTML += `
 <div class="card">
 
 <img src="${p.image}">
