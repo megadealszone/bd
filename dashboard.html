@@ -19,19 +19,45 @@ body{
     margin:auto;
 }
 
+/* input box */
 input{
     width:100%;
-    padding:10px;
+    padding:12px;
     margin:10px 0;
+    border:1px solid #ddd;
+    border-radius:8px;
+    background:#fafafa;
+    outline:none;
+    transition:0.2s;
+    box-sizing:border-box;
 }
 
-button{
-    width:100%;
-    padding:12px;
-    background:#ffcc00;
+input:focus{
+    border-color:#ffcc00;
+    background:#fff;
+    box-shadow:0 0 5px rgba(255, 208, 0, 0.5);
+}
+
+/* submit + search button */
+.submit-btn,
+.search-btn{
+    width:auto;
+    padding:10px 25px;
+    background:#0528f3;
     border:none;
     font-weight:bold;
     cursor:pointer;
+    border-radius:30px;
+    display:block;
+    margin:15px auto;
+    transition:0.3s;
+    font-size:14px;
+}
+
+.submit-btn:hover,
+.search-btn:hover{
+    background:#ffb300;
+    transform:scale(1.05);
 }
 
 /* search result */
@@ -48,11 +74,12 @@ button{
 }
 
 .small-btn{
-    padding:6px;
+    padding:6px 12px;
     margin-top:5px;
     border:none;
     cursor:pointer;
     font-weight:bold;
+    border-radius:5px;
 }
 
 .edit{
@@ -61,13 +88,11 @@ button{
 }
 
 .delete{
-    background:#f44336;
+    background:#ee1202;
     color:white;
 }
 
-/* =========================
-   MESSAGE BOX (TOAST)
-========================= */
+/* message box */
 #msg{
     position:fixed;
     top:20px;
@@ -84,7 +109,6 @@ button{
 
 <body>
 
-<!-- MESSAGE BOX -->
 <div id="msg"></div>
 
 <div class="form-box">
@@ -92,18 +116,22 @@ button{
 <h2>Add Product</h2>
 
 <input type="text" id="title" placeholder="Product Title">
+
 <input type="text" id="price" placeholder="Price">
+
 <input type="text" id="image" placeholder="Image URL">
+
 <input type="text" id="link" placeholder="Affiliate Link">
 
-<button onclick="addProduct()">Submit</button>
+<button class="submit-btn" onclick="addProduct()">Submit</button>
 
 <hr>
 
 <h3>Search Product</h3>
 
 <input type="text" id="search" placeholder="Search by Title">
-<button onclick="searchProduct()">Search</button>
+
+<button class="search-btn" onclick="searchProduct()">Search</button>
 
 <div id="result" class="result"></div>
 
@@ -112,17 +140,19 @@ button{
 <script>
 
 /* =========================
-   SHOW MESSAGE FUNCTION
+   MESSAGE FUNCTION
 ========================= */
 function showMsg(text, color="#333"){
+
     let msg = document.getElementById("msg");
+
     msg.style.display = "block";
     msg.style.background = color;
     msg.innerText = text;
 
     setTimeout(()=>{
         msg.style.display = "none";
-    }, 2000);
+    },2000);
 }
 
 /* =========================
@@ -135,13 +165,27 @@ let price = document.getElementById("price").value;
 let image = document.getElementById("image").value;
 let link = document.getElementById("link").value;
 
+/* affiliate link validation */
+if(link.trim() === ""){
+
+    showMsg("Affiliate Link Required!", "#f44336");
+
+    return;
+}
+
 let products = JSON.parse(localStorage.getItem("products")) || [];
 
-products.push({ title, price, image, link });
+products.push({
+    title,
+    price,
+    image,
+    link
+});
 
 localStorage.setItem("products", JSON.stringify(products));
 
 showMsg("Product Added Successfully!", "#4caf50");
+
 }
 
 /* =========================
@@ -150,23 +194,36 @@ showMsg("Product Added Successfully!", "#4caf50");
 function searchProduct(){
 
 let query = document.getElementById("search").value.toLowerCase();
+
+/* empty search warning */
+if(query.trim() === ""){
+
+    showMsg("Please Enter Product Title!", "#f44336");
+
+    return;
+}
+
 let products = JSON.parse(localStorage.getItem("products")) || [];
 
 let resultBox = document.getElementById("result");
 
 resultBox.innerHTML = "";
 
-products.forEach((p, index) => {
+products.forEach((p,index)=>{
 
 if(p.title.toLowerCase().includes(query)){
 
 resultBox.innerHTML += `
 <div class="item">
+
 <b>${p.title}</b><br>
+
 ${p.price}<br>
 
 <button class="small-btn edit" onclick="editProduct(${index})">Edit</button>
+
 <button class="small-btn delete" onclick="deleteProduct(${index})">Delete</button>
+
 </div>
 `;
 
@@ -191,10 +248,10 @@ let newImage = prompt("Edit Image", p.image);
 let newLink = prompt("Edit Link", p.link);
 
 products[index] = {
-    title: newTitle,
-    price: newPrice,
-    image: newImage,
-    link: newLink
+    title:newTitle,
+    price:newPrice,
+    image:newImage,
+    link:newLink
 };
 
 localStorage.setItem("products", JSON.stringify(products));
@@ -211,7 +268,7 @@ function deleteProduct(index){
 
 let products = JSON.parse(localStorage.getItem("products")) || [];
 
-products.splice(index, 1);
+products.splice(index,1);
 
 localStorage.setItem("products", JSON.stringify(products));
 
