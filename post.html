@@ -120,7 +120,7 @@ header{
 }
 
 /* ======================================================
-   PRODUCT CARD FIX (IMPORTANT)
+   PRODUCT CARD
 ====================================================== */
 
 .product-card{
@@ -157,34 +157,38 @@ header{
     object-fit:cover;
 }
 
-/* INFO */
-
-.product-info{
-    padding:12px;
-    display:flex;
-    flex-direction:column;
-    flex:1;
-}
-
-/* TITLE */
+/* ======================================================
+   TITLE FIX (ONLY CHANGE)
+====================================================== */
 
 .product-info h3{
-    font-size:8px;
+
+    font-size:9px;
     color:#222;
+
+    text-align:justify;
+
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+
     line-height:1.6;
     margin-bottom:10px;
+
     word-break:break-word;
+    padding: 5px;
 }
 
 /* ======================================================
-   BOTTOM FIX AREA (THIS IS MAIN FIX)
+   BOTTOM AREA
 ====================================================== */
 
 .bottom-area{
-    margin-top:auto;   /* 👈 সব নিচে ফিক্স */
+    margin-top:auto;
 }
-
-/* PRICE */
 
 .price{
     font-size:22px;
@@ -192,8 +196,6 @@ header{
     color:#B12704;
     margin-bottom:10px;
 }
-
-/* BUY BUTTON */
 
 .buy-btn{
     display:block;
@@ -212,9 +214,7 @@ header{
     background:#F7CA00;
 }
 
-/* ======================================================
-   FOOTER
-====================================================== */
+/* FOOTER */
 
 footer{
     margin-top:auto;
@@ -229,9 +229,7 @@ footer a{
     text-decoration:none;
 }
 
-/* ======================================================
-   RESPONSIVE
-====================================================== */
+/* RESPONSIVE */
 
 @media(max-width:768px){
     .product-grid{
@@ -251,23 +249,18 @@ footer a{
 
 <body>
 
-<!-- HEADER -->
 <header>
 <nav class="navbar">
-
 <ul class="menu">
 <li><a href="https://megadealszone.github.io/bd/">Home</a></li>
 <li><a href="#">Social Media</a></li>
 <li><a href="#">Admin Login</a></li>
 </ul>
-
 </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero"></section>
 
-<!-- PRODUCTS -->
 <section class="content">
 
 <div class="product-section">
@@ -278,13 +271,12 @@ footer a{
 
 <!-- PRODUCT 1 -->
 <div class="product-card">
-
 <div class="product-image">
 <img src="https://raw.githubusercontent.com/megadealszone/bd/b62e00b59f67bf6303866468981ea6a23bc7ce0f/Images/Untsssssitled-1.jpg">
 </div>
 
 <div class="product-info">
-<h3>Top Basketball Shoes Premium Comfortable Lightweight Design</h3>
+<h3>Top Basketball Shoes Premium Comfortable Lightweight Design High Quality Imported Fashion Trend Stylish Sports Wear</h3>
 
 <div class="bottom-area">
 <div class="price">$16.44</div>
@@ -296,13 +288,12 @@ footer a{
 
 <!-- PRODUCT 2 -->
 <div class="product-card">
-
 <div class="product-image">
 <img src="https://raw.githubusercontent.com/megadealszone/bd/08a072231a0002b9675fe6e8158a4bf1e155de2c/Images/shoes1.JPG">
 </div>
 
 <div class="product-info">
-<h3>Men Skateboard Shoes Fashion Durable Outdoor Style</h3>
+<h3>Men Skateboard Shoes Fashion Durable Outdoor Style Comfortable Trend Running Sneakers Lightweight Design</h3>
 
 <div class="bottom-area">
 <div class="price">$19.51</div>
@@ -314,13 +305,12 @@ footer a{
 
 <!-- PRODUCT 3 -->
 <div class="product-card">
-
 <div class="product-image">
 <img src="https://raw.githubusercontent.com/megadealszone/bd/315c1514a24307e363a637e1401f4ce948d6535a/Images/shoes2.JPG">
 </div>
 
 <div class="product-info">
-<h3>Men High Top Basketball Shoes Sports Running Shoes</h3>
+<h3>Men High Top Basketball Shoes Sports Running Shoes Premium Comfort Lightweight Durable Professional Design</h3>
 
 <div class="bottom-area">
 <div class="price">$22.38</div>
@@ -332,13 +322,12 @@ footer a{
 
 <!-- PRODUCT 4 -->
 <div class="product-card">
-
 <div class="product-image">
 <img src="https://raw.githubusercontent.com/megadealszone/bd/a832914981801c42d616600542553d75bf6909b8/Images/shoes3.JPG">
 </div>
 
 <div class="product-info">
-<h3>Kids Rotating Buckle Leather Sneakers Comfortable Shoes</h3>
+<h3>Kids Rotating Buckle Leather Sneakers Comfortable Shoes Lightweight Fashion Trend Outdoor Use</h3>
 
 <div class="bottom-area">
 <div class="price">$25.44</div>
@@ -350,13 +339,12 @@ footer a{
 
 <!-- PRODUCT 5 -->
 <div class="product-card">
-
 <div class="product-image">
 <img src="https://raw.githubusercontent.com/megadealszone/bd/d29966a5bc1ede13f60904b5e22e0a73097d3d4b/Images/shoes4.JPG">
 </div>
 
 <div class="product-info">
-<h3>USB C Hub 8in1 HDMI RJ45 SD TF Card Reader Adapter</h3>
+<h3>USB C Hub 8in1 HDMI RJ45 SD TF Card Reader Adapter Multi Function Fast Charging Dock</h3>
 
 <div class="bottom-area">
 <div class="price">BDT 588</div>
@@ -368,13 +356,12 @@ footer a{
 
 <!-- PRODUCT 6 -->
 <div class="product-card">
-
 <div class="product-image">
 <img src="https://raw.githubusercontent.com/megadealszone/bd/37310c9f2364d6b5388a886f3f5065e38d12c322/Images/lt1.JPG">
 </div>
 
 <div class="product-info">
-<h3>Core i9 Gaming Laptop 32GB RAM 2TB SSD High Speed</h3>
+<h3>Core i9 Gaming Laptop 32GB RAM 2TB SSD High Speed Performance Windows 11 Pro Ultra Fast Machine</h3>
 
 <div class="bottom-area">
 <div class="price">BDT 34,372</div>
@@ -390,7 +377,6 @@ footer a{
 
 </section>
 
-<!-- FOOTER -->
 <footer>
 <p>© 2026 Mega Deals Zone</p>
 </footer>
