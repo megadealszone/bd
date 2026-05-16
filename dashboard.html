@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
 
+<style>
+body{
+    font-family:Arial;
+    background:#f4f4f4;
+    padding:20px;
+}
+
+.form-box{
+    max-width:500px;
+    background:#fff;
+    padding:20px;
+    border-radius:10px;
+    margin:auto;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#ffcc00;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="form-box">
+
+<h2>Add Product</h2>
+
+<input type="text" id="title" placeholder="Product Title">
+
+<input type="text" id="price" placeholder="Price">
+
+<input type="text" id="image" placeholder="Image URL (GitHub link)">
+
+<input type="text" id="link" placeholder="Affiliate Link">
+
+<button onclick="addProduct()">Submit</button>
+
+</div>
+
+<script>
+
+function addProduct(){
+
+let title = document.getElementById("title").value;
+let price = document.getElementById("price").value;
+let image = document.getElementById("image").value;
+let link = document.getElementById("link").value;
+
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+products.push({
+    title,
+    price,
+    image,
+    link
+});
+
+localStorage.setItem("products", JSON.stringify(products));
+
+alert("Product Added!");
+window.location.href = "product.html";
+
+}
+
+</script>
+
+</body>
+</html>
