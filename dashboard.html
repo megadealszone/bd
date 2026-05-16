@@ -34,12 +34,7 @@ button{
     cursor:pointer;
 }
 
-/* search box */
-.search-box{
-    margin-top:20px;
-}
-
-/* result box */
+/* search result */
 .result{
     margin-top:20px;
     background:#fff;
@@ -69,10 +64,28 @@ button{
     background:#f44336;
     color:white;
 }
+
+/* =========================
+   MESSAGE BOX (TOAST)
+========================= */
+#msg{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:#333;
+    color:#fff;
+    padding:10px 15px;
+    border-radius:5px;
+    display:none;
+    z-index:999;
+}
 </style>
 </head>
 
 <body>
+
+<!-- MESSAGE BOX -->
+<div id="msg"></div>
 
 <div class="form-box">
 
@@ -99,6 +112,20 @@ button{
 <script>
 
 /* =========================
+   SHOW MESSAGE FUNCTION
+========================= */
+function showMsg(text, color="#333"){
+    let msg = document.getElementById("msg");
+    msg.style.display = "block";
+    msg.style.background = color;
+    msg.innerText = text;
+
+    setTimeout(()=>{
+        msg.style.display = "none";
+    }, 2000);
+}
+
+/* =========================
    ADD PRODUCT
 ========================= */
 function addProduct(){
@@ -114,7 +141,7 @@ products.push({ title, price, image, link });
 
 localStorage.setItem("products", JSON.stringify(products));
 
-alert("Product Added!");
+showMsg("Product Added Successfully!", "#4caf50");
 }
 
 /* =========================
@@ -150,7 +177,7 @@ ${p.price}<br>
 }
 
 /* =========================
-   EDIT PRODUCT (REPLACE SAME)
+   EDIT PRODUCT
 ========================= */
 function editProduct(index){
 
@@ -170,10 +197,10 @@ products[index] = {
     link: newLink
 };
 
-/* replace same product */
 localStorage.setItem("products", JSON.stringify(products));
 
-alert("Product Updated!");
+showMsg("Product Updated Successfully!", "#4caf50");
+
 searchProduct();
 }
 
@@ -188,7 +215,8 @@ products.splice(index, 1);
 
 localStorage.setItem("products", JSON.stringify(products));
 
-alert("Product Deleted!");
+showMsg("Product Deleted Successfully!", "#f44336");
+
 searchProduct();
 }
 
