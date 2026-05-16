@@ -2,6 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard</title>
 
 <style>
@@ -38,7 +39,7 @@ input:focus{
     box-shadow:0 0 5px rgba(255, 208, 0, 0.5);
 }
 
-/* submit + search button */
+/* buttons */
 .submit-btn,
 .search-btn{
     width:auto;
@@ -52,6 +53,7 @@ input:focus{
     margin:15px auto;
     transition:0.3s;
     font-size:14px;
+    color:#fff;
 }
 
 .submit-btn:hover,
@@ -60,7 +62,7 @@ input:focus{
     transform:scale(1.05);
 }
 
-/* search result */
+/* result */
 .result{
     margin-top:20px;
     background:#fff;
@@ -92,7 +94,7 @@ input:focus{
     color:white;
 }
 
-/* message box */
+/* message */
 #msg{
     position:fixed;
     top:20px;
@@ -113,14 +115,11 @@ input:focus{
 
 <div class="form-box">
 
-<h2>Add Product</h2>
+<h2>Dashboard - Add Product</h2>
 
 <input type="text" id="title" placeholder="Product Title">
-
 <input type="text" id="price" placeholder="Price">
-
 <input type="text" id="image" placeholder="Image URL">
-
 <input type="text" id="link" placeholder="Affiliate Link">
 
 <button class="submit-btn" onclick="addProduct()">Submit</button>
@@ -130,7 +129,6 @@ input:focus{
 <h3>Search Product</h3>
 
 <input type="text" id="search" placeholder="Search by Title">
-
 <button class="search-btn" onclick="searchProduct()">Search</button>
 
 <div id="result" class="result"></div>
@@ -140,7 +138,7 @@ input:focus{
 <script>
 
 /* =========================
-   MESSAGE FUNCTION
+   MESSAGE
 ========================= */
 function showMsg(text, color="#333"){
 
@@ -156,50 +154,62 @@ function showMsg(text, color="#333"){
 }
 
 /* =========================
-   ADD PRODUCT
+   ADD PRODUCT (FIXED)
 ========================= */
 function addProduct(){
 
-let title = document.getElementById("title").value;
-let price = document.getElementById("price").value;
-let image = document.getElementById("image").value;
-let link = document.getElementById("link").value;
+let title = document.getElementById("title").value.trim();
+let price = document.getElementById("price").value.trim();
+let image = document.getElementById("image").value.trim();
+let link  = document.getElementById("link").value.trim();
 
-/* affiliate link validation */
-if(link.trim() === ""){
-
-    showMsg("Affiliate Link Required!", "#f44336");
-
+/* validation */
+if(title === "" || price === "" || image === "" || link === ""){
+    showMsg("সব ফিল্ড পূরণ করুন!", "#f44336");
     return;
 }
 
-let products = JSON.parse(localStorage.getItem("products")) || [];
+/* get old data safely */
+let products = [];
 
-products.push({
+try{
+    products = JSON.parse(localStorage.getItem("products")) || [];
+}catch(e){
+    products = [];
+}
+
+/* new product */
+let newProduct = {
+    id: Date.now(),
     title,
     price,
     image,
     link
-});
+};
+
+products.push(newProduct);
 
 localStorage.setItem("products", JSON.stringify(products));
 
-showMsg("Product Added Successfully!", "#4caf50");
+/* clear input */
+document.getElementById("title").value = "";
+document.getElementById("price").value = "";
+document.getElementById("image").value = "";
+document.getElementById("link").value = "";
+
+showMsg("Product Saved Successfully!", "#4caf50");
 
 }
 
 /* =========================
-   SEARCH PRODUCT
+   SEARCH
 ========================= */
 function searchProduct(){
 
 let query = document.getElementById("search").value.toLowerCase();
 
-/* empty search warning */
 if(query.trim() === ""){
-
     showMsg("Please Enter Product Title!", "#f44336");
-
     return;
 }
 
@@ -217,11 +227,9 @@ resultBox.innerHTML += `
 <div class="item">
 
 <b>${p.title}</b><br>
-
 ${p.price}<br>
 
 <button class="small-btn edit" onclick="editProduct(${index})">Edit</button>
-
 <button class="small-btn delete" onclick="deleteProduct(${index})">Delete</button>
 
 </div>
@@ -234,7 +242,7 @@ ${p.price}<br>
 }
 
 /* =========================
-   EDIT PRODUCT
+   EDIT
 ========================= */
 function editProduct(index){
 
@@ -248,6 +256,7 @@ let newImage = prompt("Edit Image", p.image);
 let newLink = prompt("Edit Link", p.link);
 
 products[index] = {
+    id: p.id,
     title:newTitle,
     price:newPrice,
     image:newImage,
@@ -256,13 +265,13 @@ products[index] = {
 
 localStorage.setItem("products", JSON.stringify(products));
 
-showMsg("Product Updated Successfully!", "#4caf50");
+showMsg("Updated Successfully!", "#4caf50");
 
 searchProduct();
 }
 
 /* =========================
-   DELETE PRODUCT
+   DELETE
 ========================= */
 function deleteProduct(index){
 
@@ -272,7 +281,7 @@ products.splice(index,1);
 
 localStorage.setItem("products", JSON.stringify(products));
 
-showMsg("Product Deleted Successfully!", "#f44336");
+showMsg("Deleted Successfully!", "#f44336");
 
 searchProduct();
 }
