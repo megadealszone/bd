@@ -199,30 +199,30 @@ section{
   background-position:center;
   animation:slider 60s infinite ease-in-out;
   z-index:-3;
-  opacity:1;
+  opacity:0;
   transition:opacity 3s ease-in-out;
 }
 
 .hero::before{
-  animation-delay:5s;
+  animation-delay:2s;
   background: transparent;
 }
 
 .hero::after{
-  animation-delay:10s;
+  animation-delay:5s;
 }
 
 /* EXTRA SMOOTH KEYFRAMES */
 @keyframes slider{
 
   0%{
-    opacity:0;
+    opacity:1;
     background-image:url('https://raw.githubusercontent.com/megadealszone/bd/71a89956e5a7cc4127aba9a29657f95d8478ba9c/Images/HD%20Roza%20Mubarik%20Islamic%20Wallpaper%20Khana%20Kaba.jpg');
     transform:scale(1);
   }
 
   5%{
-    opacity:1;
+    opacity:0;
     transform:scale(1.07);
   }
 
@@ -260,7 +260,7 @@ section{
   }
 
   70%{
-    opacity:1;
+    opacity:0;
     transform:scale(1.05);
   }
 
@@ -276,7 +276,7 @@ section{
   }
 
   95%{
-    opacity:1;
+    opacity:0;
     transform:scale(1.05);
   }
 
