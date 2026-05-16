@@ -2,118 +2,111 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Products</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#f4f4f4;
-}
 
-h2{
-text-align:center;
-padding:15px;
+body{
+    font-family:Arial;
+    background:#f4f4f4;
 }
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-gap:12px;
-padding:10px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    padding:20px;
 }
 
 .card{
-background:#fff;
-border-radius:10px;
-overflow:hidden;
+    background:#fff;
+    border-radius:10px;
+    overflow:hidden;
 }
 
 .card img{
-width:100%;
-height:160px;
-object-fit:cover;
+    width:100%;
+    height:150px;
+    object-fit:cover;
 }
 
-.info{
-padding:8px;
-font-size:12px;
+.card h3{
+    font-size:12px;
+    padding:10px;
+    margin:0;
+    background:#fff;
+}
+
+/* Title link */
+.card h3 a{
+    text-decoration:none;
+    color:black;
+    transition:0.2s;
+}
+
+.card h3 a:hover{
+    color:#ff4d4d;
 }
 
 .price{
-color:#B12704;
-font-weight:bold;
-padding:0 8px;
+    padding:0 10px;
+    font-weight:bold;
+    color:red;
 }
 
-.btn{
-display:block;
-background:#FFD814;
-text-align:center;
-padding:10px;
-text-decoration:none;
-font-weight:bold;
-color:#111;
+/* ✅ ONLY Buy Now button style */
+.buy-btn{
+    display:block;
+    background:#ffcc00;
+    text-align:center;
+    padding:10px;
+    text-decoration:none;
+    font-weight:bold;
 }
+
 </style>
 </head>
 
 <body>
 
-<h2>🔥 Featured Products</h2>
+<h2 style="text-align:center;">All Products</h2>
+
 <div class="grid" id="grid"></div>
 
-<!-- ================= FIREBASE V12 ================= -->
-<script type="module">
+<script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import {
-getFirestore,
-collection,
-onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-/* ================= CONFIG ================= */
-const firebaseConfig = {
-  apiKey: "AIzaSyDKhxr7tDwWyVH-lO-iJsToZhkw5i_tclU",
-  authDomain: "megadealszone-49103.firebaseapp.com",
-  projectId: "megadealszone-49103",
-  storageBucket: "megadealszone-49103.appspot.com",
-  messagingSenderId: "457042872489",
-  appId: "1:457042872489:web:c6061f918d4a48a77ac1b8",
-  measurementId: "G-76JTYK936Q"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+let products = JSON.parse(localStorage.getItem("products")) || [];
 
 let grid = document.getElementById("grid");
 
-/* ================= LIVE LOAD ================= */
-onSnapshot(collection(db,"products"),(snap)=>{
+function fixGitHubImage(url){
+    if(url.includes("github.com") && url.includes("/blob/")){
+        return url
+        .replace("github.com", "raw.githubusercontent.com")
+        .replace("/blob/", "/");
+    }
+    return url;
+}
 
-grid.innerHTML="";
-
-snap.forEach(doc=>{
-
-let p = doc.data();
+products.forEach(p => {
 
 grid.innerHTML += `
 <div class="card">
 
-<img src="${p.image}">
+<img src="${fixGitHubImage(p.image)}">
 
-<div class="info">${p.title}</div>
+<h3>
+<a href="${p.link}" target="_blank">
+${p.title}
+</a>
+</h3>
 
 <div class="price">${p.price}</div>
 
-<a class="btn" href="${p.link}" target="_blank">Buy Now</a>
+<a href="${p.link}" target="_blank" class="buy-btn">Buy Now</a>
 
 </div>
 `;
-
-});
 
 });
 
