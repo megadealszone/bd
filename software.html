@@ -103,13 +103,29 @@ border-radius:8px;
 <button class="btn" onclick="login()">Login</button>
 </div>
 
+<!-- SOFTWARE LIST (VISIBLE ON LOGIN PAGE TOO) -->
+<div class="card">
+<h2>📋 Software List</h2>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Software</th>
+<th>Download</th>
+</tr>
+</thead>
+<tbody id="publicList"></tbody>
+</table>
+
+</div>
+
 <!-- DASHBOARD -->
 <div id="dashboard" class="hidden">
 
 <div class="card">
 <h2>📥 Software Download Dashboard</h2>
 
-<!-- ADMIN ADD SECTION -->
 <div id="adminPanel" class="top-box hidden">
 <input type="text" id="softName" placeholder="Software Name">
 <input type="text" id="softLink" placeholder="Download Link">
@@ -125,7 +141,6 @@ border-radius:8px;
 <th id="deleteHead" class="hidden">Delete</th>
 </tr>
 </thead>
-
 <tbody id="list"></tbody>
 </table>
 
@@ -148,10 +163,11 @@ let pass = document.getElementById("loginPass").value;
 
 if(pass === ADMIN_PASS){
 isAdmin = true;
-document.getElementById("loginBox").classList.add("hidden");
+
 document.getElementById("dashboard").classList.remove("hidden");
 document.getElementById("adminPanel").classList.remove("hidden");
 document.getElementById("deleteHead").classList.remove("hidden");
+
 loadData();
 }else{
 alert("❌ Wrong Password");
@@ -181,6 +197,7 @@ saveData(data);
 }
 
 render();
+renderPublic();
 }
 
 function render(){
@@ -214,15 +231,50 @@ alert("❌ সঠিক পাসওয়ার্ড দিন");
 }
 };
 
-// delete (admin only)
+// delete admin only
 if(isAdmin){
 tr.querySelector(".delete-btn").onclick = function(){
 let d = getData();
 d.splice(i,1);
 saveData(d);
 render();
+renderPublic();
 };
 }
+
+});
+
+}
+
+function renderPublic(){
+
+let data = getData();
+let pub = document.getElementById("publicList");
+pub.innerHTML="";
+
+data.forEach((item,i)=>{
+
+let tr = document.createElement("tr");
+
+tr.innerHTML=`
+<td>${i+1}</td>
+<td>${item.name}</td>
+<td><button class="download-btn">Download</button></td>
+`;
+
+pub.appendChild(tr);
+
+// download (same rule)
+tr.querySelector(".download-btn").onclick = function(){
+
+let p = prompt("Password দিন (Download)");
+
+if(p === DOWNLOAD_PASS){
+window.open(item.link,"_blank");
+}else{
+alert("❌ সঠিক পাসওয়ার্ড দিন");
+}
+};
 
 });
 
@@ -246,6 +298,7 @@ document.getElementById("softName").value="";
 document.getElementById("softLink").value="";
 
 render();
+renderPublic();
 }
 
 </script>
