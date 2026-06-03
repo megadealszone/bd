@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Software Download Dashboard</title>
+<title>Software Dashboard</title>
 
 <style>
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial,sans-serif;
+font-family:Arial;
 }
 
 body{
@@ -19,110 +19,76 @@ min-height:100vh;
 padding:20px;
 }
 
-.container{
-max-width:1000px;
-margin:auto;
-}
+.container{max-width:1000px;margin:auto;}
 
 .card{
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(10px);
 padding:25px;
 border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.2);
-animation:fadeIn 1s ease;
 margin-bottom:20px;
 }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(-30px);}
-to{opacity:1;transform:translateY(0);}
-}
-
-h2{
-text-align:center;
-color:white;
-margin-bottom:20px;
-}
+h2{text-align:center;color:#fff;margin-bottom:15px;}
 
 input{
 width:100%;
 padding:12px;
-margin:8px 0;
+margin:6px 0;
 border:none;
 border-radius:10px;
-font-size:16px;
 }
 
 button{
-padding:12px 20px;
+padding:10px 15px;
 border:none;
 border-radius:10px;
 cursor:pointer;
-font-size:16px;
-transition:.3s;
 }
 
-.btn{
-background:#28a745;
-color:white;
-width:100%;
-}
-
-.btn:hover{transform:scale(1.03);}
-
-#dashboard{display:block;}
+.btn{background:#28a745;color:white;width:100%;}
 
 .top-box{
 display:grid;
 grid-template-columns:1fr 1fr auto;
 gap:10px;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
 table{
 width:100%;
-border-collapse:collapse;
 background:white;
-border-radius:15px;
+border-collapse:collapse;
+border-radius:10px;
 overflow:hidden;
 }
 
 th{
 background:#007bff;
 color:white;
-padding:12px;
+padding:10px;
 }
 
 td{
-padding:12px;
+padding:10px;
 text-align:center;
-border-bottom:1px solid #eee;
-}
-
-.soft-name{
-cursor:pointer;
-font-weight:bold;
-transition:.4s;
-}
-
-.soft-name.active{
-color:red;
-transform:scale(1.1);
 }
 
 .download-btn{
 background:#007bff;
 color:white;
-padding:8px 15px;
+padding:6px 12px;
 border-radius:8px;
-transition:.4s;
 }
 
-.download-btn.active{
-background:#ff5722;
-transform:scale(1.1);
+.delete-btn{
+background:red;
+color:white;
+padding:6px 10px;
+border-radius:8px;
 }
+
+.hidden{display:none;}
 </style>
 </head>
 
@@ -131,35 +97,36 @@ transform:scale(1.1);
 <div class="container">
 
 <!-- LOGIN -->
-<div id="loginSection" class="card">
+<div id="loginBox" class="card">
 <h2>🔐 পাসওয়ার্ড দিয়ে লগইন করুন</h2>
-<input type="password" id="password" placeholder="পাসওয়ার্ড লিখুন">
+<input type="password" id="loginPass" placeholder="Password">
 <button class="btn" onclick="login()">Login</button>
-<p id="error" style="color:#ffcccc;text-align:center;"></p>
 </div>
 
 <!-- DASHBOARD -->
-<div id="dashboard">
+<div id="dashboard" class="hidden">
 
 <div class="card">
 <h2>📥 Software Download Dashboard</h2>
 
-<div class="top-box">
-<input type="text" id="softwareName" placeholder="Software Name">
-<input type="text" id="softwareLink" placeholder="Google Drive Link">
-<button onclick="addSoftware()" style="background:#28a745;color:white;">Add</button>
+<!-- ADMIN ADD SECTION -->
+<div id="adminPanel" class="top-box hidden">
+<input type="text" id="softName" placeholder="Software Name">
+<input type="text" id="softLink" placeholder="Download Link">
+<button onclick="addSoft()" style="background:#28a745;color:white;">Add</button>
 </div>
 
 <table>
 <thead>
 <tr>
-<th>ক্রমিক</th>
-<th>সফটওয়্যার নাম</th>
-<th>ডাউনলোড</th>
+<th>#</th>
+<th>Software</th>
+<th>Download</th>
+<th id="deleteHead" class="hidden">Delete</th>
 </tr>
 </thead>
 
-<tbody id="tbody"></tbody>
+<tbody id="list"></tbody>
 </table>
 
 </div>
@@ -170,125 +137,115 @@ transform:scale(1.1);
 
 <script>
 
-const LOGIN_PASSWORD = "5101";
-const DOWNLOAD_PASSWORD = "5102";
+const ADMIN_PASS = "5101";
+const DOWNLOAD_PASS = "5102";
+
+let isAdmin = false;
 
 function login(){
-let pass = document.getElementById("password").value;
 
-if(pass === LOGIN_PASSWORD){
-document.getElementById("loginSection").style.display="none";
+let pass = document.getElementById("loginPass").value;
+
+if(pass === ADMIN_PASS){
+isAdmin = true;
+document.getElementById("loginBox").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+document.getElementById("adminPanel").classList.remove("hidden");
+document.getElementById("deleteHead").classList.remove("hidden");
 loadData();
 }else{
-document.getElementById("error").innerText="❌ Wrong Password";
+alert("❌ Wrong Password");
 }
 }
 
 function getData(){
-return JSON.parse(localStorage.getItem("softwareList")) || [];
+return JSON.parse(localStorage.getItem("softDB")) || [];
 }
 
-function saveData(data){
-localStorage.setItem("softwareList",JSON.stringify(data));
-}
-
-function renderTable(){
-
-let data = getData();
-let tbody = document.getElementById("tbody");
-tbody.innerHTML="";
-
-data.forEach((item,index)=>{
-
-let row = document.createElement("tr");
-
-row.innerHTML = `
-<td></td>
-<td><span class="soft-name">${item.name}</span></td>
-<td><button class="download-btn">Download</button></td>
-`;
-
-tbody.appendChild(row);
-
-// name click effect
-row.querySelector(".soft-name").onclick = function(){
-this.classList.toggle("active");
-};
-
-// download with password
-row.querySelector(".download-btn").onclick = function(){
-
-let pass = prompt("ডাউনলোড পাসওয়ার্ড দিন");
-
-if(pass === DOWNLOAD_PASSWORD){
-this.classList.add("active");
-
-setTimeout(()=>{
-this.classList.remove("active");
-},1000);
-
-window.open(item.link,"_blank");
-
-}else{
-alert("সঠিক পাসওয়ার্ড দিন");
-}
-
-};
-
-});
-
-updateSerials();
-}
-
-function updateSerials(){
-document.querySelectorAll("#tbody tr").forEach((row,i)=>{
-row.cells[0].innerText = i+1;
-});
-}
-
-function addSoftware(){
-
-let name = document.getElementById("softwareName").value.trim();
-let link = document.getElementById("softwareLink").value.trim();
-
-if(name==="" || link===""){
-alert("সব তথ্য দিন");
-return;
-}
-
-let data = getData();
-
-// same link 3 times add
-for(let i=1;i<=3;i++){
-data.push({
-name: name + " ("+i+")",
-link: link
-});
-}
-
-saveData(data);
-
-document.getElementById("softwareName").value="";
-document.getElementById("softwareLink").value="";
-
-renderTable();
+function saveData(d){
+localStorage.setItem("softDB",JSON.stringify(d));
 }
 
 function loadData(){
 
 let data = getData();
 
-if(data.length === 0){
-for(let i=1;i<=3;i++){
-data.push({
-name:"Sample Software ("+i+")",
-link:"https://drive.google.com/uc?export=download&id=1rZ9V1YUrNqCkpECt_tPCjZyg997slHvw"
-});
-}
+if(data.length===0){
+data = [
+{name:"Sample Software 1",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
+{name:"Sample Software 2",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
+{name:"Sample Software 3",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
+{name:"Photoshop 8 CS",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"}
+];
 saveData(data);
 }
 
-renderTable();
+render();
+}
+
+function render(){
+
+let data = getData();
+let list = document.getElementById("list");
+list.innerHTML="";
+
+data.forEach((item,i)=>{
+
+let tr = document.createElement("tr");
+
+tr.innerHTML=`
+<td>${i+1}</td>
+<td>${item.name}</td>
+<td><button class="download-btn">Download</button></td>
+${isAdmin ? `<td><button class="delete-btn">Delete</button></td>` : ``}
+`;
+
+list.appendChild(tr);
+
+// download
+tr.querySelector(".download-btn").onclick = function(){
+
+let p = prompt("Password দিন (Download)");
+
+if(p === DOWNLOAD_PASS){
+window.open(item.link,"_blank");
+}else{
+alert("❌ সঠিক পাসওয়ার্ড দিন");
+}
+};
+
+// delete (admin only)
+if(isAdmin){
+tr.querySelector(".delete-btn").onclick = function(){
+let d = getData();
+d.splice(i,1);
+saveData(d);
+render();
+};
+}
+
+});
+
+}
+
+function addSoft(){
+
+let name = document.getElementById("softName").value;
+let link = document.getElementById("softLink").value;
+
+if(name=="" || link==""){
+alert("সব তথ্য দিন");
+return;
+}
+
+let data = getData();
+data.push({name,link});
+saveData(data);
+
+document.getElementById("softName").value="";
+document.getElementById("softLink").value="";
+
+render();
 }
 
 </script>
