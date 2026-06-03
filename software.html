@@ -2,303 +2,193 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Software Dashboard</title>
+<title>Software Download List</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial;
-}
+    body{
+        font-family: Arial;
+        background: linear-gradient(135deg,#0f172a,#1e293b);
+        color: white;
+        margin:0;
+        padding:20px;
+    }
 
-body{
-background:linear-gradient(135deg,#007bff,#00c6ff);
-min-height:100vh;
-padding:20px;
-}
+    .container{
+        max-width: 900px;
+        margin:auto;
+    }
 
-.container{max-width:1000px;margin:auto;}
+    h1{
+        text-align:center;
+        margin-bottom:20px;
+    }
 
-.card{
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(10px);
-padding:25px;
-border-radius:20px;
-margin-bottom:20px;
-}
+    /* SEARCH BOX */
+    .search-box{
+        width:100%;
+        padding:12px;
+        margin-bottom:15px;
+        border-radius:8px;
+        border:none;
+        outline:none;
+        font-size:16px;
+    }
 
-h2{text-align:center;color:#fff;margin-bottom:15px;}
+    table{
+        width:100%;
+        border-collapse: collapse;
+        background:#111827;
+        border-radius:10px;
+        overflow:hidden;
+    }
 
-input{
-width:100%;
-padding:12px;
-margin:6px 0;
-border:none;
-border-radius:10px;
-}
+    th, td{
+        padding:12px;
+        text-align:center;
+        border-bottom:1px solid #374151;
+    }
 
-button{
-padding:10px 15px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-}
+    th{
+        background:#1f2937;
+    }
 
-.btn{background:#28a745;color:white;width:100%;}
+    .btn{
+        padding:8px 14px;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+        background:#22c55e;
+        color:white;
+        font-weight:bold;
+    }
 
-.top-box{
-display:grid;
-grid-template-columns:1fr 1fr auto;
-gap:10px;
-margin-bottom:15px;
-}
+    .btn:hover{
+        background:#16a34a;
+    }
 
-table{
-width:100%;
-background:white;
-border-collapse:collapse;
-border-radius:10px;
-overflow:hidden;
-}
+    /* Modal */
+    .modal{
+        display:none;
+        position:fixed;
+        top:0; left:0;
+        width:100%;
+        height:100%;
+        background:rgba(0,0,0,0.7);
+        justify-content:center;
+        align-items:center;
+    }
 
-th{
-background:#007bff;
-color:white;
-padding:10px;
-}
+    .modal-box{
+        background:#0f172a;
+        padding:20px;
+        border-radius:10px;
+        text-align:center;
+        width:300px;
+    }
 
-td{
-padding:10px;
-text-align:center;
-}
+    input{
+        width:90%;
+        padding:10px;
+        margin-top:10px;
+        border-radius:5px;
+        border:none;
+    }
 
-.download-btn{
-background:#007bff;
-color:white;
-padding:6px 12px;
-border-radius:8px;
-}
+    .submit-btn{
+        margin-top:10px;
+        background:#3b82f6;
+    }
 
-.delete-btn{
-background:red;
-color:white;
-padding:6px 10px;
-border-radius:8px;
-}
-
-.hidden{display:none;}
 </style>
 </head>
 
 <body>
 
 <div class="container">
+    <h1>📦 Software Download List</h1>
 
-<!-- LOGIN -->
-<div id="loginBox" class="card">
-<h2>🔐 পাসওয়ার্ড দিয়ে লগইন করুন</h2>
-<input type="password" id="loginPass" placeholder="Password">
-<button class="btn" onclick="login()">Login</button>
+    <!-- 🔎 SEARCH BOX -->
+    <input type="text" class="search-box" id="searchInput" placeholder="🔍 সফটওয়্যার খুঁজুন..." onkeyup="searchTable()">
+
+    <table id="softwareTable">
+        <tr>
+            <th>ক্রমিক নং</th>
+            <th>সফটওয়্যার নাম</th>
+            <th>ডিটেলস</th>
+            <th>ডাউনলোড</th>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>WinRAR</td>
+            <td>File Compressor</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/')">Download</button></td>
+        </tr>
+
+        <tr>
+            <td>2</td>
+            <td>Chrome Setup</td>
+            <td>Browser</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/')">Download</button></td>
+        </tr>
+
+    </table>
 </div>
 
-<!-- PUBLIC LIST -->
-<div class="card">
-<h2>📋 Software List</h2>
-
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>Software</th>
-<th>Download</th>
-</tr>
-</thead>
-<tbody id="publicList"></tbody>
-</table>
-
-</div>
-
-<!-- DASHBOARD (ADMIN) -->
-<div id="dashboard" class="hidden">
-
-<div class="card">
-<h2>📥 Software Dashboard (Admin)</h2>
-
-<div id="adminPanel" class="top-box hidden">
-<input type="text" id="softName" placeholder="Software Name">
-<input type="text" id="softLink" placeholder="Download Link">
-<button onclick="addSoft()" style="background:#28a745;color:white;">Add</button>
-</div>
-
-<table>
-<thead>
-<tr>
-<th>#</th>
-<th>Software</th>
-<th>Download</th>
-<th id="deleteHead" class="hidden">Delete</th>
-</tr>
-</thead>
-<tbody id="adminList"></tbody>
-</table>
-
-</div>
-
-</div>
-
+<!-- Password Modal -->
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <h3>🔒 Password দিন</h3>
+        <input type="password" id="password" placeholder="Enter Password">
+        <br>
+        <button class="btn submit-btn" onclick="checkPassword()">Submit</button>
+    </div>
 </div>
 
 <script>
+    let downloadLink = "";
 
-const ADMIN_PASS = "5101";
-const DOWNLOAD_PASS = "5102";
+    function openModal(link){
+        downloadLink = link;
+        document.getElementById("modal").style.display = "flex";
+    }
 
-let isAdmin = false;
+    function checkPassword(){
+        let pass = document.getElementById("password").value;
 
-window.onload = function () {
-loadData();
-renderPublic();
-};
+        if(pass === "5102"){
+            window.location.href = downloadLink;
+        } else {
+            alert("❌ ভুল পাসওয়ার্ড!");
+        }
+    }
 
-function login(){
+    window.onclick = function(e){
+        let modal = document.getElementById("modal");
+        if(e.target === modal){
+            modal.style.display = "none";
+        }
+    }
 
-let pass = document.getElementById("loginPass").value;
+    // 🔎 SEARCH FUNCTION
+    function searchTable(){
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("softwareTable");
+        let tr = table.getElementsByTagName("tr");
 
-if(pass === ADMIN_PASS){
-isAdmin = true;
-document.getElementById("dashboard").classList.remove("hidden");
-document.getElementById("adminPanel").classList.remove("hidden");
-document.getElementById("deleteHead").classList.remove("hidden");
-renderAdmin();
-}else{
-alert("❌ Wrong Password");
-}
-}
-
-function getData(){
-return JSON.parse(localStorage.getItem("softDB")) || [];
-}
-
-function saveData(d){
-localStorage.setItem("softDB",JSON.stringify(d));
-}
-
-function loadData(){
-
-let data = getData();
-
-if(data.length === 0){
-data = [
-{name:"Sample Software 1",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
-{name:"Sample Software 2",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
-{name:"Photoshop 8 CS",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"}
-];
-saveData(data);
-}
-
-renderPublic();
-}
-
-function renderPublic(){
-
-let data = getData();
-let pub = document.getElementById("publicList");
-pub.innerHTML="";
-
-data.forEach((item,i)=>{
-
-let tr = document.createElement("tr");
-
-tr.innerHTML=`
-<td>${i+1}</td>
-<td>${item.name}</td>
-<td><button class="download-btn">Download</button></td>
-`;
-
-pub.appendChild(tr);
-
-tr.querySelector(".download-btn").onclick = function(){
-
-let p = prompt("Password দিন (Download)");
-
-if(p === DOWNLOAD_PASS){
-window.open(item.link,"_blank");
-}else{
-alert("❌ সঠিক পাসওয়ার্ড দিন");
-}
-};
-
-});
-
-}
-
-function renderAdmin(){
-
-let data = getData();
-let list = document.getElementById("adminList");
-list.innerHTML="";
-
-data.forEach((item,i)=>{
-
-let tr = document.createElement("tr");
-
-tr.innerHTML=`
-<td>${i+1}</td>
-<td>${item.name}</td>
-<td><button class="download-btn">Download</button></td>
-<td><button class="delete-btn">Delete</button></td>
-`;
-
-list.appendChild(tr);
-
-// download
-tr.querySelector(".download-btn").onclick = function(){
-
-let p = prompt("Password দিন (Download)");
-
-if(p === DOWNLOAD_PASS){
-window.open(item.link,"_blank");
-}else{
-alert("❌ সঠিক পাসওয়ার্ড দিন");
-}
-};
-
-// delete
-tr.querySelector(".delete-btn").onclick = function(){
-let d = getData();
-d.splice(i,1);
-saveData(d);
-renderPublic();
-renderAdmin();
-};
-
-});
-
-}
-
-function addSoft(){
-
-let name = document.getElementById("softName").value;
-let link = document.getElementById("softLink").value;
-
-if(name=="" || link==""){
-alert("সব তথ্য দিন");
-return;
-}
-
-let data = getData();
-data.push({name,link});
-saveData(data);
-
-document.getElementById("softName").value="";
-document.getElementById("softLink").value="";
-
-renderPublic();
-renderAdmin();
-}
-
+        for(let i = 1; i < tr.length; i++){
+            let td = tr[i].getElementsByTagName("td")[1];
+            if(td){
+                let textValue = td.textContent || td.innerText;
+                if(textValue.toLowerCase().indexOf(filter) > -1){
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
 </script>
 
 </body>
