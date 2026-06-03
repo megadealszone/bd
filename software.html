@@ -103,7 +103,7 @@ border-radius:8px;
 <button class="btn" onclick="login()">Login</button>
 </div>
 
-<!-- SOFTWARE LIST (VISIBLE ON LOGIN PAGE TOO) -->
+<!-- PUBLIC LIST -->
 <div class="card">
 <h2>📋 Software List</h2>
 
@@ -120,11 +120,11 @@ border-radius:8px;
 
 </div>
 
-<!-- DASHBOARD -->
+<!-- DASHBOARD (ADMIN) -->
 <div id="dashboard" class="hidden">
 
 <div class="card">
-<h2>📥 Software Download Dashboard</h2>
+<h2>📥 Software Dashboard (Admin)</h2>
 
 <div id="adminPanel" class="top-box hidden">
 <input type="text" id="softName" placeholder="Software Name">
@@ -141,7 +141,7 @@ border-radius:8px;
 <th id="deleteHead" class="hidden">Delete</th>
 </tr>
 </thead>
-<tbody id="list"></tbody>
+<tbody id="adminList"></tbody>
 </table>
 
 </div>
@@ -157,18 +157,21 @@ const DOWNLOAD_PASS = "5102";
 
 let isAdmin = false;
 
+window.onload = function () {
+loadData();
+renderPublic();
+};
+
 function login(){
 
 let pass = document.getElementById("loginPass").value;
 
 if(pass === ADMIN_PASS){
 isAdmin = true;
-
 document.getElementById("dashboard").classList.remove("hidden");
 document.getElementById("adminPanel").classList.remove("hidden");
 document.getElementById("deleteHead").classList.remove("hidden");
-
-loadData();
+renderAdmin();
 }else{
 alert("❌ Wrong Password");
 }
@@ -186,64 +189,16 @@ function loadData(){
 
 let data = getData();
 
-if(data.length===0){
+if(data.length === 0){
 data = [
 {name:"Sample Software 1",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
 {name:"Sample Software 2",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
-{name:"Sample Software 3",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"},
 {name:"Photoshop 8 CS",link:"https://drive.google.com/file/d/1hiHbJxLPOuiaGfCLIjXnNr-UyTYIB119/view"}
 ];
 saveData(data);
 }
 
-render();
 renderPublic();
-}
-
-function render(){
-
-let data = getData();
-let list = document.getElementById("list");
-list.innerHTML="";
-
-data.forEach((item,i)=>{
-
-let tr = document.createElement("tr");
-
-tr.innerHTML=`
-<td>${i+1}</td>
-<td>${item.name}</td>
-<td><button class="download-btn">Download</button></td>
-${isAdmin ? `<td><button class="delete-btn">Delete</button></td>` : ``}
-`;
-
-list.appendChild(tr);
-
-// download
-tr.querySelector(".download-btn").onclick = function(){
-
-let p = prompt("Password দিন (Download)");
-
-if(p === DOWNLOAD_PASS){
-window.open(item.link,"_blank");
-}else{
-alert("❌ সঠিক পাসওয়ার্ড দিন");
-}
-};
-
-// delete admin only
-if(isAdmin){
-tr.querySelector(".delete-btn").onclick = function(){
-let d = getData();
-d.splice(i,1);
-saveData(d);
-render();
-renderPublic();
-};
-}
-
-});
-
 }
 
 function renderPublic(){
@@ -264,7 +219,6 @@ tr.innerHTML=`
 
 pub.appendChild(tr);
 
-// download (same rule)
 tr.querySelector(".download-btn").onclick = function(){
 
 let p = prompt("Password দিন (Download)");
@@ -274,6 +228,50 @@ window.open(item.link,"_blank");
 }else{
 alert("❌ সঠিক পাসওয়ার্ড দিন");
 }
+};
+
+});
+
+}
+
+function renderAdmin(){
+
+let data = getData();
+let list = document.getElementById("adminList");
+list.innerHTML="";
+
+data.forEach((item,i)=>{
+
+let tr = document.createElement("tr");
+
+tr.innerHTML=`
+<td>${i+1}</td>
+<td>${item.name}</td>
+<td><button class="download-btn">Download</button></td>
+<td><button class="delete-btn">Delete</button></td>
+`;
+
+list.appendChild(tr);
+
+// download
+tr.querySelector(".download-btn").onclick = function(){
+
+let p = prompt("Password দিন (Download)");
+
+if(p === DOWNLOAD_PASS){
+window.open(item.link,"_blank");
+}else{
+alert("❌ সঠিক পাসওয়ার্ড দিন");
+}
+};
+
+// delete
+tr.querySelector(".delete-btn").onclick = function(){
+let d = getData();
+d.splice(i,1);
+saveData(d);
+renderPublic();
+renderAdmin();
 };
 
 });
@@ -297,8 +295,8 @@ saveData(data);
 document.getElementById("softName").value="";
 document.getElementById("softLink").value="";
 
-render();
 renderPublic();
+renderAdmin();
 }
 
 </script>
