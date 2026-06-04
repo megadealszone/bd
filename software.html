@@ -4,53 +4,132 @@
 <meta charset="UTF-8">
 <title>Software Download List</title>
 
+<header class="main-header">
+  <div class="logo">
+    Mega Deals Zone
+  </div>
+
+  <nav class="menu">
+    <a href="index.html">Home</a>
+    <a href="post.html">Social Media</a>
+    <a href="post.html">Affiliate</a>
+    <a href="post.html">Download</a>
+    <a href="post.html">Share Market</a>
+    <a href="post.html">API</a>
+    <a href="post.html">Software</a>
+    <a href="post.html">Admin Login</a>
+  </nav>
+</header>
+
+
+
 <style>
-    body{
-        font-family: Arial;
-        background: linear-gradient(135deg,#0f172a,#1e293b);
-        color: white;
-        margin:0;
-        padding:20px;
-    }
+.main-header {
+  background: #0f3d4c;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-    .container{
-        max-width: 900px;
-        margin:auto;
-    }
+.logo {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
 
-    h1{
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.menu a {
+  color: white;
+  text-decoration: none;
+  margin: 5px 10px;
+  padding: 6px 10px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.menu a:hover {
+  background: #ff9900;
+  color: black;
+}
+
+
+
+
+body{
+  font-family: Arial;
+  background: linear-gradient(135deg,#032402,#047f83b2);
+  color: white;
+  margin:0 auto;
+  padding:0px;
+
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container{
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0 20px;
+}
+
+h1{
         text-align:center;
         margin-bottom:20px;
     }
 
-    /* SEARCH BOX */
-    .search-box{
-        width:100%;
-        padding:12px;
-        margin-bottom:15px;
-        border-radius:8px;
-        border:none;
-        outline:none;
-        font-size:16px;
-    }
+/* SEARCH BOX */
+.search-box{
+    width: 100%;
+    max-width: 600px;
+    display: block;
+    margin: 0 auto 15px;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    box-sizing: border-box;
+}
 
-    table{
-        width:100%;
-        border-collapse: collapse;
-        background:#111827;
-        border-radius:10px;
-        overflow:hidden;
-    }
+.table-container{
+    max-height: 500px;
+    overflow-y: auto;
+    border-radius: 10px;
 
-    th, td{
+    width: 100%;
+    max-width: 1600px;   /* এখানে যত বড় চাই তত দাও */
+    margin: 0;      /* এটাই center করে */
+}
+
+table{
+
+    width:100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background:#01052e;
+    border-radius:10px;
+}
+
+th, td{
         padding:12px;
         text-align:center;
         border-bottom:1px solid #374151;
     }
 
-    th{
-        background:#1f2937;
-    }
+th{
+    background:#1f2937;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
 
     .btn{
         padding:8px 14px;
@@ -99,8 +178,23 @@
         background:#3b82f6;
     }
 
+
+     /* FOOTER */
+footer{
+  background: linear-gradient(90deg,#1a1dddf1,#0e0274ee);
+  color:white;
+  text-align:center;
+  padding:25px 15px;
+
+  margin-top: auto;
+}
+    footer a{
+      color:#ffcc70;
+      text-decoration:none;
+    }
+
 </style>
-</head>
+
 
 <body>
 
@@ -110,12 +204,15 @@
     <!-- 🔎 SEARCH BOX -->
     <input type="text" class="search-box" id="searchInput" placeholder="🔍 সফটওয়্যার খুঁজুন..." onkeyup="searchTable()">
 
+
+    <div class="table-container">
     <table id="softwareTable">
+
         <tr>
-            <th>ক্রমিক নং</th>
-            <th>সফটওয়্যার নাম</th>
-            <th>ডিটেলস</th>
-            <th>ডাউনলোড</th>
+            <th>Serial Number</th>
+            <th>Software Name list in Computer</th>
+            <th>Software Version</th>
+            <th>Download Now</th>
         </tr>
 
         <tr>
@@ -133,9 +230,37 @@
         </tr>
         <tr><td>4</td><td>KM Player </td> <td> 4.0.7.1</td>
             <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1yn4oRmvPlwdKugu0Ytm8Og-sYRStSn9V')">Download</button></td>
+        </tr> 
+        <tr><td>5</td><td>Bijoy Bayanno</td> <td> Latest</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1jrltgOtbAbIVLj_nVxJTxUvb0RkXocKN')">Download</button></td>
+        </tr>   
+                <tr><td>6</td><td>Microsoft Office</td> <td> 2010</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1zFMeYE77TV3o4X73YaecP2lp6xFLx0Op')">Download</button></td>
+        </tr>
+                <tr><td>6</td><td>Microsoft Office</td> <td> 2019</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=138VbBcqKA9DePV9d_ZRHb6kIgaygNwdd')">Download</button></td>
+        </tr> 
+        <tr><td>7</td><td>Microsoft Office</td> <td> 2007</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1sZe0Axv7MVga_VXfp85oKvwkdBxckQnT')">Download</button></td>
+        </tr>
+        <tr><td>8</td><td>Microsoft Office</td> <td> 2013</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1fZ_pZWWFOGPiYTk7LbQKiZviVS38ylum')">Download</button></td>
+        </tr>
+        <tr><td>9</td><td>Microsoft Office</td> <td> 2013</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1fZ_pZWWFOGPiYTk7LbQKiZviVS38ylum')">Download</button></td>
+        </tr>
+        <tr><td>9</td><td>Microsoft Office</td> <td> 2013</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1fZ_pZWWFOGPiYTk7LbQKiZviVS38ylum')">Download</button></td>
+        </tr>
+        <tr><td>9</td><td>Microsoft Office</td> <td> 2013</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1fZ_pZWWFOGPiYTk7LbQKiZviVS38ylum')">Download</button></td>
+        </tr>
+        <tr><td>9</td><td>Microsoft Office</td> <td> 2013</td>
+            <td><button class="btn" onclick="openModal('https://drive.google.com/uc?export=download&id=1fZ_pZWWFOGPiYTk7LbQKiZviVS38ylum')">Download</button></td>
         </tr>                                          
 
     </table>
+    </div>
 </div>
 
 <!-- Password Modal -->
@@ -195,4 +320,30 @@
 </script>
 
 </body>
+
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <p>
+      © 2026 My Website | Developer By Md Roman Islam Habib
+    </p>
+
+    <p>
+      Visit:
+      <a href="https://www.google.com" target="_blank">
+        Google,
+      </a>
+
+      <a href="https://www.facebook.com/megadealszone" target="_blank">
+        Facebook,
+      </a>
+
+      <a href="https://www.youtube.com/@somoyershikha" target="_blank">
+        Youtube
+      </a>
+    </p>
+
+  </footer>
 </html>
