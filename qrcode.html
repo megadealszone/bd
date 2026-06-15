@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULTRA QR SYSTEM</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<style>
+body{
+margin:0;
+background:radial-gradient(circle,#000,#111);
+font-family:Arial;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+color:white;
+}
+
+.box{
+width:340px;
+padding:20px;
+background:rgba(255,255,255,0.06);
+border-radius:20px;
+box-shadow:0 0 30px #00f7ff;
+text-align:center;
+}
+
+h2{
+color:#00f7ff;
+margin-bottom:10px;
+}
+
+textarea{
+width:100%;
+height:90px;
+padding:10px;
+border:none;
+outline:none;
+border-radius:10px;
+resize:none;
+background:#111;
+color:#00ffcc;
+font-size:14px;
+}
+
+.btn{
+margin-top:10px;
+width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+background:#00f7ff;
+font-weight:bold;
+cursor:pointer;
+}
+
+.row{
+display:flex;
+gap:10px;
+}
+
+.row button{
+flex:1;
+}
+
+#qrcode{
+margin-top:15px;
+display:flex;
+justify-content:center;
+}
+
+#reader{
+margin-top:15px;
+display:none;
+}
+
+.result{
+margin-top:10px;
+font-size:13px;
+color:#00ffcc;
+word-break:break-word;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>ULTRA QR SYSTEM</h2>
+
+<textarea id="text" placeholder="Type text or URL..."></textarea>
+
+<div class="row">
+<button class="btn" onclick="generateQR()">GENERATE</button>
+<button class="btn" onclick="downloadJPG()">DOWNLOAD JPG</button>
+</div>
+
+<button class="btn" onclick="toggleScanner()">SCAN QR</button>
+
+<div id="qrcode"></div>
+
+<div id="reader"></div>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script>
+
+let qrCanvas;
+
+function generateQR(){
+
+let text=document.getElementById("text").value;
+
+document.getElementById("qrcode").innerHTML="";
+
+let tempDiv=document.createElement("div");
+
+new QRCode(tempDiv,{
+text:text,
+width:250,
+height:250,
+colorDark:"#00ffcc",
+colorLight:"#000"
+});
+
+// convert to canvas after render
+setTimeout(()=>{
+
+qrCanvas=tempDiv.querySelector("canvas");
+
+if(!qrCanvas){
+alert("QR generation failed!");
+return;
+}
+
+document.getElementById("qrcode").innerHTML="";
+document.getElementById("qrcode").appendChild(qrCanvas);
+
+},300);
+
+}
+
+function downloadJPG(){
+
+if(!qrCanvas){
+alert("Please generate QR first!");
+return;
+}
+
+// convert canvas to JPG
+let link=document.createElement("a");
+
+link.download="qr-code.jpg";
+
+link.href=qrCanvas.toDataURL("image/jpeg",1.0);
+
+link.click();
+
+}
+
+// QR SCANNER
+let scanner;
+
+function toggleScanner(){
+
+let reader=document.getElementById("reader");
+
+if(reader.style.display==="block"){
+reader.style.display="none";
+if(scanner) scanner.clear();
+return;
+}
+
+reader.style.display="block";
+
+scanner=new Html5Qrcode("reader");
+
+scanner.start(
+{ facingMode:"environment" },
+{ fps:10, qrbox:250 },
+(decodedText)=>{
+document.getElementById("result").innerText="Scanned: "+decodedText;
+document.getElementById("text").value=decodedText;
+generateQR();
+scanner.stop();
+reader.style.display="none";
+}
+);
+
+}
+
+// AUTO UPDATE
+document.getElementById("text").addEventListener("input",generateQR);
+
+</script>
+
+</body>
+</html>
