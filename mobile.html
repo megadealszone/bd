@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobile Preview & Code Scroll</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#111;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:20px;
+}
+
+#editor{
+width:320px;
+}
+
+textarea{
+width:100%;
+height:180px;
+padding:15px;
+border:none;
+border-radius:15px;
+outline:none;
+resize:none;
+background:#1a1a1a;
+color:#00ffcc;
+font-size:15px;
+box-shadow:0 0 15px rgba(0,255,204,.4);
+}
+
+.run-btn{
+width:100%;
+margin-top:10px;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#00ffcc;
+color:#000;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.phone{
+width:320px;
+height:620px;
+background:#000;
+border:8px solid #333;
+border-radius:40px;
+overflow:hidden;
+position:relative;
+box-shadow:0 0 25px #00ffcc;
+}
+
+iframe{
+width:100%;
+height:100%;
+border:none;
+background:#fff;
+}
+
+.timer{
+position:absolute;
+top:10px;
+right:10px;
+z-index:999;
+background:rgba(0,0,0,.8);
+color:#00ffcc;
+padding:6px 12px;
+border-radius:20px;
+font-size:14px;
+display:none;
+transition:.3s;
+}
+
+.code-scroll{
+position:absolute;
+left:0;
+bottom:-100%;
+width:100%;
+padding:20px;
+background:#000;
+color:#00ff66;
+font-size:14px;
+line-height:1.7;
+white-space:pre-wrap;
+word-break:break-word;
+display:none;
+}
+
+.scroll{
+animation:scrollCode 40s linear forwards;
+}
+
+@keyframes scrollCode{
+from{
+bottom:-100%;
+}
+to{
+bottom:100%;
+}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div id="editor">
+
+<textarea id="codeBox"><!DOCTYPE html>
+<html>
+<head>
+<title>Demo</title>
+</head>
+<body>
+<h1 style="text-align:center;color:red;">
+Hello World
+</h1>
+<p style="text-align:center;">
+This is Preview Mode
+</p>
+</body>
+</html></textarea>
+
+<button class="run-btn" onclick="runCode()">
+RUN PREVIEW
+</button>
+
+</div>
+
+<div class="phone">
+
+<div class="timer" id="timer">50s</div>
+
+<iframe id="previewFrame"></iframe>
+
+<pre id="codeViewer" class="code-scroll"></pre>
+
+</div>
+
+</div>
+
+<script>
+
+function runCode(){
+
+document.getElementById("editor").style.display="none";
+
+const code=document.getElementById("codeBox").value;
+
+const frame=document.getElementById("previewFrame");
+
+const timer=document.getElementById("timer");
+
+const codeViewer=document.getElementById("codeViewer");
+
+frame.style.display="block";
+codeViewer.style.display="none";
+codeViewer.classList.remove("scroll");
+
+frame.srcdoc=code;
+
+timer.style.display="block";
+
+let seconds=50;
+
+timer.innerText=seconds+"s";
+
+const countdown=setInterval(()=>{
+
+seconds--;
+
+timer.innerText=seconds+"s";
+
+if(seconds<=0){
+
+clearInterval(countdown);
+
+timer.style.display="none";
+
+frame.style.display="none";
+
+codeViewer.textContent=code;
+
+codeViewer.style.display="block";
+
+void codeViewer.offsetWidth;
+
+codeViewer.classList.add("scroll");
+
+}
+
+},1000);
+
+}
+
+</script>
+
+</body>
+</html>
