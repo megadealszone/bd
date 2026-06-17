@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>A-Z Kids Learning Ultra</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-Z Kids Pro Learning Game</title>
 
 <style>
 body{
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     margin:0;
-    background: linear-gradient(135deg,#e3f2fd,#fff);
+    background:linear-gradient(135deg,#e3f2fd,#ffffff);
     text-align:center;
 }
 
@@ -17,115 +18,219 @@ h1{
     color:white;
     padding:15px;
     margin:0;
+    font-size:32px;
 }
 
-/* progress */
-#progress{
-    padding:10px;
-    font-size:18px;
+/* TOP DISPLAY */
+#topDisplay{
+    margin:15px auto;
+    width:90%;
+    background:white;
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+
+#topEmoji{
+    font-size:120px;
+    line-height:1;
+}
+
+#topText{
+    font-size:32px;
     font-weight:bold;
-    background:#fff;
+    margin-top:10px;
 }
 
-/* grid */
+/* STARS */
+#stars{
+    font-size:22px;
+    font-weight:bold;
+    margin:10px;
+}
+
+/* PROGRESS */
+#progressBar{
+    width:90%;
+    height:22px;
+    background:#ddd;
+    margin:15px auto;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+#fill{
+    height:100%;
+    width:0%;
+    background:#4CAF50;
+    transition:0.3s;
+}
+
+/* GRID */
 .container{
     display:grid;
     grid-template-columns:repeat(4,1fr);
-    gap:15px;
-    padding:20px;
+    gap:12px;
+    padding:15px;
 }
 
-/* card */
 .box{
-    height:95px;
+    height:140px;
     background:white;
     border-radius:18px;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-
-    font-size:52px;
+    font-size:70px;
     font-weight:bold;
     cursor:pointer;
-
     box-shadow:0 4px 10px rgba(0,0,0,0.15);
     transition:0.2s;
 }
 
-/* click animation */
+.boxEmoji{
+    font-size:40px;
+    margin-top:5px;
+}
+
 .box.active{
-    animation: pop 0.4s ease;
+    animation:pop 0.4s ease;
     background:#d1ffd6;
     box-shadow:0 0 20px #4CAF50;
 }
 
-.box.done{
-    background:#c8e6c9;
-    color:#2e7d32;
-}
-
 @keyframes pop{
     0%{transform:scale(1);}
-    50%{transform:scale(1.4) rotate(8deg);}
+    50%{transform:scale(1.3) rotate(5deg);}
     100%{transform:scale(1);}
+}
+
+@media(max-width:600px){
+    .container{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .box{
+        height:130px;
+        font-size:65px;
+    }
+
+    #topEmoji{
+        font-size:100px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<h1>🌟 A-Z Kids Learning</h1>
-<div id="progress">Progress: 0 / 26</div>
+<h1>🌟 A-Z Kids Pro Learning Game</h1>
+
+<div id="topDisplay">
+    <div id="topEmoji">🔤</div>
+    <div id="topText">Click a Letter</div>
+</div>
+
+<div id="stars">⭐ Stars: 0</div>
+
+<div id="progressBar">
+    <div id="fill"></div>
+</div>
 
 <div class="container" id="letters"></div>
 
 <script>
 
 const words = {
-A:"Apple", B:"Ball", C:"Cat", D:"Dog", E:"Elephant",
-F:"Fish", G:"Goat", H:"Hen", I:"Ice cream", J:"Jug",
-K:"Kite", L:"Lion", M:"Monkey", N:"Nest", O:"Orange",
-P:"Parrot", Q:"Queen", R:"Rabbit", S:"Sun", T:"Tiger",
-U:"Umbrella", V:"Violin", W:"Watch", X:"X-ray",
-Y:"Yak", Z:"Zebra"
+A:["Apple","🍎"],
+B:["Ball","⚽"],
+C:["Cat","🐱"],
+D:["Dog","🐶"],
+E:["Elephant","🐘"],
+F:["Fish","🐟"],
+G:["Goat","🐐"],
+H:["Hen","🐔"],
+I:["Ice Cream","🍦"],
+J:["Jug","🫗"],
+K:["Kite","🪁"],
+L:["Lion","🦁"],
+M:["Monkey","🐒"],
+N:["Nest","🪺"],
+O:["Orange","🍊"],
+P:["Parrot","🦜"],
+Q:["Queen","👑"],
+R:["Rabbit","🐰"],
+S:["Sun","☀️"],
+T:["Tiger","🐯"],
+U:["Umbrella","☂️"],
+V:["Violin","🎻"],
+W:["Watch","⌚"],
+X:["X-Ray","🩻"],
+Y:["Yak","🐂"],
+Z:["Zebra","🦓"]
 };
 
+let stars = 0;
 let learned = new Set();
-const container = document.getElementById("letters");
-const progress = document.getElementById("progress");
 
-function updateProgress(){
-    progress.innerText = `Progress: ${learned.size} / 26`;
+const container = document.getElementById("letters");
+const fill = document.getElementById("fill");
+const starsText = document.getElementById("stars");
+const topEmoji = document.getElementById("topEmoji");
+const topText = document.getElementById("topText");
+
+function updateUI(){
+    let percent = (learned.size / 26) * 100;
+    fill.style.width = percent + "%";
+    starsText.innerHTML = "⭐ Stars: " + stars;
+}
+
+function showTop(letter){
+    let data = words[letter];
+
+    topEmoji.innerHTML = data[1];
+    topText.innerHTML = letter + " for " + data[0];
 }
 
 for(let letter in words){
+
     let box = document.createElement("div");
     box.className = "box";
-    box.innerText = letter;
+
+    box.innerHTML = `
+        <div>${letter}</div>
+        <div class="boxEmoji">${words[letter][1]}</div>
+    `;
 
     box.onclick = function(){
 
-        // mark learned
-        learned.add(letter);
-        updateProgress();
+        if(!learned.has(letter)){
+            learned.add(letter);
+            stars += 5;
+        }
 
-        // animation
+        updateUI();
+        showTop(letter);
+
         box.classList.add("active");
 
         setTimeout(()=>{
             box.classList.remove("active");
-            box.classList.add("done");
         },400);
 
-        // voice
-        let text = `${letter} for ${words[letter]}`;
-        let speech = new SpeechSynthesisUtterance(text);
+        speechSynthesis.cancel();
+
+        let speech = new SpeechSynthesisUtterance(
+            letter + " for " + words[letter][0]
+        );
+
         speech.lang = "en-US";
-        speech.rate = 0.9;
-        speech.pitch = 1;
+        speech.rate = 0.8;
+        speech.pitch = 1.1;
 
         speechSynthesis.speak(speech);
-    }
+    };
 
     container.appendChild(box);
 }
