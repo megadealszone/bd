@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>A-Z Kids Learning Ultra</title>
+
+<style>
+body{
+    font-family: Arial;
+    margin:0;
+    background: linear-gradient(135deg,#e3f2fd,#fff);
+    text-align:center;
+}
+
+h1{
+    background:#4CAF50;
+    color:white;
+    padding:15px;
+    margin:0;
+}
+
+/* progress */
+#progress{
+    padding:10px;
+    font-size:18px;
+    font-weight:bold;
+    background:#fff;
+}
+
+/* grid */
+.container{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    padding:20px;
+}
+
+/* card */
+.box{
+    height:95px;
+    background:white;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:52px;
+    font-weight:bold;
+    cursor:pointer;
+
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    transition:0.2s;
+}
+
+/* click animation */
+.box.active{
+    animation: pop 0.4s ease;
+    background:#d1ffd6;
+    box-shadow:0 0 20px #4CAF50;
+}
+
+.box.done{
+    background:#c8e6c9;
+    color:#2e7d32;
+}
+
+@keyframes pop{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.4) rotate(8deg);}
+    100%{transform:scale(1);}
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌟 A-Z Kids Learning</h1>
+<div id="progress">Progress: 0 / 26</div>
+
+<div class="container" id="letters"></div>
+
+<script>
+
+const words = {
+A:"Apple", B:"Ball", C:"Cat", D:"Dog", E:"Elephant",
+F:"Fish", G:"Goat", H:"Hen", I:"Ice cream", J:"Jug",
+K:"Kite", L:"Lion", M:"Monkey", N:"Nest", O:"Orange",
+P:"Parrot", Q:"Queen", R:"Rabbit", S:"Sun", T:"Tiger",
+U:"Umbrella", V:"Violin", W:"Watch", X:"X-ray",
+Y:"Yak", Z:"Zebra"
+};
+
+let learned = new Set();
+const container = document.getElementById("letters");
+const progress = document.getElementById("progress");
+
+function updateProgress(){
+    progress.innerText = `Progress: ${learned.size} / 26`;
+}
+
+for(let letter in words){
+    let box = document.createElement("div");
+    box.className = "box";
+    box.innerText = letter;
+
+    box.onclick = function(){
+
+        // mark learned
+        learned.add(letter);
+        updateProgress();
+
+        // animation
+        box.classList.add("active");
+
+        setTimeout(()=>{
+            box.classList.remove("active");
+            box.classList.add("done");
+        },400);
+
+        // voice
+        let text = `${letter} for ${words[letter]}`;
+        let speech = new SpeechSynthesisUtterance(text);
+        speech.lang = "en-US";
+        speech.rate = 0.9;
+        speech.pitch = 1;
+
+        speechSynthesis.speak(speech);
+    }
+
+    container.appendChild(box);
+}
+
+</script>
+
+</body>
+</html>
