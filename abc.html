@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A-Z Kids Pro Learning Game</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    margin:0;
+    background:linear-gradient(135deg,#e3f2fd,#ffffff);
+    text-align:center;
+}
+
+h1{
+    background:#4CAF50;
+    color:#fff;
+    margin:0;
+    padding:15px;
+}
+
+/* TOP DISPLAY */
+#topDisplay{
+    width:90%;
+    margin:15px auto;
+    min-height:320px;
+    background:#fff;
+    border-radius:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+#topEmoji{
+    font-size:180px;
+    line-height:1;
+}
+
+#topText{
+    margin-top:15px;
+    font-size:38px;
+    font-weight:bold;
+}
+
+/* STARS */
+#stars{
+    font-size:24px;
+    font-weight:bold;
+    margin:10px;
+}
+
+/* PROGRESS */
+#progressBar{
+    width:90%;
+    height:22px;
+    background:#ddd;
+    margin:15px auto;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+#fill{
+    width:0%;
+    height:100%;
+    background:#4CAF50;
+    transition:.3s;
+}
+
+/* LETTER GRID */
+.container{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    padding:15px;
+}
+
+.box{
+    height:150px;
+    background:#fff;
+    border-radius:18px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-size:72px;
+    font-weight:bold;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+    transition:.2s;
+}
+
+.boxEmoji{
+    font-size:42px;
+}
+
+.box.active{
+    animation:pop .4s ease;
+    background:#d1ffd6;
+    box-shadow:0 0 20px #4CAF50;
+}
+
+@keyframes pop{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.3) rotate(5deg);}
+    100%{transform:scale(1);}
+}
+
+@media(max-width:600px){
+    .container{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .box{
+        font-size:60px;
+        height:135px;
+    }
+
+    #topEmoji{
+        font-size:140px;
+    }
+
+    #topText{
+        font-size:30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌟 A-Z Kids Pro Learning Game</h1>
+
+<div id="topDisplay">
+    <div id="topEmoji">🔤</div>
+    <div id="topText">Click a Letter</div>
+</div>
+
+<div id="stars">⭐ Stars: 0</div>
+
+<div id="progressBar">
+    <div id="fill"></div>
+</div>
+
+<div class="container" id="letters"></div>
+
+<script>
+
+const words = {
+A:["Apple","🍎"], B:["Ball","⚽"], C:["Cat","🐱"], D:["Dog","🐶"],
+E:["Elephant","🐘"], F:["Fish","🐟"], G:["Goat","🐐"], H:["Hen","🐔"],
+I:["Ice Cream","🍦"], J:["Jug","🫗"], K:["Kite","🪁"], L:["Lion","🦁"],
+M:["Monkey","🐒"], N:["Nest","🪺"], O:["Orange","🍊"], P:["Parrot","🦜"],
+Q:["Queen","👑"], R:["Rabbit","🐰"], S:["Sun","☀️"], T:["Tiger","🐯"],
+U:["Umbrella","☂️"], V:["Violin","🎻"], W:["Watch","⌚"], X:["X-Ray","🩻"],
+Y:["Yak","🐂"], Z:["Zebra","🦓"]
+};
+
+let stars = 0;
+let learned = new Set();
+
+const container = document.getElementById("letters");
+const fill = document.getElementById("fill");
+const starsText = document.getElementById("stars");
+const topEmoji = document.getElementById("topEmoji");
+const topText = document.getElementById("topText");
+
+function updateUI(){
+    fill.style.width = (learned.size/26)*100 + "%";
+    starsText.innerHTML = "⭐ Stars: " + stars;
+}
+
+function showTop(letter){
+    topEmoji.innerHTML = words[letter][1];
+    topText.innerHTML = letter + " for " + words[letter][0];
+}
+
+for(let letter in words){
+
+    let box = document.createElement("div");
+    box.className = "box";
+
+    box.innerHTML = `
+        <div>${letter}</div>
+        <div class="boxEmoji">${words[letter][1]}</div>
+    `;
+
+    box.onclick = ()=>{
+
+        if(!learned.has(letter)){
+            learned.add(letter);
+            stars += 5;
+        }
+
+        updateUI();
+        showTop(letter);
+
+        box.classList.add("active");
+        setTimeout(()=>{
+            box.classList.remove("active");
+        },400);
+
+        speechSynthesis.cancel();
+
+        let speech = new SpeechSynthesisUtterance(
+            letter + " for " + words[letter][0]
+        );
+
+        speech.lang = "en-US";
+        speech.rate = 0.8;
+        speech.pitch = 1.1;
+
+        speechSynthesis.speak(speech);
+    };
+
+    container.appendChild(box);
+}
+
+</script>
+
+</body>
+</html>
