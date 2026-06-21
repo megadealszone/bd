@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Download List</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family: SolaimanLipi, Arial, sans-serif;
+            background:#113f2c;
+            padding-top:60px;
+        }
+
+        header{
+            background:#0d6efd;
+            color:white;
+            padding:0 20px;
+            text-align:center;
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            z-index:1000;
+            height:60px;
+            overflow:hidden;
+        }
+
+        .top-nav{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:12px;
+            margin-bottom:0;
+            height:100%;
+        }
+
+        .nav-logo{
+            color:white;
+            text-decoration:none;
+            font-weight:700;
+            padding:10px 16px;
+            border:1px solid rgba(255,255,255,.6);
+            border-radius:8px;
+            background:rgba(255,255,255,.08);
+        }
+
+        .nav-links{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .nav-links a{
+            color:white;
+            text-decoration:none;
+            padding:10px 14px;
+            border-radius:8px;
+            transition:background .2s;
+        }
+
+        .nav-links a:hover{
+            background:rgba(255,255,255,.12);
+        }
+
+        .nav-button{
+            display:inline-block;
+            background:#198754;
+            color:white;
+            padding:10px 18px;
+            border-radius:8px;
+            text-decoration:none;
+            font-weight:600;
+        }
+
+        .nav-button:hover{
+            background:#157347;
+        }
+
+        .container{
+            width:90%;
+            margin:30px auto;
+        }
+
+        .search-box{
+            width:100%;
+            padding:12px;
+            margin-bottom:20px;
+            border:1px solid #ccc;
+            border-radius:6px;
+        }
+
+        .table-container{
+            max-height: calc(44px * 15);
+            overflow-y:auto;
+            overflow-x:auto;
+            border:1px solid #2bf5c9;
+            border-radius:8px;
+            background:rgb(228, 215, 215);
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            min-width:600px;
+        }
+
+        th{
+            background:#0d6efd;
+            color:white;
+            position:sticky;
+            top:0;
+            z-index:10;
+        }
+
+        th,td{
+            border:1px solid #ddd;
+            padding:12px;
+            text-align:center;
+        }
+
+        tr:nth-child(even){
+            background:#f2f2f2;
+        }
+
+        .btn{
+            background:#198754;
+            color:white;
+            border:none;
+            padding:8px 15px;
+            cursor:pointer;
+            border-radius:5px;
+        }
+
+        .btn:hover{
+            background:#157347;
+        }
+
+        .contact-info{
+            display:flex;
+            justify-content:space-between;
+            gap:20px;
+            background:rgb(122, 247, 240);
+            padding:30px;
+            margin:0px;
+            border-radius:10px;
+        }
+
+        .contact-box{
+            flex:1;
+            text-align:left;
+        }
+
+        .contact-info h2{
+            margin-bottom:15px;
+        }
+
+        .contact-info p{
+            margin:8px 0;
+        }
+
+        footer{
+            background:#212529;
+            color:white;
+            text-align:center;
+            padding:20px;
+        }
+
+        footer a{
+            color:#ffc107;
+            text-decoration:none;
+        }
+
+        footer a:hover{
+            text-decoration:underline;
+        }
+
+        .modal{
+            display:none;
+            position:fixed;
+            left:0;
+            top:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,.5);
+            justify-content:center;
+            align-items:center;
+            z-index:9999;
+        }
+
+        .modal-box{
+            background:white;
+            width:300px;
+            padding:20px;
+            text-align:center;
+            border-radius:10px;
+            margin:0;
+        }
+
+        .modal-box input{
+            width:100%;
+            padding:10px;
+            margin-top:10px;
+        }
+
+        .table-container::-webkit-scrollbar{
+            width:10px;
+        }
+
+        .table-container::-webkit-scrollbar-track{
+            background:#f1f1f1;
+        }
+
+        .table-container::-webkit-scrollbar-thumb{
+            background:#0d6efd;
+            border-radius:10px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover{
+            background:#084298;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <nav class="top-nav">
+        <a class="nav-logo" href="sof.html">Mega Deals Zone</a>
+        <div class="nav-links">
+            <a href="sof.html">Home</a>
+            <a href="#software-list">Software List</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+
+    <div class="container" id="software-list">
+
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 সফটওয়্যার খুঁজুন..." onkeyup="searchTable()">
+
+        <div class="table-container">
+
+            <table id="softwareTable">
+                <thead>
+                    <tr>
+                        <th>Serial</th>
+                        <th>Software Name</th>
+                        <th>Version</th>
+                        <th>Download</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Adobe Photoshop</td>
+                        <td>CS8</td>
+                        <td><button class="btn" onclick="openModal('link1')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Adobe Photoshop</td>
+                        <td>2020</td>
+                        <td><button class="btn" onclick="openModal('link2')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>KM Player</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link3')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Bijoy Bayanno</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link4')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Microsoft Office</td>
+                        <td>2019</td>
+                        <td><button class="btn" onclick="openModal('link5')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Adobe Photoshop</td>
+                        <td>CS8</td>
+                        <td><button class="btn" onclick="openModal('link1')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Adobe Photoshop</td>
+                        <td>2020</td>
+                        <td><button class="btn" onclick="openModal('link2')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>KM Player</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link3')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Bijoy Bayanno</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link4')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Microsoft Office</td>
+                        <td>2019</td>
+                        <td><button class="btn" onclick="openModal('link5')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Adobe Photoshop</td>
+                        <td>CS8</td>
+                        <td><button class="btn" onclick="openModal('link1')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Adobe Photoshop</td>
+                        <td>2020</td>
+                        <td><button class="btn" onclick="openModal('link2')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>KM Player</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link3')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Bijoy Bayanno</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link4')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Microsoft Office</td>
+                        <td>2019</td>
+                        <td><button class="btn" onclick="openModal('link5')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Adobe Photoshop</td>
+                        <td>CS8</td>
+                        <td><button class="btn" onclick="openModal('link1')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Adobe Photoshop</td>
+                        <td>2020</td>
+                        <td><button class="btn" onclick="openModal('link2')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>KM Player</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link3')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Bijoy Bayanno</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link4')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Microsoft Office</td>
+                        <td>2019</td>
+                        <td><button class="btn" onclick="openModal('link5')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Adobe Photoshop</td>
+                        <td>CS8</td>
+                        <td><button class="btn" onclick="openModal('link1')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Adobe Photoshop</td>
+                        <td>2020</td>
+                        <td><button class="btn" onclick="openModal('link2')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>KM Player</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link3')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Bijoy Bayanno</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link4')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Microsoft Office</td>
+                        <td>2019</td>
+                        <td><button class="btn" onclick="openModal('link5')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Adobe Photoshop</td>
+                        <td>CS8</td>
+                        <td><button class="btn" onclick="openModal('link1')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Adobe Photoshop</td>
+                        <td>2020</td>
+                        <td><button class="btn" onclick="openModal('link2')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>KM Player</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link3')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Bijoy Bayanno</td>
+                        <td>Latest</td>
+                        <td><button class="btn" onclick="openModal('link4')">Download</button></td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Microsoft Office</td>
+                        <td>2019</td>
+                        <td><button class="btn" onclick="openModal('link5')">Download</button></td>
+                    </tr>
+                    <!-- 🔥 এখানে যত খুশি row যোগ করো (25+ হলে auto scroll হবে) -->
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+</main>
+
+<section class="contact-info">
+    <div class="contact-box">
+        <h3>🏢 Institution</h3>
+        <p>MEGA DEALS ZONE</p>
+    </div>
+    <div class="contact-box">
+        <h3>📍 Address</h3>
+        <p>Bangladesh</p>
+    </div>
+    <div class="contact-box">
+        <h3>📞 Contact</h3>
+        <p>017XXXXXXXX</p>
+        <p>megadealszone@gmail.com</p>
+    </div>
+</section>
+
+<footer>
+    <p>© 2026 Software Download Center</p>
+    <a href="sof.html">🏠 Home</a>
+</footer>
+
+<div class="modal" id="modal">
+    <div class="modal-box">
+        <h3>🔒 Password দিন</h3>
+        <input type="password" id="password" placeholder="Enter Password">
+        <br><br>
+        <button class="btn" onclick="checkPassword()">Submit</button>
+    </div>
+</div>
+
+<script>
+    let downloadLink = "";
+
+    function openModal(link){
+        downloadLink = link;
+        document.getElementById("modal").style.display = "block";
+        document.getElementById("modal").style.display = "flex";
+    }
+
+    function checkPassword(){
+        let password = document.getElementById("password").value;
+        if(password === "5101"){
+            window.location.href = downloadLink;
+        }else{
+            alert("ভুল Password!");
+        }
+    }
+
+    function searchTable(){
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toUpperCase();
+        let table = document.getElementById("softwareTable");
+        let tr = table.getElementsByTagName("tr");
+        for(let i=1; i<tr.length; i++){
+            let td = tr[i].getElementsByTagName("td")[1];
+            if(td){
+                let txtValue = td.textContent || td.innerText;
+                if(txtValue.toUpperCase().indexOf(filter) > -1){
+                    tr[i].style.display = "";
+                }else{
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    window.onclick = function(event){
+        let modal = document.getElementById("modal");
+        if(event.target == modal){
+            modal.style.display = "none";
+        }
+    }
+
+    function toggleMenu(){
+        document.getElementById("mobileMenu")?.classList.toggle("active");
+    }
+</script>
+
+</body>
+</html>
