@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>মোবাইল ফ্রেম ভিডিও রেন্ডার</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #fafafa;
+      color: #1f2937;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #e0f2fe 0%, #f8fafc 40%, #ffffff 100%);
+    }
+
+    .app-shell {
+      width: min(100%, 1080px);
+      margin: 24px;
+      padding: 24px;
+      border-radius: 28px;
+      background: #ffffff;
+      box-shadow: 0 20px 80px rgba(15, 23, 42, 0.08);
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+      margin: 0;
+      line-height: 1.1;
+    }
+
+    header p {
+      margin: 0;
+      color: #475569;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 1fr) 360px;
+    }
+
+    .panel {
+      padding: 20px;
+      border-radius: 24px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .frames {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .frame-choice {
+      border: 1px solid transparent;
+      border-radius: 18px;
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 150ms ease, border-color 150ms ease, background 150ms ease;
+      background: #fff;
+    }
+
+    .frame-choice:hover,
+    .frame-choice input:checked + .frame-choice {
+      border-color: #60a5fa;
+      transform: translateY(-1px);
+      background: #eff6ff;
+    }
+
+    .frame-choice input {
+      accent-color: #2563eb;
+    }
+
+    .frame-label {
+      display: grid;
+      gap: 4px;
+    }
+
+    .frame-label strong {
+      font-size: 0.95rem;
+    }
+
+    .frame-label span {
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+
+    .controls {
+      display: grid;
+      gap: 14px;
+    }
+
+    .file-input {
+      display: grid;
+      gap: 8px;
+    }
+
+    .file-input label {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .file-input input[type=file] {
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      font-size: 0.95rem;
+      color: #0f172a;
+    }
+
+    button,
+    .render-button {
+      min-height: 48px;
+      border: none;
+      border-radius: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 150ms ease, box-shadow 150ms ease;
+    }
+
+    .render-button {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.22);
+    }
+
+    .cancel-button {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      box-shadow: 0 12px 30px rgba(239, 68, 68, 0.22);
+    }
+
+    .cancel-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .render-button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .render-button:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+    }
+
+    .toggle-row label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .background-theme {
+      display: grid;
+      gap: 10px;
+      padding: 14px 0 0;
+    }
+
+    .background-theme .section-title {
+      margin: 0;
+    }
+
+    .background-theme .file-input input[type=file] {
+      width: 100%;
+    }
+
+    .background-theme small {
+      color: #475569;
+      font-size: 0.85rem;
+    }
+
+    .toggle-row small {
+      color: #64748b;
+    }
+
+    .download-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 16px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #17418e;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .status {
+      color: #475569;
+      font-size: 0.95rem;
+      min-height: 1.2em;
+    }
+
+    .preview-shell {
+      display: grid;
+      gap: 18px;
+    }
+
+    .frame-preview {
+      position: relative;
+      width: 100%;
+      padding-top: 200%;
+      border-radius: 38px;
+      background: linear-gradient(180deg, #eef2ff 0%, #fff 100%);
+      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+    }
+
+    .frame-inner {
+      position: absolute;
+      inset: 12px;
+      border-radius: 32px;
+      padding: 14px;
+      background: #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .frame-inner::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .video-stage {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      overflow: hidden;
+      border-radius: 22px;
+      background: #0f172a;
+      display: grid;
+      place-items: center;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .video-stage video {
+      width: calc(100% - 20px);
+      height: calc(100% - 20px);
+      object-fit: cover;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .output-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .progress-container {
+      width: 100%;
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2563eb, #0ea5e9);
+      transition: width 200ms ease;
+    }
+
+    .progress-label {
+      font-size: 0.9rem;
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div>
+        <h1>মোবাইল ফ্রেম ভিডিও রেন্ডার</h1>
+        <p>ভিডিও আপলোড করুন, মোবাইল ফ্রেম বাছুন, অটো ফিট চালু করুন, আর নতুন ভিডিও ডাউনলোড করুন।</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <section class="panel">
+        <div class="controls">
+          <div>
+            <p class="section-title">📱 মোবাইল ফ্রেম নির্বাচন</p>
+            <div class="frames">
+              <label class="frame-choice" for="frame-white">
+                <input type="radio" name="frame" id="frame-white" value="white" checked />
+                <div class="frame-label">
+                  <strong>সাদা ফ্রেম</strong>
+                  <span>লাইট মোড ফিল</span>
+                </div>
+              </label>
+              <label class="frame-choice" for="frame-black">
+                <input type="radio" name="frame" id="frame-black" value="black" />
+                <div class="frame-label">
+                  <strong>কালো ফ্রেম</strong>
+                  <span>ডার্ক মোড ফিল</span>
+                </div>
+              </label>
+              <label class="frame-choice" for="frame-gold">
+                <input type="radio" name="frame" id="frame-gold" value="gold" />
+                <div class="frame-label">
+                  <strong>গোল্ড ফ্রেম</strong>
+                  <span>প্রিমিয়াম লুক</span>
+                </div>
+              </label>
+            </div>
+            <div class="background-theme">
+              <label class="section-title" for="background-upload">🎨 মোবাইল ব্যাকগ্রাউন্ড থিম</label>
+              <div class="file-input">
+                <input type="file" id="background-upload" accept="image/*" />
+                <small>আপনার থিম ইমেজ আপলোড করুন, এটি মোবাইল স্ক্রিনের পিছনে দেখা যাবে।</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="file-input">
+            <label for="video-upload">🎥 ভিডিও আপলোড</label>
+            <input type="file" id="video-upload" accept="video/*" />
+          </div>
+
+          <div class="toggle-row">
+            <label>
+              <span>🖼️ ভিডিও অটো ফিট</span>
+              <input id="auto-fit" type="checkbox" checked />
+            </label>
+            <small>স্কেল করুন স্ক্রিনে ফিট করতে</small>
+          </div>
+
+          <button class="render-button" id="render-button" disabled>🎬 মোবাইল ফ্রেমসহ নতুন ভিডিও রেন্ডার</button>
+          <button class="render-button cancel-button hidden" id="cancel-button">⏹️ রেন্ডার বাতিল করুন</button>
+
+          <div class="status" id="status">আপলোডের পর রেন্ডার বোতাম চালু হবে।</div>
+        </div>
+      </section>
+
+      <aside class="panel preview-shell">
+        <p class="section-title">📱 প্রিভিউ</p>
+        <div class="frame-preview" id="frame-preview">
+          <div class="frame-inner" id="frame-inner">
+            <div class="video-stage" id="video-stage">
+              <video id="preview-video" muted playsinline controls></video>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-info">
+          <a id="download-link" class="download-link hidden" download="mobile-frame-render.webm">⬇️ Render হওয়া ভিডিও ডাউনলোড</a>
+          <span id="render-time" class="status"></span>
+        </div>
+        <div class="progress-container hidden" id="render-progress">
+          <div class="progress-track">
+            <div class="progress-fill" id="render-progress-fill"></div>
+          </div>
+          <div class="progress-label" id="render-progress-label">০%</div>
+        </div>
+      </aside>
+    </div>
+
+    <video id="source-video" class="hidden" playsinline muted></video>
+    <canvas id="render-canvas" class="hidden"></canvas>
+  </div>
+
+  <script>
+    const framePreview = document.getElementById('frame-preview');
+    const frameInner = document.getElementById('frame-inner');
+    const videoStage = document.getElementById('video-stage');
+    const previewVideo = document.getElementById('preview-video');
+    const sourceVideo = document.getElementById('source-video');
+    const canvas = document.getElementById('render-canvas');
+    const fileInput = document.getElementById('video-upload');
+    const backgroundUpload = document.getElementById('background-upload');
+    const autoFitCheckbox = document.getElementById('auto-fit');
+    const renderButton = document.getElementById('render-button');
+    const cancelButton = document.getElementById('cancel-button');
+    const statusEl = document.getElementById('status');
+    const downloadLink = document.getElementById('download-link');
+    const renderTime = document.getElementById('render-time');
+    const progressContainer = document.getElementById('render-progress');
+    const progressFill = document.getElementById('render-progress-fill');
+    const progressLabel = document.getElementById('render-progress-label');
+
+    const frameClasses = {
+      white: { background: '#f8fafc', inner: '#0f172a' },
+      black: { background: '#111827', inner: '#0f172a' },
+      gold: { background: '#fde68a', inner: '#0f172a' }
+    };
+
+    let currentFrame = 'white';
+    let currentBlob = null;
+    let renderStart = null;
+    let backgroundThemeImage = null;
+    let isRendering = false;
+    let recorder = null;
+
+    function setThemeBackground(url) {
+      videoStage.style.backgroundImage = url ? `url(${url})` : 'none';
+    }
+
+    function setFrame(frame) {
+      currentFrame = frame;
+      const frameStyle = frameClasses[frame] || frameClasses.white;
+      framePreview.style.backgroundColor = frameStyle.background;
+      framePreview.style.backgroundImage = 'none';
+      frameInner.style.background = frameStyle.inner;
+      if (!backgroundThemeImage) {
+        setThemeBackground('');
+      }
+    }
+
+    function setStatus(message, success = true) {
+      statusEl.textContent = message;
+      statusEl.style.color = success ? '#475569' : '#b91c1c';
+    }
+
+    function getSupportedMimeType() {
+      const types = [
+        'video/webm;codecs=vp9',
+        'video/webm;codecs=vp8',
+        'video/webm',
+        'video/mp4'
+      ];
+      return types.find((type) => MediaRecorder.isTypeSupported(type)) || '';
+    }
+
+    function roundRectPath(ctx, x, y, width, height, radius) {
+      const r = Math.min(radius, width / 2, height / 2);
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + width - r, y);
+      ctx.arcTo(x + width, y, x + width, y + r, r);
+      ctx.lineTo(x + width, y + height - r);
+      ctx.arcTo(x + width, y + height, x + width - r, y + height, r);
+      ctx.lineTo(x + r, y + height);
+      ctx.arcTo(x, y + height, x, y + height - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
+      ctx.closePath();
+    }
+
+    function updateVideoFit() {
+      previewVideo.style.objectFit = autoFitCheckbox.checked ? 'cover' : 'contain';
+    }
+
+    function loadBackgroundTheme(file) {
+      if (!file) {
+        backgroundThemeImage = null;
+        setThemeBackground('');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const url = reader.result;
+        const image = new Image();
+        image.onload = () => {
+          backgroundThemeImage = image;
+          setThemeBackground(url);
+        };
+        image.src = url;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function setProgress(percent) {
+      const value = Math.max(0, Math.min(100, percent));
+      progressFill.style.width = `${value}%`;
+      progressLabel.textContent = `${Math.round(value)}%`;
+    }
+
+    function showProgress(show) {
+      progressContainer.classList.toggle('hidden', !show);
+    }
+
+    function resetDownload() {
+      currentBlob = null;
+      downloadLink.classList.add('hidden');
+      downloadLink.href = '#';
+      renderTime.textContent = '';
+      showProgress(false);
+      setProgress(0);
+    }
+
+    function cancelRender() {
+      if (isRendering && recorder) {
+        isRendering = false;
+        recorder.stop();
+        sourceVideo.pause();
+        sourceVideo.currentTime = 0;
+        cancelButton.classList.add('hidden');
+        renderButton.disabled = false;
+        showProgress(false);
+        setProgress(0);
+        setStatus('রেন্ডার বাতিল করা হয়েছে।', false);
+      }
+    }
+
+    fileInput.addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      resetDownload();
+      setStatus('ভিডিও লোড হচ্ছে...', true);
+      const videoURL = URL.createObjectURL(file);
+      previewVideo.src = videoURL;
+      sourceVideo.src = videoURL;
+      renderButton.disabled = true;
+
+      const previewLoaded = new Promise((resolve) => {
+        previewVideo.addEventListener('loadedmetadata', resolve, { once: true });
+      });
+      const sourceLoaded = new Promise((resolve) => {
+        sourceVideo.addEventListener('loadedmetadata', resolve, { once: true });
+      });
+
+      previewVideo.load();
+      sourceVideo.load();
+
+      await Promise.all([previewLoaded, sourceLoaded]);
+      updateVideoFit();
+      renderButton.disabled = false;
+      setStatus('ভিডিও লোড হয়েছে, এখন রেন্ডার করুন।', true);
+    });
+
+    document.querySelectorAll('input[name="frame"]').forEach((input) => {
+      input.addEventListener('change', (event) => {
+        setFrame(event.target.value);
+      });
+    });
+
+    autoFitCheckbox.addEventListener('change', updateVideoFit);
+    backgroundUpload.addEventListener('change', (event) => {
+      const file = event.target.files?.[0];
+      loadBackgroundTheme(file);
+    });
+
+    async function renderVideoWithFrame() {
+      if (!sourceVideo.src) {
+        setStatus('পূর্বে ভিডিও আপলোড করুন।', false);
+        return;
+      }
+
+      renderButton.disabled = true;
+      resetDownload();
+      setStatus('ভিডিও রেন্ডার করা হচ্ছে… অনুগ্রহ করে অপেক্ষা করুন।', true);
+      showProgress(true);
+      setProgress(0);
+      isRendering = true;
+      cancelButton.classList.remove('hidden');
+      renderStart = performance.now();
+
+      const width = 540;
+      const height = 960;
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        setStatus('কেনও 2D ব্রাউজার কনটেক্সট পাওয়া যায়নি।', false);
+        renderButton.disabled = false;
+        return;
+      }
+
+      function drawFrame() {
+        ctx.clearRect(0, 0, width, height);
+
+        // Phone bezel background
+        const outerX = 30;
+        const outerY = 80;
+        const outerW = width - 60;
+        const outerH = height - 160;
+
+        if (backgroundThemeImage) {
+          const imgW = backgroundThemeImage.width;
+          const imgH = backgroundThemeImage.height;
+          const scale = Math.max(outerW / imgW, outerH / imgH);
+          const drawW = imgW * scale;
+          const drawH = imgH * scale;
+          const drawX = outerX + (outerW - drawW) / 2;
+          const drawY = outerY + (outerH - drawH) / 2;
+          ctx.drawImage(backgroundThemeImage, drawX, drawY, drawW, drawH);
+        } else {
+          ctx.fillStyle = frameClasses[currentFrame]?.background || '#f8fafc';
+          ctx.fillRect(0, 0, width, height);
+        }
+
+        // Screen shadow and border
+        const screenX = 30;
+        const screenY = 80;
+        const screenW = width - 60;
+        const screenH = height - 160;
+        ctx.fillStyle = '#111827';
+        ctx.fillRect(screenX, screenY, screenW, screenH);
+
+        // Video content area
+        const vw = sourceVideo.videoWidth || screenW;
+        const vh = sourceVideo.videoHeight || screenH;
+        let drawW = screenW;
+        let drawH = screenH;
+        if (autoFitCheckbox.checked) {
+          const scale = Math.max(screenW / vw, screenH / vh);
+          drawW = vw * scale;
+          drawH = vh * scale;
+        } else {
+          const scale = Math.min(screenW / vw, screenH / vh);
+          drawW = vw * scale;
+          drawH = vh * scale;
+        }
+        const drawX = screenX + (screenW - drawW) / 2;
+        const drawY = screenY + (screenH - drawH) / 2;
+
+        ctx.save();
+        roundRectPath(ctx, screenX + 6, screenY + 6, screenW - 12, screenH - 12, 24);
+        ctx.clip();
+        ctx.drawImage(sourceVideo, drawX, drawY, drawW, drawH);
+        ctx.restore();
+
+        // Top sensor bar
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillRect(width / 2 - 55, 20, 110, 10);
+      }
+
+      const stream = canvas.captureStream(30);
+      const mimeType = getSupportedMimeType();
+      if (!mimeType) {
+        setStatus('আপনার ব্রাউজারে ভিডিও রেকর্ডিং মাইম টাইপ সমর্থিত নয়।', false);
+        renderButton.disabled = false;
+        cancelButton.classList.add('hidden');
+        isRendering = false;
+        return;
+      }
+      recorder = new MediaRecorder(stream, { mimeType });
+      const chunks = [];
+
+      recorder.ondataavailable = (event) => {
+        if (event.data && event.data.size > 0) {
+          chunks.push(event.data);
+        }
+      };
+
+      const finished = new Promise((resolve, reject) => {
+        recorder.onstop = () => resolve();
+        recorder.onerror = (event) => reject(event.error || new Error('MediaRecorder failed'));
+      });
+
+      sourceVideo.currentTime = 0;
+      sourceVideo.muted = true;
+      sourceVideo.playbackRate = 3.0;
+
+      const updateProgressFromVideo = () => {
+        if (sourceVideo.duration) {
+          setProgress((sourceVideo.currentTime / sourceVideo.duration) * 100);
+        }
+      };
+
+      sourceVideo.addEventListener('timeupdate', updateProgressFromVideo);
+      sourceVideo.addEventListener('ended', () => {
+        setProgress(100);
+      });
+
+      const drawLoop = () => {
+        if (sourceVideo.ended || sourceVideo.paused) {
+          return;
+        }
+        drawFrame();
+        requestAnimationFrame(drawLoop);
+      };
+
+      sourceVideo.onended = () => {
+        recorder.stop();
+      };
+
+      recorder.start();
+      try {
+        await sourceVideo.play();
+      } catch (error) {
+        recorder.stop();
+        setStatus('ভিডিও প্লে করা যাচ্ছে না: ' + (error?.message || 'অজানা ত্রুটি'), false);
+        renderButton.disabled = false;
+        return;
+      }
+      drawLoop();
+
+      try {
+        await finished;
+      } catch (error) {
+        setStatus('ভিডিও রেকর্ডিং ব্যর্থ হয়েছে: ' + error.message, false);
+        renderButton.disabled = false;
+        cancelButton.classList.add('hidden');
+        isRendering = false;
+        return;
+      } finally {
+        sourceVideo.removeEventListener('timeupdate', updateProgressFromVideo);
+      }
+
+      if (!isRendering) {
+        return;
+      }
+
+      const recordedBlob = new Blob(chunks, { type: mimeType });
+      currentBlob = recordedBlob;
+      const blobUrl = URL.createObjectURL(recordedBlob);
+      downloadLink.href = blobUrl;
+      downloadLink.classList.remove('hidden');
+      downloadLink.textContent = '⬇️ Render হওয়া ভিডিও ডাউনলোড';
+      const elapsed = ((performance.now() - renderStart) / 1000).toFixed(1);
+      renderTime.textContent = `রেন্ডার শেষ: ${elapsed} সেকেন্ড`;
+      setStatus('রেন্ডার সম্পন্ন হয়েছে। ডাউনলোড করুন।', true);
+      renderButton.disabled = false;
+      cancelButton.classList.add('hidden');
+      isRendering = false;
+    }
+
+    renderButton.addEventListener('click', renderVideoWithFrame);
+    cancelButton.addEventListener('click', cancelRender);
+
+    setFrame(currentFrame);
+    updateVideoFit();
+  </script>
+</body>
+</html>
