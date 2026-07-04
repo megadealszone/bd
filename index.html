@@ -28,13 +28,11 @@
 
     /* HEADER */
     header{
-      background: linear-gradient(90deg,#0f2027,#203a43,#2c5364);
+      background:#06437a;
       box-shadow:0 2px 10px rgba(0,0,0,0.3);
       position:relative;
       z-index:999;
       width:100%;
-      border-top-right-radius:20px;
-      border-top-left-radius:20px;
     }
 
     .navbar{
@@ -141,9 +139,9 @@ section{
       white-space:nowrap;
     }
 
-    .menu li a:hover{
-      background:linear-gradient(90deg,#ff512f,#dd2476);
-      color:#fff;
+    .menu li a:hover,
+    .menu li a:focus{
+      color:rgb(0, 195, 255);
     }
 
     /* SUB MENU */
@@ -152,7 +150,7 @@ section{
       position:absolute;
       top:100%;
       left:0;
-      background:#203a43;
+      background:#022849;
       min-width:220px;
       list-style:none;
       z-index:1000;
@@ -178,7 +176,7 @@ section{
     .submenu .submenu{
       top:0;
       left:100%;
-      background:#2c5364;
+      background:#06437a;
     }
 
     /* HERO SECTION */
@@ -1607,7 +1605,7 @@ setInterval(updateClock,1000);
       slides[0].classList.add('active');
       slides[1].style.backgroundImage = `url('${heroImages[1]}')`;
       imageIndex = 0;
-      setInterval(showNextHeroImage, 10000);
+      setInterval(showNextHeroImage, 9999);
     }
 
     window.addEventListener('DOMContentLoaded', initHeroSlider);
