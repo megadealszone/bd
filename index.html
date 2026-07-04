@@ -60,6 +60,7 @@ html, body{
     margin: 0;
     padding: 0;
     width: 100%;
+    max-width: 100vw;
     overflow-x: hidden;
     min-height: 100vh;
 }
@@ -68,6 +69,11 @@ html, body{
 .container{
     width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 /* ইমেজ responsive */
@@ -133,7 +139,7 @@ section{
       padding:18px 22px;
       color:white;
       text-decoration:none;
-      transition:0.3s;
+      transition:0.3s background,color;
       font-size:16px;
       font-weight:bold;
       white-space:nowrap;
@@ -141,7 +147,8 @@ section{
 
     .menu li a:hover,
     .menu li a:focus{
-      color:rgb(0, 195, 255);
+      background:rgba(255,255,255,0.12);
+      color:red;
     }
 
     /* SUB MENU */
@@ -155,7 +162,10 @@ section{
       list-style:none;
       z-index:1000;
       animation:fadeIn 0.4s ease;
+      
     }
+
+    
 
     .submenu li{
       position:relative;
@@ -163,10 +173,18 @@ section{
     }
 
     .submenu li a{
+      display:block;
       padding:14px 18px;
       border-bottom:1px solid rgba(255,255,255,0.1);
       width:100%;
+      text-align:left;
     }
+
+    /* সাব-মেনুর টেক্সট সবসময় বামে অ্যালাইন রাখার জন্য */
+.submenu li a {
+    justify-content: flex-start !important;
+    text-align: left !important;
+}
 
     .menu li:hover > .submenu{
       display:block;
@@ -352,6 +370,7 @@ section{
         max-height:0;
         overflow:hidden;
         background:#203a43;
+        box-sizing:border-box;
       }
 
       .menu.active{
@@ -459,12 +478,13 @@ section{
 
 .product-promo{
     width:100%;
-    max-width:1200px;
-    margin:0 auto;
-    padding:20px;
+    max-width:none;
+    margin:0;
+    padding:20px 15px;
     background:#dde5ed;
     text-align:left;
     border-radius:18px;
+    box-sizing:border-box;
 }
 
 .product-promo h2{
@@ -475,86 +495,34 @@ section{
 }
 
 .dashboard-container{
-    max-width:1200px;
-    margin:auto;
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:0 10px;
     display:grid;
     gap:20px;
+    box-sizing:border-box;
 }
 
-.top-notice{
-    background:#fff;
-    padding:0 10px;
-    border-left:5px solid #007a3d;
-    border-radius:6px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.05);
-    position:relative;
-    margin-bottom:0;
-    min-height:51px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-
-#news-ticker{
-  flex:1;
-  min-width:0;
-  overflow:hidden;
-  margin:0;
-  padding-left:0;
-  position:relative;
-  background:#fff;
-  border-radius:8px;
-  box-shadow:0 2px 6px rgba(0,0,0,0.06);
-  border:1px solid rgba(0,0,0,0.04);
-  height:51px;
-  display:flex;
-  align-items:center;
-}
-
-#breaking-news-wrapper{
-    display:flex;
-    width:max-content;
-    animation: tickerScroll 120s linear infinite;
-}
-
-.top-notice{
-    background:#fff;
-    padding:0 10px;
-    border-left:5px solid #007a3d;
-    border-radius:6px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.05);
-    position:relative;
-    margin-bottom:0;
-    min-height:51px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    transform: translateY(-8px);
-}
-
-.btn-green{
-    background-color:#007a3d;
-    color:#fff;
-    border:none;
-    padding:8px 14px;
-    border-radius:4px;
-    cursor:pointer;
-    font-size:14px;
-    position:static;
-    margin-left:18px;
-}
 
 .dashboard-grid{
     display:grid;
-    grid-template-columns:3fr 1fr;
+    grid-template-columns:minmax(0,3fr) minmax(0,1fr);
     gap:20px;
+    width:100%;
 }
 
 .main-content{
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:repeat(2,minmax(0,1fr));
     gap:20px;
     align-content:start;
+    width:100%;
+}
+
+.card,
+.sidebar-widget{
+    min-width:0;
 }
 
 .card{
@@ -563,6 +531,7 @@ section{
     padding:20px;
     box-shadow:0 2px 8px rgba(0,0,0,0.06);
     border:1px solid #eef2f5;
+    box-sizing:border-box;
 }
 
 .card-header{
@@ -644,8 +613,9 @@ section{
 }
 
 .profile-box img{
-    width:2.5in;
-    height:3in;
+    width:100%;
+    max-width:260px;
+    height:auto;
     object-fit:cover;
     border:4px solid #007a3d;
     padding:6px;
@@ -765,21 +735,6 @@ section{
         grid-template-columns:1fr;
     }
 
-    .top-notice{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:12px;
-    }
-
-    #news-ticker{
-        width:100%;
-    }
-
-    .btn-green{
-        margin-left:0;
-        width:100%;
-    }
-
     .contact-info{
         grid-template-columns:1fr;
     }
@@ -792,11 +747,6 @@ section{
 
     .dashboard-container{
         padding:0 10px;
-    }
-
-    .top-notice{
-        padding:10px;
-        border-radius:14px;
     }
 
     .card,
@@ -831,6 +781,118 @@ section{
         padding:30px 15px;
     }
 }
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      left:0;
+      right:0;
+    }
+
+    .menu li a{
+      padding:16px 20px;
+      min-height:48px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .menu li a:hover,
+    .menu li a:focus{
+      background:rgba(255,255,255,0.12);
+      color:red;
+    }
+
+.submenu li a{
+      color:#fff;
+      background:transparent;
+      justify-content: flex-start; /* এটি টেক্সট বামে নিয়ে আসবে */
+    }
+
+    .submenu li a:hover{
+      background:rgba(255,255,255,0.08);
+      color:rgb(1, 233, 202);
+    }
+
+    .hero-slide{
+      background-position:center center;
+    }
+
+    .hero-content{
+      width:100%;
+      max-width:720px;
+      padding:20px;
+    }
+
+    @media(max-width:992px){
+      .hero-content h1{
+        font-size:44px;
+      }
+
+      .hero-content p{
+        font-size:18px;
+      }
+    }
+
+    @media(max-width:768px){
+      .navbar{
+        flex-direction:column;
+        align-items:flex-start;
+        padding:10px 15px;
+      }
+
+      .menu{
+        width:100%;
+      }
+
+      .menu li a{
+        padding:16px 18px;
+        font-size:15px;
+      }
+
+      .submenu{
+        position:static;
+        width:100%;
+        background:#06437a;
+      }
+
+      .submenu .submenu{
+        left:0;
+      }
+
+      .hero{
+        min-height:360px;
+        height:auto;
+        padding:40px 15px;
+      }
+
+      .content{
+        padding:30px 15px;
+      }
+    }
+
+    @media(max-width:600px){
+      .hero-content h1{
+        font-size:30px;
+      }
+
+      .hero-content p{
+        font-size:15px;
+      }
+
+      .menu li a{
+        font-size:14px;
+        padding:14px 16px;
+      }
+
+      .contact-info{
+        grid-template-columns:1fr;
+      }
+    }
 /* Contact Info Section CSS End */
 
 
@@ -1033,134 +1095,7 @@ section{
 
 <!-- LATEST NEWS START -->
 <!-- Bengali News Ticker Start -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali&display=swap" rel="stylesheet" />
 
-<style>
-#news-ticker {
-  background: transparent;
-  color: #000;
-  padding: 0;
-  overflow: hidden;
-  font-size: 18px;
-  font-weight: bold;
-  font-family: 'Noto Sans Bengali', Arial, sans-serif;
-  border: none;
-  border-radius: 5px;
-  position: relative;
-  min-height: 60px;
-  width: 1000px;
-  max-width: 100%;
-  margin: 0 auto;
-}
-
-.breaking-inner {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-}
-
-
-#breaking-news-wrapper{
-  display:inline-flex;
-  width:max-content;
-  animation: tickerScroll 220s linear infinite;
-  align-items:center;
-  will-change: transform;
-}
-
-#breaking-news-container {
-  display: flex;
-  flex: 0 0 auto;
-  gap: 30px;
-  white-space: nowrap;
-  align-items:center;
-  line-height:1.2;
-  font-size:18px;
-}
-
-/* small responsive tweak */
-@media(max-width:900px){
-  #news-ticker{width:100%; padding-left:60px}
-}
-
-#breaking-news-container a {
-  text-decoration: none;
-  color: black;
-  padding: 0 5px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  background: transparent;
-}
-
-#breaking-news-container a:hover {
-  color: red;
-  text-decoration:none;
-}
-
-#breaking-news-wrapper:hover {
-  animation-play-state: paused;
-}
-
-@keyframes tickerScroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-</style>
-
-<script>
-function decodeHTMLEntities(text) {
-  const txt = document.createElement("textarea");
-  txt.innerHTML = text;
-  return txt.value;
-}
-
-async function fetchRSS(url, count = 10) {
-  const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
-  const resp = await fetch(proxy + encodeURIComponent(url));
-  const data = await resp.json();
-  return (data.items || []).slice(0, count);
-}
-
-async function loadNews() {
-  try {
-    const sources = await Promise.all([
-      fetchRSS('https://www.prothomalo.com/feed', 5),
-      fetchRSS('https://thedhakapost.com/rss.xml', 5),
-      fetchRSS('https://www.jagonews24.com/rss/allnews', 5),
-      fetchRSS('https://feeds.bbci.co.uk/bengali/rss.xml', 5),
-      fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5)
-    ]);
-
-    const all = sources.flat();
-
-    const headlines = all.map(item => {
-      const title = decodeHTMLEntities(item.title);
-      return `<a href="${item.link}" target="_blank" rel="noopener noreferrer">🟢 ${title}</a>`;
-    });
-
-    const finalHTML = headlines.join(' 🔸 ');
-
-    document.querySelectorAll('#breaking-news-container').forEach(container => {
-      container.innerHTML = finalHTML;
-    });
-
-  } catch (err) {
-    console.error('News load error:', err);
-    document.querySelectorAll('#breaking-news-container').forEach(container => {
-      container.textContent = '❌ নিউজ পাওয়া যায়নি!';
-    });
-  }
-}
-
-loadNews();
-</script>
-<!-- Bengali News Ticker End -->
-<!-- LATEST NEWS END -->
 
 <!-- DIGITAL CLOCK START -->
 <!-- Desital Clock Start Point------------------------Start -👉----------------- -->
@@ -1228,7 +1163,7 @@ loadNews();
 /* TRACK */
 .track{
     display:flex;
-    width:max-content;
+    width:auto;
     animation:scroll 35s linear infinite;
     will-change: transform;
 }
@@ -1245,8 +1180,8 @@ loadNews();
 /* ITEM */
 .item{
     display:flex;
-    gap:50px;
-    padding:0 60px;
+    gap:30px;
+    padding:0 20px;
     font-size:clamp(12px, 2vw, 17px);
     white-space:nowrap;
     flex-shrink:0;
@@ -1349,18 +1284,6 @@ setInterval(updateClock,1000);
 <section class="product-promo">
 
     <div class="dashboard-container">
-
-        <div class="top-notice">
-            <div id="news-ticker">
-              <div class="breaking-inner">
-                <div id="breaking-news-wrapper">
-                  <div id="breaking-news-container">🔄 লোড হচ্ছে...</div>
-                  <div id="breaking-news-container" class="clone">🔄 লোড হচ্ছে...</div>
-                </div>
-              </div>
-            </div>
-            <button class="btn-green">সকল খবর</button>
-        </div>
 
         <div class="dashboard-grid">
 
