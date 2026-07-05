@@ -713,30 +713,99 @@ section{
     padding:8px 0;
     border-bottom:1px dashed #eee;
     font-size:14px;
-    display:flex;
-    justify-content:space-between;
     cursor:pointer;
+    color:#111;
 }
 
 .link-list li:last-child{
     border-bottom:none;
 }
 
-.link-list li:hover{
-    color:#007a3d;
+.link-list li a{
+    color:#111;
+    text-decoration:none;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    width:100%;
+    transition:color 0.25s ease, font-weight 0.25s ease;
 }
 
-.hotline-box{
-    padding:15px;
+.link-list li:hover,
+.link-list li:hover a,
+.link-list li:hover span{
+    color:#e63946;
+}
+
+.link-list li a:hover{
+    color:#e63946;
+    font-weight:600;
     text-align:center;
     background:#fff;
 }
 
+.hotline-box{
+    padding:20px 15px;
+    background:#f8f9fa;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));
+    gap:15px;
+}
+
+.hotline-item{
+    background:linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+    border:2px solid #e63946;
+    border-radius:12px;
+    padding:16px 12px;
+    text-align:center;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(230, 57, 70, 0.1);
+}
+
+.hotline-item::before{
+    content:"📞";
+    display:block;
+    font-size:24px;
+    margin-bottom:8px;
+    transition:transform 0.3s ease;
+}
+
+.hotline-item:hover{
+    transform:translateY(-5px) scale(1.02);
+    box-shadow:0 8px 20px rgba(230, 57, 70, 0.25);
+    border-color:#d32f2f;
+    background:linear-gradient(135deg, #ffe0e0 0%, #fff3e0 100%);
+}
+
+.hotline-item:hover::before{
+    transform:scale(1.2);
+}
+
+.hotline-item strong{
+    display:block;
+    font-size:11px;
+    color:#333;
+    font-weight:600;
+    margin-bottom:8px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+}
+
 .hotline-number{
-    font-size:28px;
+    font-size:24px;
     color:#e63946;
     font-weight:bold;
-    margin-top:5px;
+    font-family:'Arial', sans-serif;
+    letter-spacing:2px;
+}
+
+.hotline-item:hover .hotline-number{
+    color:#d32f2f;
+    font-size:26px;
 }
 
 .audio-player{
@@ -1134,6 +1203,7 @@ section{
     </nav>
     
   </header>
+<!-- HEADER END -->
 
   
   <!-- HERO -->
@@ -1160,11 +1230,9 @@ section{
   <!-- HERO END -->
 
 <!-- LATEST NEWS START -->
-<!-- Bengali News Ticker Start -->
-
+<!-- LATEST NEWS END -->
 
 <!-- DIGITAL CLOCK START -->
-<!-- Desital Clock Start Point------------------------Start -👉----------------- -->
 
 <style>
 
@@ -1338,22 +1406,19 @@ setInterval(updateClock,1000);
 </script>
 
 
-<!-- Desital Clock End Point ---------------------------END Clock---------------- -->
 <!-- DIGITAL CLOCK END -->
 
   <!-- CONTENT START -->
   <section class="content">
 
     
- <!-- Service Body -----------------শুরু----------------- -->
-
+<!-- SERVICE BODY START -->
 <section class="service-body">
-    <h2>-------------------------------------------------------------------------------------------</h2>
 
     <div class="dashboard-container">
 
         <div class="dashboard-grid">
-<!-- Body content -----------------------------  Start ------------------------------->
+<!-- MAIN CONTENT START -->
             <div class="main-content">
                 
                 <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
@@ -1434,11 +1499,13 @@ setInterval(updateClock,1000);
 
             </div>
 
-<!-- Sidebar Start -->
+<!-- MAIN CONTENT END -->
+<!-- SIDEBAR START -->
 
 
 
             <aside class="sidebar">
+<!-- PROFILE WIDGET 1 START -->
                 <div class="sidebar-widget">
                     <div class="widget-title">মহাপরিচালক ওয়েবসাইট ডিপার্টমেন্ট</div>
                     <div class="profile-box">
@@ -1446,7 +1513,9 @@ setInterval(updateClock,1000);
                         <p>মো: রোমান ইসলাম হাবিব</p>
                     </div>
                 </div>
+<!-- PROFILE WIDGET 1 END -->
 
+<!-- PROFILE WIDGET 2 START -->
                 <div class="sidebar-widget">
                     <div class="widget-title">মহাপরিচালক ওয়েবসাইট ডিপার্টমেন্ট</div>
                     <div class="profile-box">
@@ -1454,25 +1523,32 @@ setInterval(updateClock,1000);
                         <p>মো: রোমান ইসলাম হাবিব</p>
                     </div>
                 </div>
+<!-- PROFILE WIDGET 2 END -->
 
+<!-- INTERNAL E-SERVICES WIDGET START -->
                 <div class="sidebar-widget">
                     <div class="widget-title">অভ্যন্তরীণ ই-সেবাসমূহ</div>
                     <ul class="link-list">
-                        <li><a href="https://ibas.finance.gov.bd"> আইবাস++  </a> <span>➔</span></li>
-                        <li>সেবা+ <span>➔</span></li>
-                        <li>Store Mgt. System <span>➔</span></li>
+                        <li><a href="https://ibas.finance.gov.bd" target="_blank" rel="noopener noreferrer">আইবাস++ <span>➔</span></a></li>
+                        <li><a href="https://www.gov.bd/" target="_blank" rel="noopener noreferrer">সরকারি সেবা <span>➔</span></a></li>
+                        <li><a href="https://services.portal.gov.bd/" target="_blank" rel="noopener noreferrer">সেবা পোর্টাল <span>➔</span></a></li>
+                        <li><a href="https://www.dip.gov.bd/" target="_blank" rel="noopener noreferrer">ডিজিটাল পোর্টাল <span>➔</span></a></li>
+                        <li><a href="https://www.digital.gov.bd/" target="_blank" rel="noopener noreferrer">ডিজিটাল গভর্নমেন্ট <span>➔</span></a></li>
+                        <li><a href="https://www.bangladesh.gov.bd/" target="_blank" rel="noopener noreferrer">বাংলাদেশ gov <span>➔</span></a></li>
                     </ul>
                 </div>
+<!-- INTERNAL E-SERVICES WIDGET END -->
 
+<!-- EMERGENCY HOTLINE WIDGET START -->
   <div class="sidebar-widget">
     <div class="widget-title">জরুরি হটলাইন</div>
 
     <div class="hotline-box">
-          <div class="hotline-item"><strong>দুদক:</strong><div class="hotline-number">১০৬</div></div>
-          <div class="hotline-item"> <strong>জরুরি সেবা:</strong><div class="hotline-number">৯৯৯</div></div>
-          <div class="hotline-item"> <strong>ফায়ার সার্ভিস:</strong> <div class="hotline-number">১০২</div> </div>
-          <div class="hotline-item"> <strong>দূর্যোগ:</strong> <div class="hotline-number">১০৯০</div> </div>
-          <div class="hotline-item"><strong>সরকারি তথ্য ও সেবা:</strong><div class="hotline-number">৩৩৩</div></div>
+          <div class="hotline-item"><strong>দুদক</strong><div class="hotline-number">১০৬</div></div>
+          <div class="hotline-item"> <strong>জরুরি সেবা</strong><div class="hotline-number">৯৯৯</div></div>
+          <div class="hotline-item"> <strong>ফায়ার সার্ভিস</strong> <div class="hotline-number">১০২</div> </div>
+          <div class="hotline-item"> <strong>দূর্যোগ</strong> <div class="hotline-number">১০৯০</div> </div>
+          <div class="hotline-item"><strong>সরকারি তথ্য</strong><div class="hotline-number">৩৩৩</div></div>
     </div>
 </div>
 
@@ -1485,21 +1561,19 @@ setInterval(updateClock,1000);
                         </audio>
                     </div>
                 </div>
+<!-- NATIONAL ANTHEM WIDGET END -->
             </aside>
-
+<!-- SIDEBAR END -->
         </div>
-
     </div>
-
 </section>
-
-<!-- সেবা প্রদান -----------------শেষ----------------- -->
+<!-- SERVICE BODY END -->
 
     </section>
-  <!-- CONTENT END -->
+<!-- CONTENT END -->
 
-  <!-- CONTACT INFO START -->
-  <section class="contact-info">
+<!-- CONTACT INFO START -->
+<section class="contact-info">
     <div class="contact-box">
         <h3>🏢 Institution</h3>
         <p>MEGA DEALS ZONE</p>
@@ -1515,17 +1589,15 @@ setInterval(updateClock,1000);
         <p>+8809658083475</p>
         <p>megadealszone@gmail.com</p>
     </div>
-  </section>
-  <!-- CONTACT INFO END -->
+</section>
+<!-- CONTACT INFO END -->
 
-  <!-- FOOTER START -->
-  <footer>
-
-    <p>
-      © 2026 My Website | Developer By Md Roman Islam Habib
-    </p>
-
-    <p>
+<!-- FOOTER START -->
+<footer>
+  <p>
+    © 2026 My Website | Developer By Md Roman Islam Habib
+  </p>
+  <p>
       Visit:
       <a href="https://www.google.com" target="_blank">
         Google,
@@ -1539,9 +1611,8 @@ setInterval(updateClock,1000);
         Youtube
       </a>
     </p>
-
-  </footer>
-  <!-- FOOTER END -->
+</footer>
+<!-- FOOTER END -->
 
   <!-- MOBILE MENU SCRIPT -->
   <script>
@@ -1668,7 +1739,12 @@ setInterval(updateClock,1000);
 
   </script>
 
- 
+
+  
 </body>
 
 </html>   
+
+
+
+
