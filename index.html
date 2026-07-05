@@ -51,6 +51,10 @@ body{
     min-height: 100vh;
 }
 
+.sidebar-widget a{
+  text-decoration: none;
+} 
+
 footer{
     margin-top: auto;
 }
@@ -221,9 +225,10 @@ section{
       background-repeat:no-repeat;
       opacity:0;
       transform:translateX(100%);
-      transition:transform 1s ease, opacity 1s ease;
+      transition:transform 1.2s cubic-bezier(.22,1,.36,1), opacity 1.2s ease;
       z-index:-3;
       pointer-events:none;
+      will-change:transform, opacity;
     }
 
     .hero-slide.active{
@@ -234,6 +239,16 @@ section{
     .hero-slide.previous{
       opacity:0;
       transform:translateX(-100%);
+    }
+
+    .hero-slide.fade-only{
+      opacity:0;
+      transform:none;
+    }
+
+    .hero-slide.fade-only.active{
+      opacity:1;
+      transform:none;
     }
 
     .hero-overlay{
@@ -253,6 +268,31 @@ section{
       max-width:900px;
       padding:20px;
       animation:fadeIn 1.2s ease;
+    }
+
+    .hero-dots{
+      position:absolute;
+      bottom:18px;
+      left:50%;
+      transform:translateX(-50%);
+      display:flex;
+      gap:8px;
+      z-index:3;
+    }
+
+    .hero-dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:rgba(255,255,255,0.55);
+      border:1px solid rgba(255,255,255,0.9);
+      cursor:pointer;
+      transition:all 0.3s ease;
+    }
+
+    .hero-dot.active{
+      background:#fff;
+      transform:scale(1.2);
     }
 
     .hero-content h1{
@@ -476,7 +516,8 @@ section{
 
 /* PRODUCT SECTION */
 
-.product-promo{
+.product-promo,
+.service-body{
     width:100%;
     max-width:none;
     margin:0;
@@ -487,7 +528,8 @@ section{
     box-sizing:border-box;
 }
 
-.product-promo h2{
+.product-promo h2,
+.service-body h2{
     font-size:38px;
     margin-bottom:30px;
     color:#203a43;
@@ -526,24 +568,48 @@ section{
 }
 
 .card{
-    background:#fff;
-    border-radius:10px;
+    background:linear-gradient(135deg,#ffffff 0%,#f8fbff 100%);
+    border-radius:16px;
     padding:20px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.06);
-    border:1px solid #eef2f5;
+    box-shadow:0 8px 24px rgba(0,0,0,0.08);
+    border:1px solid #e6edf5;
     box-sizing:border-box;
+    transition:transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    position:relative;
+    overflow:hidden;
+}
+
+.card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,rgba(0,122,61,0.08),rgba(0,114,255,0.06));
+    opacity:0;
+    transition:opacity 0.3s ease;
+    pointer-events:none;
+}
+
+.card:hover{
+    transform:translateY(-6px) scale(1.01);
+    box-shadow:0 14px 30px rgba(0,0,0,0.12);
+    border-color:#00a651;
+}
+
+.card:hover::before{
+    opacity:1;
 }
 
 .card-header{
     margin-bottom:15px;
-    border-bottom:1px solid #f0f0f0;
+    border-bottom:1px solid #edf3f8;
     padding-bottom:10px;
 }
 
 .card-header h3{
-    color:#222;
+    color:#06437a;
     font-size:18px;
-    font-weight:600;
+    font-weight:700;
+    letter-spacing:0.2px;
 }
 
 .card-list{
@@ -557,8 +623,9 @@ section{
     padding-left:18px;
     margin-bottom:10px;
     font-size:14px;
-    color:#000;
+    color:#23374d;
     cursor:pointer;
+    transition:color 0.25s ease, transform 0.25s ease;
 }
 
 .card-list li::before{
@@ -572,17 +639,21 @@ section{
 }
 
 .card-list li:hover{
-    color:red;
+    color:#007a3d;
+    transform:translateX(3px);
 }
 
 .card-list li a{
     color:#222;
     text-decoration:none;
-    transition:color 0.3s ease;
+    transition:color 0.25s ease, font-weight 0.25s ease;
+    display:block;
+    width:100%;
 }
 
 .card-list li a:hover{
-    color:red;
+    color:#1103ce;
+    font-weight:700;
 }
 
 .sidebar{
@@ -613,16 +684,17 @@ section{
 }
 
 .profile-box img{
-    width:100%;
-    max-width:260px;
-    height:auto;
+    width:2.5in;
+    height:3in;
+    max-width:100%;
     object-fit:cover;
+    display:block;
+    margin:0 auto 10px;
     border:4px solid #007a3d;
     padding:6px;
     background:#fff;
     border-radius:10px;
     box-shadow:0 4px 12px rgba(0,0,0,0.12);
-    margin-bottom:10px;
 }
 
 .profile-box p{
@@ -1028,42 +1100,35 @@ section{
           
                 
              
-           <!-- Amanzon, Aliexpress, Daraz-----------------End--------------------- -->
+           <!-- -------------Kids----------------শুরু------------------- -->
           
                    <li><a href="#">Kids</a> <ul class="submenu"> 
-                      <li><a href="https://megadealszone.github.io/bd/abcd.html">ABCD...</a></li>
-                      
-                      <li><a href="#">Upcomming..</a></li>
-                    </ul>
+                                <li><a href="https://megadealszone.github.io/bd/abcd.html">ABCD...</a></li>
+                                <li><a href="#">Upcomming..</a></li>
+                    </ul> </li>
+
+              <!-- Software Link -----------------শুরু--------- -->
                   
-                  </li>
-              <!-- Software Link -->
-                  
-                  <li><a href="#">Software</a>
-                    <ul class="submenu"> 
-                      <li><a href="https://www.github.com/">Github</a></li>
-                      <li><a href="https://console.firebase.google.com/">Firebase</a></li>
-                      <li><a href="#">Upcomming..</a></li>
-                    </ul>
-                  
-                  </li>
+                    <li><a href="#">Software</a><ul class="submenu"> 
+                                <li><a href="https://www.github.com/">Github</a></li>
+                                <li><a href="https://console.firebase.google.com/">Firebase</a></li>
+                                <li><a href="#">Upcomming..</a></li>
+                    </ul> </li>
           
                   
           <!-- Share Market-----Start------------------------------- -->
-          <li>
-              <a href="#">Share Market</a>
-              <ul class="submenu">
-                  <li><a href="https://www.dsebd.org/">Dhaka Stock Exchange</a></li>
-                  <li><a href="https://www.cse.com.bd/">Chittagong Stock Exchange</a></li>
-                  <li><a href="https://ibroker.lbsbd.com/">iBroker</a></li>
-                  <li><a href="https://itrade.lbsbd.com/">TradeXpress</a></li>
-                  <li><a href="https://www.amarstock.com/">Amar Stock</a></li>
-              </ul>
-            </li>
+                    <li><a href="#">Share Market</a><ul class="submenu">
+                                <li><a href="https://www.dsebd.org/">Dhaka Stock Exchange</a></li>
+                                <li><a href="https://www.cse.com.bd/">Chittagong Stock Exchange</a></li>
+                                <li><a href="https://ibroker.lbsbd.com/">iBroker</a></li>
+                                <li><a href="https://itrade.lbsbd.com/">TradeXpress</a></li>
+                                <li><a href="https://www.amarstock.com/">Amar Stock</a></li>
+                    </ul> </li>
+
           <!-- Share Market-----End------------------------------- -->
                   
                   <!-- ADMIN PANEL -->
-                  <li><a href="https://megadealszone.github.io/bd/admin_login.html"> Login</a></li>
+                      <li><a href="https://megadealszone.github.io/bd/admin_login.html"> Login</a></li>
 
       </ul>
     </nav>
@@ -1077,6 +1142,7 @@ section{
     <div class="hero-slide" id="heroSlideA"></div>
     <div class="hero-slide" id="heroSlideB"></div>
     <div class="hero-overlay"></div>
+    <div class="hero-dots" id="heroDots"></div>
 
     <div class="hero-content">
 
@@ -1279,120 +1345,104 @@ setInterval(updateClock,1000);
   <section class="content">
 
     
- <!-- সেবা প্রদান -----------------শুরু----------------- -->
+ <!-- Service Body -----------------শুরু----------------- -->
 
-<section class="product-promo">
+<section class="service-body">
+    <h2>-------------------------------------------------------------------------------------------</h2>
 
     <div class="dashboard-container">
 
         <div class="dashboard-grid">
-
+<!-- Body content -----------------------------  Start ------------------------------->
             <div class="main-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>আমাদের বিষয়ে</h3>
-                    </div>
+                
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
                     <ul class="card-list">
-                        <li>ভিশন ও মিশন</li>
-                        <li>সাংগঠনিক কাঠামো</li>
-                        <li>কর্মকর্তাবৃন্দ</li>
-                        <li>কার্যবণ্টন</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3> গুরুত্বপূর্ণ কিছু লিংক </h3>
-                    </div>
-                    <ul class="card-list">
-                      <li><a href="Qr.html"> কিউ আর কোড জেনারেট </a></li>
-                        <li><a href="videor.html"> ভিডিও রেন্ডার </a></li>
                         <li><a href="https://youtube.com"> ইউটিউব </a></li>
                         <li><a href="https://facebook.com"> ফেসবুক </a></li>
                     </ul>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>নীতিমালা ও প্রকাশনা</h3>
-                    </div>
+
+
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
                     <ul class="card-list">
-                        <li>নীতিমালা</li>
-                        <li>আইন ও বিধি</li>
-                        <li>প্রকাশনা ও বার্ষিক প্রতিবেদন</li>
-                        <li>স্ট্র্যাটেজিক প্ল্যান</li>
+                        <li><a href="https://youtube.com"> ইউটিউব </a></li>
+                        <li><a href="https://facebook.com"> ফেসবুক </a></li>
                     </ul>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>নাগরিক ই-সেবা</h3>
-                    </div>
-                    <ul class="card-list">
-                        <li>অনলাইনে চালান সিস্টেম (এ-চালান)</li>
-                        <li>জাতীয় সঞ্চয়পত্র অনলাইন ম্যানেজমেন্ট</li>
-                        <li>G2P পদ্ধতিতে সামাজিক নিরাপত্তা বেষ্টনী</li>
-                        <li>ভিডিও টিউটোরিয়াল অন্যান্য বিল দাখিল</li>
-                    </ul>
-                </div>
+                
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>সেবা প্রদান প্রতিশ্রুতি</h3>
-                    </div>
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
                     <ul class="card-list">
-                        <li>সেবা প্রদান প্রতিশ্রুতি (Citizen's Charter)</li>
-                        <li>ফোকাল পয়েন্ট/মনিটরিং কমিটি</li>
-                        <li>কর্মপরিকল্পনা, পরিবীক্ষণ ও মূল্যায়ন</li>
-                        <li>আইন/বিধি/নীতিমালা/পরিপত্র</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>সরকারি কর্মসম্পাদন ব্যবস্থাপনা</h3>
-                    </div>
-                    <ul class="card-list">
-                        <li class="red-link">নির্দেশিকা/পরিপত্র/এপিএ টিম</li>
-                        <li class="red-link">স্ব স্ব অফিসের এপিএ এবং ফলাফল</li>
-                        <li class="red-link">পরিবীক্ষণ ও মূল্যায়ন প্রতিবেদন</li>
-                        <li class="red-link">এপিএমএস সফটওয়্যার লিংক</li>
-                    </ul>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>সরকারি কর্মসম্পাদন ব্যবস্থাপনা</h3>
-                    </div>
-                    <ul class="card-list">
-                        <li class="red-link">নির্দেশিকা/পরিপত্র/এপিএ টিম</li>
-                        <li class="red-link">স্ব স্ব অফিসের এপিএ এবং ফলাফল</li>
-                        <li class="red-link">পরিবীক্ষণ ও মূল্যায়ন প্রতিবেদন</li>
-                        <li class="red-link">এপিএমএস সফটওয়্যার লিংক</li>
+                        <li><a href="https://youtube.com"> ইউটিউব </a></li>
+                        <li><a href="https://facebook.com"> ফেসবুক </a></li>
                     </ul>
                 </div>
 
 
-                <div class="card">
-                    <div class="card-header">
-                        <h3>সরকারি কর্মসম্পাদন ব্যবস্থাপনা</h3>
-                    </div>
+
+                
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
                     <ul class="card-list">
-                        <li class="red-link">নির্দেশিকা/পরিপত্র/এপিএ টিম</li>
-                        <li class="red-link">স্ব স্ব অফিসের এপিএ এবং ফলাফল</li>
-                        <li class="red-link">পরিবীক্ষণ ও মূল্যায়ন প্রতিবেদন</li>
-                        <li class="red-link">এপিএমএস সফটওয়্যার লিংক</li>
+                        <li><a href="https://youtube.com"> ইউটিউব </a></li>
+                        <li><a href="https://facebook.com"> ফেসবুক </a></li>
                     </ul>
                 </div>
 
+
+
+
+                
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
+                    <ul class="card-list">
+                        <li><a href="https://youtube.com"> ইউটিউব </a></li>
+                        <li><a href="https://facebook.com"> ফেসবুক </a></li>
+                    </ul>
+                </div>
+
+
+
+
+                
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
+                    <ul class="card-list">
+                        <li><a href="https://youtube.com"> ইউটিউব </a></li>
+                        <li><a href="https://facebook.com"> ফেসবুক </a></li>
+                    </ul>
+                </div>
+
+
+
+               
+                <div class="card"><div class="card-header"><h3> সোশ্যাল মিডিয়া </h3></div>
+                    <ul class="card-list">
+                        <li><a href="https://youtube.com"> ইউটিউব </a></li>
+                        <li><a href="https://facebook.com"> ফেসবুক </a></li>
+                    </ul>
+                </div>
+
+
+
+                <div class="card"><div class="card-header"><h3> অন্যান্য </h3></div>
+                    <ul class="card-list">
+                        <li><a href="Qr.html"> কিউ আর কোড জেনারেট </a></li>
+                        <li><a href="videor.html"> ভিডিও রেন্ডার </a></li>
+                    </ul>
+                </div>
 
             </div>
+
+<!-- Sidebar Start -->
+
+
 
             <aside class="sidebar">
                 <div class="sidebar-widget">
                     <div class="widget-title">মহাপরিচালক ওয়েবসাইট ডিপার্টমেন্ট</div>
                     <div class="profile-box">
-                        <img src="https://raw.githubusercontent.com/megadealszone/bd/71a89956e5a7cc4127aba9a29657f95d8478ba9c/Images/HD%20Roza%20Mubarik%20Islamic%20Wallpaper%20Khana%20Kaba.jpg" alt="Profile Picture">
+                        <img src="https://raw.githubusercontent.com/megadealszone/bd/953e46f504777d570781c224f57b334e7c857872/Images/Roman.jpg" alt="Profile Picture">
                         <p>মো: রোমান ইসলাম হাবিব</p>
                     </div>
                 </div>
@@ -1400,7 +1450,7 @@ setInterval(updateClock,1000);
                 <div class="sidebar-widget">
                     <div class="widget-title">মহাপরিচালক ওয়েবসাইট ডিপার্টমেন্ট</div>
                     <div class="profile-box">
-                        <img src="https://raw.githubusercontent.com/megadealszone/bd/71a89956e5a7cc4127aba9a29657f95d8478ba9c/Images/HD%20Roza%20Mubarik%20Islamic%20Wallpaper%20Khana%20Kaba.jpg" alt="Profile Picture">
+                        <img src="https://raw.githubusercontent.com/megadealszone/bd/4533e503ecfdb41c97a2be3137ed46e7b79d8d8e/Images/taiyeba.jpg" alt="Profile Picture">
                         <p>মো: রোমান ইসলাম হাবিব</p>
                     </div>
                 </div>
@@ -1414,13 +1464,17 @@ setInterval(updateClock,1000);
                     </ul>
                 </div>
 
-                <div class="sidebar-widget">
-                    <div class="widget-title">দুদক হটলাইন</div>
-                    <div class="hotline-box">
-                        <div style="font-weight: bold; color: #555;">দুদক হটলাইন</div>
-                        <div class="hotline-number">১০৬</div>
-                    </div>
-                </div>
+  <div class="sidebar-widget">
+    <div class="widget-title">জরুরি হটলাইন</div>
+
+    <div class="hotline-box">
+          <div class="hotline-item"><strong>দুদক:</strong><div class="hotline-number">১০৬</div></div>
+          <div class="hotline-item"> <strong>জরুরি সেবা:</strong><div class="hotline-number">৯৯৯</div></div>
+          <div class="hotline-item"> <strong>ফায়ার সার্ভিস:</strong> <div class="hotline-number">১০২</div> </div>
+          <div class="hotline-item"> <strong>দূর্যোগ:</strong> <div class="hotline-number">১০৯০</div> </div>
+          <div class="hotline-item"><strong>সরকারি তথ্য ও সেবা:</strong><div class="hotline-number">৩৩৩</div></div>
+    </div>
+</div>
 
                 <div class="sidebar-widget">
                     <div class="widget-title">জাতীয় সঙ্গীত</div>
@@ -1498,37 +1552,116 @@ setInterval(updateClock,1000);
 
     const heroImages = [
       'https://raw.githubusercontent.com/megadealszone/bd/71a89956e5a7cc4127aba9a29657f95d8478ba9c/Images/HD%20Roza%20Mubarik%20Islamic%20Wallpaper%20Khana%20Kaba.jpg',
-      'https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Resolution%20Genre%20World%20Wallpaper%20Islamic%20Mosques.jpg',
+      'https://raw.githubusercontent.com/megadealszone/bd/4533e503ecfdb41c97a2be3137ed46e7b79d8d8e/Images/taiyeba1.jpg',
       'https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Mitsubishi%20Lancer%20Evolution%20Wallpaper%20And%20Image.jpg',
-      'https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/HD%20Widescreen%20Wallpaper%20Right%20Click%20The%20Select%20Set%20As.jpg'
+      'https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Resolution%20Genre%20World%20Wallpaper%20Islamic%20Mosques.jpg',
+      'https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/HD%20Widescreen%20Wallpaper%20Right%20Click%20The%20Select%20Set%20As.jpg',
+      'https://raw.githubusercontent.com/megadealszone/bd/8ddd69266dac1826a6988da9561834ffce84a2f5/Images/Resolution%20Genre%20World%20Wallpaper%20Islamic%20Mosques.jpg'
     ];
 
     const slides = [
       document.getElementById('heroSlideA'),
       document.getElementById('heroSlideB')
     ];
+    const dotsContainer = document.getElementById('heroDots');
+
+    const displayDuration = 7000;
+    const transitionDuration = 1200;
 
     let activeIndex = 0;
-    let imageIndex = 0;
+    let currentImageIndex = 0;
+    let autoplayTimer;
 
-    function showNextHeroImage(){
-      const nextSlide = slides[(activeIndex + 1) % slides.length];
+    function updateDots(){
+      const dots = dotsContainer.querySelectorAll('.hero-dot');
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentImageIndex);
+      });
+    }
+
+    function renderDots(){
+      dotsContainer.innerHTML = '';
+      heroImages.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.className = 'hero-dot';
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+        dot.addEventListener('click', () => goToSlide(index));
+        dotsContainer.appendChild(dot);
+      });
+      updateDots();
+    }
+
+    function goToSlide(index){
+      if (!heroImages.length || slides.length < 2) return;
+      const targetIndex = index % heroImages.length;
       const currentSlide = slides[activeIndex];
-      imageIndex = (imageIndex + 1) % heroImages.length;
-      nextSlide.style.backgroundImage = `url('${heroImages[imageIndex]}')`;
+      const nextSlide = slides[(activeIndex + 1) % slides.length];
+
+      currentImageIndex = targetIndex;
+      nextSlide.style.backgroundImage = `url('${heroImages[currentImageIndex]}')`;
       nextSlide.classList.add('active');
       currentSlide.classList.remove('active');
       currentSlide.classList.add('previous');
-      setTimeout(() => currentSlide.classList.remove('previous'), 1000);
-      activeIndex = (activeIndex + 1) % slides.length;
+
+      setTimeout(() => {
+        currentSlide.classList.remove('previous');
+        activeIndex = (activeIndex + 1) % slides.length;
+        updateDots();
+      }, transitionDuration);
+
+      clearInterval(autoplayTimer);
+      autoplayTimer = setInterval(showNextHeroImage, displayDuration);
+    }
+
+    function showNextHeroImage(){
+      if (!heroImages.length || slides.length < 2) return;
+
+      const currentSlide = slides[activeIndex];
+      const nextIndex = (activeIndex + 1) % slides.length;
+      const nextSlide = slides[nextIndex];
+
+      currentImageIndex = (currentImageIndex + 1) % heroImages.length;
+      nextSlide.style.backgroundImage = `url('${heroImages[currentImageIndex]}')`;
+      nextSlide.classList.add('active');
+      currentSlide.classList.remove('active');
+      currentSlide.classList.add('previous');
+
+      setTimeout(() => {
+        currentSlide.classList.remove('previous');
+        activeIndex = nextIndex;
+        updateDots();
+      }, transitionDuration);
     }
 
     function initHeroSlider(){
+      if (!heroImages.length || slides.length < 2) return;
+
+      slides.forEach(slide => slide.classList.remove('active', 'previous'));
       slides[0].style.backgroundImage = `url('${heroImages[0]}')`;
       slides[0].classList.add('active');
       slides[1].style.backgroundImage = `url('${heroImages[1]}')`;
-      imageIndex = 0;
-      setInterval(showNextHeroImage, 9999);
+      currentImageIndex = 0;
+      renderDots();
+      autoplayTimer = setInterval(showNextHeroImage, displayDuration);
+
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      document.querySelector('.hero').addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].screenX;
+      }, { passive: true });
+
+      document.querySelector('.hero').addEventListener('touchend', (event) => {
+        touchEndX = event.changedTouches[0].screenX;
+        const delta = touchEndX - touchStartX;
+
+        if (delta > 50) {
+          showNextHeroImage();
+        } else if (delta < -50) {
+          goToSlide(currentImageIndex - 1);
+        }
+      }, { passive: true });
     }
 
     window.addEventListener('DOMContentLoaded', initHeroSlider);
