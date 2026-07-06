@@ -1036,7 +1036,36 @@ section{
     }
 /* Contact Info Section CSS End */
 
+/* মাউস নিলে------See More Button --------------------Start------------ বাটনের ইফেক্ট */
+/* স্মুথ স্ক্রোলিং নিশ্চিত করার জন্য */
+html {
+  scroll-behavior: smooth !important;
+}
 
+/* See More বাটনটিকে সুন্দর করার জন্য */
+.slider-btn {
+  display: inline-block;
+  padding: 12px 30px;
+  background: linear-gradient(45deg, #ff416c, #ff4b2b); /* সুন্দর একটি গ্রাডিয়েন্ট লাল/গোলাপি রঙ */
+  color: white !important;
+  text-decoration: none !important;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 25px; /* বাটনটি গোল করার জন্য */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+  margin-top: 15px;
+}
+
+/* মাউস নিলে বাটনের ইফেক্ট */
+.slider-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 65, 108, 0.6);
+  background: linear-gradient(45deg, #ff4b2b, #ff416c);
+}
+
+
+/* মাউস নিলে------See More Button -------------------------------------End বাটনের ইফেক্ট */
     
     
   </style>
@@ -1222,7 +1251,7 @@ section{
         “দুনিয়ার সৌন্দর্য ক্ষণিকের, কিন্তু আখিরাতের শান্তি চিরদিনের। তাই আল্লাহর পথে চলাই সবচেয়ে বড় সফলতা। 🌙✨”
       </p>
 
-      <a href="https://isca.html" class="btn">See More</a>
+      <a href="#contact-section" class="slider-btn" onclick="document.getElementById('contact-section').scrollIntoView({ behavior: 'smooth' }); return false;">See More</a>
 
     </div>
 
@@ -1574,7 +1603,7 @@ setInterval(updateClock,1000);
         <h3>🏢 Institution</h3>
         <p>MEGA DEALS ZONE</p>
     </div>
-    <div class="contact-box">
+    <div class="contact-box" id="contact-section>
         <h3>📍Home Address</h3>
         <p>Tangail, Dhaka, Bangladesh</p>
         <h3>📍Work Address</h3>
