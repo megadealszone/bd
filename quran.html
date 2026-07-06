@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Legal Size Card Showcase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -29,12 +30,12 @@
             color: #f3f4f6;
         }
 
-        /* 📄 প্রিমিয়াম লিগ্যাল সাইজ কার্ড কন্টেইনার (8.5" x 14" রেশিও অনুযায়ী পিক্সেল সেট করা হয়েছে) */
+        /* 📄 প্রিমিয়াম লিগ্যাল সাইজ কার্ড কন্টেইনার */
         .premium-legal-card {
             background-color: var(--primary-dark);
             width: 100%;
-            max-width: 994px; /* স্ট্যান্ডার্ড চওড়া */
-            height: 1308px; /* লিগ্যাল সাইজের লম্বা অনুপাত (১:১.৬৪) */
+            max-width: 794px; 
+            height: 1308px; 
             box-shadow: var(--card-shadow);
             border-radius: 20px;
             overflow: hidden;
@@ -64,19 +65,6 @@
             position: relative;
             z-index: 2;
         }
-        .card-header .badge {
-            display: inline-block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent-gold);
-            border: 1px solid var(--accent-gold);
-            padding: 4px 12px;
-            border-radius: 20px;
-            margin-bottom: 16px;
-            font-weight: 600;
-            background: rgba(197, 168, 128, 0.05);
-        }
         .card-header h1 {
             font-size: 28px;
             color: #ffffff;
@@ -100,42 +88,110 @@
         .pdf-frame-container {
             flex: 1;
             margin: 0 40px 40px 40px; 
-            background-color: #030712;
+            background-color: #ffffff;
             border-radius: 8px;
-            overflow: hidden;
+            overflow: auto; 
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
             position: relative;
             z-index: 5;
+            scroll-behavior: smooth; 
+            -webkit-overflow-scrolling: touch; 
         }
 
+        /* কাস্টম প্রিমিয়াম স্ক্রলবার ডিজাইন */
+        .pdf-frame-container::-webkit-scrollbar {
+            width: 8px; 
+        }
+        .pdf-frame-container::-webkit-scrollbar-track {
+            background: #1f2937; 
+            border-radius: 0 8px 8px 0;
+        }
+        .pdf-frame-container::-webkit-scrollbar-thumb {
+            background: var(--accent-gold); 
+            border-radius: 10px;
+        }
+
+        /* আইফ্রেম পজিশনিং এবং জুম ইফেক্ট */
         iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* 🛡️ ডান কোণার পপ-আউট বাটনটি ঢেকে রাখার ব্লক */
-        .pdf-shield {
             position: absolute;
-            top: 0;
-            right: 0;
-            width: 70px;       
-            height: 70px;      
-            background-color: #1f2937; /* আপনার ইমেজ অনুযায়ী গ্রে ব্লেন্ড কালার */
-            z-index: 999;      
-            border-bottom-left-radius: 8px;
+            top: -56px;          
+            left: 50%;
+            transform: translateX(-50%) scale(1); 
+            transform-origin: top center; 
+            width: 100%;         
+            height: calc(100% + 56px); 
+            border: none;
+            transition: transform 0.2s ease; 
         }
 
-        /* মোবাইল স্ক্রিনের রেসপনসিভনেস (লিগ্যাল রেশিও ১:১.৬৪ ঠিক রাখা হয়েছে) */
+        /* 🎛️ ডান পাশের ইউনিফাইড কন্ট্রোল প্যানেল (এরো এবং জুম বাটন একসাথে মাঝ বরাবর) */
+        .pdf-controls-sidebar {
+            position: absolute;
+            right: 25px;
+            top: 55%; /* কার্ডের ওপর-নিচের একদম মাঝ বরাবর পজিশন */
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 99;
+        }
+
+        /* বাটনগুলোর সাধারণ স্টাইল */
+        .control-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+        
+        /* এরো বাটনের কালার স্কিম */
+        .btn-arrow {
+            background-color: rgba(17, 24, 39, 0.9);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        
+        /* জুম বাটনের কালার স্কিম */
+        .btn-zoom {
+            background-color: var(--accent-gold);
+            border: none;
+            color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.08);
+        }
+        .control-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* 📱 সম্পূর্ণ রেসপনসিভ মোবাইল ভিউ */
         @media (max-width: 768px) {
-            body { padding: 20px 10px; }
-            .premium-legal-card { height: auto; aspect-ratio: 1 / 1.647; border-radius: 12px; }
+            body { padding: 15px 8px; }
+            .premium-legal-card { height: 85vh; border-radius: 12px; }
             .premium-legal-card::before { top: 8px; left: 8px; right: 8px; bottom: 8px; }
-            .card-header { padding: 25px 20px 15px 20px; }
-            .card-header h1 { font-size: 20px; }
-            .pdf-frame-container { margin: 0 20px 25px 20px; }
-            .pdf-shield { width: 50px; height: 50px; }
+            .card-header { padding: 20px 15px 12px 15px; }
+            .card-header h1 { font-size: 18px; }
+            .card-header p { font-size: 12px; }
+            .pdf-frame-container { margin: 0 15px 15px 15px; }
+            
+            iframe { 
+                top: -48px; 
+                height: calc(100% + 48px); 
+            }
+            .pdf-frame-container::-webkit-scrollbar { width: 5px; }
+            
+            /* মোবাইলে সাইডবারের পজিশন ও বাটন সাইজ অ্যাডজাস্টমেন্ট */
+            .pdf-controls-sidebar { right: 15px; top: 58%; gap: 10px; }
+            .control-btn { width: 38px; height: 38px; font-size: 14px; }
         }
     </style>
 </head>
@@ -143,18 +199,67 @@
 
     <div class="premium-legal-card">
         <div class="card-header">
-            <span class="badge">Legal Document View</span>
-            <h1>কোরআন মাজিদ – ১-৩০ পারা – বড় হরফ</h1>
+            <h1>কোরাআন মাজিদ - ১-৩০ পারা - বড় হরফ</h1>
             <div class="divider"></div>
             <p>নিচে লিগ্যাল সাইজ ডকুমেন্টটি স্ক্রল করে সম্পূর্ণ দেখতে পারবেন</p>
         </div>
 
-        <div class="pdf-frame-container">
-            <div class="pdf-shield"></div>
+        <div class="pdf-frame-container" id="pdfContainer">
+            <iframe id="pdfIframe" src="https://drive.google.com/file/d/1RRpM1W5MTWGcacSwvmJHIW1LSRbo37ak/preview?rm=minimal" allow="autoplay"></iframe>
+        </div>
 
-            <iframe src="https://drive.google.com/file/d/1RRpM1W5MTWGcacSwvmJHIW1LSRbo37ak/preview?rm=minimal" allow="autoplay"></iframe>
+        <div class="pdf-controls-sidebar">
+            <div class="control-btn btn-arrow" onclick="scrollPdf('up')" title="ওপরের পেজে যান">
+                <i class="fa-solid fa-chevron-up"></i>
+            </div>
+            
+            <button class="control-btn btn-zoom" onclick="zoomPdf('in')" title="জুম ইন">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            
+            <button class="control-btn btn-zoom" onclick="zoomPdf('out')" title="জুম আউট">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+            
+            <div class="control-btn btn-arrow" onclick="scrollPdf('down')" title="নিচের পেজে যান">
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
         </div>
     </div>
+
+    <script>
+        // স্ক্রলিং ফাংশন
+        function scrollPdf(direction) {
+            const container = document.getElementById('pdfContainer');
+            const scrollAmount = container.clientHeight - 20; 
+
+            if (direction === 'down') {
+                container.scrollTo({ top: container.scrollTop + scrollAmount, behavior: 'smooth' });
+            } else if (direction === 'up') {
+                container.scrollTo({ top: container.scrollTop - scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // কাস্টম সেন্টারড জুম ফাংশন
+        let currentScale = 1; 
+        function zoomPdf(zoomType) {
+            const iframe = document.getElementById('pdfIframe');
+            
+            if (zoomType === 'in') {
+                if (currentScale < 2.5) currentScale += 0.2; 
+            } else if (zoomType === 'out') {
+                if (currentScale > 1) currentScale -= 0.2; 
+            }
+            
+            iframe.style.transform = `translateX(-50%) scale(${currentScale})`;
+            
+            if(currentScale > 1) {
+                iframe.style.width = (100 * currentScale) + '%';
+            } else {
+                iframe.style.width = '100%';
+            }
+        }
+    </script>
 
 </body>
 </html>
