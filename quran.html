@@ -115,7 +115,7 @@
         /* আইফ্রেম পজিশনিং এবং জুম ইফেক্ট */
         iframe {
             position: absolute;
-            top: -56px;          
+            top: -56px;           
             left: 50%;
             transform: translateX(-50%) scale(1); 
             transform-origin: top center; 
@@ -125,16 +125,49 @@
             transition: transform 0.2s ease; 
         }
 
-        /* 🎛️ ডান পাশের ইউনিফাইড কন্ট্রোল প্যানেল (এরো এবং জুম বাটন একসাথে মাঝ বরাবর) */
+        /* 🎛️ ডান পাশের ইউনিফাইড কন্ট্রোল প্যানেল */
         .pdf-controls-sidebar {
             position: absolute;
             right: 25px;
-            top: 55%; /* কার্ডের ওপর-নিচের একদম মাঝ বরাবর পজিশন */
+            top: 55%; 
             transform: translateY(-50%);
             display: flex;
             flex-direction: column;
             gap: 15px;
             z-index: 99;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+
+        /* হাইড ক্লাসের জন্য স্টাইল */
+        .pdf-controls-sidebar.hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-50%) translateX(20px);
+        }
+
+        /* 👁️ শো/হাইড করার জন্য নতুন টগল বাটন */
+        .sidebar-toggle-btn {
+            position: absolute;
+            right: 25px;
+            top: 25px;
+            width: 35px;
+            height: 35px;
+            background-color: rgba(17, 24, 39, 0.8);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background-color: var(--accent-gold);
+            color: var(--primary-dark);
         }
 
         /* বাটনগুলোর সাধারণ স্টাইল */
@@ -189,26 +222,30 @@
             }
             .pdf-frame-container::-webkit-scrollbar { width: 5px; }
             
-            /* মোবাইলে সাইডবারের পজিশন ও বাটন সাইজ অ্যাডজাস্টমেন্ট */
             .pdf-controls-sidebar { right: 15px; top: 58%; gap: 10px; }
             .control-btn { width: 38px; height: 38px; font-size: 14px; }
+            .sidebar-toggle-btn { right: 15px; top: 15px; width: 30px; height: 30px; }
         }
     </style>
 </head>
 <body>
 
     <div class="premium-legal-card">
+        <div class="sidebar-toggle-btn" onclick="toggleSidebar()" title="বাটন অন/অফ করুন">
+            <i id="toggleIcon" class="fa-solid fa-eye-slash"></i>
+        </div>
+
         <div class="card-header">
-            <h1> بِسْمِ-ٱللَّٰهِ-ٱلرَّحْمَٰنِ-ٱلرَّحِيمِ </h1>
+            <h1> بِسْمِ-ٱللَّٰهِ-ٱلرَّحْمَٰনِ-ٱلرَّحِيمِ </h1>
             <div class="divider"></div>
-            <p> কোরাআন মাজিদ - ১-৩০ পারা - বড় হরফ </p>
+            <p> কোরাআন মাজিদ - ১-৩০ পারা - বড় হরফ </p>
         </div>
 
         <div class="pdf-frame-container" id="pdfContainer">
             <iframe id="pdfIframe" src="https://drive.google.com/file/d/1RRpM1W5MTWGcacSwvmJHIW1LSRbo37ak/preview?rm=minimal" allow="autoplay"></iframe>
         </div>
 
-        <div class="pdf-controls-sidebar">
+        <div class="pdf-controls-sidebar" id="pdfSidebar">
             <div class="control-btn btn-arrow" onclick="scrollPdf('up')" title="ওপরের পেজে যান">
                 <i class="fa-solid fa-chevron-up"></i>
             </div>
@@ -228,6 +265,23 @@
     </div>
 
     <script>
+        // কন্ট্রোল বার হাইড/শো করার ফাংশন
+        function toggleSidebar() {
+            const sidebar = document.getElementById('pdfSidebar');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            sidebar.classList.toggle('hidden');
+            
+            // আইকন পরিবর্তন (চোখ বন্ধ/খোলা)
+            if (sidebar.classList.contains('hidden')) {
+                toggleIcon.className = "fa-solid fa-eye";
+                toggleIcon.parentElement.setAttribute('title', 'বাটন দেখান');
+            } else {
+                toggleIcon.className = "fa-solid fa-eye-slash";
+                toggleIcon.parentElement.setAttribute('title', 'বাটন লুকান');
+            }
+        }
+
         // স্ক্রলিং ফাংশন
         function scrollPdf(direction) {
             const container = document.getElementById('pdfContainer');
