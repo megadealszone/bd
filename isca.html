@@ -4,94 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>৫০০টি অনন্য রেসপন্সিভ ইসলামিক কার্ড (ফিল্টারসহ)</title>
-    <!-- গুগল ফন্ট লিংক -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- গুগল ফন্ট -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            background: linear-gradient(135deg, #f6f8fb 0%, #e9edf4 100%);
-            font-family: 'Noto Serif Bengali', serif;
-            color: #2d3748;
-            padding: 50px 15px;
+            background: radial-gradient(circle at top, #0f2b26 0%, #051412 100%);
+            font-family: 'Noto Serif Bengali', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #e2e8f0;
+            padding: 60px 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
         h1 {
             text-align: center;
-            font-size: clamp(1.8rem, 4vw, 2.8rem);
-            color: #0f342e;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #f59e0b;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            text-shadow: 0 2px 10px rgba(245, 158, 11, 0.2);
+            letter-spacing: 1px;
         }
 
         .subtitle {
             text-align: center;
-            color: #64748b;
-            margin-bottom: 30px;
-            font-size: clamp(0.95rem, 2vw, 1.15rem);
+            color: #94a3b8;
+            margin-bottom: 40px;
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            font-weight: 400;
         }
 
         /* ফিল্টার বাটন সেকশন */
         .filter-container {
             display: flex;
-            gap: 12px;
-            margin-bottom: 40px;
-            background: #ffffff;
-            padding: 8px 12px;
+            gap: 15px;
+            margin-bottom: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .filter-btn {
             background: transparent;
             border: none;
-            padding: 10px 24px;
-            font-family: 'Noto Serif Bengali', serif;
+            padding: 12px 28px;
+            font-family: 'Noto Serif Bengali', sans-serif;
             font-size: 1rem;
             font-weight: 600;
-            color: #475569;
+            color: #94a3b8;
             cursor: pointer;
             border-radius: 50px;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .filter-btn:hover {
-            color: #0f342e;
-            background: #f1f5f9;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
         }
 
         .filter-btn.active {
-            background: #0f342e;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(15, 52, 46, 0.2);
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #051412;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
         }
 
         /* রেসপন্সিভ গ্রিড কন্টেইনার */
         .card-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 380px));
-            gap: 30px;
+            gap: 35px;
             width: 100%;
             max-width: 1300px;
             justify-content: center;
         }
 
-        /* কার্ড ডিজাইন */
+        /* কার্ড ডিজাইন প্রিমিয়াম গ্লাস মরফিজম */
         .card {
-            background: #ffffff;
-            min-height: 340px;
-            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            min-height: 410px;
+            border-radius: 30px;
             padding: 35px 25px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03), 0 20px 48px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -101,88 +111,140 @@
             text-align: center;
         }
 
-        /* ফিল্টারিং ক্লাস */
         .card.hide {
             display: none !important;
         }
 
+        /* হোভার ইফেক্ট */
         .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 30px 60px rgba(15, 52, 46, 0.12);
+            transform: translateY(-12px);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        /* থিম ১ (সবুজ) */
+        /* থিম ১ (সবুজ গ্লো) */
         .card.theme-green::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 6px;
             background: linear-gradient(90deg, #10b981, #059669);
         }
-        .card.theme-green .pronunciation strong { color: #059669; }
-        .card.theme-green .meaning strong { color: #d97706; }
+        .card.theme-green:hover {
+            box-shadow: 0 30px 60px rgba(16, 185, 129, 0.15);
+        }
+        .card.theme-green .pronunciation strong { color: #10b981; }
+        .card.theme-green .card-tag { color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
 
-        /* থিম ২ (গোল্ডেন) */
+        /* থিম ২ (গোল্ডেন গ্লো) */
         .card.theme-gold::before {
             content: '';
             position: absolute;
             top: 0; left: 0; width: 100%; height: 6px;
-            background: linear-gradient(90deg, #f5af19, #e65c00);
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
         }
-        .card.theme-gold .pronunciation strong { color: #e65c00; }
-        .card.theme-gold .meaning strong { color: #059669; }
+        .card.theme-gold:hover {
+            box-shadow: 0 30px 60px rgba(245, 158, 11, 0.15);
+        }
+        .card.theme-gold .pronunciation strong { color: #fbbf24; }
+        .card.theme-gold .card-tag { color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
 
-        .card-number {
+        /* কার্ড ক্যাটাগরি ট্যাগ */
+        .card-tag {
             position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 0.8rem;
-            color: #94a3b8;
+            top: 20px;
+            right: 25px;
+            font-size: 0.9rem;
             font-weight: 700;
-            background: #f1f5f9;
-            padding: 3px 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 14px;
             border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            letter-spacing: 0.5px;
         }
 
+        /* আরবি হরফ ডিজাইন (সব লেখা এখন ধবধবে সাদা করা হয়েছে) */
         .arabic-title {
-            font-family: 'Amiri', serif;
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            color: #0f342e;
-            margin-top: 20px;
+            font-family: 'Amiri', 'Traditional Arabic', serif;
+            font-size: clamp(1.5rem, 4vw, 1.9rem);
+            color: #ffffff !important; /* সব কার্ডের আরবি লেখা এখন পিওর হোয়াইট */
+            margin-top: 25px;
             direction: rtl;
             font-weight: 700;
-            line-height: 1.6;
+            line-height: 2.3;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            word-spacing: 2px;
         }
 
+        /* মডার্ন ডিভাইডার */
         .divider {
-            width: 50px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #d97706, transparent);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.6), transparent);
             margin: 15px 0;
         }
 
+        /* উচ্চারণ বক্স */
         .pronunciation {
-            font-size: 1.05rem;
-            color: #1e293b;
+            font-size: 1.25rem;
+            color: #f1f5f9;
             font-weight: 600;
-            background: #f8fafc;
-            padding: 10px 15px;
-            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 18px;
+            border-radius: 16px;
             width: 100%;
-            border: 1px solid #edf2f7;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* অর্থ বক্স ও সী-মোর কন্টেইনার */
+        .meaning-container {
+            width: 100%;
+            margin-top: 15px;
         }
 
         .meaning {
-            font-size: 0.95rem;
-            color: #475569;
+            font-size: 1.18rem;
+            color: #cbd5e1;
             line-height: 1.6;
-            margin-top: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
+        .meaning.expanded {
+            display: block;
+            overflow: visible;
+        }
+
+        .meaning strong {
+            color: #94a3b8;
+        }
+
+        /* সী মোর বাটন */
+        .see-more-btn {
+            background: transparent;
+            border: none;
+            color: #f59e0b;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            font-family: 'Noto Serif Bengali', sans-serif;
+            display: none;
+        }
+
+        .see-more-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* মোবাইল স্ক্রিন অপ্টিমাইজেশন */
         @media (max-width: 360px) {
             .card-container { grid-template-columns: 1fr; }
-            .card { padding: 25px 15px; }
+            .card { padding: 30px 20px; min-height: 380px; }
             .filter-container { padding: 6px; gap: 6px; }
-            .filter-btn { padding: 8px 16px; font-size: 0.9rem; }
+            .filter-btn { padding: 10px 20px; font-size: 0.95rem; }
+            .arabic-title { line-height: 2.1; }
         }
     </style>
 </head>
@@ -202,7 +264,6 @@
     <div class="card-container" id="cardContainer"></div>
 
     <script>
-        // ১. আল্লাহর গুণবাচক নামসমূহ (জিকির ক্যাটাগরি)
         const asmaulHusna = [
             { ar: "يَا رَحْمَٰنُ", bn: "ইয়া রহমানু", me: "হে পরম করুণাময়" },
             { ar: "يَا رَحِيمُ", bn: "ইয়া রহীমু", me: "হে অসীম দয়ালু" },
@@ -216,42 +277,35 @@
             { ar: "يَا وَدُودُ", bn: "ইয়া ওয়াদੂদু", me: "হে প্রেমময়/স্নেহশীল" }
         ];
 
-        // ২. দোয়ার মূল অনুরোধ বা আকুতিসমূহ (দোয়া ক্যাটাগরি)
         const duaRequests = [
             { ar: "ٱغْفِرْ لِي ذُنُوبِي", bn: "ইগফির লী জুনুবী", me: "আমার গুনাহসমূহ ক্ষমা করে দিন" },
             { ar: "ٱرْحَمْنِي بِرَحْمَتِكَ", bn: "ইরহামনী বিরাহমাতিকা", me: "আপনার রহমত দ্বারা আমার প্রতি দয়া করুন" },
-            { ar: "ٱرْজُقْنِي رِজْقًا حَلَالًا", bn: "ইরজুকনী রিজকান হালালান", me: "আমাকে হালাল রিজিক দান করুন" },
+            { ar: "ٱرْجُقْنِي رِজْقًا حَلَالًا", bn: "ইরজুকনী রিজকান হালালান", me: "আমাকে হালাল রিজিক দান করুন" },
             { ar: "ٱشْفِنِي مِن كُلِّ دَاءٍ", bn: "ইশফিনী মিন কুল্লি দা-ইন", me: "আমাকে যাবতীয় রোগ থেকে আরোগ্য দিন" },
             { ar: "ٱحْفَظْنِي مِنَ ٱلسُّوءِ", bn: "ইহফাজনী মিনাস সূ-ই", me: "আমাকে সব ধরনের মন্দ থেকে রক্ষা করুন" },
             { ar: "تُبْ عَلَيَّ إِنَّكَ أَنْتَ ٱلتَّوَّابُ", bn: "তুব আলাইয়্যা ইන්නাকা আন্তাত তাওয়াব", me: "আমার তাওবা কবুল করুন, নিশ্চয়ই আপনি তাওবা কবুলকারী" },
             { ar: "ٱفْتَحْ لِي أَبْوَابَ رَحْمَتِكَ", bn: "ইফতাহ লী আবওয়াবা রহমাতিকা", me: "আমার জন্য আপনার রহমতের দরজাগুলো খুলে দিন" },
             { ar: "أَصْلِحْ لِي شَأْنِي كُلَّهُ", bn: "আসলিহ লী শানি কুল্লাহু", me: "আমার সমস্ত বিষয় সংশোধন করে দিন" },
-            { ar: "نَوِّরْ قَلْبِي بِٱلْإِيمَانِ", bn: "নাউউইর ক্বালবী বিল ঈমান", me: "আমার অন্তরকে ঈমান দ্বারা আলোকিত করুন" },
+            { ar: "نَوِّرْ قَلْبِي بِٱلْإِيمَانِ", bn: "নাউউইর ক্বালবী বিল ঈমান", me: "আমার অন্তরকে ঈমান দ্বারা আলোকিত করুন" },
             { ar: "ٱجْعَلْنِي مِنَ ٱلصَّালِحِينَ", bn: "ইজআলনী মিনাছ ছালিহীন", me: "আমাকে নেককার বান্দাদের অন্তর্ভুক্ত করুন" }
         ];
 
-        // ৩. বেস কোর ডাটা
         const coreZikir = [
             { ar: "ٱلْحَمْدُ لِلَّهِ شُكْرًا", bn: "আলহামদুলিল্লাহি শুকরান", me: "কৃতজ্ঞতাস্বরূপ সমস্ত প্রশংসা আল্লাহর জন্য।", type: "zikir" },
             { ar: "سُبْحَانَ ٱللَّهِ وَبِحَمْدِهِ", bn: "সুবহানাল্লাহি ওয়া বিহামদিহি", me: "আল্লাহর প্রশংসা সহকারে তাঁর পবিত্রতা ঘোষণা করছি।", type: "zikir" },
             { ar: "أَسْتَغْفِرُ ٱللَّهَ وَأَتُوبُ إِلَيْهِ", bn: "আস্তাগফিরুল্লাহ ওয়া আতুবু ইলাইহি", me: "আমি আল্লাহর ক্ষমা চাইছি এবং তাঁর দিকেই ফিরে আসছি।", type: "dua" },
             { ar: "لَا إِلَٰهَ إِلَّا ٱللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ", bn: "লা ইলাহা ইল্লাল্লাহু ওয়াহদাহু লা শারীকা লাহু", me: "আল্লাহ ছাড়া কোনো সত্য উপাস্য নেই, তিনি একক, তাঁর কোনো শরিক নেই।", type: "zikir" },
-            { ar: "لَا حَوْลَ وَلَا قُوَّةَ إِلَّا بِٱللَّهِ", bn: "লা হাওলা ওয়া লা কুওয়াতা ইল্লা বিল্লাহ", me: "আল্লাহর সাহায্য ছাড়া কোনো উপায় ও শক্তি নেই।", type: "zikir" },
+            { ar: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّهِ", bn: "لا حول ولا قوة إلا بالله", me: "আল্লাহর সাহায্য ছাড়া কোনো উপায় ও শক্তি নেই।", type: "zikir" },
             { ar: "حَسْبُنَا ٱللَّهُ وَنِعْمَ ٱلْوَكِيلُ", bn: "হাসবুনাল্লাহু ওয়া নি'মাল আকিল", me: "আল্লাহই আমাদের জন্য যথেষ্ট এবং তিনি কতই না উত্তম কর্মবিধায়ক।", type: "dua" },
             { ar: "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ", bn: "ইয়া হাইয়্যু ইয়া কাইয়্যুম বিরাহমাতিকা আস্তাগিস", me: "হে চিরঞ্জীব! হে মহাবিশ্বের ধারক! আপনার রহমতের উসিলায় আমি সাহায্য প্রার্থনা করছি।", type: "dua" },
             { ar: "ٱللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", bn: "আল্লাহুম্মা সাল্লি আলা মুহাম্মাদ", me: "হে আল্লাহ! মুহাম্মদ (সাঃ) এর ওপর শান্তি বর্ষণ করুন।", type: "zikir" },
             { ar: "لَا إِلَٰهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ", bn: "লা ইলাহা ইল্লা আন্তা সুবহানাকা ইন্নি কুন্তু মিনাজ জোয়ালিমীন", me: "তুমি ছাড়া কোনো উপাস্য নেই, তুমি পবিত্র! নিশ্চয়ই আমি নিজের ওপর জুলুম করেছি।", type: "dua" },
-            { ar: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً", bn: "রব্বানা আতিনা ফিদ দুনিয়া হাসানাহ", me: "হে আমাদের রব! আমাদের দুনিয়াতে কল্যাণ দান করুন।", type: "dua" }
+            { ar: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً", bn: "রব্বানা আতিনা ফিদ دুনিয়া হাসানাহ", me: "হে আমাদের রব! আমাদের দুনিয়াতে কল্যাণ দান করুন।", type: "dua" }
         ];
 
         const container = document.getElementById('cardContainer');
         let cardCount = 1;
 
-        function toBanglaNumber(n) {
-            return String(n).replace(/[0-9]/g, d => "০১২৩৪৫৬৭৮৯"[d]);
-        }
-
-        // পারফরম্যান্স বুস্টের জন্য মেমোরি ভেরিয়েবল
         let finalHTML = "";
 
         for (let i = 0; i < asmaulHusna.length; i++) {
@@ -277,15 +331,18 @@
                     }
 
                     const themeClass = cardCount % 2 === 0 ? 'theme-gold' : 'theme-green';
-                    const bnNumber = toBanglaNumber(cardCount);
+                    const tagText = itemType === 'dua' ? 'দোয়া' : 'জিকির';
 
                     finalHTML += `
                         <div class="card ${themeClass}" data-category="${itemType}">
-                            <span class="card-number">${bnNumber}</span>
+                            <span class="card-tag">${tagText}</span>
                             <div class="arabic-title">${arText}</div>
                             <div class="divider"></div>
                             <p class="pronunciation"><strong>উচ্চারণ:</strong> ${bnText}</p>
-                            <p class="meaning"><strong>অর্থ:</strong> ${meText}</p>
+                            <div class="meaning-container">
+                                <p class="meaning"><strong>অর্থ:</strong> ${meText}</p>
+                                <button class="see-more-btn" onclick="toggleSeeMore(this)">আরও দেখুন</button>
+                            </div>
                         </div>
                     `;
                     cardCount++;
@@ -293,8 +350,29 @@
             }
         }
 
-        // সমস্ত কার্ড একসাথে পেজে রেন্ডার করা হলো
         container.innerHTML = finalHTML;
+
+        // সী-মোর বাটন চেক লজিক
+        document.querySelectorAll('.meaning').forEach(meaningElement => {
+            if (meaningElement.scrollHeight > meaningElement.clientHeight) {
+                const btn = meaningElement.nextElementSibling;
+                if (btn && btn.classList.contains('see-more-btn')) {
+                    btn.style.display = 'inline-block';
+                }
+            }
+        });
+
+        // সী মোর টগল ফাংশন
+        function toggleSeeMore(button) {
+            const textElement = button.previousElementSibling;
+            if (textElement.classList.contains('expanded')) {
+                textElement.classList.remove('expanded');
+                button.innerText = 'আরও দেখুন';
+            } else {
+                textElement.classList.add('expanded');
+                button.innerText = 'সংক্ষিপ্ত করুন';
+            }
+        }
 
         // ফিল্টারিং ফাংশন
         function filterCards(category, button) {
