@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        } 
+        :root {
+            --primary-dark: #111827; 
+            --accent-gold: #c5a880;  
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --border-color: rgba(197, 168, 128, 0.2);
+        }
+        
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 50px 20px;
+            color: #f3f4f6;
+        }
+
+        /* 📄 প্রিমিয়াম লিগ্যাল সাইজ কার্ড কন্টেইনার */
+        .premium-legal-card {
+            background-color: var(--primary-dark);
+            width: 100%;
+            max-width: 794px; 
+            height: 1308px; 
+            box-shadow: var(--card-shadow);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        /* ভেতরের লাক্সারি বর্ডার ওভারলে */
+        .premium-legal-card::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 1px solid rgba(197, 168, 128, 0.15);
+            border-radius: 12px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .card-header {
+            padding: 40px 40px 25px 40px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        .card-header h1 {
+            font-size: 28px;
+            color: #ffffff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+        .card-header .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent-gold);
+            margin: 15px auto;
+        }
+        .card-header p {
+            font-size: 14px;
+            color: #9ca3af;
+            font-weight: 300;
+        }
+
+        /* পিডিএফ কন্টেইনার */
+        .pdf-frame-container {
+            flex: 1;
+            margin: 0 40px 40px 40px; 
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: auto; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+            position: relative;
+            z-index: 5;
+            scroll-behavior: smooth; 
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        /* কাস্টম প্রিমিয়াম স্ক্রলবার ডিজাইন */
+        .pdf-frame-container::-webkit-scrollbar {
+            width: 8px; 
+        }
+        .pdf-frame-container::-webkit-scrollbar-track {
+            background: #1f2937; 
+            border-radius: 0 8px 8px 0;
+        }
+        .pdf-frame-container::-webkit-scrollbar-thumb {
+            background: var(--accent-gold); 
+            border-radius: 10px;
+        }
+
+        /* আইফ্রেম পজিশনিং এবং জুম ইফেক্ট */
+        iframe {
+            position: absolute;
+            top: -56px;           
+            left: 50%;
+            transform: translateX(-50%) scale(1); 
+            transform-origin: top center; 
+            width: 100%;         
+            height: calc(100% + 56px); 
+            border: none;
+            transition: transform 0.2s ease; 
+        }
+
+        /* 🎛️ ডান পাশের ইউনিফাইড কন্ট্রোল প্যানেল */
+        .pdf-controls-sidebar {
+            position: absolute;
+            right: 25px;
+            top: 55%; 
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 99;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+        }
+
+        /* হাইড ক্লাসের জন্য স্টাইল */
+        .pdf-controls-sidebar.hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-50%) translateX(20px);
+        }
+
+        /* 👁️ শো/হাইড করার জন্য নতুন টগল বাটন */
+        .sidebar-toggle-btn {
+            position: absolute;
+            right: 25px;
+            top: 25px;
+            width: 35px;
+            height: 35px;
+            background-color: rgba(17, 24, 39, 0.8);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background-color: var(--accent-gold);
+            color: var(--primary-dark);
+        }
+
+        /* বাটনগুলোর সাধারণ স্টাইল */
+        .control-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+        
+        /* এরো বাটনের কালার স্কিম */
+        .btn-arrow {
+            background-color: rgba(17, 24, 39, 0.9);
+            border: 1px solid var(--accent-gold);
+            color: var(--accent-gold);
+        }
+        
+        /* জুম বাটনের কালার স্কিম */
+        .btn-zoom {
+            background-color: var(--accent-gold);
+            border: none;
+            color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.08);
+        }
+        .control-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* 📱 সম্পূর্ণ রেসপনসিভ মোবাইল ভিউ */
+        @media (max-width: 768px) {
+            body { padding: 15px 8px; }
+            .premium-legal-card { height: 85vh; border-radius: 12px; }
+            .premium-legal-card::before { top: 8px; left: 8px; right: 8px; bottom: 8px; }
+            .card-header { padding: 20px 15px 12px 15px; }
+            .card-header h1 { font-size: 18px; }
+            .card-header p { font-size: 12px; }
+            .pdf-frame-container { margin: 0 15px 15px 15px; }
+            
+            iframe { 
+                top: -48px; 
+                height: calc(100% + 48px); 
+            }
+            .pdf-frame-container::-webkit-scrollbar { width: 5px; }
+            
+            .pdf-controls-sidebar { right: 15px; top: 58%; gap: 10px; }
+            .control-btn { width: 38px; height: 38px; font-size: 14px; }
+            .sidebar-toggle-btn { right: 15px; top: 15px; width: 30px; height: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="premium-legal-card">
+        <div class="sidebar-toggle-btn" onclick="toggleSidebar()" title="বাটন অন/অফ করুন">
+            <i id="toggleIcon" class="fa-solid fa-eye-slash"></i>
+        </div>
+
+        <div class="card-header">
+            <h1>    بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ     </h1>
+            <div class="divider"></div>
+            <p> কোরাআন মাজিদ - ১-৩০ পারা - বড় হরফ </p>
+        </div>
+
+        <div class="pdf-frame-container" id="pdfContainer">
+            <iframe id="pdfIframe" src="https://drive.google.com/file/d/1PqfIsTM7_YTr1gdVWjdYF36zYu4ziXti" allow="autoplay"></iframe>
+        </div>
+
+        <div class="pdf-controls-sidebar" id="pdfSidebar">
+            <div class="control-btn btn-arrow" onclick="scrollPdf('up')" title="ওপরের পেজে যান">
+                <i class="fa-solid fa-chevron-up"></i>
+            </div>
+            
+            <button class="control-btn btn-zoom" onclick="zoomPdf('in')" title="জুম ইন">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            
+            <button class="control-btn btn-zoom" onclick="zoomPdf('out')" title="জুম আউট">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+            
+            <div class="control-btn btn-arrow" onclick="scrollPdf('down')" title="নিচের পেজে যান">
+                <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // কন্ট্রোল বার হাইড/শো করার ফাংশন
+        function toggleSidebar() {
+            const sidebar = document.getElementById('pdfSidebar');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            sidebar.classList.toggle('hidden');
+            
+            // আইকন পরিবর্তন (চোখ বন্ধ/খোলা)
+            if (sidebar.classList.contains('hidden')) {
+                toggleIcon.className = "fa-solid fa-eye";
+                toggleIcon.parentElement.setAttribute('title', 'বাটন দেখান');
+            } else {
+                toggleIcon.className = "fa-solid fa-eye-slash";
+                toggleIcon.parentElement.setAttribute('title', 'বাটন লুকান');
+            }
+        }
+
+        // স্ক্রলিং ফাংশন
+        function scrollPdf(direction) {
+            const container = document.getElementById('pdfContainer');
+            const scrollAmount = container.clientHeight - 20; 
+
+            if (direction === 'down') {
+                container.scrollTo({ top: container.scrollTop + scrollAmount, behavior: 'smooth' });
+            } else if (direction === 'up') {
+                container.scrollTo({ top: container.scrollTop - scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // কাস্টম সেন্টারড জুম ফাংশন
+        let currentScale = 1; 
+        function zoomPdf(zoomType) {
+            const iframe = document.getElementById('pdfIframe');
+            
+            if (zoomType === 'in') {
+                if (currentScale < 2.5) currentScale += 0.2; 
+            } else if (zoomType === 'out') {
+                if (currentScale > 1) currentScale -= 0.2; 
+            }
+            
+            iframe.style.transform = `translateX(-50%) scale(${currentScale})`;
+            
+            if(currentScale > 1) {
+                iframe.style.width = (100 * currentScale) + '%';
+            } else {
+                iframe.style.width = '100%';
+            }
+        }
+    </script>
+
+</body>
+</html>
