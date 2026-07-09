@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Math - A to Z Clean Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght=500;700;900&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #020617, #0f172a, #1e1b4b);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .monitor-board {
+            background: radial-gradient(circle at center, rgba(30, 27, 75, 0.4) 0%, rgba(3, 7, 18, 0.9) 100%);
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8),
+                        0 0 40px rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        :fullscreen .monitor-board {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            border: none !important;
+            border-radius: 0px !important;
+            padding: 2rem !important;
+            box-sizing: border-box;
+        }
+
+        .number-pulse {
+            animation: pulseScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes pulseScale {
+            0% { transform: scale(0.6); opacity: 0; filter: blur(4px); }
+            70% { transform: scale(1.05); opacity: 0.9; filter: blur(0px); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* [৮০px সাইজ বৃদ্ধি] বর্ণমালার জন্য নতুন বড় সাইজ */
+        .responsive-number {
+            font-size: clamp(180px, 25vw, 300px); /* বেস সাইজ এবং ম্যাক্স সাইজ ৮০px বাড়ানো হয়েছে */
+            line-height: 0.85;
+        }
+
+        :fullscreen .responsive-number {
+            font-size: clamp(220px, 45vh, 360px);
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-3 sm:p-6 md:p-10 text-white">
+
+    <div class="w-full max-w-6xl flex flex-col justify-center my-auto">
+        
+        <div class="glass-card w-full rounded-[2.5rem] p-5 sm:p-8 md:p-10 text-center shadow-[0_30px_100px_rgba(0,0,0,0.6)] border border-white/10 relative overflow-hidden flex flex-col justify-between">
+            
+            <div class="mb-4">
+                <h1 class="text-2xl sm:text-3xl md:text-5xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 drop-shadow-sm">
+                    ALPHABET MASTER
+                </h1>
+                <div class="h-10 mt-1 flex items-center justify-center">
+                    <p id="status-text" class="text-xs sm:text-sm md:text-base text-slate-400 font-bold tracking-widest uppercase px-4 bg-white/5 py-1 rounded-full border border-white/5">
+                        Smash START to begin!
+                    </p>
+                </div>
+            </div>
+
+            <div id="monitor-area" class="monitor-board min-h-[220px] sm:min-h-[280px] md:min-h-[320px] lg:min-h-[360px] w-full flex flex-col items-center justify-center relative mb-5 rounded-[2rem] border-2 border-indigo-500/10 p-4 overflow-hidden">
+                
+                <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 via-transparent to-cyan-500/5 pointer-events-none"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[150px] sm:h-[220px] bg-indigo-600/10 rounded-full blur-[80px] pointer-events-none"></div>
+                
+                <div class="w-full max-w-full flex flex-col items-center justify-center z-10 box-border">
+                    <div id="game-row-container" class="w-full flex items-center justify-center transition-all duration-300">
+                        <div id="display" class="responsive-number font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 select-none drop-shadow-[0_12px_25px_rgba(0,0,0,0.7)]">
+                            🅰️
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-3xl self-center">
+                <div class="flex flex-row gap-3 sm:gap-4 w-full items-stretch">
+                    <button id="reset-btn" class="bg-rose-600/90 hover:bg-rose-600 text-white font-black px-4 sm:px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-lg shadow-rose-600/20 active:scale-[0.95] text-xs sm:text-base flex items-center justify-center gap-1.5 tracking-wider shrink-0 border border-rose-500/30">
+                        🛑 RESET
+                    </button>
+                    
+                    <button id="fullscreen-btn" class="bg-slate-800 hover:bg-slate-700 text-white font-black px-4 sm:px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-lg active:scale-[0.95] text-xs sm:text-base flex items-center justify-center gap-1.5 tracking-wider shrink-0 border border-white/10">
+                        📺 FULLSCREEN
+                    </button>
+
+                    <button id="action-btn" class="flex-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:opacity-95 text-white font-black py-3.5 px-5 rounded-2xl transition-all duration-300 shadow-xl shadow-indigo-500/20 active:scale-[0.97] text-sm sm:text-lg md:text-xl tracking-widest uppercase border border-white/10">
+                        START GAME
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const statusText = document.getElementById('status-text');
+        const actionBtn = document.getElementById('action-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const monitorArea = document.getElementById('monitor-area');
+
+        let currentAlphabetIndex = 0; 
+        let gameTimeout = null;
+        let isRunning = false;
+        let femaleVoice = null;
+        const defaultSpeed = 1500; 
+
+        const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+
+        // ফুলস্ক্রিন হ্যান্ডলিং লজিক
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                if (monitorArea.requestFullscreen) {
+                    monitorArea.requestFullscreen();
+                } else if (monitorArea.webkitRequestFullscreen) { /* Safari */
+                    monitorArea.webkitRequestFullscreen();
+                } else if (monitorArea.msRequestFullscreen) { /* IE11 */
+                    monitorArea.msRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = "❌ EXIT FULL";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                fullscreenBtn.innerHTML = "📺 FULLSCREEN";
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullscreenBtn.innerHTML = "📺 FULLSCREEN";
+            }
+        });
+
+        function initVoiceEngine() {
+            if ('speechSynthesis' in window) {
+                const voices = window.speechSynthesis.getVoices();
+                femaleVoice = voices.find(v => 
+                    v.name.includes('Google US English Female') || 
+                    v.name.includes('Microsoft Zira') || 
+                    v.name.includes('Samantha') ||
+                    (v.lang.includes('en') && v.name.toLowerCase().includes('female'))
+                ) || voices.find(v => v.lang.includes('en-US')) || voices.find(v => v.lang.includes('en'));
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = initVoiceEngine;
+            initVoiceEngine();
+        }
+
+        // সিঙ্গেল বা ক্লীন ভয়েস উচ্চারণ মেকানিজম (রিপিটেশন ছাড়া)
+        function playSingleVoice(letter, onEndCallback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+
+                const utterance = new SpeechSynthesisUtterance(letter);
+                if (femaleVoice) utterance.voice = femaleVoice;
+                utterance.rate = 0.65; // স্বাভাবিক ও স্পষ্ট গতি
+                utterance.pitch = 1.15;
+
+                utterance.onend = function() {
+                    if (isRunning && typeof onEndCallback === 'function') {
+                        onEndCallback();
+                    }
+                };
+                window.speechSynthesis.speak(utterance);
+            } else {
+                if (typeof onEndCallback === 'function') onEndCallback();
+            }
+        }
+
+        function triggerGlobalReset() {
+            clearTimeout(gameTimeout);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            isRunning = false;
+            currentAlphabetIndex = 0;
+            
+            display.innerText = "🅰️";
+            display.className = "responsive-number font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 select-none drop-shadow-[0_12px_25px_rgba(0,0,0,0.7)]";
+            
+            actionBtn.classList.remove('hidden');
+            statusText.className = "text-xs sm:text-sm md:text-base text-slate-400 font-bold tracking-widest uppercase px-4 bg-white/5 py-1 rounded-full border border-white/5";
+            statusText.innerText = "Smash START to begin!";
+        }
+
+        function startInfiniteGame() {
+            if (isRunning) return;
+            isRunning = true;
+            currentAlphabetIndex = 0;
+            
+            actionBtn.classList.add('hidden');
+            
+            statusText.className = "text-xs sm:text-sm md:text-base text-amber-400 font-black tracking-widest uppercase animate-pulse px-4 bg-amber-500/10 py-1 rounded-full border border-amber-500/20";
+            statusText.innerText = "GET READY...";
+            
+            display.innerText = "READY";
+            display.className = "text-2xl sm:text-3xl md:text-4xl font-black text-amber-400 number-pulse select-none z-10 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]";
+            
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            const introUtterance = new SpeechSynthesisUtterance("Get ready.");
+            if (femaleVoice) introUtterance.voice = femaleVoice;
+            introUtterance.rate = 0.85;
+            introUtterance.onend = function() {
+                setTimeout(() => {
+                    statusText.className = "text-xs sm:text-sm md:text-base text-emerald-400 font-black tracking-widest uppercase px-4 bg-emerald-500/10 py-1 rounded-full border border-emerald-500/20";
+                    statusText.innerText = "ALPHABET RUNNING";
+                    
+                    display.innerText = "GO!";
+                    display.className = "text-3xl sm:text-4xl md:text-5xl font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_0_30px_rgba(16,185,129,0.5)]";
+                    
+                    gameTimeout = setTimeout(runStreamLoop, 800);
+                }, 400);
+            };
+            window.speechSynthesis.speak(introUtterance);
+        }
+
+        function runStreamLoop() {
+            if (!isRunning) return;
+
+            if (currentAlphabetIndex < alphabet.length) {
+                const currentLetter = alphabet[currentAlphabetIndex];
+
+                display.innerText = currentLetter;
+                display.className = "responsive-number font-black text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-cyan-500 number-pulse select-none z-10 drop-shadow-[0_0_25px_rgba(6,182,212,0.5)]";
+                
+                playSingleVoice(currentLetter, () => {
+                    currentAlphabetIndex++;
+                    gameTimeout = setTimeout(runStreamLoop, defaultSpeed);
+                });
+
+            } else {
+                display.innerText = "🎉";
+                statusText.innerText = "ALL LETTERS SHOWN SUCCESSFULLY!";
+                statusText.className = "text-xs sm:text-sm md:text-base text-emerald-400 font-black tracking-widest px-4 bg-emerald-500/10 py-1 rounded-full border border-emerald-500/20";
+                
+                const endUtterance = new SpeechSynthesisUtterance("Fantastic!");
+                if (femaleVoice) endUtterance.voice = femaleVoice;
+                endUtterance.onend = function() {
+                    actionBtn.classList.remove('hidden');
+                    isRunning = false;
+                };
+                window.speechSynthesis.speak(endUtterance);
+            }
+        }
+
+        actionBtn.addEventListener('click', startInfiniteGame);
+        resetBtn.addEventListener('click', triggerGlobalReset);
+    </script>
+</body>
+</html>
