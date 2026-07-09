@@ -3,143 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Math - Perfect Character Highlight Sync</title>
+    <title>Mental Math - Ultimate Responsive Sync</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght=500;700;900&display=swap');
         
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            background: linear-gradient(135deg, #020617, #0f172a, #1e1b4b);
             min-height: 100vh;
         }
 
+        .glass-card {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* দৈর্ঘ্য বা উচ্চতা আরও কমানো মনিটর বোর্ড */
+        .monitor-board {
+            background: radial-gradient(circle at center, rgba(30, 27, 75, 0.4) 0%, rgba(3, 7, 18, 0.9) 100%);
+            box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.8),
+                        0 0 40px rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* ফুলস্ক্রিন মোডে পুরো স্ক্রিন জুড়েই থাকবে */
+        :fullscreen .monitor-board {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            border: none !important;
+            border-radius: 0px !important;
+            padding: 2rem !important;
+            box-sizing: border-box;
+        }
+
         .number-pulse {
-            animation: pulseScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation: pulseScale 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
         @keyframes pulseScale {
-            0% { transform: scale(0.5); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 0.9; }
+            0% { transform: scale(0.6); opacity: 0; filter: blur(4px); }
+            70% { transform: scale(1.05); opacity: 0.9; filter: blur(0px); }
             100% { transform: scale(1); opacity: 1; }
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.07);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        /* ছোট দৈর্ঘ্যের স্ক্রিনের সাথে সামঞ্জস্যপূর্ণ ফন্ট সাইজ */
+        .responsive-number {
+            font-size: clamp(90px, 15vw, 200px); 
+            line-height: 0.85;
         }
 
-        /* [মোবাইল ডিভাইস] - ১০০% জুম ইন সাইজ */
-        .custom-number-size {
-            font-size: 180px; 
-            line-height: 0.9;
-        }
-        .custom-word-size {
-            font-size: 80px;  
-            line-height: 1;
+        :fullscreen .responsive-number {
+            font-size: clamp(120px, 25vh, 260px);
         }
 
-        /* [ট্যাবলেট ডিভাইস] */
-        @media (min-width: 640px) and (max-width: 1023px) {
-            .custom-number-size {
-                font-size: 280px !important;
-                line-height: 0.85;
-            }
-            .custom-word-size {
-                font-size: 150px !important;
-                line-height: 0.9;
-            }
+        .responsive-word {
+            font-size: clamp(28px, 5.5vw, 85px); 
+            line-height: 1.1;
         }
 
-        /* [ল্যাপটপ এবং কম্পিউটার ডেস্কটপ] */
-        @media (min-width: 1024px) {
-            .custom-number-size {
-                font-size: 400px !important;
-                line-height: 0.85;
-            }
-            .custom-word-size {
-                font-size: 300px !important;
-                line-height: 0.85;
-            }
+        :fullscreen .responsive-word {
+            font-size: clamp(40px, 8vh, 105px);
         }
 
         .letter-span {
-            transition: all 0.15s ease-in-out;
+            transition: all 0.2s ease-in-out;
+            display: inline-block;
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-start p-4 text-white lg:py-12">
+<body class="flex flex-col items-center justify-center p-3 sm:p-6 md:p-10 text-white">
 
-    <div class="w-full max-w-7xl flex flex-col xl:flex-row gap-8 items-stretch justify-center mb-8">
+    <!-- মেইন কন্টেইনার -->
+    <div class="w-full max-w-6xl flex flex-col justify-center my-auto">
         
-        <div class="glass-card flex-1 w-full rounded-3xl p-5 md:p-10 text-center shadow-2xl relative overflow-hidden flex flex-col justify-between order-2 xl:order-1">
+        <!-- মূল গেম কার্ড -->
+        <div class="glass-card w-full rounded-[2.5rem] p-5 sm:p-8 md:p-10 text-center shadow-[0_30px_100px_rgba(0,0,0,0.6)] border border-white/10 relative overflow-hidden flex flex-col justify-between">
             
-            <div>
-                <h1 class="text-3xl md:text-5xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-400 mb-2">
+            <!-- টপ হেডার সেকশন -->
+            <div class="mb-4">
+                <h1 class="text-2xl sm:text-3xl md:text-5xl font-black tracking-widest bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 drop-shadow-sm">
                     MENTAL MATH
                 </h1>
-                <div class="h-12 mb-4 flex items-center justify-center">
-                    <p id="status-text" class="text-sm md:text-lg text-slate-300 font-bold tracking-widest uppercase px-2">
-                        Set speed on the right & smash START!
+                <div class="h-10 mt-1 flex items-center justify-center">
+                    <p id="status-text" class="text-xs sm:text-sm md:text-base text-slate-400 font-bold tracking-widest uppercase px-4 bg-white/5 py-1 rounded-full border border-white/5">
+                        Smash START to begin!
                     </p>
                 </div>
             </div>
 
-            <div class="min-h-[550px] sm:min-h-[650px] lg:min-h-[850px] flex flex-col items-center justify-center relative mb-6 bg-slate-950/40 rounded-2xl border border-white/5 shadow-inner p-4 overflow-hidden">
-                <div class="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-2xl opacity-40"></div>
+            <!-- মনিটর বোর্ড (দৈর্ঘ্য বা min-h আরও কমানো হয়েছে) -->
+            <div id="monitor-area" class="monitor-board min-h-[220px] sm:min-h-[280px] md:min-h-[320px] lg:min-h-[360px] w-full flex flex-col items-center justify-center relative mb-5 rounded-[2rem] border-2 border-indigo-500/10 p-4 overflow-hidden">
                 
-                <div class="w-full flex flex-col items-center justify-center gap-6 lg:gap-10 z-10">
+                <!-- ব্যাকগ্রাউন্ড গ্লো ইফেক্টস -->
+                <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 via-transparent to-cyan-500/5 pointer-events-none"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] sm:w-[600px] h-[150px] sm:h-[220px] bg-indigo-600/10 rounded-full blur-[80px] pointer-events-none"></div>
+                
+                <!-- কন্টেন্ট ডিসপ্লে এরিয়া -->
+                <div class="w-full max-w-full flex flex-col items-center justify-center gap-3 z-10 box-border">
                     <div id="game-row-container" class="w-full flex items-center justify-center transition-all duration-300">
-                        <div id="display" class="custom-number-size font-black text-white select-none transition-all duration-300 drop-shadow-[0_25px_60px_rgba(0,0,0,0.8)]">
+                        <!-- বড় সংখ্যা ডিসপ্লে -->
+                        <div id="display" class="responsive-number font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 select-none drop-shadow-[0_12px_25px_rgba(0,0,0,0.7)]">
                             🧠
                         </div>
                     </div>
-                    <div id="english-word-display" class="custom-word-size font-black tracking-wide text-indigo-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(99,102,241,0.6)] uppercase text-center w-full break-words px-4"></div>
+                    <!-- ইংরেজি বানান ডিসপ্লে -->
+                    <div id="english-word-display" class="responsive-word font-black tracking-wide text-indigo-400 number-pulse select-none drop-shadow-[0_12px_25px_rgba(99,102,241,0.4)] uppercase text-center w-full break-words px-4"></div>
                 </div>
             </div>
 
-            <div>
-                <div class="flex gap-3 md:gap-4 w-full">
-                    <button id="reset-btn" class="bg-rose-600 hover:bg-rose-500 text-white font-black p-4 md:p-5 rounded-2xl transition-all duration-300 shadow-lg shadow-rose-600/30 active:scale-[0.95] text-base md:text-xl flex items-center justify-center gap-2 tracking-wider shrink-0">
+            <!-- কন্ট্রোল বাটন্স সেকশন -->
+            <div class="w-full max-w-3xl self-center">
+                <div class="flex flex-row gap-3 sm:gap-4 w-full items-stretch">
+                    <!-- রিসেট বাটন -->
+                    <button id="reset-btn" class="bg-rose-600/90 hover:bg-rose-600 text-white font-black px-4 sm:px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-lg shadow-rose-600/20 active:scale-[0.95] text-xs sm:text-base flex items-center justify-center gap-1.5 tracking-wider shrink-0 border border-rose-500/30">
                         🛑 RESET
                     </button>
-                    <button id="action-btn" class="flex-1 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-black py-4 md:py-5 px-4 md:px-8 rounded-2xl transition-all duration-300 shadow-xl shadow-indigo-500/30 active:scale-[0.97] text-base md:text-2xl tracking-widest uppercase">
+                    
+                    <!-- ফুলস্ক্রিন বাটন -->
+                    <button id="fullscreen-btn" class="bg-slate-800 hover:bg-slate-700 text-white font-black px-4 sm:px-6 py-3.5 rounded-2xl transition-all duration-300 shadow-lg active:scale-[0.95] text-xs sm:text-base flex items-center justify-center gap-1.5 tracking-wider shrink-0 border border-white/10">
+                        📺 FULLSCREEN
+                    </button>
+
+                    <!-- স্টার্ট বাটন -->
+                    <button id="action-btn" class="flex-1 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:opacity-95 text-white font-black py-3.5 px-5 rounded-2xl transition-all duration-300 shadow-xl shadow-indigo-500/20 active:scale-[0.97] text-sm sm:text-lg md:text-xl tracking-widest uppercase border border-white/10">
                         START GAME
                     </button>
                 </div>
             </div>
         </div>
 
-        <div class="glass-card w-full xl:w-[380px] rounded-3xl p-5 md:p-6 shadow-2xl order-1 xl:order-2 flex flex-col justify-center">
-            <h3 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 mb-6 border-b border-white/10 pb-3 tracking-wide flex items-center gap-2">
-                ⚙️ SPEED CONTROL
-            </h3>
-            
-            <div class="flex flex-col gap-5 flex-1 justify-center">
-                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
-                    <input type="radio" name="math-speed" value="180000" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
-                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Very Slow</span>
-                </label>
-                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
-                    <input type="radio" name="math-speed" value="2000" checked class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
-                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Slow</span>
-                </label>
-                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
-                    <input type="radio" name="math-speed" value="1500" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
-                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Fast</span>
-                </label>
-                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
-                    <input type="radio" name="math-speed" value="1200" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
-                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Very Fast</span>
-                </label>
-                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
-                    <input type="radio" name="math-speed" value="1000" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
-                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Super Fast</span>
-                </label>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -148,12 +144,40 @@
         const statusText = document.getElementById('status-text');
         const actionBtn = document.getElementById('action-btn');
         const resetBtn = document.getElementById('reset-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const monitorArea = document.getElementById('monitor-area');
 
         let currentNumber = 1;
         let gameTimeout = null;
         let isRunning = false;
         let femaleVoice = null;
-        let highlightIntervals = []; // টাইমারগুলো ট্র্যাক রাখার জন্য অ্যারে
+        let highlightIntervals = []; 
+        const defaultSpeed = 2000; 
+
+        // ফুলস্ক্রিন হ্যান্ডলিং লজিক
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                if (monitorArea.requestFullscreen) {
+                    monitorArea.requestFullscreen();
+                } else if (monitorArea.webkitRequestFullscreen) { /* Safari */
+                    monitorArea.webkitRequestFullscreen();
+                } else if (monitorArea.msRequestFullscreen) { /* IE11 */
+                    monitorArea.msRequestFullscreen();
+                }
+                fullscreenBtn.innerHTML = "❌ EXIT FULL";
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                fullscreenBtn.innerHTML = "📺 FULLSCREEN";
+            }
+        });
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullscreenBtn.innerHTML = "📺 FULLSCREEN";
+            }
+        });
 
         function initVoiceEngine() {
             if ('speechSynthesis' in window) {
@@ -172,45 +196,38 @@
             initVoiceEngine();
         }
 
-        // টেক্সটকে প্রতিটি অক্ষরের আলাদা স্প্যান (span) ট্যাগে নিখুঁতভাবে দেখানোর ফাংশন
         function renderWordWithSpans(wordText) {
             englishWordDisplay.innerHTML = "";
             wordText.split("").forEach((char, index) => {
                 const span = document.createElement("span");
                 span.innerText = char;
                 span.id = `char-${index}`;
-                span.className = "letter-span text-indigo-400 font-black"; // ডিফল্ট বেগুনী কালার ঠিক থাকবে
+                span.className = "letter-span text-indigo-400 font-black"; 
                 englishWordDisplay.appendChild(span);
             });
         }
 
-        // নির্দিষ্ট ইনডেক্সের অক্ষরকে লাল করার ফাংশন
         function highlightLetterAt(index, fullWordLength) {
-            // প্রথমে সব অক্ষরের কালার ডিফল্ট করে নেওয়া হচ্ছে
             for (let i = 0; i < fullWordLength; i++) {
                 const el = document.getElementById(`char-${i}`);
-                if (el) el.className = "letter-span text-indigo-400 font-black";
+                if (el) el.className = "letter-span text-indigo-400 font-black transform scale-100";
             }
-            // নির্দিষ্ট অক্ষরটিকে লাল (Red) করা হচ্ছে
             const activeEl = document.getElementById(`char-${index}`);
             if (activeEl) {
-                activeEl.className = "letter-span text-red-500 font-black scale-110 inline-block";
+                activeEl.className = "letter-span text-rose-500 font-black scale-110 drop-shadow-[0_0_15px_rgba(244,63,94,0.6)]";
             }
         }
 
-        // ক্লিয়ার অল টাইমার্স
         function clearAllHighlights() {
             highlightIntervals.forEach(id => clearTimeout(id));
             highlightIntervals = [];
         }
 
-        // পারফেক্ট টাইম-বেসড ভয়েস এবং হাইলাইট সিঙ্ক ইঞ্জিন
         function playSyncedVoice(number, fullWord, onEndCallback) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel(); 
                 clearAllHighlights();
 
-                // ১. প্রথমে শুধু নাম্বার বলবে
                 const numUtterance = new SpeechSynthesisUtterance(`${number}`);
                 if (femaleVoice) numUtterance.voice = femaleVoice;
                 numUtterance.rate = 0.75;
@@ -219,18 +236,15 @@
                 numUtterance.onend = function() {
                     if (!isRunning) return;
 
-                    // ২. নাম্বার বলা শেষ হলে স্পেলিং (বানান) শুরু হবে
                     const cleanWord = fullWord.replace(/-/g, ' '); 
                     const spellingText = cleanWord.split('').join(', ');
 
                     const spellingUtterance = new SpeechSynthesisUtterance(spellingText);
                     if (femaleVoice) spellingUtterance.voice = femaleVoice;
-                    spellingUtterance.rate = 0.60; // স্পেলিং স্পিড স্লো
+                    spellingUtterance.rate = 0.60; 
                     spellingUtterance.pitch = 1.15;
 
-                    // ম্যাজিক পার্ট: টাইমিং লুপের সাহায্যে নিখুঁতভাবে অক্ষর লাল করা
-                    let spanIndex = 0;
-                    let delayTime = 100; // প্রথম অক্ষরের জন্য সামান্য ইনিশিয়াল ডিলে
+                    let delayTime = 100; 
 
                     fullWord.split("").forEach((char, idx) => {
                         if (char !== " " && char !== "-") {
@@ -238,9 +252,8 @@
                                 if (isRunning) highlightLetterAt(idx, fullWord.length);
                             }, delayTime);
                             highlightIntervals.push(tid);
-                            delayTime += 460; // ০.৬০ স্পিডের জন্য প্রতি অক্ষরের মাঝের পারফেক্ট সময় (৪৬০ মিলিমেকেন্ড)
+                            delayTime += 460; 
                         } else {
-                            // স্পেস বা ড্যাশের জন্য টাইমিং গ্যাপ অ্যাডজাস্টমেন্ট
                             delayTime += 200;
                         }
                     });
@@ -248,9 +261,8 @@
                     spellingUtterance.onend = function() {
                         if (!isRunning) return;
 
-                        // ৩. বানান শেষ হলে পুরো শব্দটা শেষবারের মতো উচ্চারণ করবে এবং সব নরমাল কালার হয়ে যাবে
                         clearAllHighlights();
-                        renderWordWithSpans(fullWord); // রিস্টোর বেগুনী কালার
+                        renderWordWithSpans(fullWord); 
                         
                         const finalUtterance = new SpeechSynthesisUtterance(fullWord);
                         if (femaleVoice) finalUtterance.voice = femaleVoice;
@@ -285,24 +297,6 @@
             return num.toString();
         }
 
-        function getSelectedSpeed() {
-            const el = document.querySelector('input[name="math-speed"]:checked');
-            return el ? parseInt(el.value) : 2000;
-        }
-
-        function toggleControlPanel(disable) {
-            const inputs = document.querySelectorAll('input[name="math-speed"]');
-            inputs.forEach(input => {
-                input.disabled = disable;
-                const label = input.parentElement;
-                if(disable) {
-                    label.classList.add('opacity-20', 'cursor-not-allowed');
-                } else {
-                    label.classList.remove('opacity-20', 'cursor-not-allowed');
-                }
-            });
-        }
-
         function triggerGlobalReset() {
             clearTimeout(gameTimeout);
             clearAllHighlights();
@@ -311,13 +305,12 @@
             currentNumber = 1;
             
             display.innerText = "🧠";
-            display.className = "custom-number-size font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]";
+            display.className = "responsive-number font-black text-transparent bg-clip-text bg-gradient-to-b from-white to-slate-300 select-none drop-shadow-[0_15px_30px_rgba(0,0,0,0.7)]";
             englishWordDisplay.innerHTML = "";
             
-            toggleControlPanel(false);
             actionBtn.classList.remove('hidden');
-            statusText.className = "text-sm md:text-lg text-slate-300 font-bold tracking-widest uppercase";
-            statusText.innerText = "Set speed on the right & smash START!";
+            statusText.className = "text-xs sm:text-sm md:text-base text-slate-400 font-bold tracking-widest uppercase px-4 bg-white/5 py-1.5 rounded-full border border-white/5";
+            statusText.innerText = "Smash START to begin!";
         }
 
         function startInfiniteGame() {
@@ -325,14 +318,13 @@
             isRunning = true;
             currentNumber = 1;
             
-            toggleControlPanel(true);
             actionBtn.classList.add('hidden');
             
-            statusText.className = "text-base md:text-xl text-amber-400 font-black tracking-widest uppercase animate-pulse";
+            statusText.className = "text-xs sm:text-sm md:text-base text-amber-400 font-black tracking-widest uppercase animate-pulse px-4 bg-amber-500/10 py-1 rounded-full border border-amber-500/20";
             statusText.innerText = "GET READY...";
             
             display.innerText = "READY";
-            display.className = "text-5xl md:text-7xl lg:text-8xl font-black text-amber-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(245,158,11,0.3)]";
+            display.className = "text-2xl sm:text-3xl md:text-4xl font-black text-amber-400 number-pulse select-none z-10 drop-shadow-[0_0_20px_rgba(245,158,11,0.4)]";
             englishWordDisplay.innerText = "STARTING";
             
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -341,11 +333,11 @@
             introUtterance.rate = 0.8;
             introUtterance.onend = function() {
                 setTimeout(() => {
-                    statusText.className = "text-base md:text-xl text-emerald-400 font-black tracking-widest uppercase";
+                    statusText.className = "text-xs sm:text-sm md:text-base text-emerald-400 font-black tracking-widest uppercase px-4 bg-emerald-500/10 py-1 rounded-full border border-emerald-500/20";
                     statusText.innerText = "STREAM RUNNING";
                     
                     display.innerText = "GO!";
-                    display.className = "text-6xl md:text-8xl lg:text-9xl font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(16,185,129,0.4)]";
+                    display.className = "text-3xl sm:text-4xl md:text-5xl font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_0_30px_rgba(16,185,129,0.5)]";
                     englishWordDisplay.innerText = "NOW";
                     
                     gameTimeout = setTimeout(runStreamLoop, 1000);
@@ -358,33 +350,27 @@
             if (!isRunning) return;
 
             if (currentNumber <= 100) {
-                // UI রেন্ডারিং
                 display.innerText = currentNumber;
-                display.className = "custom-number-size font-black text-cyan-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(6,182,212,0.6)]";
+                display.className = "responsive-number font-black text-transparent bg-clip-text bg-gradient-to-b from-cyan-300 to-cyan-500 number-pulse select-none z-10 drop-shadow-[0_0_25px_rgba(6,182,212,0.5)]";
                 
                 const fullWord = numberToEnglishWords(currentNumber);
-                
-                // স্ক্রিনে ডিফল্ট বেগুনী কালার টেক্সট শো করবে অবিলম্বে
                 renderWordWithSpans(fullWord);
                 
-                // ভয়েস প্লে এবং পারফেক্ট রিয়েল-টাইম লেটার হাইলাইট রান হচ্ছে
                 playSyncedVoice(currentNumber, fullWord, () => {
                     currentNumber++;
-                    const currentSpeed = getSelectedSpeed();
-                    gameTimeout = setTimeout(runStreamLoop, currentSpeed);
+                    gameTimeout = setTimeout(runStreamLoop, defaultSpeed);
                 });
 
             } else {
                 display.innerText = "🎉";
                 englishWordDisplay.innerText = "DONE";
-                englishWordDisplay.className = "custom-word-size font-black tracking-wide text-emerald-400 select-none uppercase text-center w-full";
+                englishWordDisplay.className = "responsive-word font-black tracking-wide text-emerald-400 select-none uppercase text-center w-full drop-shadow-[0_0_25px_rgba(16,185,129,0.4)]";
                 statusText.innerText = "STREAM FINISHED SUCCESSFULLY!";
-                statusText.className = "text-base md:text-xl text-emerald-400 font-black tracking-widest";
+                statusText.className = "text-xs sm:text-sm md:text-base text-emerald-400 font-black tracking-widest px-4 bg-emerald-500/10 py-1 rounded-full border border-emerald-500/20";
                 
                 const endUtterance = new SpeechSynthesisUtterance("Excellent. Stream finished successfully.");
                 if (femaleVoice) endUtterance.voice = femaleVoice;
                 endUtterance.onend = function() {
-                    toggleControlPanel(false);
                     actionBtn.classList.remove('hidden');
                     isRunning = false;
                 };
