@@ -108,10 +108,9 @@
 </head>
 <body class="flex flex-col items-center justify-start p-3 text-white lg:py-8">
 
-    <div class="w-full max-w-7xl flex flex-col xl:flex-row gap-5 items-stretch justify-center mb-6">
+    <div class="w-full max-w-7xl flex flex-col xl:flex-row gap-5 items-start justify-center mb-6">
         
-        <!-- গেম প্লে প্যানেল -->
-        <div class="glass-card flex-1 w-full rounded-2xl p-5 text-center shadow-2xl relative overflow-hidden flex flex-col justify-between order-2 xl:order-1">
+        <div class="glass-card flex-1 w-full rounded-2xl p-5 text-center shadow-2xl relative overflow-hidden flex flex-col justify-between order-2 xl:order-1 self-stretch">
             <div>
                 <h1 class="text-2xl md:text-4xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 mb-1">
                     MENTAL MATH
@@ -126,21 +125,18 @@
             <div class="h-72 md:h-[360px] flex flex-col items-stretch justify-start relative mb-4 bg-slate-950/60 rounded-xl border border-white/5 shadow-inner p-4 overflow-hidden">
                 <div class="absolute inset-0 bg-indigo-500/10 rounded-xl blur-3xl opacity-25 pointer-events-none"></div>
                 
-                <!-- লাইভ মনিটর বোর্ড রো -->
-                <div class="w-full neon-monitor-board rounded-lg px-4 py-2.5 mb-6 text-left min-h-[46px] flex items-center z-10 transition-all duration-300">
-                    <p id="live-equation-monitor" class="text-base font-bold tracking-wide text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] select-none w-full truncate">
-                        <!-- লাইভ হিসাব বাম দিক থেকে এখানে পূর্ণ হবে -->
-                    </p>
+                <div class="w-full neon-monitor-board rounded-lg px-4 py-2.5 mb-6 text-left min-h-[46px] flex items-center z-10 overflow-hidden box-border">
+                    <p id="live-equation-monitor" class="text-xs sm:text-sm md:text-base font-bold tracking-wide text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] select-none w-full truncate whitespace-nowrap overflow-hidden block">
+                        </p>
                 </div>
 
-                <!-- মেইন ডিসপ্লে এরিয়া -->
-                <div id="game-row-container" class="w-full flex-1 flex items-center justify-center gap-2 z-10">
-                    <div id="display" class="text-6xl md:text-[100px] lg:text-[130px] font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]">
+                <div id="game-row-container" class="w-full flex-1 flex items-center justify-center gap-2 z-10 overflow-hidden">
+                    <div id="display" class="text-4xl sm:text-6xl md:text-[100px] lg:text-[120px] font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] truncate max-w-full px-2">
                         🧠
                     </div>
 
                     <div id="input-container" class="hidden w-full max-w-[180px] md:max-w-[380px]">
-                        <input type="number" id="user-answer" placeholder="?" class="invisible-input w-full text-center text-6xl md:text-[100px] lg:text-[130px] font-black text-cyan-400 drop-shadow-[0_10px_20px_rgba(6,182,212,0.5)] placeholder-cyan-400/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                        <input type="number" id="user-answer" placeholder="?" class="invisible-input w-full text-center text-5xl md:text-[100px] lg:text-[120px] font-black text-cyan-400 drop-shadow-[0_10px_20px_rgba(6,182,212,0.5)] placeholder-cyan-400/20 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                     </div>
                 </div>
             </div>
@@ -160,7 +156,6 @@
             </div>
         </div>
 
-        <!-- পরিমার্জিত গেম কন্ট্রোল প্যানেল (টেক্সট অনুযায়ী প্রস্থ - w-fit) -->
         <div class="glass-card w-fit rounded-2xl p-4 shadow-2xl order-1 xl:order-2 flex flex-col justify-start gap-4 shrink-0">
             <h3 class="text-sm font-bold text-slate-300 border-b border-white/5 pb-2 tracking-wide flex items-center gap-1.5">
                 <span class="text-cyan-400">⚙️</span> CONTROL PANEL
@@ -168,13 +163,11 @@
             
             <div class="flex flex-col gap-4">
                 
-                <!-- ১. অপারেশন সেকশন -->
                 <div class="w-full bg-slate-950/30 p-2.5 rounded-xl border border-white/5">
                     <h4 class="text-[10px] font-bold text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                         <span>🧮</span> 1. Mode (Operation)
                     </h4>
                     <div class="flex flex-col gap-2">
-                        <!-- রো ১ -->
                         <div class="flex flex-wrap gap-2">
                             <label class="control-item-card flex items-center gap-2 p-2 px-3 rounded-lg cursor-pointer select-none text-purple-400 text-xs w-fit">
                                 <input type="radio" name="math-op" value="+" checked class="text-purple-500 shrink-0">
@@ -185,7 +178,6 @@
                                 <span class="font-semibold text-slate-300 whitespace-nowrap">বিয়োগ (-)</span>
                             </label>
                         </div>
-                        <!-- রো ২ -->
                         <div class="flex flex-wrap gap-2">
                             <label class="control-item-card flex items-center gap-2 p-2 px-3 rounded-lg cursor-pointer select-none text-purple-400 text-xs w-fit">
                                 <input type="radio" name="math-op" value="*" class="text-purple-500 shrink-0">
@@ -199,31 +191,17 @@
                     </div>
                 </div>
 
-                <!-- ২ এবং ৩ নং মেইন কলামের সেকশনগুলো -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="flex flex-col sm:flex-row gap-4">
                     
-                    <!-- বাম সাইড: ২ নং রেঞ্জ এবং ৪ নং স্পিড -->
                     <div class="flex flex-col gap-4">
-                        <!-- ২. রেঞ্জ কলাম -->
                         <div class="flex flex-col bg-slate-950/30 p-2.5 rounded-xl border border-white/5">
                             <h4 class="text-[10px] font-bold text-cyan-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                                 <span>🎯</span> 2. Range
                             </h4>
                             <div class="fixed-scroll-box custom-scroll flex flex-col items-start gap-1" id="range-group">
-                                <script>
-                                    for(let i=10; i<=100; i+=10) {
-                                        document.write(`
-                                            <label class="control-item-card flex items-center gap-2 p-1.5 px-3 rounded-lg cursor-pointer select-none text-cyan-400 text-xs w-fit">
-                                                <input type="radio" name="math-range" value="${i}" ${i===100?'checked':''} class="text-cyan-500 shrink-0">
-                                                <span class="font-semibold text-slate-300 whitespace-nowrap">০ - ${i}</span>
-                                            </label>
-                                        `);
-                                    }
-                                </script>
-                            </div>
+                                </div>
                         </div>
 
-                        <!-- ৪. স্পিড কলাম -->
                         <div class="flex flex-col bg-slate-950/30 p-2.5 rounded-xl border border-white/5">
                             <h4 class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                                 <span>⚡</span> 4. Speed
@@ -243,28 +221,15 @@
                         </div>
                     </div>
 
-                    <!-- ডান সাইড: ৩ নং পরিমাণ এবং ৫ নং টাইম আউট -->
                     <div class="flex flex-col gap-4">
-                        <!-- ৩. পরিমাণ কলাম (২ হতে ১০ পর্যন্ত রাখা হয়েছে) -->
                         <div class="flex flex-col bg-slate-950/30 p-2.5 rounded-xl border border-white/5">
                             <h4 class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                                 <span>🔢</span> 3. Quantity
                             </h4>
                             <div class="fixed-scroll-box custom-scroll flex flex-col items-start gap-1" id="quantity-group">
-                                <script>
-                                    for(let i=2; i<=10; i++) {
-                                        document.write(`
-                                            <label class="control-item-card flex items-center gap-2 p-1.5 px-3 rounded-lg cursor-pointer select-none text-indigo-400 text-xs w-fit">
-                                                <input type="radio" name="math-quantity" value="${i}" ${i===5?'checked':''} class="text-indigo-500 shrink-0">
-                                                <span class="font-semibold text-slate-300 whitespace-nowrap">${i} টি সংখ্যা</span>
-                                            </label>
-                                        `);
-                                    }
-                                </script>
-                            </div>
+                                </div>
                         </div>
 
-                        <!-- ৫. টাইম লেফট কলাম -->
                         <div class="flex flex-col bg-slate-950/30 p-2.5 rounded-xl border border-white/5">
                             <h4 class="text-[10px] font-bold text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1">
                                 <span>⏳</span> 5. Answer Timeout
@@ -289,7 +254,6 @@
         </div>
     </div>
 
-    <!-- পারফরম্যান্স বক্স -->
     <div id="performance-box" class="glass-card w-full max-w-7xl rounded-2xl p-4 shadow-xl hidden">
         <div class="mb-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl p-3 text-center font-semibold tracking-wide text-xs md:text-sm">
             🎉 SUCCESS! All 10 rounds completed successfully! Check your stats below.
@@ -333,7 +297,6 @@
         </div>
     </div>
 
-    <!-- ব্যাকগ্রাউন্ড গ্লো ইফেক্ট -->
     <div class="absolute top-10 left-10 w-48 h-48 bg-cyan-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
     <div class="absolute bottom-10 right-10 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
 
@@ -353,6 +316,9 @@
         const roundCounter = document.getElementById('round-counter');
         const performanceBox = document.getElementById('performance-box');
 
+        const rangeGroup = document.getElementById('range-group');
+        const quantityGroup = document.getElementById('quantity-group');
+
         let numbers = [];
         let operatorsInRound = [];
         let totalSum = 0;
@@ -364,6 +330,83 @@
         let runningEquationStr = ""; 
 
         let universalUsedNumbers = new Set();
+
+        // ভারতীয় কমা ফরম্যাট মেথড (৩ সংখ্যা, পরে ২ সংখ্যা কমা)
+        function formatIndianNumber(num) {
+            if (num === null || num === undefined || isNaN(num)) return "---";
+            let str = num.toString();
+            let isNegative = str.startsWith('-');
+            if (isNegative) str = str.substring(1);
+            
+            if (str.length <= 3) {
+                return isNegative ? '-' + str : str;
+            }
+            
+            let lastThree = str.substring(str.length - 3);
+            let otherBits = str.substring(0, str.length - 3);
+            otherBits = otherBits.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+            
+            let finalResult = otherBits + ',' + lastThree;
+            return isNegative ? '-' + finalResult : finalResult;
+        }
+
+        function formatEquationString(equation) {
+            return equation.replace(/\d+/g, (match) => formatIndianNumber(parseInt(match)));
+        }
+
+        // ডাইনামিক কন্ট্রোল প্যানেল আপডেট ফাংশন
+        function updateControlPanelUI() {
+            const selectedOp = getSelectedOperator();
+            
+            // ১. রেঞ্জ আপডেট (১০ থেকে ১০০ পর্যন্ত ১০ ব্যবধানে, এরপর ২০০ থেকে ১০০০ পর্যন্ত ১০০ ব্যবধানে)
+            rangeGroup.innerHTML = '';
+            
+            // ১০ থেকে ১০০ পর্যন্ত জেনারেট
+            for(let i = 10; i <= 100; i += 10) {
+                rangeGroup.innerHTML += `
+                    <label class="control-item-card flex items-center gap-2 p-1.5 px-3 rounded-lg cursor-pointer select-none text-cyan-400 text-xs w-fit">
+                        <input type="radio" name="math-range" value="${i}" ${i===100?'checked':''} class="text-cyan-500 shrink-0">
+                        <span class="font-semibold text-slate-300 whitespace-nowrap">০ - ${formatIndianNumber(i)}</span>
+                    </label>
+                `;
+            }
+            // ২০০ থেকে ১০০০ পর্যন্ত জেনারেট
+            for(let i = 200; i <= 1000; i += 100) {
+                rangeGroup.innerHTML += `
+                    <label class="control-item-card flex items-center gap-2 p-1.5 px-3 rounded-lg cursor-pointer select-none text-cyan-400 text-xs w-fit">
+                        <input type="radio" name="math-range" value="${i}" class="text-cyan-500 shrink-0">
+                        <span class="font-semibold text-slate-300 whitespace-nowrap">০ - ${formatIndianNumber(i)}</span>
+                    </label>
+                `;
+            }
+
+            // ২. কোয়ান্টিটি আপডেট
+            quantityGroup.innerHTML = '';
+            if (selectedOp === '/') {
+                quantityGroup.innerHTML = `
+                    <label class="control-item-card flex items-center gap-2 p-1.5 px-3 rounded-lg cursor-pointer select-none text-indigo-400 text-xs w-fit">
+                        <input type="radio" name="math-quantity" value="2" checked class="text-indigo-500 shrink-0">
+                        <span class="font-semibold text-slate-300 whitespace-nowrap">২ টি সংখ্যা</span>
+                    </label>
+                `;
+            } else {
+                for(let i=2; i<=10; i++) {
+                    quantityGroup.innerHTML += `
+                        <label class="control-item-card flex items-center gap-2 p-1.5 px-3 rounded-lg cursor-pointer select-none text-indigo-400 text-xs w-fit">
+                            <input type="radio" name="math-quantity" value="${i}" ${i===5?'checked':''} class="text-indigo-500 shrink-0">
+                            <span class="font-semibold text-slate-300 whitespace-nowrap">${i} টি সংখ্যা</span>
+                        </label>
+                    `;
+                }
+            }
+
+            // কোয়ান্টিটি চেঞ্জ ইভেন্ট আবার বাইন্ড করা
+            document.querySelectorAll('input[name="math-quantity"]').forEach(radio => {
+                radio.addEventListener('change', initDots);
+            });
+
+            initDots();
+        }
 
         function initDots() {
             const count = getSelectedQuantity();
@@ -496,7 +539,7 @@
             isCountdownActive = false;
             display.style.display = 'block';
             display.innerText = "🧠";
-            display.className = "text-6xl md:text-[100px] lg:text-[130px] font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]";
+            display.className = "text-4xl sm:text-6xl md:text-[100px] lg:text-[120px] font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] truncate max-w-full px-2";
             
             liveEquationMonitor.innerText = ""; 
             runningEquationStr = "";
@@ -512,7 +555,7 @@
             
             performanceBox.classList.add('hidden');
             performanceBox.classList.remove('fade-in-up');
-            initDots();
+            updateControlPanelUI();
         }
 
         function handleActionButtonClick() {
@@ -588,12 +631,12 @@
                     runningEquationStr = `${currentNum}`;
                 }
 
-                liveEquationMonitor.innerText = runningEquationStr;
+                liveEquationMonitor.innerText = formatEquationString(runningEquationStr);
 
                 updateDots(currentStep + 1);
                 
-                display.innerText = currentNum;
-                display.className = "text-6xl md:text-[100px] lg:text-[130px] font-black text-cyan-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(6,182,212,0.4)]";
+                display.innerText = formatIndianNumber(currentNum);
+                display.className = "text-4xl sm:text-6xl md:text-[100px] lg:text-[120px] font-black text-cyan-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(6,182,212,0.4)] truncate max-w-full px-2";
 
                 currentStep++;
                 gameInterval = setTimeout(showNextNumber, currentSpeed);
@@ -606,10 +649,10 @@
             const currentSpeed = getSelectedSpeed();
             
             display.innerText = "=";
-            display.className = "text-6xl md:text-[100px] lg:text-[130px] font-black text-indigo-400 number-pulse select-none shrink-0 drop-shadow-[0_10px_20px_rgba(99,102,241,0.3)]";
+            display.className = "text-6xl md:text-[100px] lg:text-[120px] font-black text-indigo-400 number-pulse select-none shrink-0 drop-shadow-[0_10px_20px_rgba(99,102,241,0.3)]";
             statusText.innerText = "Calculate the total!";
             
-            liveEquationMonitor.innerText = runningEquationStr + " = ?";
+            liveEquationMonitor.innerText = formatEquationString(runningEquationStr) + " = ?";
 
             inputContainer.classList.remove('hidden');
             userAnswerInput.value = '';
@@ -671,16 +714,16 @@
         function processNextAutomatedStep(isCorrect) {
             inputContainer.classList.add('hidden');
             display.style.display = 'block';
-            display.innerText = totalSum;
+            display.innerText = formatIndianNumber(totalSum);
 
-            liveEquationMonitor.innerText = runningEquationStr + " = " + totalSum;
+            liveEquationMonitor.innerText = formatEquationString(runningEquationStr) + " = " + formatIndianNumber(totalSum);
 
             if(isCorrect) {
-                display.className = "text-6xl md:text-[100px] lg:text-[130px] font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(16,185,129,0.4)]";
+                display.className = "text-4xl sm:text-6xl md:text-[100px] lg:text-[120px] font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(16,185,129,0.4)] truncate max-w-full px-2";
                 statusText.className = "text-xs text-emerald-400 font-bold tracking-wider uppercase";
                 statusText.innerText = "YOUR ANSWER IS CORRECT! 🎉";
             } else {
-                display.className = "text-6xl md:text-[100px] lg:text-[130px] font-black text-rose-500 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(244,63,94,0.4)]";
+                display.className = "text-4xl sm:text-6xl md:text-[100px] lg:text-[120px] font-black text-rose-500 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(244,63,94,0.4)] truncate max-w-full px-2";
                 statusText.className = "text-xs text-rose-400 font-bold tracking-wider uppercase";
                 statusText.innerText = "WRONG OR TIME OUT! ❌";
             }
@@ -718,11 +761,13 @@
                 const statusColor = item.status === 'সঠিক' ? 'text-emerald-400' : 'text-rose-400';
                 const statusBadge = item.status === 'সঠিক' ? '🟢 সঠিক' : '🔴 ভুল';
 
+                let formattedUserAns = item.userSum === "---" ? "---" : formatIndianNumber(item.userSum);
+
                 row.innerHTML = `
                     <td class="py-2 px-1 text-slate-500 font-normal text-center">${index + 1}</td>
-                    <td class="py-2 px-3 text-center text-slate-100 text-sm">${item.userSum}</td>
-                    <td class="py-2 px-3 text-center text-cyan-400 text-base font-bold">${item.actualSum}</td>
-                    <td class="py-2 px-1 text-left text-xs text-slate-400 font-normal italic">${item.formulaStr}</td>
+                    <td class="py-2 px-3 text-center text-slate-100 text-sm">${formattedUserAns}</td>
+                    <td class="py-2 px-3 text-center text-cyan-400 text-base font-bold">${formatIndianNumber(item.actualSum)}</td>
+                    <td class="py-2 px-1 text-left text-xs text-slate-400 font-normal italic">${formatEquationString(item.formulaStr)}</td>
                     <td class="py-2 px-1 ${statusColor} text-center text-[11px]">${statusBadge}</td>
                 `;
                 historyRows.appendChild(row);
@@ -752,10 +797,12 @@
             scoreGrade.className = `text-base font-black ${gradeColor}`;
         }
 
-        initDots();
+        // অপশন ইনিশিয়াল রেন্ডার
+        updateControlPanelUI();
 
-        document.querySelectorAll('input[name="math-quantity"]').forEach(radio => {
-            radio.addEventListener('change', initDots);
+        // মোড চেঞ্জ লিসেনার (যোগ, বিয়োগ, গুণ, ভাগের কন্ডিশন চেক করার জন্য)
+        document.querySelectorAll('input[name="math-op"]').forEach(radio => {
+            radio.addEventListener('change', updateControlPanelUI);
         });
 
         actionBtn.addEventListener('click', handleActionButtonClick);
