@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mental Math - Voice Synced Stream</title>
-    <!-- Tailwind CSS for styling -->
+    <title>Mental Math - Perfect Character Highlight Sync</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght=500;700;900&display=swap');
@@ -54,7 +53,7 @@
             }
         }
 
-        /* [ল্যাপটপ এবং কম্পিউটার ডেস্কটপ] - ৪০০px এবং ৩০০px */
+        /* [ল্যাপটপ এবং কম্পিউটার ডেস্কটপ] */
         @media (min-width: 1024px) {
             .custom-number-size {
                 font-size: 400px !important;
@@ -65,14 +64,16 @@
                 line-height: 0.85;
             }
         }
+
+        .letter-span {
+            transition: all 0.15s ease-in-out;
+        }
     </style>
 </head>
 <body class="flex flex-col items-center justify-start p-4 text-white lg:py-12">
 
-    <!-- Wrapper for Control Panel + Game Box Layout -->
     <div class="w-full max-w-7xl flex flex-col xl:flex-row gap-8 items-stretch justify-center mb-8">
         
-        <!-- MAIN GAME CONTAINER -->
         <div class="glass-card flex-1 w-full rounded-3xl p-5 md:p-10 text-center shadow-2xl relative overflow-hidden flex flex-col justify-between order-2 xl:order-1">
             
             <div>
@@ -95,7 +96,7 @@
                             🧠
                         </div>
                     </div>
-                    <div id="english-word-display" class="custom-word-size font-black tracking-wide text-slate-400/80 uppercase select-none transition-all duration-300 text-center w-full break-words px-4"></div>
+                    <div id="english-word-display" class="custom-word-size font-black tracking-wide text-indigo-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(99,102,241,0.6)] uppercase text-center w-full break-words px-4"></div>
                 </div>
             </div>
 
@@ -111,7 +112,6 @@
             </div>
         </div>
 
-        <!-- CONTROL PANEL SIDEBAR -->
         <div class="glass-card w-full xl:w-[380px] rounded-3xl p-5 md:p-6 shadow-2xl order-1 xl:order-2 flex flex-col justify-center">
             <h3 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 mb-6 border-b border-white/10 pb-3 tracking-wide flex items-center gap-2">
                 ⚙️ SPEED CONTROL
@@ -153,6 +153,7 @@
         let gameTimeout = null;
         let isRunning = false;
         let femaleVoice = null;
+        let highlightIntervals = []; // টাইমারগুলো ট্র্যাক রাখার জন্য অ্যারে
 
         function initVoiceEngine() {
             if ('speechSynthesis' in window) {
@@ -171,35 +172,104 @@
             initVoiceEngine();
         }
 
-        // কাস্টম ভয়েস ফাংশন যা কথা শেষ করার পর পরবর্তী কাজের সংকেত (Callback) দেয়
-        function playVoiceWithCallback(textToSay, onEndCallback) {
+        // টেক্সটকে প্রতিটি অক্ষরের আলাদা স্প্যান (span) ট্যাগে নিখুঁতভাবে দেখানোর ফাংশন
+        function renderWordWithSpans(wordText) {
+            englishWordDisplay.innerHTML = "";
+            wordText.split("").forEach((char, index) => {
+                const span = document.createElement("span");
+                span.innerText = char;
+                span.id = `char-${index}`;
+                span.className = "letter-span text-indigo-400 font-black"; // ডিফল্ট বেগুনী কালার ঠিক থাকবে
+                englishWordDisplay.appendChild(span);
+            });
+        }
+
+        // নির্দিষ্ট ইনডেক্সের অক্ষরকে লাল করার ফাংশন
+        function highlightLetterAt(index, fullWordLength) {
+            // প্রথমে সব অক্ষরের কালার ডিফল্ট করে নেওয়া হচ্ছে
+            for (let i = 0; i < fullWordLength; i++) {
+                const el = document.getElementById(`char-${i}`);
+                if (el) el.className = "letter-span text-indigo-400 font-black";
+            }
+            // নির্দিষ্ট অক্ষরটিকে লাল (Red) করা হচ্ছে
+            const activeEl = document.getElementById(`char-${index}`);
+            if (activeEl) {
+                activeEl.className = "letter-span text-red-500 font-black scale-110 inline-block";
+            }
+        }
+
+        // ক্লিয়ার অল টাইমার্স
+        function clearAllHighlights() {
+            highlightIntervals.forEach(id => clearTimeout(id));
+            highlightIntervals = [];
+        }
+
+        // পারফেক্ট টাইম-বেসড ভয়েস এবং হাইলাইট সিঙ্ক ইঞ্জিন
+        function playSyncedVoice(number, fullWord, onEndCallback) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel(); 
-                
-                const utterance = new SpeechSynthesisUtterance(textToSay);
-                if (femaleVoice) {
-                    utterance.voice = femaleVoice;
-                }
-                utterance.rate = 0.75;  // আপনার রিকোয়েস্ট করা স্লো স্পিড
-                utterance.pitch = 1.15; 
-                
-                // ভয়েস বা বানান শেষ হওয়া মাত্র এই ট্রিগারটি অন হবে
-                utterance.onend = function () {
-                    if (isRunning && typeof onEndCallback === 'function') {
-                        onEndCallback();
-                    }
+                clearAllHighlights();
+
+                // ১. প্রথমে শুধু নাম্বার বলবে
+                const numUtterance = new SpeechSynthesisUtterance(`${number}`);
+                if (femaleVoice) numUtterance.voice = femaleVoice;
+                numUtterance.rate = 0.75;
+                numUtterance.pitch = 1.15;
+
+                numUtterance.onend = function() {
+                    if (!isRunning) return;
+
+                    // ২. নাম্বার বলা শেষ হলে স্পেলিং (বানান) শুরু হবে
+                    const cleanWord = fullWord.replace(/-/g, ' '); 
+                    const spellingText = cleanWord.split('').join(', ');
+
+                    const spellingUtterance = new SpeechSynthesisUtterance(spellingText);
+                    if (femaleVoice) spellingUtterance.voice = femaleVoice;
+                    spellingUtterance.rate = 0.60; // স্পেলিং স্পিড স্লো
+                    spellingUtterance.pitch = 1.15;
+
+                    // ম্যাজিক পার্ট: টাইমিং লুপের সাহায্যে নিখুঁতভাবে অক্ষর লাল করা
+                    let spanIndex = 0;
+                    let delayTime = 100; // প্রথম অক্ষরের জন্য সামান্য ইনিশিয়াল ডিলে
+
+                    fullWord.split("").forEach((char, idx) => {
+                        if (char !== " " && char !== "-") {
+                            let tid = setTimeout(() => {
+                                if (isRunning) highlightLetterAt(idx, fullWord.length);
+                            }, delayTime);
+                            highlightIntervals.push(tid);
+                            delayTime += 460; // ০.৬০ স্পিডের জন্য প্রতি অক্ষরের মাঝের পারফেক্ট সময় (৪৬০ মিলিমেকেন্ড)
+                        } else {
+                            // স্পেস বা ড্যাশের জন্য টাইমিং গ্যাপ অ্যাডজাস্টমেন্ট
+                            delayTime += 200;
+                        }
+                    });
+
+                    spellingUtterance.onend = function() {
+                        if (!isRunning) return;
+
+                        // ৩. বানান শেষ হলে পুরো শব্দটা শেষবারের মতো উচ্চারণ করবে এবং সব নরমাল কালার হয়ে যাবে
+                        clearAllHighlights();
+                        renderWordWithSpans(fullWord); // রিস্টোর বেগুনী কালার
+                        
+                        const finalUtterance = new SpeechSynthesisUtterance(fullWord);
+                        if (femaleVoice) finalUtterance.voice = femaleVoice;
+                        finalUtterance.rate = 0.75;
+                        finalUtterance.pitch = 1.15;
+
+                        finalUtterance.onend = function() {
+                            if (isRunning && typeof onEndCallback === 'function') {
+                                onEndCallback();
+                            }
+                        };
+                        window.speechSynthesis.speak(finalUtterance);
+                    };
+
+                    window.speechSynthesis.speak(spellingUtterance);
                 };
 
-                // কোনো কারণে ভয়েস ইরর হলে লুপ যাতে আটকে না থাকে
-                utterance.onerror = function () {
-                    if (isRunning && typeof onEndCallback === 'function') {
-                        onEndCallback();
-                    }
-                };
-
-                window.speechSynthesis.speak(utterance);
+                window.speechSynthesis.speak(numUtterance);
             } else {
-                // ব্রাউজারে ভয়েস সাপোর্ট না থাকলে সরাসরি কলব্যাক রান হবে
                 if (typeof onEndCallback === 'function') onEndCallback();
             }
         }
@@ -213,10 +283,6 @@
             if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? " " + ones[num % 10] : "");
             if (num === 100) return "ONE HUNDRED";
             return num.toString();
-        }
-
-        function getLetterSpelling(word) {
-            return word.split('').join(', ');
         }
 
         function getSelectedSpeed() {
@@ -239,14 +305,14 @@
 
         function triggerGlobalReset() {
             clearTimeout(gameTimeout);
+            clearAllHighlights();
             if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             isRunning = false;
             currentNumber = 1;
             
             display.innerText = "🧠";
             display.className = "custom-number-size font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]";
-            englishWordDisplay.innerText = "";
-            englishWordDisplay.className = "custom-word-size font-black tracking-wide text-slate-400/80 uppercase select-none transition-all duration-300 text-center w-full break-words px-4";
+            englishWordDisplay.innerHTML = "";
             
             toggleControlPanel(false);
             actionBtn.classList.remove('hidden');
@@ -269,7 +335,11 @@
             display.className = "text-5xl md:text-7xl lg:text-8xl font-black text-amber-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(245,158,11,0.3)]";
             englishWordDisplay.innerText = "STARTING";
             
-            playVoiceWithCallback("Get ready. Starting now.", () => {
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            const introUtterance = new SpeechSynthesisUtterance("Get ready. Starting now.");
+            if (femaleVoice) introUtterance.voice = femaleVoice;
+            introUtterance.rate = 0.8;
+            introUtterance.onend = function() {
                 setTimeout(() => {
                     statusText.className = "text-base md:text-xl text-emerald-400 font-black tracking-widest uppercase";
                     statusText.innerText = "STREAM RUNNING";
@@ -278,10 +348,10 @@
                     display.className = "text-6xl md:text-8xl lg:text-9xl font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(16,185,129,0.4)]";
                     englishWordDisplay.innerText = "NOW";
                     
-                    // ১ সেকেন্ড পর মূল লুপ শুরু হবে
                     gameTimeout = setTimeout(runStreamLoop, 1000);
                 }, 500);
-            });
+            };
+            window.speechSynthesis.speak(introUtterance);
         }
 
         function runStreamLoop() {
@@ -293,21 +363,14 @@
                 display.className = "custom-number-size font-black text-cyan-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(6,182,212,0.6)]";
                 
                 const fullWord = numberToEnglishWords(currentNumber);
-                englishWordDisplay.innerText = fullWord;
-                englishWordDisplay.className = "custom-word-size font-black tracking-wide text-indigo-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(99,102,241,0.6)] uppercase text-center w-full break-words px-4";
                 
-                const cleanWordForSpelling = fullWord.replace(/-/g, ''); 
-                const letterSpelling = getLetterSpelling(cleanWordForSpelling);
+                // স্ক্রিনে ডিফল্ট বেগুনী কালার টেক্সট শো করবে অবিলম্বে
+                renderWordWithSpans(fullWord);
                 
-                const ultraClearSpeech = `${currentNumber}, ... ${letterSpelling}, ... ${fullWord}`;
-                
-                // ভয়েস কলব্যাক সিঙ্ক লজিক
-                playVoiceWithCallback(ultraClearSpeech, () => {
-                    // বানান ও কথা শেষ হওয়া মাত্রই এই অংশ কাজ করবে
+                // ভয়েস প্লে এবং পারফেক্ট রিয়েল-টাইম লেটার হাইলাইট রান হচ্ছে
+                playSyncedVoice(currentNumber, fullWord, () => {
                     currentNumber++;
                     const currentSpeed = getSelectedSpeed();
-                    
-                    // কথা শেষ হওয়ার পর আপনার দেওয়া স্পিড অনুযায়ী গ্যাপ দিয়ে নতুন লুপ কল করবে
                     gameTimeout = setTimeout(runStreamLoop, currentSpeed);
                 });
 
@@ -318,11 +381,14 @@
                 statusText.innerText = "STREAM FINISHED SUCCESSFULLY!";
                 statusText.className = "text-base md:text-xl text-emerald-400 font-black tracking-widest";
                 
-                playVoiceWithCallback("Excellent. Stream finished successfully.", () => {
+                const endUtterance = new SpeechSynthesisUtterance("Excellent. Stream finished successfully.");
+                if (femaleVoice) endUtterance.voice = femaleVoice;
+                endUtterance.onend = function() {
                     toggleControlPanel(false);
                     actionBtn.classList.remove('hidden');
                     isRunning = false;
-                });
+                };
+                window.speechSynthesis.speak(endUtterance);
             }
         }
 
