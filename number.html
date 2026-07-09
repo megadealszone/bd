@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Math - Voice Synced Stream</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght=500;700;900&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            min-height: 100vh;
+        }
+
+        .number-pulse {
+            animation: pulseScale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes pulseScale {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* [মোবাইল ডিভাইস] - ১০০% জুম ইন সাইজ */
+        .custom-number-size {
+            font-size: 180px; 
+            line-height: 0.9;
+        }
+        .custom-word-size {
+            font-size: 80px;  
+            line-height: 1;
+        }
+
+        /* [ট্যাবলেট ডিভাইস] */
+        @media (min-width: 640px) and (max-width: 1023px) {
+            .custom-number-size {
+                font-size: 280px !important;
+                line-height: 0.85;
+            }
+            .custom-word-size {
+                font-size: 150px !important;
+                line-height: 0.9;
+            }
+        }
+
+        /* [ল্যাপটপ এবং কম্পিউটার ডেস্কটপ] - ৪০০px এবং ৩০০px */
+        @media (min-width: 1024px) {
+            .custom-number-size {
+                font-size: 400px !important;
+                line-height: 0.85;
+            }
+            .custom-word-size {
+                font-size: 300px !important;
+                line-height: 0.85;
+            }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-start p-4 text-white lg:py-12">
+
+    <!-- Wrapper for Control Panel + Game Box Layout -->
+    <div class="w-full max-w-7xl flex flex-col xl:flex-row gap-8 items-stretch justify-center mb-8">
+        
+        <!-- MAIN GAME CONTAINER -->
+        <div class="glass-card flex-1 w-full rounded-3xl p-5 md:p-10 text-center shadow-2xl relative overflow-hidden flex flex-col justify-between order-2 xl:order-1">
+            
+            <div>
+                <h1 class="text-3xl md:text-5xl font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-400 mb-2">
+                    MENTAL MATH
+                </h1>
+                <div class="h-12 mb-4 flex items-center justify-center">
+                    <p id="status-text" class="text-sm md:text-lg text-slate-300 font-bold tracking-widest uppercase px-2">
+                        Set speed on the right & smash START!
+                    </p>
+                </div>
+            </div>
+
+            <div class="min-h-[550px] sm:min-h-[650px] lg:min-h-[850px] flex flex-col items-center justify-center relative mb-6 bg-slate-950/40 rounded-2xl border border-white/5 shadow-inner p-4 overflow-hidden">
+                <div class="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-2xl opacity-40"></div>
+                
+                <div class="w-full flex flex-col items-center justify-center gap-6 lg:gap-10 z-10">
+                    <div id="game-row-container" class="w-full flex items-center justify-center transition-all duration-300">
+                        <div id="display" class="custom-number-size font-black text-white select-none transition-all duration-300 drop-shadow-[0_25px_60px_rgba(0,0,0,0.8)]">
+                            🧠
+                        </div>
+                    </div>
+                    <div id="english-word-display" class="custom-word-size font-black tracking-wide text-slate-400/80 uppercase select-none transition-all duration-300 text-center w-full break-words px-4"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="flex gap-3 md:gap-4 w-full">
+                    <button id="reset-btn" class="bg-rose-600 hover:bg-rose-500 text-white font-black p-4 md:p-5 rounded-2xl transition-all duration-300 shadow-lg shadow-rose-600/30 active:scale-[0.95] text-base md:text-xl flex items-center justify-center gap-2 tracking-wider shrink-0">
+                        🛑 RESET
+                    </button>
+                    <button id="action-btn" class="flex-1 bg-gradient-to-r from-cyan-500 to-indigo-500 hover:from-cyan-400 hover:to-indigo-400 text-white font-black py-4 md:py-5 px-4 md:px-8 rounded-2xl transition-all duration-300 shadow-xl shadow-indigo-500/30 active:scale-[0.97] text-base md:text-2xl tracking-widest uppercase">
+                        START GAME
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL PANEL SIDEBAR -->
+        <div class="glass-card w-full xl:w-[380px] rounded-3xl p-5 md:p-6 shadow-2xl order-1 xl:order-2 flex flex-col justify-center">
+            <h3 class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400 mb-6 border-b border-white/10 pb-3 tracking-wide flex items-center gap-2">
+                ⚙️ SPEED CONTROL
+            </h3>
+            
+            <div class="flex flex-col gap-5 flex-1 justify-center">
+                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
+                    <input type="radio" name="math-speed" value="180000" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
+                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Very Slow</span>
+                </label>
+                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
+                    <input type="radio" name="math-speed" value="2000" checked class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
+                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Slow</span>
+                </label>
+                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
+                    <input type="radio" name="math-speed" value="1500" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
+                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Fast</span>
+                </label>
+                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
+                    <input type="radio" name="math-speed" value="1200" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
+                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Very Fast</span>
+                </label>
+                <label class="flex items-center gap-4 cursor-pointer select-none group transition-all">
+                    <input type="radio" name="math-speed" value="1000" class="w-6 h-6 text-cyan-500 accent-cyan-400 cursor-pointer shrink-0">
+                    <span class="text-[22px] sm:text-[26px] md:text-[32px] font-black text-white leading-none tracking-wide transition-colors">Super Fast</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const englishWordDisplay = document.getElementById('english-word-display');
+        const statusText = document.getElementById('status-text');
+        const actionBtn = document.getElementById('action-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        let currentNumber = 1;
+        let gameTimeout = null;
+        let isRunning = false;
+        let femaleVoice = null;
+
+        function initVoiceEngine() {
+            if ('speechSynthesis' in window) {
+                const voices = window.speechSynthesis.getVoices();
+                femaleVoice = voices.find(v => 
+                    v.name.includes('Google US English Female') || 
+                    v.name.includes('Microsoft Zira') || 
+                    v.name.includes('Samantha') ||
+                    (v.lang.includes('en') && v.name.toLowerCase().includes('female'))
+                ) || voices.find(v => v.lang.includes('en-US')) || voices.find(v => v.lang.includes('en'));
+            }
+        }
+
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = initVoiceEngine;
+            initVoiceEngine();
+        }
+
+        // কাস্টম ভয়েস ফাংশন যা কথা শেষ করার পর পরবর্তী কাজের সংকেত (Callback) দেয়
+        function playVoiceWithCallback(textToSay, onEndCallback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); 
+                
+                const utterance = new SpeechSynthesisUtterance(textToSay);
+                if (femaleVoice) {
+                    utterance.voice = femaleVoice;
+                }
+                utterance.rate = 0.75;  // আপনার রিকোয়েস্ট করা স্লো স্পিড
+                utterance.pitch = 1.15; 
+                
+                // ভয়েস বা বানান শেষ হওয়া মাত্র এই ট্রিগারটি অন হবে
+                utterance.onend = function () {
+                    if (isRunning && typeof onEndCallback === 'function') {
+                        onEndCallback();
+                    }
+                };
+
+                // কোনো কারণে ভয়েস ইরর হলে লুপ যাতে আটকে না থাকে
+                utterance.onerror = function () {
+                    if (isRunning && typeof onEndCallback === 'function') {
+                        onEndCallback();
+                    }
+                };
+
+                window.speechSynthesis.speak(utterance);
+            } else {
+                // ব্রাউজারে ভয়েস সাপোর্ট না থাকলে সরাসরি কলব্যাক রান হবে
+                if (typeof onEndCallback === 'function') onEndCallback();
+            }
+        }
+
+        function numberToEnglishWords(num) {
+            if (num === 0) return "ZERO";
+            const ones = ["", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN", "SIXTEEN", "SEVENTEEN", "EIGHTEEN", "NINETEEN"];
+            const tens = ["", "", "TWENTY", "THIRTY", "FORTY", "FIFTY", "SIXTY", "SEVENTY", "EIGHTY", "NINETY"];
+            
+            if (num < 20) return ones[num];
+            if (num < 100) return tens[Math.floor(num / 10)] + (num % 10 !== 0 ? " " + ones[num % 10] : "");
+            if (num === 100) return "ONE HUNDRED";
+            return num.toString();
+        }
+
+        function getLetterSpelling(word) {
+            return word.split('').join(', ');
+        }
+
+        function getSelectedSpeed() {
+            const el = document.querySelector('input[name="math-speed"]:checked');
+            return el ? parseInt(el.value) : 2000;
+        }
+
+        function toggleControlPanel(disable) {
+            const inputs = document.querySelectorAll('input[name="math-speed"]');
+            inputs.forEach(input => {
+                input.disabled = disable;
+                const label = input.parentElement;
+                if(disable) {
+                    label.classList.add('opacity-20', 'cursor-not-allowed');
+                } else {
+                    label.classList.remove('opacity-20', 'cursor-not-allowed');
+                }
+            });
+        }
+
+        function triggerGlobalReset() {
+            clearTimeout(gameTimeout);
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            isRunning = false;
+            currentNumber = 1;
+            
+            display.innerText = "🧠";
+            display.className = "custom-number-size font-black text-white select-none transition-all duration-300 drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]";
+            englishWordDisplay.innerText = "";
+            englishWordDisplay.className = "custom-word-size font-black tracking-wide text-slate-400/80 uppercase select-none transition-all duration-300 text-center w-full break-words px-4";
+            
+            toggleControlPanel(false);
+            actionBtn.classList.remove('hidden');
+            statusText.className = "text-sm md:text-lg text-slate-300 font-bold tracking-widest uppercase";
+            statusText.innerText = "Set speed on the right & smash START!";
+        }
+
+        function startInfiniteGame() {
+            if (isRunning) return;
+            isRunning = true;
+            currentNumber = 1;
+            
+            toggleControlPanel(true);
+            actionBtn.classList.add('hidden');
+            
+            statusText.className = "text-base md:text-xl text-amber-400 font-black tracking-widest uppercase animate-pulse";
+            statusText.innerText = "GET READY...";
+            
+            display.innerText = "READY";
+            display.className = "text-5xl md:text-7xl lg:text-8xl font-black text-amber-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(245,158,11,0.3)]";
+            englishWordDisplay.innerText = "STARTING";
+            
+            playVoiceWithCallback("Get ready. Starting now.", () => {
+                setTimeout(() => {
+                    statusText.className = "text-base md:text-xl text-emerald-400 font-black tracking-widest uppercase";
+                    statusText.innerText = "STREAM RUNNING";
+                    
+                    display.innerText = "GO!";
+                    display.className = "text-6xl md:text-8xl lg:text-9xl font-black text-emerald-400 number-pulse select-none z-10 drop-shadow-[0_10px_20px_rgba(16,185,129,0.4)]";
+                    englishWordDisplay.innerText = "NOW";
+                    
+                    // ১ সেকেন্ড পর মূল লুপ শুরু হবে
+                    gameTimeout = setTimeout(runStreamLoop, 1000);
+                }, 500);
+            });
+        }
+
+        function runStreamLoop() {
+            if (!isRunning) return;
+
+            if (currentNumber <= 100) {
+                // UI রেন্ডারিং
+                display.innerText = currentNumber;
+                display.className = "custom-number-size font-black text-cyan-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(6,182,212,0.6)]";
+                
+                const fullWord = numberToEnglishWords(currentNumber);
+                englishWordDisplay.innerText = fullWord;
+                englishWordDisplay.className = "custom-word-size font-black tracking-wide text-indigo-400 number-pulse select-none z-10 drop-shadow-[0_20px_45px_rgba(99,102,241,0.6)] uppercase text-center w-full break-words px-4";
+                
+                const cleanWordForSpelling = fullWord.replace(/-/g, ''); 
+                const letterSpelling = getLetterSpelling(cleanWordForSpelling);
+                
+                const ultraClearSpeech = `${currentNumber}, ... ${letterSpelling}, ... ${fullWord}`;
+                
+                // ভয়েস কলব্যাক সিঙ্ক লজিক
+                playVoiceWithCallback(ultraClearSpeech, () => {
+                    // বানান ও কথা শেষ হওয়া মাত্রই এই অংশ কাজ করবে
+                    currentNumber++;
+                    const currentSpeed = getSelectedSpeed();
+                    
+                    // কথা শেষ হওয়ার পর আপনার দেওয়া স্পিড অনুযায়ী গ্যাপ দিয়ে নতুন লুপ কল করবে
+                    gameTimeout = setTimeout(runStreamLoop, currentSpeed);
+                });
+
+            } else {
+                display.innerText = "🎉";
+                englishWordDisplay.innerText = "DONE";
+                englishWordDisplay.className = "custom-word-size font-black tracking-wide text-emerald-400 select-none uppercase text-center w-full";
+                statusText.innerText = "STREAM FINISHED SUCCESSFULLY!";
+                statusText.className = "text-base md:text-xl text-emerald-400 font-black tracking-widest";
+                
+                playVoiceWithCallback("Excellent. Stream finished successfully.", () => {
+                    toggleControlPanel(false);
+                    actionBtn.classList.remove('hidden');
+                    isRunning = false;
+                });
+            }
+        }
+
+        actionBtn.addEventListener('click', startInfiniteGame);
+        resetBtn.addEventListener('click', triggerGlobalReset);
+    </script>
+</body>
+</html>
