@@ -5,13 +5,15 @@
     <title>রেজিস্টর ক্যালকুলেটর</title>
     <style>
         body { font-family: sans-serif; background: #eef2f3; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 350px; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 380px; }
         h2 { text-align: center; color: #333; }
         label { display: block; margin-top: 15px; font-weight: bold; }
-        select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; }
+        select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
         .radio-group { display: flex; justify-content: space-around; margin-top: 10px; }
         .result { margin-top: 25px; padding: 15px; background: #222; color: #0f0; text-align: center; font-size: 16px; border-radius: 8px; }
         .range { font-size: 14px; color: #fff; margin-top: 10px; }
+        .unit-details { text-align: left; margin-top: 10px; border-top: 1px solid #444; padding-top: 10px; color: #ddd; font-size: 13px; }
+        .unit-title { color: #ffeb3b; font-weight: bold; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -22,6 +24,7 @@
     <div class="radio-group">
         <label><input type="radio" name="bands" value="3" checked onchange="toggleBands()"> ৩-ব্যান্ড</label>
         <label><input type="radio" name="bands" value="4" onchange="toggleBands()"> ৪-ব্যান্ড</label>
+        <label><input type="radio" name="bands" value="5" onchange="toggleBands()"> ৫-ব্যান্ড</label>
     </div>
     
     <label>১ম ব্যান্ড:</label>
@@ -30,12 +33,23 @@
     <label>২য় ব্যান্ড:</label>
     <select id="b2" onchange="calc()"></select>
     
-    <label>৩য় ব্যান্ড (গুণক):</label>
-    <select id="b3" onchange="calc()"></select>
+    <div id="band3Container">
+        <label id="b3Label">৩য় ব্যান্ড (गुणक):</label>
+        <select id="b3" onchange="calc()"></select>
+    </div>
 
     <div id="band4Container" style="display:none;">
-        <label>৪র্থ ব্যান্ড (টলারেন্স):</label>
+        <label id="b4Label">৪র্থ ব্যান্ড (টলারেন্স):</label>
         <select id="b4" onchange="calc()">
+            <option value="5">সোনালী (±5%)</option>
+            <option value="10">রুপালী (±10%)</option>
+            <option value="20">কোনো রঙ নেই (±20%)</option>
+        </select>
+    </div>
+
+    <div id="band5Container" style="display:none;">
+        <label>৫ম ব্যান্ড (টলারেন্স):</label>
+        <select id="b5" onchange="calc()">
             <option value="5">সোনালী (±5%)</option>
             <option value="10">রুপালী (±10%)</option>
             <option value="20">কোনো রঙ নেই (±20%)</option>
@@ -61,29 +75,90 @@
         });
     });
 
+    // ৫-ব্যান্ডের জন্য b4 সিলেক্ট বক্সেও রঙের অপশনগুলো ডায়নামিকালি যোগ করার ব্যবস্থা
+    let b4Sel = document.getElementById('b4');
+    let originalB4Options = b4Sel.innerHTML; // ৪-ব্যান্ডের টলারেন্স অপশনগুলো সেভ রাখা হলো
+
     function toggleBands() {
-        const is4Band = document.querySelector('input[name="bands"]:checked').value === "4";
-        document.getElementById('band4Container').style.display = is4Band ? "block" : "none";
+        const bandValue = document.querySelector('input[name="bands"]:checked').value;
+        
+        if (bandValue === "3") {
+            document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
+            b4Sel.innerHTML = originalB4Options;
+            document.getElementById('band4Container').style.display = "none";
+            document.getElementById('band5Container').style.display = "none";
+        } else if (bandValue === "4") {
+            document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
+            b4Sel.innerHTML = originalB4Options;
+            document.getElementById('band4Container').style.display = "block";
+            document.getElementById('band5Container').style.display = "none";
+        } else if (bandValue === "5") {
+            document.getElementById('b3Label').innerText = "৩য় ব্যান্ড:";
+            // ৫-ব্যান্ডের জন্য ৪র্থ ব্যান্ড হবে গুণক (Multiplier), তাই একে রঙের ড্রপডাউন বানাতে হবে
+            b4Sel.innerHTML = "";
+            colors.forEach(c => {
+                b4Sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
+            });
+            document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (गुणक):";
+            document.getElementById('band4Container').style.display = "block";
+            document.getElementById('band5Container').style.display = "block";
+        }
         calc();
+    }
+
+    function formatNum(num) {
+        return num.toLocaleString(undefined, { maximumFractionDigits: 4 });
     }
 
     function calc() {
         let v1 = parseInt(document.getElementById('b1').value);
         let v2 = parseInt(document.getElementById('b2').value);
         let v3 = parseInt(document.getElementById('b3').value);
-        let is4Band = document.querySelector('input[name="bands"]:checked').value === "4";
         
-        // যদি ৩-ব্যান্ড হয় তবে ডিফল্ট টলারেন্স ২০%
-        let tol = is4Band ? parseInt(document.getElementById('b4').value) : 20;
+        const bandValue = document.querySelector('input[name="bands"]:checked').value;
         
-        let resistance = (v1 * 10 + v2) * Math.pow(10, v3);
+        let resistance = 0;
+        let tol = 20;
+
+        if (bandValue === "3") {
+            resistance = (v1 * 10 + v2) * Math.pow(10, v3);
+            tol = 20;
+        } else if (bandValue === "4") {
+            resistance = (v1 * 10 + v2) * Math.pow(10, v3);
+            tol = parseInt(document.getElementById('b4').value);
+        } else if (bandValue === "5") {
+            let v4 = parseInt(document.getElementById('b4').value);
+            tol = parseInt(document.getElementById('b5').value);
+            resistance = (v1 * 100 + v2 * 10 + v3) * Math.pow(10, v4);
+        }
+        
         let toleranceValue = resistance * (tol / 100);
-        
         let minRange = resistance - toleranceValue;
         let maxRange = resistance + toleranceValue;
         
-        document.getElementById('res').innerHTML = `মান: ${resistance.toLocaleString()} Ω ± ${tol}%` + 
-            `<div class="range">${minRange.toLocaleString()} - ${maxRange.toLocaleString()} ohm</div>`;
+        // প্রধান ডিসপ্লে (ওহম এককে)
+        let htmlOutput = `মান: ${formatNum(resistance)} Ω ± ${tol}%` + 
+                         `<div class="range">${formatNum(minRange)} - ${formatNum(maxRange)} ohm</div>`;
+        
+        // ৫-ব্যান্ড সিলেক্ট করা হলে অতিরিক্ত কিলো-ওহম এবং মেগা-ওহম ইউনিটগুলো নিচে দেখাবে
+        if (bandValue === "5") {
+            let resKilo = resistance / 1000;
+            let minKilo = minRange / 1000;
+            let maxKilo = maxRange / 1000;
+            
+            let resMega = resistance / 1000000;
+            let minMega = minRange / 1000000;
+            let maxMega = maxRange / 1000000;
+
+            htmlOutput += `<div class="unit-details">` +
+                          `<div class="unit-title">■ কিলো ওহম (kΩ):</div>` +
+                          `মান: <b>${formatNum(resKilo)} kΩ</b><br>সীমা: ${formatNum(minKilo)} kΩ - ${formatNum(maxKilo)} kΩ` +
+                          `<div class="unit-title">■ মেগা ওহম (MΩ):</div>` +
+                          `মান: <b>${formatNum(resMega)} MΩ</b><br>সীমা: ${formatNum(minMega)} MΩ - ${formatNum(maxMega)} MΩ` +
+                          `</div>`;
+        }
+        
+        document.getElementById('res').innerHTML = htmlOutput;
     }
     
     calc();
