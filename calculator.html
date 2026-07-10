@@ -5,38 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modern Premium Calculator</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
         
         body { 
             display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; background: #e0e5ec; 
-            padding: 20px; 
+            min-height: 100vh; background: #e0e5ec; padding: 20px; 
         }
 
         .container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
 
         .calculator { 
-            padding: 25px; border-radius: 40px; 
+            padding: 30px; border-radius: 40px; 
             background: #e0e5ec;
             box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-            width: 320px;
+            width: 580px; /* প্রস্থ বাড়িয়ে ৫৮০ পিক্সেল করা হয়েছে */
         }
 
         #display { 
-            width: 100%; height: 70px; margin-bottom: 20px; 
+            width: 100%; height: 80px; margin-bottom: 25px; 
             border: none; border-radius: 20px; 
             background: #e0e5ec; text-align: right; padding: 20px; 
-            font-size: 1.8rem; font-weight: bold; color: #000; /* টেক্সট কালো */
+            font-size: 2.2rem; font-weight: bold; color: #000;
             outline: none; box-shadow: inset 6px 6px 12px #b8bcc4, inset -6px -6px 12px #ffffff;
         }
 
-        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
         
         button { 
-            height: 55px; border-radius: 18px; border: none; 
-            background: #e0e5ec; font-size: 1.2rem; font-weight: bold; 
-            color: #000; /* বাটন টেক্সট কালো */
-            cursor: pointer; transition: 0.3s; 
+            height: 70px; border-radius: 18px; border: none; 
+            background: #e0e5ec; font-size: 1.5rem; font-weight: bold; 
+            color: #000; cursor: pointer; transition: 0.3s; 
             box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #ffffff;
         }
         
@@ -48,14 +46,13 @@
         .equal:hover { background: #3db865; }
 
         .history-panel { 
-            width: 250px; padding: 20px; border-radius: 30px; 
+            width: 300px; padding: 25px; border-radius: 30px; 
             background: #e0e5ec; 
             box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
-            color: #000; /* হিস্টোরি টেক্সট কালো */
-            height: 400px; overflow-y: auto;
+            color: #000; height: 500px; overflow-y: auto;
         }
         .history-panel h3 { margin-bottom: 15px; text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-        .history-item { padding: 10px; border-bottom: 1px solid #dcdde1; font-size: 0.9rem; font-weight: 500; }
+        .history-item { padding: 12px; border-bottom: 1px solid #dcdde1; font-size: 1rem; font-weight: 500; }
     </style>
 </head>
 <body>
@@ -101,6 +98,18 @@
     const historyList = document.getElementById('historyList');
     const operators = ['+', '-', '*', '/', '**'];
 
+    document.addEventListener('keydown', (event) => {
+        const key = event.key;
+        if (/[0-9.]/.test(key)) append(key);
+        else if (key === '+') append('+');
+        else if (key === '-') append('-');
+        else if (key === '*') append('*');
+        else if (key === '/') append('/');
+        else if (key === 'Enter') calculate();
+        else if (key === 'Backspace') deleteLast();
+        else if (key === 'Escape') clearDisplay();
+    });
+
     function formatNumber(num) {
         let parts = num.toString().split(".");
         parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -110,7 +119,7 @@
     function append(val) {
         let rawVal = display.value.replace(/,/g, '');
         let lastChar = rawVal.slice(-1);
-        if (operators.includes(lastChar) && operators.includes(val.charAt(0))) {
+        if (operators.includes(lastChar) && operators.includes(val)) {
             rawVal = rawVal.slice(0, -1) + val;
         } else {
             rawVal += val;
@@ -119,6 +128,7 @@
     }
 
     function clearDisplay() { display.value = ''; }
+
     function deleteLast() {
         let rawVal = display.value.replace(/,/g, '').slice(0, -1);
         display.value = rawVal ? formatNumber(rawVal) : '';
