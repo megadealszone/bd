@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Resistor Calculator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #e0e5ec; padding: 20px; }
+        .card { width: 480px; padding: 30px; border-radius: 40px; background: #e0e5ec; box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff; text-align: center; }
+        
+        #monitor { width: 100%; height: 80px; margin-bottom: 25px; border-radius: 20px; background: #222; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #00ff00; font-family: 'Courier New', monospace; font-size: 1.5rem; font-weight: bold; box-shadow: inset 5px 5px 15px #000; }
+        
+        .group { margin-bottom: 15px; text-align: left; }
+        .group p { font-size: 0.9rem; margin-bottom: 5px; color: #555; }
+        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .color-box { height: 35px; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: 0.3s; }
+        .color-box:hover { transform: scale(1.05); }
+        .selected { border: 3px solid #333 !important; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="monitor">0 Ω ± 0%</div>
+
+    <div class="group">
+        <p>ব্যান্ড ১ ও ২ (সংখ্যা):</p>
+        <div class="color-grid" id="band1"></div>
+        <div class="color-grid" id="band2" style="margin-top: 8px;"></div>
+    </div>
+    <div class="group">
+        <p>মাল্টিপ্লায়ার (গুণক):</p>
+        <div class="color-grid" id="band3"></div>
+    </div>
+    <div class="group">
+        <p>সহনশীলতা (Tolerance):</p>
+        <div class="color-grid" id="band4"></div>
+    </div>
+</div>
+
+<script>
+    const colors = [
+        {name: 'Black', hex: '#000000', val: 0}, {name: 'Brown', hex: '#8B4513', val: 1},
+        {name: 'Red', hex: '#FF0000', val: 2}, {name: 'Orange', hex: '#FFA500', val: 3},
+        {name: 'Yellow', hex: '#FFFF00', val: 4}, {name: 'Green', hex: '#008000', val: 5},
+        {name: 'Blue', hex: '#0000FF', val: 6}, {name: 'Violet', hex: '#EE82EE', val: 7},
+        {name: 'Gray', hex: '#808080', val: 8}, {name: 'White', hex: '#FFFFFF', val: 9}
+    ];
+
+    const tolerance = [
+        {name: 'Brown', hex: '#8B4513', val: 1}, {name: 'Red', hex: '#FF0000', val: 2},
+        {name: 'Gold', hex: '#FFD700', val: 5}, {name: 'Silver', hex: '#C0C0C0', val: 10}
+    ];
+
+    let selected = {b1: 0, b2: 0, b3: 0, b4: 5};
+
+    function createGrid(id, data, target, isTolerance = false) {
+        const grid = document.getElementById(id);
+        data.forEach(c => {
+            let div = document.createElement('div');
+            div.className = 'color-box';
+            div.style.backgroundColor = c.hex;
+            if (isTolerance && c.val === 5) div.classList.add('selected');
+            else if (!isTolerance && c.val === 0 && (target === 'b1' || target === 'b3')) div.classList.add('selected');
+            
+            div.onclick = () => {
+                grid.querySelectorAll('.color-box').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+                selected[target] = c.val;
+                calculate();
+            };
+            grid.appendChild(div);
+        });
+    }
+
+    function calculate() {
+        let val = (selected.b1 * 10 + selected.b2) * Math.pow(10, selected.b3);
+        let monitor = document.getElementById('monitor');
+        let ohms = val >= 1000000 ? (val/1000000) + " MΩ" : (val >= 1000 ? (val/1000) + " KΩ" : val + " Ω");
+        monitor.innerHTML = `${ohms} <br> <span style="font-size:1rem">± ${selected.b4}%</span>`;
+    }
+
+    createGrid('band1', colors, 'b1');
+    createGrid('band2', colors, 'b2');
+    createGrid('band3', colors, 'b3');
+    createGrid('band4', tolerance, 'b4', true);
+</script>
+</body>
+</html>
