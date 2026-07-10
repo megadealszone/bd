@@ -5,7 +5,7 @@
     <title>রেজিস্টর ক্যালকুলেটর</title>
     <style>
         body { font-family: sans-serif; background: #eef2f3; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 380px; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 400px; }
         h2 { text-align: center; color: #333; }
         label { display: block; margin-top: 15px; font-weight: bold; }
         select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
@@ -25,6 +25,7 @@
         <label><input type="radio" name="bands" value="3" checked onchange="toggleBands()"> ৩-ব্যান্ড</label>
         <label><input type="radio" name="bands" value="4" onchange="toggleBands()"> ৪-ব্যান্ড</label>
         <label><input type="radio" name="bands" value="5" onchange="toggleBands()"> ৫-ব্যান্ড</label>
+        <label><input type="radio" name="bands" value="6" onchange="toggleBands()"> ৬-ব্যান্ড</label>
     </div>
     
     <label>১ম ব্যান্ড:</label>
@@ -48,11 +49,26 @@
     </div>
 
     <div id="band5Container" style="display:none;">
-        <label>৫ম ব্যান্ড (টলারেন্স):</label>
+        <label id="b5Label">৫ম ব্যান্ড (টলারেন্স):</label>
         <select id="b5" onchange="calc()">
             <option value="5">সোনালী (±5%)</option>
             <option value="10">রুপালী (±10%)</option>
             <option value="20">কোনো রঙ নেই (±20%)</option>
+        </select>
+    </div>
+
+    <div id="band6Container" style="display:none;">
+        <label>৬ষ্ঠ ব্যান্ড (Temperature Coefficient):</label>
+        <select id="b6" onchange="calc()">
+            <option value="250">কালো (250 ppm/°C)</option>
+            <option value="100">বাদামী (100 ppm/°C)</option>
+            <option value="50">লাল (50 ppm/°C)</option>
+            <option value="15">কমলা (15 ppm/°C)</option>
+            <option value="25">হলুদ (25 ppm/°C)</option>
+            <option value="20">সবুজ (20 ppm/°C)</option>
+            <option value="10">নীল (10 ppm/°C)</option>
+            <option value="5">বেগুনি (5 ppm/°C)</option>
+            <option value="2">ধূসর (2 ppm/°C)</option>
         </select>
     </div>
 
@@ -75,26 +91,31 @@
         });
     });
 
-    // ৫-ব্যান্ডের জন্য b4 সিলেক্ট বক্সেও রঙের অপশনগুলো ডায়নামিকালি যোগ করার ব্যবস্থা
     let b4Sel = document.getElementById('b4');
-    let originalB4Options = b4Sel.innerHTML; // ৪-ব্যান্ডের টলারেন্স অপশনগুলো সেভ রাখা হলো
+    let b5Sel = document.getElementById('b5');
+    let originalB4Options = b4Sel.innerHTML; 
+    let originalB5Options = b5Sel.innerHTML;
 
     function toggleBands() {
         const bandValue = document.querySelector('input[name="bands"]:checked').value;
         
+        // সবগুলোকে রিসেট বা ডিফল্ট মোডে নিয়ে আসা
+        b4Sel.innerHTML = originalB4Options;
+        b5Sel.innerHTML = originalB5Options;
+        document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
+        document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (টলারেন্স):";
+        document.getElementById('b5Label').innerText = "৫ম ব্যান্ড (টলারেন্স):";
+        
         if (bandValue === "3") {
-            document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
-            b4Sel.innerHTML = originalB4Options;
             document.getElementById('band4Container').style.display = "none";
             document.getElementById('band5Container').style.display = "none";
+            document.getElementById('band6Container').style.display = "none";
         } else if (bandValue === "4") {
-            document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
-            b4Sel.innerHTML = originalB4Options;
             document.getElementById('band4Container').style.display = "block";
             document.getElementById('band5Container').style.display = "none";
+            document.getElementById('band6Container').style.display = "none";
         } else if (bandValue === "5") {
             document.getElementById('b3Label').innerText = "৩য় ব্যান্ড:";
-            // ৫-ব্যান্ডের জন্য ৪র্থ ব্যান্ড হবে গুণক (Multiplier), তাই একে রঙের ড্রপডাউন বানাতে হবে
             b4Sel.innerHTML = "";
             colors.forEach(c => {
                 b4Sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
@@ -102,6 +123,17 @@
             document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (गुणक):";
             document.getElementById('band4Container').style.display = "block";
             document.getElementById('band5Container').style.display = "block";
+            document.getElementById('band6Container').style.display = "none";
+        } else if (bandValue === "6") {
+            document.getElementById('b3Label').innerText = "৩য় ব্যান্ড:";
+            b4Sel.innerHTML = "";
+            colors.forEach(c => {
+                b4Sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
+            });
+            document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (गुणक):";
+            document.getElementById('band4Container').style.display = "block";
+            document.getElementById('band5Container').style.display = "block";
+            document.getElementById('band6Container').style.display = "block";
         }
         calc();
     }
@@ -119,6 +151,7 @@
         
         let resistance = 0;
         let tol = 20;
+        let tempCoeff = null;
 
         if (bandValue === "3") {
             resistance = (v1 * 10 + v2) * Math.pow(10, v3);
@@ -130,18 +163,27 @@
             let v4 = parseInt(document.getElementById('b4').value);
             tol = parseInt(document.getElementById('b5').value);
             resistance = (v1 * 100 + v2 * 10 + v3) * Math.pow(10, v4);
+        } else if (bandValue === "6") {
+            let v4 = parseInt(document.getElementById('b4').value);
+            tol = parseInt(document.getElementById('b5').value);
+            tempCoeff = parseInt(document.getElementById('b6').value);
+            resistance = (v1 * 100 + v2 * 10 + v3) * Math.pow(10, v4);
         }
         
         let toleranceValue = resistance * (tol / 100);
         let minRange = resistance - toleranceValue;
         let maxRange = resistance + toleranceValue;
         
-        // প্রধান ডিসপ্লে (ওহম এককে)
-        let htmlOutput = `মান: ${formatNum(resistance)} Ω ± ${tol}%` + 
-                         `<div class="range">${formatNum(minRange)} - ${formatNum(maxRange)} ohm</div>`;
+        // প্রধান ডিসপ্লে হেড তৈরি
+        let mainTitle = `মান: ${formatNum(resistance)} Ω ± ${tol}%`;
+        if (bandValue === "6") {
+            mainTitle += ` | ${tempCoeff} ppm/°C`;
+        }
+
+        let htmlOutput = mainTitle + `<div class="range">${formatNum(minRange)} - ${formatNum(maxRange)} ohm</div>`;
         
-        // ৫-ব্যান্ড সিলেক্ট করা হলে অতিরিক্ত কিলো-ওহম এবং মেগা-ওহম ইউনিটগুলো নিচে দেখাবে
-        if (bandValue === "5") {
+        // ৫ এবং ৬-ব্যান্ড সিলেক্ট করা হলে অতিরিক্ত কিলো-ওহম এবং মেগা-ওহম ইউনিটগুলো নিচে দেখাবে
+        if (bandValue === "5" || bandValue === "6") {
             let resKilo = resistance / 1000;
             let minKilo = minRange / 1000;
             let maxKilo = maxRange / 1000;
