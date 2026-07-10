@@ -2,89 +2,91 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Resistor Calculator</title>
+    <title>রেজিস্টর ক্যালকুলেটর</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #e0e5ec; padding: 20px; }
-        .card { width: 480px; padding: 30px; border-radius: 40px; background: #e0e5ec; box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff; text-align: center; }
-        
-        #monitor { width: 100%; height: 80px; margin-bottom: 25px; border-radius: 20px; background: #222; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #00ff00; font-family: 'Courier New', monospace; font-size: 1.5rem; font-weight: bold; box-shadow: inset 5px 5px 15px #000; }
-        
-        .group { margin-bottom: 15px; text-align: left; }
-        .group p { font-size: 0.9rem; margin-bottom: 5px; color: #555; }
-        .color-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .color-box { height: 35px; border-radius: 8px; cursor: pointer; border: 3px solid transparent; transition: 0.3s; }
-        .color-box:hover { transform: scale(1.05); }
-        .selected { border: 3px solid #333 !important; }
+        body { font-family: sans-serif; background: #eef2f3; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 350px; }
+        h2 { text-align: center; color: #333; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; }
+        .radio-group { display: flex; justify-content: space-around; margin-top: 10px; }
+        .result { margin-top: 25px; padding: 15px; background: #222; color: #0f0; text-align: center; font-size: 16px; border-radius: 8px; }
+        .range { font-size: 14px; color: #fff; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div id="monitor">0 Ω ± 0%</div>
+<div class="container">
+    <h2>রেজিস্টর ক্যালকুলেটর</h2>
+    
+    <div class="radio-group">
+        <label><input type="radio" name="bands" value="3" checked onchange="toggleBands()"> ৩-ব্যান্ড</label>
+        <label><input type="radio" name="bands" value="4" onchange="toggleBands()"> ৪-ব্যান্ড</label>
+    </div>
+    
+    <label>১ম ব্যান্ড:</label>
+    <select id="b1" onchange="calc()"></select>
+    
+    <label>২য় ব্যান্ড:</label>
+    <select id="b2" onchange="calc()"></select>
+    
+    <label>৩য় ব্যান্ড (গুণক):</label>
+    <select id="b3" onchange="calc()"></select>
 
-    <div class="group">
-        <p>ব্যান্ড ১ ও ২ (সংখ্যা):</p>
-        <div class="color-grid" id="band1"></div>
-        <div class="color-grid" id="band2" style="margin-top: 8px;"></div>
+    <div id="band4Container" style="display:none;">
+        <label>৪র্থ ব্যান্ড (টলারেন্স):</label>
+        <select id="b4" onchange="calc()">
+            <option value="5">সোনালী (±5%)</option>
+            <option value="10">রুপালী (±10%)</option>
+            <option value="20">কোনো রঙ নেই (±20%)</option>
+        </select>
     </div>
-    <div class="group">
-        <p>মাল্টিপ্লায়ার (গুণক):</p>
-        <div class="color-grid" id="band3"></div>
-    </div>
-    <div class="group">
-        <p>সহনশীলতা (Tolerance):</p>
-        <div class="color-grid" id="band4"></div>
-    </div>
+
+    <div class="result" id="res">মান: 0 Ω</div>
 </div>
 
 <script>
     const colors = [
-        {name: 'Black', hex: '#000000', val: 0}, {name: 'Brown', hex: '#8B4513', val: 1},
-        {name: 'Red', hex: '#FF0000', val: 2}, {name: 'Orange', hex: '#FFA500', val: 3},
-        {name: 'Yellow', hex: '#FFFF00', val: 4}, {name: 'Green', hex: '#008000', val: 5},
-        {name: 'Blue', hex: '#0000FF', val: 6}, {name: 'Violet', hex: '#EE82EE', val: 7},
-        {name: 'Gray', hex: '#808080', val: 8}, {name: 'White', hex: '#FFFFFF', val: 9}
+        {name: "কালো (কা)", val: 0}, {name: "বাদামী (বা)", val: 1}, 
+        {name: "লাল (লা)", val: 2}, {name: "কমলা (ক)", val: 3}, 
+        {name: "হলুদ (হ)", val: 4}, {name: "সবুজ (স)", val: 5}, 
+        {name: "নীল (নী)", val: 6}, {name: "বেগুনি (বে)", val: 7}, 
+        {name: "ধূসর (ধূ)", val: 8}, {name: "সাদা (সা)", val: 9}
     ];
 
-    const tolerance = [
-        {name: 'Brown', hex: '#8B4513', val: 1}, {name: 'Red', hex: '#FF0000', val: 2},
-        {name: 'Gold', hex: '#FFD700', val: 5}, {name: 'Silver', hex: '#C0C0C0', val: 10}
-    ];
-
-    let selected = {b1: 0, b2: 0, b3: 0, b4: 5};
-
-    function createGrid(id, data, target, isTolerance = false) {
-        const grid = document.getElementById(id);
-        data.forEach(c => {
-            let div = document.createElement('div');
-            div.className = 'color-box';
-            div.style.backgroundColor = c.hex;
-            if (isTolerance && c.val === 5) div.classList.add('selected');
-            else if (!isTolerance && c.val === 0 && (target === 'b1' || target === 'b3')) div.classList.add('selected');
-            
-            div.onclick = () => {
-                grid.querySelectorAll('.color-box').forEach(el => el.classList.remove('selected'));
-                div.classList.add('selected');
-                selected[target] = c.val;
-                calculate();
-            };
-            grid.appendChild(div);
+    ['b1', 'b2', 'b3'].forEach(id => {
+        let sel = document.getElementById(id);
+        colors.forEach(c => {
+            sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
         });
+    });
+
+    function toggleBands() {
+        const is4Band = document.querySelector('input[name="bands"]:checked').value === "4";
+        document.getElementById('band4Container').style.display = is4Band ? "block" : "none";
+        calc();
     }
 
-    function calculate() {
-        let val = (selected.b1 * 10 + selected.b2) * Math.pow(10, selected.b3);
-        let monitor = document.getElementById('monitor');
-        let ohms = val >= 1000000 ? (val/1000000) + " MΩ" : (val >= 1000 ? (val/1000) + " KΩ" : val + " Ω");
-        monitor.innerHTML = `${ohms} <br> <span style="font-size:1rem">± ${selected.b4}%</span>`;
+    function calc() {
+        let v1 = parseInt(document.getElementById('b1').value);
+        let v2 = parseInt(document.getElementById('b2').value);
+        let v3 = parseInt(document.getElementById('b3').value);
+        let is4Band = document.querySelector('input[name="bands"]:checked').value === "4";
+        
+        // যদি ৩-ব্যান্ড হয় তবে ডিফল্ট টলারেন্স ২০%
+        let tol = is4Band ? parseInt(document.getElementById('b4').value) : 20;
+        
+        let resistance = (v1 * 10 + v2) * Math.pow(10, v3);
+        let toleranceValue = resistance * (tol / 100);
+        
+        let minRange = resistance - toleranceValue;
+        let maxRange = resistance + toleranceValue;
+        
+        document.getElementById('res').innerHTML = `মান: ${resistance.toLocaleString()} Ω ± ${tol}%` + 
+            `<div class="range">${minRange.toLocaleString()} - ${maxRange.toLocaleString()} ohm</div>`;
     }
-
-    createGrid('band1', colors, 'b1');
-    createGrid('band2', colors, 'b2');
-    createGrid('band3', colors, 'b3');
-    createGrid('band4', tolerance, 'b4', true);
+    
+    calc();
 </script>
 </body>
 </html>
