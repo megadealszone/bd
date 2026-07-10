@@ -5,8 +5,26 @@
     <title>রেজিস্টর ক্যালকুলেটর</title>
     <style>
         body { font-family: sans-serif; background: #eef2f3; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 400px; }
-        h2 { text-align: center; color: #333; }
+        .container { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 400px; position: relative; }
+        h2 { text-align: center; color: #333; margin-top: 10px; }
+        
+        /* হোম মেনু বোতামের স্টাইল */
+        .home-menu { 
+            position: absolute; 
+            top: 20px; 
+            right: 25px; 
+            background: #007bff; 
+            color: white; 
+            text-decoration: none; 
+            padding: 6px 14px; 
+            border-radius: 6px; 
+            font-size: 14px; 
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            transition: background 0.2s;
+        }
+        .home-menu:hover { background: #0056b3; }
+        
         label { display: block; margin-top: 15px; font-weight: bold; }
         select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
         .radio-group { display: flex; justify-content: space-around; margin-top: 10px; }
@@ -19,6 +37,9 @@
 <body>
 
 <div class="container">
+    <!-- হোম মেনু লিঙ্ক -->
+    <a href="https://megadealszone.github.io/bd/index.html" class="home-menu">হোম</a>
+
     <h2>রেজিস্টর ক্যালকুলেটর</h2>
     
     <div class="radio-group">
@@ -99,7 +120,6 @@
     function toggleBands() {
         const bandValue = document.querySelector('input[name="bands"]:checked').value;
         
-        // সবগুলোকে রিসেট বা ডিফল্ট মোডে নিয়ে আসা
         b4Sel.innerHTML = originalB4Options;
         b5Sel.innerHTML = originalB5Options;
         document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
@@ -174,7 +194,6 @@
         let minRange = resistance - toleranceValue;
         let maxRange = resistance + toleranceValue;
         
-        // প্রধান ডিসপ্লে হেড তৈরি
         let mainTitle = `মান: ${formatNum(resistance)} Ω ± ${tol}%`;
         if (bandValue === "6") {
             mainTitle += ` | ${tempCoeff} ppm/°C`;
@@ -182,7 +201,6 @@
 
         let htmlOutput = mainTitle + `<div class="range">${formatNum(minRange)} - ${formatNum(maxRange)} ohm</div>`;
         
-        // ৫ এবং ৬-ব্যান্ড সিলেক্ট করা হলে অতিরিক্ত কিলো-ওহম এবং মেগা-ওহম ইউনিটগুলো নিচে দেখাবে
         if (bandValue === "5" || bandValue === "6") {
             let resKilo = resistance / 1000;
             let minKilo = minRange / 1000;
@@ -194,9 +212,9 @@
 
             htmlOutput += `<div class="unit-details">` +
                           `<div class="unit-title">■ কিলো ওহম (kΩ):</div>` +
-                          `মান: <b>${formatNum(resKilo)} kΩ</b><br>সীমা: ${formatNum(minKilo)} kΩ - ${formatNum(maxKilo)} kΩ` +
+                          `মান: <b>${formatNum(resKilo)} kΩ</b><br>সীма: ${formatNum(minKilo)} kΩ - ${formatNum(maxKilo)} kΩ` +
                           `<div class="unit-title">■ মেগা ওহম (MΩ):</div>` +
-                          `মান: <b>${formatNum(resMega)} MΩ</b><br>সীমা: ${formatNum(minMega)} MΩ - ${formatNum(maxMega)} MΩ` +
+                          `মান: <b>${formatNum(resMega)} MΩ</b><br>সীма: ${formatNum(minMega)} MΩ - ${formatNum(maxMega)} MΩ` +
                           `</div>`;
         }
         
