@@ -1,43 +1,145 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neumorphism Calculator</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Premium Calculator</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        
+        body { 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; background: #e0e5ec; 
+            padding: 20px; 
+        }
+
+        .container { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+
+        .calculator { 
+            padding: 25px; border-radius: 40px; 
+            background: #e0e5ec;
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            width: 320px;
+        }
+
+        #display { 
+            width: 100%; height: 70px; margin-bottom: 20px; 
+            border: none; border-radius: 20px; 
+            background: #e0e5ec; text-align: right; padding: 20px; 
+            font-size: 1.8rem; font-weight: bold; color: #000; /* টেক্সট কালো */
+            outline: none; box-shadow: inset 6px 6px 12px #b8bcc4, inset -6px -6px 12px #ffffff;
+        }
+
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        
+        button { 
+            height: 55px; border-radius: 18px; border: none; 
+            background: #e0e5ec; font-size: 1.2rem; font-weight: bold; 
+            color: #000; /* বাটন টেক্সট কালো */
+            cursor: pointer; transition: 0.3s; 
+            box-shadow: 5px 5px 10px #bebebe, -5px -5px 10px #ffffff;
+        }
+        
+        button:hover { background: #d0d7e0; }
+        button:active { box-shadow: inset 3px 3px 6px #bebebe, inset -3px -3px 6px #ffffff; transform: scale(0.95); }
+        
+        .operator { color: #ff4757; }
+        .equal { background: #50c878; color: white; grid-column: span 2; }
+        .equal:hover { background: #3db865; }
+
+        .history-panel { 
+            width: 250px; padding: 20px; border-radius: 30px; 
+            background: #e0e5ec; 
+            box-shadow: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+            color: #000; /* হিস্টোরি টেক্সট কালো */
+            height: 400px; overflow-y: auto;
+        }
+        .history-panel h3 { margin-bottom: 15px; text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        .history-item { padding: 10px; border-bottom: 1px solid #dcdde1; font-size: 0.9rem; font-weight: 500; }
+    </style>
 </head>
 <body>
 
-<div class="calculator">
-    <input type="text" id="display" readonly>
+<div class="container">
+    <div class="calculator">
+        <input type="text" id="display" readonly placeholder="0">
+        <div class="buttons">
+            <button onclick="clearDisplay()" style="color:red">AC</button>
+            <button onclick="deleteLast()">DEL</button>
+            <button onclick="append('**2')">x²</button>
+            <button class="operator" onclick="append('/')">÷</button>
+            
+            <button onclick="append('7')">7</button>
+            <button onclick="append('8')">8</button>
+            <button onclick="append('9')">9</button>
+            <button class="operator" onclick="append('*')">×</button>
 
-    <button class="action" onclick="clearDisplay()">AC</button>
-    <button class="action" onclick="deleteLast()">DEL</button>
-    <button class="operator" onclick="append('%')">%</button>
-    <button class="operator" onclick="append('/')">÷</button>
+            <button onclick="append('4')">4</button>
+            <button onclick="append('5')">5</button>
+            <button onclick="append('6')">6</button>
+            <button class="operator" onclick="append('-')">-</button>
 
-    <button onclick="append('7')">7</button>
-    <button onclick="append('8')">8</button>
-    <button onclick="append('9')">9</button>
-    <button class="operator" onclick="append('*')">×</button>
+            <button onclick="append('1')">1</button>
+            <button onclick="append('2')">2</button>
+            <button onclick="append('3')">3</button>
+            <button class="operator" onclick="append('+')">+</button>
 
-    <button onclick="append('4')">4</button>
-    <button onclick="append('5')">5</button>
-    <button onclick="append('6')">6</button>
-    <button class="operator" onclick="append('-')">-</button>
+            <button onclick="append('0')">0</button>
+            <button onclick="append('.')">.</button>
+            <button class="equal" onclick="calculate()">=</button>
+        </div>
+    </div>
 
-    <button onclick="append('1')">1</button>
-    <button onclick="append('2')">2</button>
-    <button onclick="append('3')">3</button>
-    <button class="operator" onclick="append('+')">+</button>
-
-    <button onclick="append('0')">0</button>
-    <button onclick="append('.')">.</button>
-    <button class="equal" onclick="calculate()">=</button>
+    <div class="history-panel">
+        <h3>ইতিহাস</h3>
+        <div id="historyList"></div>
+    </div>
 </div>
 
-<script src="script.js"></script>
+<script>
+    const display = document.getElementById('display');
+    const historyList = document.getElementById('historyList');
+    const operators = ['+', '-', '*', '/', '**'];
+
+    function formatNumber(num) {
+        let parts = num.toString().split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(".");
+    }
+
+    function append(val) {
+        let rawVal = display.value.replace(/,/g, '');
+        let lastChar = rawVal.slice(-1);
+        if (operators.includes(lastChar) && operators.includes(val.charAt(0))) {
+            rawVal = rawVal.slice(0, -1) + val;
+        } else {
+            rawVal += val;
+        }
+        display.value = formatNumber(rawVal);
+    }
+
+    function clearDisplay() { display.value = ''; }
+    function deleteLast() {
+        let rawVal = display.value.replace(/,/g, '').slice(0, -1);
+        display.value = rawVal ? formatNumber(rawVal) : '';
+    }
+
+    function calculate() {
+        try {
+            let rawVal = display.value.replace(/,/g, '');
+            let displayVal = display.value;
+            let result = eval(rawVal);
+            
+            let historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerText = `${displayVal} = ${formatNumber(result)}`;
+            historyList.prepend(historyItem);
+
+            display.value = formatNumber(result);
+        } catch {
+            display.value = 'Error';
+        }
+    }
+</script>
 </body>
 </html>
-
