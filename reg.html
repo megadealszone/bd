@@ -56,7 +56,7 @@
     <select id="b2" onchange="calc()"></select>
     
     <div id="band3Container">
-        <label id="b3Label">৩য় ব্যান্ড (गुणक):</label>
+        <label id="b3Label">৩য় ব্যান্ড (গুণক):</label>
         <select id="b3" onchange="calc()"></select>
     </div>
 
@@ -97,20 +97,22 @@
 </div>
 
 <script>
-    const colors = [
-        {name: "কালো (কা)", val: 0}, {name: "বাদামী (বা)", val: 1}, 
-        {name: "লাল (লা)", val: 2}, {name: "কমলা (ক)", val: 3}, 
-        {name: "হলুদ (হ)", val: 4}, {name: "সবুজ (স)", val: 5}, 
-        {name: "নীল (নী)", val: 6}, {name: "বেগুনি (বে)", val: 7}, 
-        {name: "ধূসর (ধূ)", val: 8}, {name: "সাদা (সা)", val: 9}
+    const colorData = [
+        {name: "কালো", val: 0, code: "#000000"}, {name: "বাদামী", val: 1, code: "#8B4513"}, 
+        {name: "লাল", val: 2, code: "#FF0000"}, {name: "কমলা", val: 3, code: "#FFA500"}, 
+        {name: "হলুদ", val: 4, code: "#FFFF00"}, {name: "সবুজ", val: 5, code: "#008000"}, 
+        {name: "নীল", val: 6, code: "#0000FF"}, {name: "বেগুনি", val: 7, code: "#800080"}, 
+        {name: "ধূসর", val: 8, code: "#808080"}, {name: "সাদা", val: 9, code: "#FFFFFF"}
     ];
 
-    ['b1', 'b2', 'b3'].forEach(id => {
-        let sel = document.getElementById(id);
-        colors.forEach(c => {
-            sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
+    function populateColors(selectId) {
+        let sel = document.getElementById(selectId);
+        colorData.forEach(c => {
+            sel.innerHTML += `<option value="${c.val}" style="background-color:${c.code}; color:${c.val==9?'black':'white'}">${c.name} ⬤</option>`;
         });
-    });
+    }
+
+    ['b1', 'b2', 'b3'].forEach(id => populateColors(id));
 
     let b4Sel = document.getElementById('b4');
     let b5Sel = document.getElementById('b5');
@@ -122,7 +124,7 @@
         
         b4Sel.innerHTML = originalB4Options;
         b5Sel.innerHTML = originalB5Options;
-        document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (गुणक):";
+        document.getElementById('b3Label').innerText = "৩য় ব্যান্ড (গুণক):";
         document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (টলারেন্স):";
         document.getElementById('b5Label').innerText = "৫ম ব্যান্ড (টলারেন্স):";
         
@@ -137,20 +139,20 @@
         } else if (bandValue === "5") {
             document.getElementById('b3Label').innerText = "৩য় ব্যান্ড:";
             b4Sel.innerHTML = "";
-            colors.forEach(c => {
+            colorData.forEach(c => {
                 b4Sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
             });
-            document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (गुणक):";
+            document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (গুণক):";
             document.getElementById('band4Container').style.display = "block";
             document.getElementById('band5Container').style.display = "block";
             document.getElementById('band6Container').style.display = "none";
         } else if (bandValue === "6") {
             document.getElementById('b3Label').innerText = "৩য় ব্যান্ড:";
             b4Sel.innerHTML = "";
-            colors.forEach(c => {
+            colorData.forEach(c => {
                 b4Sel.innerHTML += `<option value="${c.val}">${c.name}</option>`;
             });
-            document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (गुणक):";
+            document.getElementById('b4Label').innerText = "৪র্থ ব্যান্ড (গুণক):";
             document.getElementById('band4Container').style.display = "block";
             document.getElementById('band5Container').style.display = "block";
             document.getElementById('band6Container').style.display = "block";
@@ -201,22 +203,20 @@
 
         let htmlOutput = mainTitle + `<div class="range">${formatNum(minRange)} - ${formatNum(maxRange)} ohm</div>`;
         
-        if (bandValue === "5" || bandValue === "6") {
-            let resKilo = resistance / 1000;
-            let minKilo = minRange / 1000;
-            let maxKilo = maxRange / 1000;
-            
-            let resMega = resistance / 1000000;
-            let minMega = minRange / 1000000;
-            let maxMega = maxRange / 1000000;
+        let resKilo = resistance / 1000;
+        let minKilo = minRange / 1000;
+        let maxKilo = maxRange / 1000;
+        
+        let resMega = resistance / 1000000;
+        let minMega = minRange / 1000000;
+        let maxMega = maxRange / 1000000;
 
-            htmlOutput += `<div class="unit-details">` +
-                          `<div class="unit-title">■ কিলো ওহম (kΩ):</div>` +
-                          `মান: <b>${formatNum(resKilo)} kΩ</b><br>সীма: ${formatNum(minKilo)} kΩ - ${formatNum(maxKilo)} kΩ` +
-                          `<div class="unit-title">■ মেগা ওহম (MΩ):</div>` +
-                          `মান: <b>${formatNum(resMega)} MΩ</b><br>সীма: ${formatNum(minMega)} MΩ - ${formatNum(maxMega)} MΩ` +
-                          `</div>`;
-        }
+        htmlOutput += `<div class="unit-details">` +
+                        `<div class="unit-title">■ কিলো ওহম (kΩ):</div>` +
+                        `মান: <b>${formatNum(resKilo)} kΩ</b><br>সীমা: ${formatNum(minKilo)} kΩ - ${formatNum(maxKilo)} kΩ` +
+                        `<div class="unit-title">■ মেগা ওহম (MΩ):</div>` +
+                        `মান: <b>${formatNum(resMega)} MΩ</b><br>সীমা: ${formatNum(minMega)} MΩ - ${formatNum(maxMega)} MΩ` +
+                        `</div>`;
         
         document.getElementById('res').innerHTML = htmlOutput;
     }
