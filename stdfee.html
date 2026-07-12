@@ -115,7 +115,7 @@
         <h2>BCPSC Portal</h2>
         <div class="subtitle">Student Fee Payment</div>
         <input type="number" id="sid" placeholder="Student ID (6 Digits)">
-        <input type="tel" id="mobile" placeholder="Mobile Number">
+        <input type="tel" id="mobile" placeholder="Mobile Number (11 Digits)">
         <input type="number" id="amt" placeholder="Amount (Tk)" oninput="calcBase()">
         <input type="text" value="Online Tap Charge: 30 Tk" disabled style="background:#eee">
         <div style="font-weight:600; margin:10px 0;">Total: <span id="totalBase">0</span> Tk</div>
@@ -137,7 +137,7 @@
         <h3>Select Gateway</h3>
         <div class="methods">
             <div class="method-btn" onclick="selectMethod(this, 'Nagad', 14)">Nagad</div>
-            <div class="method-btn" onclick="selectMethod(this, 'bKash', 16)">bKash</div>
+            <div class="method-btn" onclick="selectMethod(this, 'bKash', 15)">bKash</div>
             <div class="method-btn" onclick="selectMethod(this, 'Tap', 0)">Tap</div>
         </div>
         
@@ -189,8 +189,8 @@
         if (studentId.length !== 6) {
             return alert("সঠিক আইডি দিন (আইডি অবশ্যই ৬ ডিজিটের হতে হবে)");
         }
-        if (!mobile) {
-            return alert("সঠিক মোবাইল নম্বর দিন");
+        if (mobile.length !== 11) {
+            return alert("সঠিক মোবাইল নম্বর দিন (মোবাইল নম্বর অবশ্যই ১১ ডিজিটের হতে হবে)");
         }
         if (baseAmount <= 0) {
             return alert("সঠিক টাকার পরিমাণ দিন");
@@ -214,7 +214,6 @@
         selectedMethod = name;
         selectedRate = rate;
         
-        // ১০০০ টাকায় রেট হিসাব (যদি ট্যাপ হয় তবে ০)
         let charge = Math.ceil((totalWithCharge / 1000) * rate);
         finalAmountWithGateway = totalWithCharge + charge;
         
@@ -222,12 +221,10 @@
         document.getElementById('finalAmt').innerText = finalAmountWithGateway;
         document.getElementById('payDetails').classList.remove('hidden');
         
-        // রেডিও বাটন ও ট্রানজেকশন সেকশন রিসেট
         document.getElementById('confirmSendMoney').checked = false;
         document.getElementById('trxSection').classList.add('hidden');
         document.getElementById('trx').value = '';
         
-        // UI একটিভ ক্লাস টগল
         document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
         element.classList.add('active');
     }
@@ -260,10 +257,10 @@
         if(!trx) return alert("Enter TrxID");
 
         document.getElementById('finalPreviewData').innerHTML = `
-            <b>Student ID No:</b> ${document.getElementById('sid').value}<br>
-            <b>Student Mobile No:</b> ${document.getElementById('mobile').value}<br>
-            <b>Grand Total:</b> ${finalAmountWithGateway} Tk<br>
-            <b> Transaction ID No:</b> ${trx}`;
+            <b>Students ID:</b> ${document.getElementById('sid').value}<br>
+            <b>Mobile NO:</b> ${document.getElementById('mobile').value}<br>
+            <b>Amount:</b> ${finalAmountWithGateway} Tk<br>
+            <b>Transaction ID:</b> ${trx}`;
         
         show('step4');
     }
