@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BCPSC Payment Portal</title>
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #004e92;
+            --secondary: #00a86b;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .card {
+            background: var(--glass);
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.5s ease;
+        }
+
+        h2, h3 { color: var(--primary); text-align: center; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        .hidden { display: none; }
+
+        /* Timer Style */
+        #timerBox {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #d32f2f;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .timer-text {
+            text-align: center;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        /* Payment Methods */
+        .methods { display: flex; gap: 10px; margin: 15px 0; }
+        .method-btn { flex: 1; padding: 10px; border: 2px solid #ddd; border-radius: 8px; text-align: center; cursor: pointer; font-size: 14px; }
+        .method-btn.active { border-color: var(--primary); background: #e3f2fd; font-weight: bold; }
+
+        .summary-box { background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary); margin-bottom: 15px; line-height: 1.6; }
+        
+        .radio-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #fff3cd;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #ffeeba;
+        }
+        .radio-container input[type="radio"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card" id="app">
+    <!-- Step 1: Input -->
+    <div id="step1">
+        <h2>BCPSC Portal</h2>
+        <div class="subtitle">Student Fee Payment</div>
+        <input type="number" id="sid" placeholder="Student ID (6 Digits)">
+        <input type="tel" id="mobile" placeholder="Mobile Number">
+        <input type="number" id="amt" placeholder="Amount (Tk)" oninput="calcBase()">
+        <input type="text" value="Online Tap Charge: 30 Tk" disabled style="background:#eee">
+        <div style="font-weight:600; margin:10px 0;">Total: <span id="totalBase">0</span> Tk</div>
+        <button onclick="preview()">Proceed</button>
+    </div>
+
+    <!-- Step 2: Preview -->
+    <div id="step2" class="hidden">
+        <h2>Preview</h2>
+        <div class="summary-box" id="previewData"></div>
+        <button onclick="confirmPayment()">Submit Now</button>
+        <button style="background:#6c757d; margin-top:10px;" onclick="back(1)">Edit</button>
+    </div>
+
+    <!-- Step 3: Payment Gateway -->
+    <div id="step3" class="hidden">
+        <div id="timerBox">15:00</div>
+        <div class="timer-text">১৫ মিনিট সময় এর মধ্যে পেমেন্ট সম্পূর্ণ করুন</div>
+        <h3>Select Gateway</h3>
+        <div class="methods">
+            <div class="method-btn" onclick="selectMethod(this, 'Nagad', 14)">Nagad</div>
+            <div class="method-btn" onclick="selectMethod(this, 'bKash', 16)">bKash</div>
+            <div class="method-btn" onclick="selectMethod(this, 'Tap', 0)">Tap</div>
+        </div>
+        
+        <div id="payDetails" class="hidden">
+            <div class="summary-box">
+                <div>Charge: <span id="chargeVal">0</span> Tk</div>
+                <div style="font-weight:bold; font-size:1.2em;">Pay: <span id="finalAmt">0</span> Tk</div>
+            </div>
+            
+            <div class="radio-container">
+                <input type="radio" id="confirmSendMoney" name="verify_send" onclick="toggleTrxField()">
+                <label for="confirmSendMoney" style="font-size:0.95em; cursor:pointer;">Send Money to: <b>01792016702</b></label>
+            </div>
+
+            <div id="trxSection" class="hidden">
+                <input type="text" id="trx" placeholder="Enter Transaction ID">
+                <button onclick="goToFinalPreview()">Confirm & Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step 4: Final Preview before Whatsapp -->
+    <div id="step4" class="hidden">
+        <h2>Final Preview</h2>
+        <div class="summary-box" id="finalPreviewData"></div>
+        <button style="background: var(--secondary);" onclick="finish()">Final Submit</button>
+        <button style="background:#6c757d; margin-top:10px;" onclick="back(3)">Back</button>
+    </div>
+</div>
+
+<script>
+    let baseAmount = 0;
+    let totalWithCharge = 0;
+    let finalAmountWithGateway = 0;
+    let selectedMethod = '';
+    let selectedRate = 0;
+    let timerInterval;
+
+    function calcBase() {
+        baseAmount = parseFloat(document.getElementById('amt').value) || 0;
+        totalWithCharge = baseAmount + 30;
+        document.getElementById('totalBase').innerText = baseAmount > 0 ? totalWithCharge : 0;
+    }
+
+    function preview() {
+        let studentId = document.getElementById('sid').value.trim();
+        let mobile = document.getElementById('mobile').value.trim();
+
+        if (studentId.length !== 6) {
+            return alert("সঠিক আইডি দিন (আইডি অবশ্যই ৬ ডিজিটের হতে হবে)");
+        }
+        if (!mobile) {
+            return alert("সঠিক মোবাইল নম্বর দিন");
+        }
+        if (baseAmount <= 0) {
+            return alert("সঠিক টাকার পরিমাণ দিন");
+        }
+
+        document.getElementById('previewData').innerHTML = `
+            <b>ID:</b> ${studentId}<br>
+            <b>Mobile:</b> ${mobile}<br>
+            <b>Total:</b> ${totalWithCharge} Tk`;
+        show('step2');
+    }
+
+    function confirmPayment() {
+        if(confirm("Are you sure to submit?")) {
+            show('step3');
+            startTimer(900); // 15 minutes
+        }
+    }
+
+    function selectMethod(element, name, rate) {
+        selectedMethod = name;
+        selectedRate = rate;
+        
+        // ১০০০ টাকায় রেট হিসাব (যদি ট্যাপ হয় তবে ০)
+        let charge = Math.ceil((totalWithCharge / 1000) * rate);
+        finalAmountWithGateway = totalWithCharge + charge;
+        
+        document.getElementById('chargeVal').innerText = charge;
+        document.getElementById('finalAmt').innerText = finalAmountWithGateway;
+        document.getElementById('payDetails').classList.remove('hidden');
+        
+        // রেডিও বাটন ও ট্রানজেকশন সেকশন রিসেট
+        document.getElementById('confirmSendMoney').checked = false;
+        document.getElementById('trxSection').classList.add('hidden');
+        document.getElementById('trx').value = '';
+        
+        // UI একটিভ ক্লাস টগল
+        document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function toggleTrxField() {
+        let radioButton = document.getElementById('confirmSendMoney');
+        let trxSection = document.getElementById('trxSection');
+        if(radioButton.checked) {
+            trxSection.classList.remove('hidden');
+        }
+    }
+
+    function startTimer(duration) {
+        if(timerInterval) clearInterval(timerInterval);
+        let timer = duration;
+        timerInterval = setInterval(() => {
+            let m = Math.floor(timer / 60);
+            let s = timer % 60;
+            document.getElementById('timerBox').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+            if (--timer < 0) { 
+                clearInterval(timerInterval); 
+                alert("Time Out!"); 
+                location.reload(); 
+            }
+        }, 1000);
+    }
+
+    function goToFinalPreview() {
+        let trx = document.getElementById('trx').value.trim();
+        if(!trx) return alert("Enter TrxID");
+
+        document.getElementById('finalPreviewData').innerHTML = `
+            <b>Student ID No:</b> ${document.getElementById('sid').value}<br>
+            <b>Student Mobile No:</b> ${document.getElementById('mobile').value}<br>
+            <b>Grand Total:</b> ${finalAmountWithGateway} Tk<br>
+            <b> Transaction ID No:</b> ${trx}`;
+        
+        show('step4');
+    }
+
+    function finish() {
+        let trx = document.getElementById('trx').value.trim();
+        let msg = `Student ID: ${document.getElementById('sid').value}%0AMobile: ${document.getElementById('mobile').value}%0AAmount: ${finalAmountWithGateway} Tk%0AMethod: ${selectedMethod}%0ATrxID: ${trx}`;
+        window.location.href = `https://wa.me/8801792016702?text=${msg}`;
+    }
+
+    function show(id) {
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step3').classList.add('hidden');
+        document.getElementById('step4').classList.add('hidden');
+        document.getElementById(id).classList.remove('hidden');
+    }
+
+    function back(s) { 
+        show('step'+s); 
+    }
+</script>
+</body>
+</html>
