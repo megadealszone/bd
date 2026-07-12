@@ -34,6 +34,18 @@
             transition: all 0.5s ease;
         }
 
+        /* Scroller Notice Style */
+        .scroller-notice {
+            color: red;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            background: #fff0f0;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px dashed red;
+        }
+
         h2, h3 { color: var(--primary); text-align: center; margin-bottom: 5px; }
         .subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 20px; }
 
@@ -112,6 +124,11 @@
 <div class="card" id="app">
     <!-- Step 1: Input -->
     <div id="step1">
+        <!-- Scrolling Notice Box -->
+        <div class="scroller-notice">
+            <marquee behavior="scroll" direction="left" scrollamount="4">⚠️ সতর্কবার্তা: আসসালামু আলাইকুম। সম্মানিত অভিভাবক,শিক্ষার্থীদের জন্য ভর্তি ফি, সেশন ফি, টিউশন ফি, পরিবহন ফি এখানে পরিশোধ করতে পারবেন। শুধুমাত্র 01792-016702 এই নম্বরে অর্থ লেনদেন (বিকাশ/নগদ/ট্যাপ) করুন। এই নম্বর ব্যতীত অন্য কোনো নম্বরে টাকা পাঠিয়ে প্রতারিত হলে কর্তৃপক্ষ কোনোভাবেই দায়ী থাকবে না। পেমেন্ট করতে সমস্যা হলে অফিশিয়াল ০১৮৭০৮০২৭০৫ নম্বরে WhatsApp এ মেসেজ দিন। ধন্যবাদ।</marquee>
+        </div>
+
         <h2>BCPSC Portal</h2>
         <div class="subtitle">Student Fee Payment</div>
         <input type="number" id="sid" placeholder="Student ID (6 Digits)">
@@ -137,7 +154,7 @@
         <h3>Select Gateway</h3>
         <div class="methods">
             <div class="method-btn" onclick="selectMethod(this, 'Nagad', 14)">Nagad</div>
-            <div class="method-btn" onclick="selectMethod(this, 'bKash', 15)">bKash</div>
+            <div class="method-btn" onclick="selectMethod(this, 'bKash', 16)">bKash</div>
             <div class="method-btn" onclick="selectMethod(this, 'Tap', 0)">Tap</div>
         </div>
         
@@ -259,8 +276,8 @@
         document.getElementById('finalPreviewData').innerHTML = `
             <b>Students ID:</b> ${document.getElementById('sid').value}<br>
             <b>Mobile NO:</b> ${document.getElementById('mobile').value}<br>
-            <b>Amount:</b> ${finalAmountWithGateway} Tk<br>
-            <b>Transaction ID:</b> ${trx}`;
+            <b>Amounts:</b> ${finalAmountWithGateway} Tk<br>
+            <b>Transaction ID:< /b> ${trx}`;
         
         show('step4');
     }
