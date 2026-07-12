@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টেলিকম অফার প্যানেল — প্রিমিয়াম ওয়াইড</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; 
+        }
+
+        body { 
+            background: linear-gradient(135deg, #c5c4c4 0%, #b3b3b4 100%);
+            padding: 30px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        /* Premium Tab Container */
+        .tab-container { 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 35px; 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(10px);
+            padding: 8px; 
+            border-radius: 40px; 
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.06); 
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .tab-btn { 
+            padding: 12px 28px; 
+            border: none; 
+            background: none; 
+            font-size: 15px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            border-radius: 30px; 
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            color: #555;
+        }
+        .tab-btn:focus {
+            outline: none;
+        }
+        
+        /* Premium Active Tab Colors */
+        .tab-btn.active.all-tab { background: #1e293b; color: white; box-shadow: 0 4px 15px rgba(30, 41, 59, 0.3); }
+        .tab-btn.active.gp-tab { background: #0077B6; color: white; box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3); }
+        .tab-btn.active.robi-tab { background: #E21227; color: white; box-shadow: 0 4px 15px rgba(226, 18, 39, 0.3); }
+        .tab-btn.active.airtel-tab { background: #ff1493; color: white; box-shadow: 0 4px 15px rgba(255, 20, 147, 0.3); }
+        .tab-btn.active.bl-tab { background: #FF6600; color: white; box-shadow: 0 4px 15px rgba(255, 102, 0, 0.3); }
+        .tab-btn.active.tt-tab { background: #2E7D32; color: white; box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3); }
+        
+        /* Grid Layout for 3 Cards in a Row */
+        .app-container { 
+            width: 100%; 
+            max-width: 1200px; 
+            display: none; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 20px;
+            padding: 10px;
+        }
+        .app-container.active { 
+            display: grid; 
+        }
+        
+        /* Premium Horizontal Card Style */
+        .card { 
+            background: #ffffff; 
+            border: 1px solid rgba(0, 0, 0, 0.05); 
+            border-radius: 16px; 
+            padding: 16px 20px; 
+            cursor: pointer; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+
+        .card-details {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        /* Operator Badges inside Cards */
+        .badge {
+            display: inline-block;
+            align-self: flex-start;
+            padding: 2px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gp-card .badge { background: rgba(0, 119, 182, 0.1); color: #0077B6; }
+        .robi-card .badge { background: rgba(226, 18, 39, 0.1); color: #E21227; }
+        .airtel-card .badge { background: rgba(255, 20, 147, 0.1); color: #ff1493; }
+        .bl-card .badge { background: rgba(255, 102, 0, 0.1); color: #FF6600; }
+        .tt-card .badge { background: rgba(46, 125, 50, 0.1); color: #2E7D32; }
+
+        .card h3 { 
+            font-size: 20px; 
+            font-weight: 700;
+            color: #1a1a1a; 
+        }
+        .card .validity { 
+            font-size: 13px; 
+            color: #666; 
+        }
+        .card .price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #222;
+            background: #f1f5f9;
+            padding: 10px 16px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        /* Premium Hover & Focus Glow Effects */
+        .gp-card:hover, .gp-card:focus-visible { 
+            transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0, 119, 182, 0.15); border-color: #0077B6; outline: none;
+        }
+        .gp-card:hover .price { background: #0077B6; color: white; }
+
+        .robi-card:hover, .robi-card:focus-visible { 
+            transform: translateY(-5px); box-shadow: 0 12px 25px rgba(226, 18, 39, 0.15); border-color: #E21227; outline: none;
+        }
+        .robi-card:hover .price { background: #E21227; color: white; }
+
+        .airtel-card:hover, .airtel-card:focus-visible { 
+            transform: translateY(-5px); box-shadow: 0 12px 25px rgba(255, 20, 147, 0.15); border-color: #ff1493; outline: none;
+        }
+        .airtel-card:hover .price { background: #ff1493; color: white; }
+
+        .bl-card:hover, .bl-card:focus-visible { 
+            transform: translateY(-5px); box-shadow: 0 12px 25px rgba(255, 102, 0, 0.15); border-color: #FF6600; outline: none;
+        }
+        .bl-card:hover .price { background: #FF6600; color: white; }
+
+        .tt-card:hover, .tt-card:focus-visible { 
+            transform: translateY(-5px); box-shadow: 0 12px 25px rgba(46, 125, 50, 0.15); border-color: #2E7D32; outline: none;
+        }
+        .tt-card:hover .price { background: #2E7D32; color: white; }
+
+        /* Premium Modal Styles */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(15, 23, 42, 0.6); 
+            z-index: 1000; 
+            justify-content: center; align-items: center; 
+            backdrop-filter: blur(8px);
+        }
+        .modal-content { 
+            background: #fff; 
+            width: 90%; max-width: 420px; 
+            padding: 35px 30px; border-radius: 24px; 
+            text-align: center; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: modalFadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        @keyframes modalFadeIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .btn-buy { 
+            background: #1e293b; color: white; 
+            padding: 14px 20px; border: none; border-radius: 12px; 
+            width: 100%; cursor: pointer; font-size: 16px; 
+            margin-top: 20px; font-weight: 700; transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
+        }
+        .btn-buy:hover { background: #0f172a; transform: translateY(-2px); }
+        .platform-btn { 
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 14px; margin: 12px 0; 
+            border: 1px solid #e2e8f0; border-radius: 12px; cursor: pointer; 
+            text-decoration: none; color: #333; font-weight: 600; transition: all 0.2s ease;
+        }
+        .platform-btn:hover { background: #f8fafc; border-color: #cbd5e1; transform: scale(1.02); }
+        .close-btn { margin-top: 20px; border: none; background: none; cursor: pointer; color: #64748b; font-size: 14px; font-weight: 600; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <!-- Operator Tabs -->
+    <div class="tab-container">
+        <button class="tab-btn active all-tab" onclick="switchApp('all')">All Pack</button>
+        <button class="tab-btn gp-tab" onclick="switchApp('gp')">MyGP</button>
+        <button class="tab-btn robi-tab" onclick="switchApp('robi')">MyRobi</button>
+        <button class="tab-btn airtel-tab" onclick="switchApp('airtel')">Airtel</button>
+        <button class="tab-btn bl-tab" onclick="switchApp('bl')">Banglalink</button>
+        <button class="tab-btn tt-tab" onclick="switchApp('tt')">Teletalk</button>
+    </div>
+
+    <!-- Main Packs Grid Container -->
+    <div id="packs-container" class="app-container active">
+        
+        <!-- Grameenphone Packs -->
+        <div class="card gp-card" data-operator="gp" tabindex="0" onclick="openModal('১০ জিবি (৩ জিবি বোনাস)', 'মেয়াদ ৩ দিন', '৳১১৮')" onkeydown="handleKeyDown(event, '১০ জিবি (৩ জিবি বোনাস)', 'মেয়াদ ৩ দিন', '৳১১৮')">
+            <div class="card-details">
+                <span class="badge">Grameenphone</span>
+                <h3>১০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩ দিন</div>
+            </div>
+            <div class="price">৳১১৮</div>
+        </div>
+        <div class="card gp-card" data-operator="gp" tabindex="0" onclick="openModal('২০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳২৯৮')" onkeydown="handleKeyDown(event, '২০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳২৯৮')">
+            <div class="card-details">
+                <span class="badge">Grameenphone</span>
+                <h3>২০ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳২৯৮</div>
+        </div>
+        <div class="card gp-card" data-operator="gp" tabindex="0" onclick="openModal('৩০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৪৯৮')" onkeydown="handleKeyDown(event, '৩০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৪৯৮')">
+            <div class="card-details">
+                <span class="badge">Grameenphone</span>
+                <h3>৩০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৪৯৮</div>
+        </div>
+        <div class="card gp-card" data-operator="gp" tabindex="0" onclick="openModal('৫০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৬৯৯')" onkeydown="handleKeyDown(event, '৫০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৬৯৯')">
+            <div class="card-details">
+                <span class="badge">Grameenphone</span>
+                <h3>৫০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৬৯৯</div>
+        </div>
+
+        <!-- Robi Packs -->
+        <div class="card robi-card" data-operator="robi" tabindex="0" onclick="openModal('৪০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৪৯৪')" onkeydown="handleKeyDown(event, '৪০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৪৯৪')">
+            <div class="card-details">
+                <span class="badge">Robi</span>
+                <h3>৪০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৪৯৪</div>
+        </div>
+        <div class="card robi-card" data-operator="robi" tabindex="0" onclick="openModal('১০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳১৪৯')" onkeydown="handleKeyDown(event, '১০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳১৪৯')">
+            <div class="card-details">
+                <span class="badge">Robi</span>
+                <h3>১০ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳১৪৯</div>
+        </div>
+        <div class="card robi-card" data-operator="robi" tabindex="0" onclick="openModal('২৫ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৩২৯')" onkeydown="handleKeyDown(event, '২৫ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৩২৯')">
+            <div class="card-details">
+                <span class="badge">Robi</span>
+                <h3>২৫ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳৩২৯</div>
+        </div>
+        <div class="card robi-card" data-operator="robi" tabindex="0" onclick="openModal('৬০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৫৯৯')" onkeydown="handleKeyDown(event, '৬০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৫৯৯')">
+            <div class="card-details">
+                <span class="badge">Robi</span>
+                <h3>৬০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৫৯৯</div>
+        </div>
+
+        <!-- Airtel Packs -->
+        <div class="card airtel-card" data-operator="airtel" tabindex="0" onclick="openModal('১৫ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳১৭৯')" onkeydown="handleKeyDown(event, '১৫ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳১৭৯')">
+            <div class="card-details">
+                <span class="badge">Airtel</span>
+                <h3>১৫ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳১৭৯</div>
+        </div>
+        <div class="card airtel-card" data-operator="airtel" tabindex="0" onclick="openModal('৩০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৩৪৮')" onkeydown="handleKeyDown(event, '৩০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৩৪৮')">
+            <div class="card-details">
+                <span class="badge">Airtel</span>
+                <h3>৩০ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳৩৪৮</div>
+        </div>
+        <div class="card airtel-card" data-operator="airtel" tabindex="0" onclick="openModal('৪৫ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৫২৯')" onkeydown="handleKeyDown(event, '৪৫ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৫২৯')">
+            <div class="card-details">
+                <span class="badge">Airtel</span>
+                <h3>৪৫ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৫২৯</div>
+        </div>
+        <div class="card airtel-card" data-operator="airtel" tabindex="0" onclick="openModal('৮২ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৭৯৮')" onkeydown="handleKeyDown(event, '৮২ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৭৯৮')">
+            <div class="card-details">
+                <span class="badge">Airtel</span>
+                <h3>৮২ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৭৯৮</div>
+        </div>
+
+        <!-- Banglalink Packs -->
+        <div class="card bl-card" data-operator="bl" tabindex="0" onclick="openModal('১২ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳১৬৯')" onkeydown="handleKeyDown(event, '১২ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳১৬৯')">
+            <div class="card-details">
+                <span class="badge">Banglalink</span>
+                <h3>১২ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳১৬৯</div>
+        </div>
+        <div class="card bl-card" data-operator="bl" tabindex="0" onclick="openModal('২৫ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৩১৯')" onkeydown="handleKeyDown(event, '২৫ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৩১৯')">
+            <div class="card-details">
+                <span class="badge">Banglalink</span>
+                <h3>২৫ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳৩১৯</div>
+        </div>
+        <div class="card bl-card" data-operator="bl" tabindex="0" onclick="openModal('৩৫ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৪৪৯')" onkeydown="handleKeyDown(event, '৩৫ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৪৪৯')">
+            <div class="card-details">
+                <span class="badge">Banglalink</span>
+                <h3>৩৫ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৪৪৯</div>
+        </div>
+        <div class="card bl-card" data-operator="bl" tabindex="0" onclick="openModal('৮০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৭৯৯')" onkeydown="handleKeyDown(event, '৮০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৭৯৯')">
+            <div class="card-details">
+                <span class="badge">Banglalink</span>
+                <h3>৮০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৭৯৯</div>
+        </div>
+
+        <!-- Teletalk Packs -->
+        <div class="card tt-card" data-operator="tt" tabindex="0" onclick="openModal('৮ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৯৮')" onkeydown="handleKeyDown(event, '৮ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳৯৮')">
+            <div class="card-details">
+                <span class="badge">Teletalk</span>
+                <h3>৮ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳৯৮</div>
+        </div>
+        <div class="card tt-card" data-operator="tt" tabindex="0" onclick="openModal('২০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳২৪৯')" onkeydown="handleKeyDown(event, '২০ জিবি প্যাক', 'মেয়াদ ৭ দিন', '৳২৪৯')">
+            <div class="card-details">
+                <span class="badge">Teletalk</span>
+                <h3>২০ জিবি</h3>
+                <div class="validity">মেয়াদ ৭ দিন</div>
+            </div>
+            <div class="price">৳২৪৯</div>
+        </div>
+        <div class="card tt-card" data-operator="tt" tabindex="0" onclick="openModal('৩০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৩৮৯')" onkeydown="handleKeyDown(event, '৩০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৩৮৯')">
+            <div class="card-details">
+                <span class="badge">Teletalk</span>
+                <h3>৩০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৩৮৯</div>
+        </div>
+        <div class="card tt-card" data-operator="tt" tabindex="0" onclick="openModal('৫০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৫৪৯')" onkeydown="handleKeyDown(event, '৫০ জিবি প্যাক', 'মেয়াদ ৩০ দিন', '৳৫৪৯')">
+            <div class="card-details">
+                <span class="badge">Teletalk</span>
+                <h3>৫০ জিবি</h3>
+                <div class="validity">মেয়াদ ৩০ দিন</div>
+            </div>
+            <div class="price">৳৫৪৯</div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="offerModal" class="modal" onclick="if(event.target === this) closeModal()">
+        <div class="modal-content">
+            <h2 id="modalTitle">অফার বিস্তারিত</h2>
+            <p id="modalInfo" style="margin: 15px 0; color: #334155; font-size: 20px; font-weight: 700;"></p>
+            <div id="buySection">
+                <button class="btn-buy" id="primaryBuyBtn" onclick="showPlatforms()">এখনই ইন্টারনেট প্যাকটি কিনুন</button>
+            </div>
+            <div id="platformSection" style="display:none; margin-top: 20px;">
+                <p style="margin-bottom: 12px; color: #64748b; font-weight: 500;">মেসেজ পাঠাতে মাধ্যম নির্বাচন করুন:</p>
+                <a href="#" id="waLink" class="platform-btn">WhatsApp এ পাঠান</a>
+                <a href="#" id="imoLink" class="platform-btn">IMO এ পাঠান</a>
+            </div>
+            <button class="close-btn" onclick="closeModal()">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <script>
+        let currentOffer = { title: '', validity: '', price: '' };
+        const targetNumber = "8801792016702";
+
+        function switchApp(operator) {
+            // সকল ট্যাবের অ্যাক্টিভ ক্লাস রিমুভ করা
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // বর্তমান সিলেক্ট করা ট্যাবে অ্যাক্টিভ ক্লাস দেওয়া
+            document.querySelector(`.${operator}-tab`).classList.add('active'); 
+            
+            // কার্ড ফিল্টারিং লজিক
+            const cards = document.querySelectorAll('#packs-container .card');
+            
+            cards.forEach(card => {
+                if (operator === 'all') {
+                    card.style.display = 'flex'; // সকল প্যাক দেখাবে
+                } else {
+                    if (card.getAttribute('data-operator') === operator) {
+                        card.style.display = 'flex'; // শুধু সিলেক্টেড অপারেটর দেখাবে
+                    } else {
+                        card.style.display = 'none'; // বাকিগুলো হাইড করবে
+                    }
+                }
+            });
+        }
+
+        function openModal(title, validity, price) {
+            currentOffer = { title, validity, price };
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalInfo').innerText = `${validity} - ${price}`;
+            document.getElementById('buySection').style.display = 'block';
+            document.getElementById('platformSection').style.display = 'none';
+            document.getElementById('offerModal').style.display = 'flex';
+            setTimeout(() => document.getElementById('primaryBuyBtn').focus(), 50);
+        }
+
+        function closeModal() { 
+            document.getElementById('offerModal').style.display = 'none'; 
+        }
+
+        function handleKeyDown(event, title, validity, price) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault(); 
+                openModal(title, validity, price);
+            }
+        }
+
+        window.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeModal();
+        });
+
+        function showPlatforms() {
+            document.getElementById('buySection').style.display = 'none';
+            document.getElementById('platformSection').style.display = 'block';
+            
+            const msg = `অর্ডার করছি: ${currentOffer.title}, ${currentOffer.validity}, ${currentOffer.price}`;
+            const encodedMsg = encodeURIComponent(msg);
+            
+            document.getElementById('waLink').href = `https://wa.me/${targetNumber}?text=${encodedMsg}`;
+            document.getElementById('imoLink').href = `intent://send?text=${encodedMsg}#Intent;scheme=smsto;package=com.imo.android;end`;
+        }
+
+        // পেজ রিফ্রেশ বা লোড হওয়ার পর স্বয়ংক্রিয়ভাবে "সকল প্যাক" চালু রাখার স্ক্রিপ্ট
+        window.addEventListener('DOMContentLoaded', () => {
+            switchApp('all');
+        });
+    </script>
+</body>
+</html>
