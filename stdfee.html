@@ -126,7 +126,7 @@
     <div id="step1">
         <!-- Scrolling Notice Box -->
         <div class="scroller-notice">
-            <marquee behavior="scroll" direction="left" scrollamount="4">⚠️ সতর্কবার্তা: আসসালামু আলাইকুম। জরুরী প্রয়োজনে ভর্তি ফি, সেশন ফি, টিউশন ফি, পরিবহন ফি এখানে পরিশোধ করতে পারবেন। শুধুমাত্র 01792-016702 এই নম্বরে অর্থ লেনদেন (বিকাশ/নগদ/ট্যাপ) করুন। এই নম্বর ব্যতীত অন্য কোনো নম্বরে টাকা পাঠিয়ে প্রতারিত হলে কর্তৃপক্ষ দায়ী থাকবে না। পেমেন্ট করতে সমস্যা হলে অফিশিয়াল এই ০১৮৭০৮০২৭০৫ নম্বরে WhatsApp এ মেসেজ দিন। ধন্যবাদ।</marquee>
+            <marquee behavior="scroll" direction="left" scrollamount="4">⚠️ সতর্কবার্তা: আসসালামু আলাইকুম। জরুরী প্রয়োজনে শিক্ষার্থীদের জন্য ভর্তি ফি, সেশন ফি, টিউশন ফি, পরিবহন ফি এখানে পরিশোধ করতে পারবেন। শুধুমাত্র 01792-016702 এই নম্বরে অর্থ লেনদেন (বিকাশ/নগদ/ট্যাপ) করুন। এই নম্বর ব্যতীত অন্য কোনো নম্বরে টাকা পাঠিয়ে প্রতারিত হলে কর্তৃপক্ষ কোনোভাবেই দায়ী থাকবে না। পেমেন্ট করতে সমস্যা হলে অফিশিয়াল ০১৮৭০৮০২৭০৫ নম্বরে WhatsApp এ মেসেজ দিন। ধন্যবাদ।</marquee>
         </div>
 
         <h2>BCPSC Portal</h2>
@@ -193,10 +193,15 @@
     let selectedRate = 0;
     let timerInterval;
 
+    // সংখ্যা ফরম্যাট করার ফাংশন (৩ সংখ্যা পর কমা, এরপর ২ সংখ্যা পর কমা)
+    function formatCurrency(amount) {
+        return amount.toLocaleString('en-IN');
+    }
+
     function calcBase() {
         baseAmount = parseFloat(document.getElementById('amt').value) || 0;
         totalWithCharge = baseAmount + 30;
-        document.getElementById('totalBase').innerText = baseAmount > 0 ? totalWithCharge : 0;
+        document.getElementById('totalBase').innerText = baseAmount > 0 ? formatCurrency(totalWithCharge) : 0;
     }
 
     function preview() {
@@ -216,7 +221,7 @@
         document.getElementById('previewData').innerHTML = `
             <b>ID:</b> ${studentId}<br>
             <b>Mobile:</b> ${mobile}<br>
-            <b>Total:</b> ${totalWithCharge} Tk`;
+            <b>Total:</b> ${formatCurrency(totalWithCharge)} Tk`;
         show('step2');
     }
 
@@ -234,8 +239,8 @@
         let charge = Math.ceil((totalWithCharge / 1000) * rate);
         finalAmountWithGateway = totalWithCharge + charge;
         
-        document.getElementById('chargeVal').innerText = charge;
-        document.getElementById('finalAmt').innerText = finalAmountWithGateway;
+        document.getElementById('chargeVal').innerText = formatCurrency(charge);
+        document.getElementById('finalAmt').innerText = formatCurrency(finalAmountWithGateway);
         document.getElementById('payDetails').classList.remove('hidden');
         
         document.getElementById('confirmSendMoney').checked = false;
@@ -244,6 +249,13 @@
         
         document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
         element.classList.add('active');
+
+        // ব্যালেন্স ক্লিপবোর্ডে কপি করার লজিক (কমা ছাড়া পিওর নম্বর কপি হবে যাতে পেস্ট করতে সমস্যা না হয়)
+        navigator.clipboard.writeText(finalAmountWithGateway).then(() => {
+            alert(`পরিশোধযোগ্য সর্বমোট ${formatCurrency(finalAmountWithGateway)} টাকা কপি হয়েছে! এখন 01792016702 এই নম্বরে সেন্ড মানি করুন।`);
+        }).catch(err => {
+            console.error('টাকা কপি করা যায়নি: ', err);
+        });
     }
 
     function toggleTrxField() {
@@ -274,9 +286,9 @@
         if(!trx) return alert("Enter TrxID");
 
         document.getElementById('finalPreviewData').innerHTML = `
-            <b>Students ID:</b> ${document.getElementById('sid').value}<br>
-            <b>Mobile NO:</b> ${document.getElementById('mobile').value}<br>
-            <b>Amounts:</b> ${finalAmountWithGateway} Tk<br>
+            <b> Student ID:</b> ${document.getElementById('sid').value}<br>
+            <b> Mobile NO:</b> ${document.getElementById('mobile').value}<br>
+            <b> Amount:</b> ${formatCurrency(finalAmountWithGateway)} Tk<br>
             <b>Transaction ID:</b> ${trx}`;
         
         show('step4');
