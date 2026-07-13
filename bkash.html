@@ -1,56 +1,268 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bKash Live Payment</title>
+    <title>Premium Smart Gateway</title>
     <style>
-        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f7f7f7; }
-        .payment-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 320px; }
-        .logo { width: 120px; margin-bottom: 20px; }
-        .btn-bkash { background: #E2136E; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .btn-bkash:disabled { background: #cccccc; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #eef2f3, #8e9eab);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .payment-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 30px 22px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 360px;
+        }
+
+        .header-title {
+            color: #1a1a1a;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .info-container {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+        }
+
+        .info-label span:first-child {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: block;
+        }
+
+        .info-text {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .btn-small-copy {
+            background: #1e293b;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-small-copy:hover { background: #0f172a; }
+
+        .divider {
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+            margin: 25px 0 20px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: "যেকোনো একটি অ্যাপ সিলেক্ট করুন";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ffffff;
+            padding: 0 10px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .btn-gateway {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-gateway:active { transform: scale(0.98); }
+
+        .btn-bkash { background: linear-gradient(135deg, #E2136E, #b80f55); }
+        .btn-bkash:hover { box-shadow: 0 6px 15px rgba(226, 19, 110, 0.25); }
+
+        .btn-nagad { background: linear-gradient(135deg, #F64A16, #d1390a); }
+        .btn-nagad:hover { box-shadow: 0 6px 15px rgba(246, 74, 22, 0.25); }
+
+        .btn-tap { background: linear-gradient(135deg, #203a8a, #142456); }
+        .btn-tap:hover { box-shadow: 0 6px 15px rgba(32, 58, 138, 0.25); }
+
+        .instruction-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .instruction-step {
+            font-size: 11.5px;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+
+        /* প্রিমিয়াম টোস্ট নোটিফিকেশন */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #0f172a;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease;
+            z-index: 9999;
+            opacity: 0;
+            width: 90%;
+            max-width: 330px;
+            text-align: center;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 
-<div class="payment-box">
-    <img src="https://www.bkash.com/images/bkash_logo.png" alt="bKash" class="logo">
-    <p>Receiver: <strong>01792016702</strong></p>
-    <p>Amount: <strong>BDT 500</strong></p>
-    <button class="btn-bkash" id="pay-btn" onclick="initiatePayment()">Pay with bKash</button>
+<div class="payment-card">
+    <h3 class="header-title">স্মার্ট পেমেন্ট</h3>
+    <p class="subtitle">সহজ ধাপে আপনার পেমেন্ট সম্পন্ন করুন</p>
+    
+    <!-- নম্বর বক্স (শুধুমাত্র প্রদর্শনের জন্য, বাটন ক্লিক করলে অটো কপি হবে) -->
+    <div class="info-container">
+        <div class="info-label">
+            <span>আমাদের নম্বর</span>
+            <span class="info-text" id="targetNumber">01792016702</span>
+        </div>
+    </div>
+
+    <!-- অ্যামাউন্ট বক্স (পাশে কপির অপশন সহ) -->
+    <div class="info-container">
+        <div class="info-label">
+            <span>টাকার পরিমাণ (Amount)</span>
+            <span class="info-text"><span id="targetAmount">500</span> BDT</span>
+        </div>
+        <button class="btn-small-copy" onclick="copyAmountOnly()">কপি</button>
+    </div>
+    
+    <div class="divider"></div>
+
+    <!-- bKash Option -->
+    <button class="btn-gateway btn-bkash" onclick="payAndCopyNumber('bkash')">
+        bKash পেমেন্ট করুন
+    </button>
+    
+    <!-- Nagad Option -->
+    <button class="btn-gateway btn-nagad" onclick="payAndCopyNumber('nagad')">
+        Nagad পেমেন্ট করুন
+    </button>
+
+    <!-- Tap Option -->
+    <button class="btn-gateway btn-tap" onclick="payAndCopyNumber('tap')">
+        Tap পেমেন্ট করুন
+    </button>
+
+    <!-- গাইডেন্স বক্স -->
+    <div class="instruction-box">
+        <p class="instruction-step">১. প্রথমে অ্যামাউন্টের পাশের <strong>"কপি"</strong> বাটনে চাপ দিয়ে টাকা কপি করে নিন।</p>
+        <p class="instruction-step">২. এরপর কাঙ্খিত অ্যাপ বাটনে ক্লিক করুন। এতে <strong>নম্বরটি অটো-কপি হয়ে যাবে</strong> এবং অ্যাপ ওপেন হবে।</p>
+    </div>
 </div>
 
-<script>
-    async function initiatePayment() {
-        const btn = document.getElementById('pay-btn');
-        btn.disabled = true;
-        btn.innerText = "Processing...";
+<div id="toastMessage" class="toast">কপি হয়েছে!</div>
 
-        try {
-            // আপনার ব্যাকএন্ড সার্ভারে রিকোয়েস্ট পাঠানো
-            const response = await fetch('/api/bkash/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: "500", invoice: "INV" + Date.now() })
-            });
+<script>
+    // শুধুমাত্র অ্যামাউন্ট কপি করার ফাংশন
+    function copyAmountOnly() {
+        const amount = document.getElementById("targetAmount").innerText;
+        navigator.clipboard.writeText(amount).then(() => {
+            showToast("শুধুমাত্র অ্যামাউন্ট (টাকা) কপি হয়েছে!");
+        });
+    }
+
+    // অ্যাপ ওপেন এবং শুধুমাত্র নম্বর কপি করার স্মার্ট ফাংশন
+    function payAndCopyNumber(gateway) {
+        const number = document.getElementById("targetNumber").innerText;
+        
+        // ব্যাকগ্রাউন্ডে শুধুমাত্র মোবাইল ব্যাংকিং নম্বরটি কপি হবে
+        navigator.clipboard.writeText(number).then(() => {
+            showToast("মোবাইল নম্বর কপি হয়েছে! অ্যাপ ওপেন হচ্ছে...");
             
-            const data = await response.json();
-            
-            if (data.bkashURL) {
-                // bKash-এর অফিশিয়াল লাইভ পেমেন্ট পেজে রিডাইরেক্ট হবে
-                window.location.href = data.bkashURL;
-            } else {
-                alert("Payment initiation failed!");
-                btn.disabled = false;
-                btn.innerText = "Pay with bKash";
-            }
-        } catch (error) {
-            console.error(error);
-            alert("Server Error!");
-            btn.disabled = false;
-            btn.innerText = "Pay with bKash";
-        }
+            // নম্বর কপি হওয়ার ১.২ সেকেন্ড পর নির্দিষ্ট অ্যাপ/লিংকে রিডাইরেক্ট হবে
+            setTimeout(() => {
+                if (gateway === 'bkash') {
+                    window.location.href = "https://bka.sh/opn"; // বিকাশের অফিশিয়াল ডিরেক্ট ওয়েব পোর্টাল লিংক
+                } else if (gateway === 'nagad') {
+                    window.location.href = "intent://#Intent;scheme=nagad;package=com.konasl.nagad;end";
+                } else if (gateway === 'tap') {
+                    window.location.href = "intent://#Intent;scheme=tap;package=com.tap.customer;end";
+                }
+            }, 1200);
+        });
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById("toastMessage");
+        toast.innerText = message;
+        toast.classList.add("show");
+        setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
     }
 </script>
 
