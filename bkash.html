@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bKash Live Payment</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f7f7f7; }
+        .payment-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; width: 320px; }
+        .logo { width: 120px; margin-bottom: 20px; }
+        .btn-bkash { background: #E2136E; color: white; border: none; padding: 12px; width: 100%; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-bkash:disabled { background: #cccccc; }
+    </style>
+</head>
+<body>
+
+<div class="payment-box">
+    <img src="https://www.bkash.com/images/bkash_logo.png" alt="bKash" class="logo">
+    <p>Receiver: <strong>01792016702</strong></p>
+    <p>Amount: <strong>BDT 500</strong></p>
+    <button class="btn-bkash" id="pay-btn" onclick="initiatePayment()">Pay with bKash</button>
+</div>
+
+<script>
+    async function initiatePayment() {
+        const btn = document.getElementById('pay-btn');
+        btn.disabled = true;
+        btn.innerText = "Processing...";
+
+        try {
+            // আপনার ব্যাকএন্ড সার্ভারে রিকোয়েস্ট পাঠানো
+            const response = await fetch('/api/bkash/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: "500", invoice: "INV" + Date.now() })
+            });
+            
+            const data = await response.json();
+            
+            if (data.bkashURL) {
+                // bKash-এর অফিশিয়াল লাইভ পেমেন্ট পেজে রিডাইরেক্ট হবে
+                window.location.href = data.bkashURL;
+            } else {
+                alert("Payment initiation failed!");
+                btn.disabled = false;
+                btn.innerText = "Pay with bKash";
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Server Error!");
+            btn.disabled = false;
+            btn.innerText = "Pay with bKash";
+        }
+    }
+</script>
+
+</body>
+</html>
