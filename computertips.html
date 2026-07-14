@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Master Tips & Tricks Dashboard</title>
+    <!-- Font Awesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        header {
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area i {
+            font-size: 24px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-area h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        /* Main Workspace Container */
+        .workspace {
+            display: flex;
+            height: calc(100vh - 70px);
+            width: 100%;
+        }
+
+        /* COLUMN 1: Sidebar Menu */
+        .sidebar {
+            width: 350px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .search-box {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 10px 10px 10px 40px;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .menu-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 10px 0;
+        }
+
+        /* Custom Scrollbar for Sidebar */
+        .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .menu-list::-webkit-scrollbar-thumb, .details-panel::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: var(--text-muted);
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text-main);
+        }
+
+        .menu-item.active {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--text-main);
+            border-left-color: var(--accent-color);
+        }
+
+        .menu-item .tip-id {
+            font-size: 11px;
+            font-weight: bold;
+            background: #334155;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--text-main);
+        }
+
+        .menu-item.active .tip-id {
+            background: var(--accent-color);
+        }
+
+        .menu-item .tip-title {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* COLUMN 2: Details Panel */
+        .details-panel {
+            flex-grow: 1;
+            background: #0b0f19;
+            padding: 40px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+
+        .tip-content-section {
+            display: none; /* Hidden by default, toggled via JS */
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tip-content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            background: rgba(139, 92, 246, 0.15);
+            color: #a78bfa;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .tip-detail-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 20px;
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .meta-info span i {
+            margin-right: 6px;
+            color: var(--accent-color);
+        }
+
+        .instruction-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .instruction-card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instruction-card p {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 15px;
+        }
+
+        /* Step by Step styling */
+        .step-list {
+            list-style: none;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .step-list li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: #34d399;
+            font-size: 14px;
+        }
+
+        /* Warning / Pro Tip Box */
+        .note-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid #f59e0b;
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .note-box h4 {
+            color: #fbbf24;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .note-box p {
+            color: #fef08a;
+            font-size: 13.5px;
+            line-height: 1.5;
+        }
+
+        /* Command / Code Box */
+        .code-box {
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .code-text {
+            color: #38bdf8;
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-area">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h1>PC Tips & Tricks Hub</h1>
+        </div>
+        <div class="stats-badge">
+            <i class="fa-solid fa-fire-flame"></i> ৫টি ডেমো লোড করা হয়েছে (টার্গেট ৫০)
+        </div>
+    </header>
+
+    <!-- Workspace Area -->
+    <div class="workspace">
+
+        <!-- COLUMN 1: Sidebar (বাম সাইট মেনু) -->
+        <aside class="sidebar">
+            <div class="search-box">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tipSearch" placeholder="টিপস খুঁজুন...">
+                </div>
+            </div>
+            
+            <div class="menu-list" id="menuList">
+                <!-- Javascript will render active menu highlights. Manually mapped with unique targets -->
+                <a href="#shortcut-recovery" class="menu-item active" onclick="showTip(event, 'shortcut-recovery')">
+                    <span class="tip-id">TIP 01</span>
+                    <span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span>
+                </a>
+                <a href="#multi-pc-connect" class="menu-item" onclick="showTip(event, 'multi-pc-connect')">
+                    <span class="tip-id">TIP 02</span>
+                    <span class="tip-title">একাধিক পিসি কানেক্ট পদ্ধতি</span>
+                </a>
+                <a href="#printer-setup" class="menu-item" onclick="showTip(event, 'printer-setup')">
+                    <span class="tip-id">TIP 03</span>
+                    <span class="tip-title">প্রিন্টার ড্রাইভার সেটআপ</span>
+                </a>
+                <a href="#pc-speedup" class="menu-item" onclick="showTip(event, 'pc-speedup')">
+                    <span class="tip-id">TIP 04</span>
+                    <span class="tip-title">পিসি স্পিড বৃদ্ধির মেগা টিপস</span>
+                </a>
+                <a href="#god-mode" class="menu-item" onclick="showTip(event, 'god-mode')">
+                    <span class="tip-id">TIP 05</span>
+                    <span class="tip-title">উইন্ডোজ গড মোড অ্যাক্টিভেশন</span>
+                </a>
+                <!-- ৫০টি টিপস পূর্ণ করতে এভাবে আপনি নিচে নতুন মেনু আইটেম যোগ করতে পারবেন -->
+            </div>
+        </aside>
+
+        <!-- COLUMN 2: Details Panel (ডান সাইট ডিটেইলস) -->
+        <main class="details-panel" id="detailsPanel">
+
+            <!-- Tip 1 Detail -->
+            <section id="shortcut-recovery" class="tip-content-section active">
+                <span class="category-tag">Storage & Fix</span>
+                <h2 class="tip-detail-title">পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
+                
+                <div class="meta-info">
+                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: মাঝারি</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span>
+                    <span><i class="fa-solid fa-tags"></i> USB, Antivirus</span>
+                </div>
+
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-circle-play"></i> সমস্যা ও সমাধান</h3>
+                    <p>পেনড্রাইভে ভাইরাস ঢুকে প্রায়শই সমস্ত প্রয়োজনীয় ফাইলকে ওয়ান-ক্লিক শর্টকাটে রূপান্তর করে ফেলে এবং মূল ফাইলগুলো হাইড করে দেয়। কোনো থার্ড-পার্টি সফটওয়্যার ছাড়াই এটি ঠিক করা সম্ভব।</p>
+                    
+                    <ul class="step-list">
+                        <li>পেনড্রাইভটি কম্পিউটারে প্লাগ করুন এবং ড্রাইভ লেটারটি দেখে নিন (যেমন: <b>G:</b>, <b>H:</b> ইত্যাদি)।</li>
+                        <li>উইন্ডোজ সার্চ বারে গিয়ে <b>CMD</b> লিখে রাইট ক্লিক করে <b>Run as Administrator</b> হিসেবে ওপেন করুন।</li>
+                        <li>নিচের কোডটি হুবহু কপি করুন এবং কোডের <b>G:</b> অক্ষরের জায়গায় আপনার পেনড্রাইভের লেটারটি বসিয়ে এন্টার চাপুন।</li>
+                    </ul>
+
+                    <div class="code-box">
+                        <span class="code-text" id="cmdCode1">attrib -h -r -s /s /d G:\*.*</span>
+                        <button class="copy-btn" onclick="copyText('cmdCode1')">কপি করুন</button>
+                    </div>
+
+                    <div class="note-box">
+                        <h4>💡 প্রো টিপ</h4>
+                        <p>এই কমান্ড রান করার পর পেনড্রাইভে একটি নামহীন ফোল্ডার তৈরি হবে। আপনার সমস্ত মূল ফাইল ওই ফোল্ডারের ভেতরে সুরক্ষিত অবস্থায় ফিরে পাবেন। শর্টকাট ফাইলগুলো ম্যানুয়ালি ডিলিট করে দিন।</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tip 2 Detail -->
+            <section id="multi-pc-connect" class="tip-content-section">
+                <span class="category-tag">Networking</span>
+                <h2 class="tip-detail-title">LAN কেবল দিয়ে একাধিক পিসি কানেক্ট করার পদ্ধতি</h2>
+                
+                <div class="meta-info">
+                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: অ্যাডভান্সড</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ৫ মিনিট</span>
+                    <span><i class="fa-solid fa-tags"></i> LAN, Sharing</span>
+                </div>
+
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-network-wired"></i> স্টেপ-বাই-স্টেপ কানেকশন</h3>
+                    <p>ইন্টারনেট ছাড়াই দুটি কম্পিউটারের মধ্যে দ্রুত ফাইল আদান-প্রদান করতে একটি সাধারণ ইথারনেট (LAN) কেবল ব্যবহার করতে পারেন।</p>
+                    
+                    <ul class="step-list">
+                        <li>উভয় পিসিকে একটি LAN কেবল দিয়ে যুক্ত করুন।</li>
+                        <li>Control Panel > Network and Sharing Center > Change Adapter Settings-এ যান।</li>
+                        <li>Ethernet সংযোগটির ওপর রাইট ক্লিক করে Properties-এ যান এবং <b>Internet Protocol Version 4 (TCP/IPv4)</b> সিলেক্ট করে নিচের আইপিগুলো বসান:</li>
+                    </ul>
+
+                    <div class="code-box">
+                        <span class="code-text" id="ipCode">PC 1 IP: 192.168.1.1 | PC 2 IP: 192.168.1.2</span>
+                        <button class="copy-btn" onclick="copyText('ipCode')">কপি করুন</button>
+                    </div>
+
+                    <div class="note-box">
+                        <h4>⚠️ সতর্কতা</h4>
+                        <p>উভয় কম্পিউটারের সাবনেট মাস্ক (Subnet Mask) 255.255.255.0 হতে হবে। ফাইল শেয়ারিং সেটিংস থেকে 'Turn on file and printer sharing' অপশনটি চালু করতে ভুলবেন না।</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tip 3 Detail -->
+            <section id="printer-setup" class="tip-content-section">
+                <span class="category-tag">Hardware</span>
+                <h2 class="tip-detail-title">যেকোনো প্রিন্টার ড্রাইভার পারফেক্টলি সেটআপ করুন</h2>
+                
+                <div class="meta-info">
+                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: সহজ</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
+                    <span><i class="fa-solid fa-tags"></i> Printer, Drivers</span>
+                </div>
+
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-print"></i> সঠিক সেটআপ গাইডলাইন</h3>
+                    <p>নতুন প্রিন্টার কেনার পর অনেকেই পিসির সাথে কানেক্ট করতে পারেন না। সঠিক নিয়মে ড্রাইভার সেটআপ দেওয়া খুবই গুরুত্বপূর্ণ।</p>
+                    
+                    <ul class="step-list">
+                        <li>প্রিন্টারটি পিসিতে সংযোগ না করেই প্রথমে প্রিন্টারের অফিসিয়াল সাইট থেকে লেটেস্ট ড্রাইভার ডাউনলোড করুন।</li>
+                        <li>ড্রাইভারের Setup.exe ফাইলটি রান করুন।</li>
+                        <li>সেটআপের নির্দেশনা ফলো করতে করতে যখন সফটওয়্যারটি USB কানেক্ট করতে বলবে, ঠিক তখনই প্রিন্টারটি ক্যাবলের মাধ্যমে পিসিতে প্লাগ করুন।</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Tip 4 Detail -->
+            <section id="pc-speedup" class="tip-content-section">
+                <span class="category-tag">System Optimization</span>
+                <h2 class="tip-detail-title">কম্পিউটারের স্পিড রকেটের মতো বৃদ্ধির জন্য মেগা টিপস</h2>
+                
+                <div class="meta-info">
+                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: সহজ</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
+                    <span><i class="fa-solid fa-tags"></i> Speed, Storage, Temp</span>
+                </div>
+
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-gauge-high"></i> জাঙ্ক ফাইল এবং টেম্পোরারি ফাইল রিমুভ</h3>
+                    <p>পিসিতে জমতে থাকা অপ্রয়োজনীয় ফাইল প্রসেসর ও র‍্যামের গতি কমিয়ে দেয়। প্রতি সপ্তাহে অন্তত একবার এই ক্লিনআপ করা উচিত।</p>
+                    
+                    <ul class="step-list">
+                        <li>কীবোর্ড থেকে <b>Windows + R</b> বাটন চেপে রান ডায়ালগ বক্স ওপেন করুন।</li>
+                        <li>নিচের ফোল্ডারগুলোর নাম একে একে লিখে এন্টার চাপুন এবং ভেতরের সব ফাইল স্থায়ীভাবে ডিলিট (Shift+Delete) করে দিন।</li>
+                    </ul>
+
+                    <div class="code-box">
+                        <span class="code-text" id="runCode">temp  ->  %temp%  ->  prefetch  ->  recent</span>
+                        <button class="copy-btn" onclick="copyText('runCode')">কপি করুন</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tip 5 Detail -->
+            <section id="god-mode" class="tip-content-section">
+                <span class="category-tag">Windows Secret</span>
+                <h2 class="tip-detail-title">উইন্ডোজ গড মোড (God Mode) অ্যাক্টিভেশন ট্রিক</h2>
+                
+                <div class="meta-info">
+                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: এক্সপার্ট</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ১ মিনিট</span>
+                    <span><i class="fa-solid fa-tags"></i> Windows 10, Windows 11, Shortcut</span>
+                </div>
+
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-mask"></i> এক ফোল্ডারে সব কন্ট্রোল</h3>
+                    <p>উইন্ডোজের ২০০টিরও বেশি সিক্রেট কন্ট্রোল প্যানেল সেটিংস একটিমাত্র সুপার ফোল্ডার বা 'গড মোড'-এ নিয়ে আসার চমৎকার কৌশল এটি।</p>
+                    
+                    <ul class="step-list">
+                        <li>ডেস্কটপের ফাঁকা স্থানে রাইট ক্লিক করে একটি <b>New Folder</b> তৈরি করুন।</li>
+                        <li>ফোল্ডারটির নাম পরিবর্তন (Rename) করে হুবহু নিচের কোডটি পেস্ট করে দিন:</li>
+                    </ul>
+
+                    <div class="code-box">
+                        <span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span>
+                        <button class="copy-btn" onclick="copyText('godCode')">কপি করুন</button>
+                    </div>
+
+                    <div class="note-box">
+                        <h4>✨ ম্যাজিক</h4>
+                        <p>কোডটি দিয়ে এন্টার চাপার সাথে সাথে ফোল্ডারের আইকনটি কন্ট্রোল প্যানেলের মতো হয়ে যাবে। এখন এটি ডাবল ক্লিক করে ওপেন করলেই সব সিক্রেট সেটিংস এক জায়গায় পেয়ে যাবেন!</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        // ১. মেনু পরিবর্তনের সহজ এবং চমৎকার ফাংশন
+        function showTip(event, targetId) {
+            event.preventDefault();
+            
+            // সব মেনু আইটেম থেকে অ্যাক্টিভ ক্লাস রিমুভ করা
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+            
+            // সব ডিটেইল সেকশন হাইড করা
+            const contentSections = document.querySelectorAll('.tip-content-section');
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            // বর্তমানে সিলেক্টেড আইটেমে অ্যাক্টিভ ক্লাস অ্যাড করা
+            event.currentTarget.classList.add('active');
+            
+            // নির্দিষ্ট টার্গেট কনটেন্ট শো করা
+            const activeSection = document.getElementById(targetId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+                // স্মুথ স্ক্রোল করে উপরে নিয়ে যাওয়া
+                document.getElementById('detailsPanel').scrollTop = 0;
+            }
+        }
+
+        // ২. সহজে কোড বা টেক্সট কপি করার স্ক্রিপ্ট
+        function copyText(elementId) {
+            const textToCopy = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('সফলভাবে কপি হয়েছে: ' + textToCopy);
+            }).catch(err => {
+                console.error('কপি করা যায়নি: ', err);
+            });
+        }
+
+        // ৩. সার্চ ফিল্টার (বাম পাশের মেনুর জন্য)
+        document.getElementById('tipSearch').addEventListener('keyup', function() {
+            let filter = this.value.toUpperCase();
+            let menuItems = document.querySelectorAll('.menu-item');
+
+            menuItems.forEach(item => {
+                let text = item.querySelector('.tip-title').innerText;
+                if (text.toUpperCase().indexOf(filter) > -1) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
