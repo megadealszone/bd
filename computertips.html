@@ -373,7 +373,7 @@
             <h1>PC Tips & Tricks Hub</h1>
         </div>
         <div class="stats-badge">
-            <i class="fa-solid fa-fire-flame"></i> ৫টি ডেমো লোড করা হয়েছে (টার্গেট ৫০)
+            <i class="fa-solid fa-fire-flame"></i> ৫টি ডেমো লোড করা হয়েছে (টার্গেট ৫০)
         </div>
     </header>
 
@@ -390,7 +390,7 @@
             </div>
             
             <div class="menu-list" id="menuList">
-                <!-- Javascript will render active menu highlights. Manually mapped with unique targets -->
+                <!-- Navigation Items -->
                 <a href="#shortcut-recovery" class="menu-item active" onclick="showTip(event, 'shortcut-recovery')">
                     <span class="tip-id">TIP 01</span>
                     <span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span>
@@ -411,7 +411,6 @@
                     <span class="tip-id">TIP 05</span>
                     <span class="tip-title">উইন্ডোজ গড মোড অ্যাক্টিভেশন</span>
                 </a>
-                <!-- ৫০টি টিপস পূর্ণ করতে এভাবে আপনি নিচে নতুন মেনু আইটেম যোগ করতে পারবেন -->
             </div>
         </aside>
 
@@ -425,28 +424,29 @@
                 
                 <div class="meta-info">
                     <span><i class="fa-solid fa-circle-info"></i> লেভেল: মাঝারি</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span>
                     <span><i class="fa-solid fa-tags"></i> USB, Antivirus</span>
                 </div>
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-circle-play"></i> সমস্যা ও সমাধান</h3>
-                    <p>পেনড্রাইভে ভাইরাস ঢুকে প্রায়শই সমস্ত প্রয়োজনীয় ফাইলকে ওয়ান-ক্লিক শর্টকাটে রূপান্তর করে ফেলে এবং মূল ফাইলগুলো হাইড করে দেয়। কোনো থার্ড-পার্টি সফটওয়্যার ছাড়াই এটি ঠিক করা সম্ভব।</p>
+                    <p>পেনড্রাইভে ভাইরাস ঢুকে প্রায়শই সমস্ত প্রয়োজনীয় ফাইলকে ওয়ান-ক্লিক শর্টকাটে রূপান্তর করে ফেলে এবং মূল ফাইলগুলো হাইড করে দেয়। কোনো থার্ড-পার্টি সফটওয়্যার ছাড়াই এটি ঠিক করা সম্ভব।</p>
                     
                     <ul class="step-list">
                         <li>পেনড্রাইভটি কম্পিউটারে প্লাগ করুন এবং ড্রাইভ লেটারটি দেখে নিন (যেমন: <b>G:</b>, <b>H:</b> ইত্যাদি)।</li>
-                        <li>উইন্ডোজ সার্চ বারে গিয়ে <b>CMD</b> লিখে রাইট ক্লিক করে <b>Run as Administrator</b> হিসেবে ওপেন করুন।</li>
-                        <li>নিচের কোডটি হুবহু কপি করুন এবং কোডের <b>G:</b> অক্ষরের জায়গায় আপনার পেনড্রাইভের লেটারটি বসিয়ে এন্টার চাপুন।</li>
+                        <li>উইন্ডোজ সার্চ বারে গিয়ে <b>CMD</b> লিখে রাইট ক্লিক করে <b>Run as Administrator</b> হিসেবে ওপেন করুন।</li>
+                        <li>নিচের কোডটি হুবহু কপি করুন এবং কোডের <b>G:</b> অক্ষরের জায়গায় আপনার পেনড্রাইভের লেটারটি বসিয়ে এন্টার চাপুন।</li>
                     </ul>
 
                     <div class="code-box">
+                        <!-- ইউনিক আইডি: cmdCode1 -->
                         <span class="code-text" id="cmdCode1">attrib -h -r -s /s /d G:\*.*</span>
-                        <button class="copy-btn" onclick="copyText('cmdCode1')">কপি করুন</button>
+                        <button class="copy-btn" onclick="copyText('cmdCode1', event)">কপি করুন</button>
                     </div>
 
                     <div class="note-box">
                         <h4>💡 প্রো টিপ</h4>
-                        <p>এই কমান্ড রান করার পর পেনড্রাইভে একটি নামহীন ফোল্ডার তৈরি হবে। আপনার সমস্ত মূল ফাইল ওই ফোল্ডারের ভেতরে সুরক্ষিত অবস্থায় ফিরে পাবেন। শর্টকাট ফাইলগুলো ম্যানুয়ালি ডিলিট করে দিন।</p>
+                        <p>এই কমান্ড রান করার পর পেনড্রাইভে একটি নামহীন ফোল্ডার তৈরি হবে। আপনার সমস্ত মূল ফাইল ওই ফোল্ডারের ভেতরে সুরক্ষিত অবস্থায় ফিরে পাবেন। শর্টকাট ফাইলগুলো ম্যানুয়ালি ডিলিট করে দিন।</p>
                     </div>
                 </div>
             </section>
@@ -454,32 +454,42 @@
             <!-- Tip 2 Detail -->
             <section id="multi-pc-connect" class="tip-content-section">
                 <span class="category-tag">Networking</span>
-                <h2 class="tip-detail-title">LAN কেবল দিয়ে একাধিক পিসি কানেক্ট করার পদ্ধতি</h2>
+                <h2 class="tip-detail-title">LAN কেবল দিয়ে একাধিক পিসি কানেক্ট করার পদ্ধতি</h2>
                 
                 <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: অ্যাডভান্সড</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ৫ মিনিট</span>
+                    <span><i class="fa-solid fa-circle-info"></i> : লেভেল: অ্যাডভান্সড</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ৫ মিনিট</span>
                     <span><i class="fa-solid fa-tags"></i> LAN, Sharing</span>
                 </div>
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-network-wired"></i> স্টেপ-বাই-স্টেপ কানেকশন</h3>
-                    <p>ইন্টারনেট ছাড়াই দুটি কম্পিউটারের মধ্যে দ্রুত ফাইল আদান-প্রদান করতে একটি সাধারণ ইথারনেট (LAN) কেবল ব্যবহার করতে পারেন।</p>
+                    <p>ইন্টারনেট ছাড়াই দুটি কম্পিউটারের মধ্যে দ্রুত ফাইল আদান-প্রদান করতে একটি সাধারণ ইথারনেট (LAN) কেবল ব্যবহার করতে পারেন। নিচে আলাদা আলাদা আইপি সেটআপ দেওয়া হলো:</p>
                     
                     <ul class="step-list">
-                        <li>উভয় পিসিকে একটি LAN কেবল দিয়ে যুক্ত করুন।</li>
-                        <li>Control Panel > Network and Sharing Center > Change Adapter Settings-এ যান।</li>
-                        <li>Ethernet সংযোগটির ওপর রাইট ক্লিক করে Properties-এ যান এবং <b>Internet Protocol Version 4 (TCP/IPv4)</b> সিলেক্ট করে নিচের আইপিগুলো বসান:</li>
+                        <li>উভয় পিসিকে একটি LAN কেবল দিয়ে যুক্ত করুন।</li>
+                        <li>১ম পিসিতে গিয়ে IPv4 সেটিংসে নিচের আইপিটি বসান:</li>
                     </ul>
 
                     <div class="code-box">
-                        <span class="code-text" id="ipCode">PC 1 IP: 192.168.1.1 | PC 2 IP: 192.168.1.2</span>
-                        <button class="copy-btn" onclick="copyText('ipCode')">কপি করুন</button>
+                        <!-- প্রথম কপি বাটন (ইউনিক আইডি: ipPC1) -->
+                        <span class="code-text" id="ipPC1">192.168.1.1</span>
+                        <button class="copy-btn" onclick="copyText('ipPC1', event)">কপি করুন</button>
+                    </div>
+
+                    <ul class="step-list" style="margin-top: 15px;">
+                        <li>২য় পিসিতে গিয়ে IPv4 সেটিংসে এই আইপিটি বসান:</li>
+                    </ul>
+
+                    <div class="code-box">
+                        <!-- দ্বিতীয় কপি বাটন (ইউনিক আইডি: ipPC2) -->
+                        <span class="code-text" id="ipPC2">192.168.1.2</span>
+                        <button class="copy-btn" onclick="copyText('ipPC2', event)">কপি করুন</button>
                     </div>
 
                     <div class="note-box">
                         <h4>⚠️ সতর্কতা</h4>
-                        <p>উভয় কম্পিউটারের সাবনেট মাস্ক (Subnet Mask) 255.255.255.0 হতে হবে। ফাইল শেয়ারিং সেটিংস থেকে 'Turn on file and printer sharing' অপশনটি চালু করতে ভুলবেন না।</p>
+                        <p>উভয় কম্পিউটারের সাবনেট মাস্ক (Subnet Mask) 255.255.255.0 হতে হবে। ফাইল শেয়ারিং সেটিংস থেকে 'Turn on file and printer sharing' অপশনটি চালু করতে ভুলবেন না।</p>
                     </div>
                 </div>
             </section>
@@ -491,18 +501,18 @@
                 
                 <div class="meta-info">
                     <span><i class="fa-solid fa-circle-info"></i> লেভেল: সহজ</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
                     <span><i class="fa-solid fa-tags"></i> Printer, Drivers</span>
                 </div>
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-print"></i> সঠিক সেটআপ গাইডলাইন</h3>
-                    <p>নতুন প্রিন্টার কেনার পর অনেকেই পিসির সাথে কানেক্ট করতে পারেন না। সঠিক নিয়মে ড্রাইভার সেটআপ দেওয়া খুবই গুরুত্বপূর্ণ।</p>
+                    <p>নতুন প্রিন্টার কেনার পর অনেকেই পিসির সাথে কানেক্ট করতে পারেন না। সঠিক নিয়মে ড্রাইভার সেটআপ দেওয়া খুবই গুরুত্বপূর্ণ।</p>
                     
                     <ul class="step-list">
-                        <li>প্রিন্টারটি পিসিতে সংযোগ না করেই প্রথমে প্রিন্টারের অফিসিয়াল সাইট থেকে লেটেস্ট ড্রাইভার ডাউনলোড করুন।</li>
+                        <li>প্রিন্টারটি পিসিতে সংযোগ না করেই প্রথমে প্রিন্টারের অফিসিয়াল সাইট থেকে লেটেস্ট ড্রাইভার ডাউনলোড করুন।</li>
                         <li>ড্রাইভারের Setup.exe ফাইলটি রান করুন।</li>
-                        <li>সেটআপের নির্দেশনা ফলো করতে করতে যখন সফটওয়্যারটি USB কানেক্ট করতে বলবে, ঠিক তখনই প্রিন্টারটি ক্যাবলের মাধ্যমে পিসিতে প্লাগ করুন।</li>
+                        <li>সেটআপের নির্দেশনা ফলো করতে করতে যখন সফটওয়্যারটি USB কানেক্ট করতে বলবে, ঠিক তখনই প্রিন্টারটি ক্যাবলের মাধ্যমে পিসিতে প্লাগ করুন।</li>
                     </ul>
                 </div>
             </section>
@@ -514,22 +524,27 @@
                 
                 <div class="meta-info">
                     <span><i class="fa-solid fa-circle-info"></i> লেভেল: সহজ</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
                     <span><i class="fa-solid fa-tags"></i> Speed, Storage, Temp</span>
                 </div>
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-gauge-high"></i> জাঙ্ক ফাইল এবং টেম্পোরারি ফাইল রিমুভ</h3>
-                    <p>পিসিতে জমতে থাকা অপ্রয়োজনীয় ফাইল প্রসেসর ও র‍্যামের গতি কমিয়ে দেয়। প্রতি সপ্তাহে অন্তত একবার এই ক্লিনআপ করা উচিত।</p>
+                    <p>পিসিতে জমতে থাকা অপ্রয়োজনীয় ফাইল প্রসেসর ও র‍্যামের গতি কমিয়ে দেয়। প্রতি সপ্তাহে অন্তত একবার এই ক্লিনআপ করা উচিত। নিচে ৪টি ভিন্ন ভিন্ন রান কমান্ড দেওয়া হলো:</p>
                     
-                    <ul class="step-list">
-                        <li>কীবোর্ড থেকে <b>Windows + R</b> বাটন চেপে রান ডায়ালগ বক্স ওপেন করুন।</li>
-                        <li>নিচের ফোল্ডারগুলোর নাম একে একে লিখে এন্টার চাপুন এবং ভেতরের সব ফাইল স্থায়ীভাবে ডিলিট (Shift+Delete) করে দিন।</li>
-                    </ul>
+                    <div class="code-box">
+                        <span class="code-text" id="speedCode1">%temp%</span>
+                        <button class="copy-btn" onclick="copyText('speedCode1', event)">কপি করুন</button>
+                    </div>
+                    
+                    <div class="code-box">
+                        <span class="code-text" id="speedCode2">prefetch</span>
+                        <button class="copy-btn" onclick="copyText('speedCode2', event)">কপি করুন</button>
+                    </div>
 
                     <div class="code-box">
-                        <span class="code-text" id="runCode">temp  ->  %temp%  ->  prefetch  ->  recent</span>
-                        <button class="copy-btn" onclick="copyText('runCode')">কপি করুন</button>
+                        <span class="code-text" id="speedCode3">tree</span>
+                        <button class="copy-btn" onclick="copyText('speedCode3', event)">কপি করুন</button>
                     </div>
                 </div>
             </section>
@@ -541,13 +556,13 @@
                 
                 <div class="meta-info">
                     <span><i class="fa-solid fa-circle-info"></i> লেভেল: এক্সপার্ট</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ১ মিনিট</span>
+                    <span><i class="fa-solid fa-clock"></i> সময়: ১ মিনিট</span>
                     <span><i class="fa-solid fa-tags"></i> Windows 10, Windows 11, Shortcut</span>
                 </div>
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-mask"></i> এক ফোল্ডারে সব কন্ট্রোল</h3>
-                    <p>উইন্ডোজের ২০০টিরও বেশি সিক্রেট কন্ট্রোল প্যানেল সেটিংস একটিমাত্র সুপার ফোল্ডার বা 'গড মোড'-এ নিয়ে আসার চমৎকার কৌশল এটি।</p>
+                    <p>উইন্ডোজের ২০০টিরও বেশি সিক্রেট কন্ট্রোল প্যানেল সেটিংস একটিমাত্র সুপার ফোল্ডার বা 'গড মোড'-এ নিয়ে আসার চমৎকার কৌশল এটি।</p>
                     
                     <ul class="step-list">
                         <li>ডেস্কটপের ফাঁকা স্থানে রাইট ক্লিক করে একটি <b>New Folder</b> তৈরি করুন।</li>
@@ -555,13 +570,14 @@
                     </ul>
 
                     <div class="code-box">
+                        <!-- ইউনিক আইডি: godCode -->
                         <span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span>
-                        <button class="copy-btn" onclick="copyText('godCode')">কপি করুন</button>
+                        <button class="copy-btn" onclick="copyText('godCode', event)">কপি করুন</button>
                     </div>
 
                     <div class="note-box">
                         <h4>✨ ম্যাজিক</h4>
-                        <p>কোডটি দিয়ে এন্টার চাপার সাথে সাথে ফোল্ডারের আইকনটি কন্ট্রোল প্যানেলের মতো হয়ে যাবে। এখন এটি ডাবল ক্লিক করে ওপেন করলেই সব সিক্রেট সেটিংস এক জায়গায় পেয়ে যাবেন!</p>
+                        <p>কোডটি দিয়ে এন্টার চাপার সাথে সাথে ফোল্ডারের আইকনটি কন্ট্রোল প্যানেলের মতো হয়ে যাবে। এখন এটি ডাবল ক্লিক করে ওপেন করলেই সব সিক্রেট সেটিংস এক জায়গায় পেয়ে যাবেন!</p>
                     </div>
                 </div>
             </section>
@@ -590,19 +606,38 @@
             const activeSection = document.getElementById(targetId);
             if (activeSection) {
                 activeSection.classList.add('active');
-                // স্মুথ স্ক্রোল করে উপরে নিয়ে যাওয়া
+                // স্মুথ স্ক্রোল করে উপরে নিয়ে যাওয়া
                 document.getElementById('detailsPanel').scrollTop = 0;
             }
         }
 
-        // ২. সহজে কোড বা টেক্সট কপি করার স্ক্রিপ্ট
-        function copyText(elementId) {
-            const textToCopy = document.getElementById(elementId).innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('সফলভাবে কপি হয়েছে: ' + textToCopy);
-            }).catch(err => {
-                console.error('কপি করা যায়নি: ', err);
-            });
+        // ২. ডায়নামিক কপি ফাংশন (একাধিক কপি বাটন সাপোর্ট করে)
+        function copyText(elementId, event) {
+            const textElement = document.getElementById(elementId);
+            
+            if (textElement) {
+                const textToCopy = textElement.innerText;
+                
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    // ক্লিকের ইভেন্ট থেকে টার্গেট বাটনটি চিহ্নিত করা
+                    const activeButton = event.currentTarget;
+                    const originalText = activeButton.innerText;
+                    
+                    activeButton.innerText = "কপি হয়েছে! ✓";
+                    activeButton.style.background = "#10b981"; // সবুজ রঙ
+                    activeButton.style.borderColor = "#10b981";
+                    
+                    // ২ সেকেন্ড পর বাটন আগের অবস্থায় যাবে
+                    setTimeout(() => {
+                        activeButton.innerText = originalText;
+                        activeButton.style.background = ""; 
+                        activeButton.style.borderColor = "";
+                    }, 2000);
+                    
+                }).catch(err => {
+                    console.error('কপি করা যায়নি: ', err);
+                });
+            }
         }
 
         // ৩. সার্চ ফিল্টার (বাম পাশের মেনুর জন্য)
