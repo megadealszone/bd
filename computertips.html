@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Master Tips & Tricks Dashboard</title>
-    <!-- Font Awesome for Premium Icons -->
+    <!-- Font Awesome for Premium Icons (আইকন প্রদর্শনের জন্য লাইব্রেরি) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
+    <!-- Google Fonts (বাংলা ও ইংরেজি ফন্টের জন্য গুগলের ফ্রি ফন্ট) -->
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
+        /* [গ্লোবাল ভেরিয়েবল কালার স্কিম] - পুরো ওয়েবসাইটের থিম কালার এখান থেকে কন্ট্রোল করা হয় */
         :root {
             --bg-dark: #0f172a;
             --sidebar-bg: #1e293b;
@@ -21,23 +22,25 @@
             --border-color: #334155;
         }
 
+        /* [রিসেট সেটিংস] - ডিফল্ট মার্জিন-প্যাডিং রিমুভ এবং বক্স সাইজিং ঠিক করার জন্য */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+        /* [মূল বডি সেটিংস] - পুরো পেজের উচ্চতা ও স্ক্রলিং ডাইনামিক রাখার জন্য */
         body {
             font-family: 'Inter', 'Hind Siliguri', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
-        /* Top Header */
+        /* [টপ হেডার] - লোগো এবং স্ট্যাটাস ব্যাজ ধারণকারী উপরের অংশ */
         header {
             background: var(--sidebar-bg);
             border-bottom: 1px solid var(--border-color);
@@ -46,6 +49,7 @@
             justify-content: space-between;
             align-items: center;
             height: 70px;
+            flex-shrink: 0;
         }
 
         .logo-area {
@@ -77,14 +81,15 @@
             font-weight: 600;
         }
 
-        /* Main Workspace Container */
+        /* [ওয়ার্কস্পেস কন্টেইনার] - মেইন কন্টেন্ট এলাকা (সাইডবার + ডিটেইলস প্যানেল) */
         .workspace {
             display: flex;
             height: calc(100vh - 70px);
             width: 100%;
+            position: relative;
         }
 
-        /* COLUMN 1: Sidebar Menu */
+        /* [কলাম ১: সাইডবার মেনু] - বাম পাশের টিপসের তালিকা */
         .sidebar {
             width: 350px;
             background-color: var(--sidebar-bg);
@@ -92,8 +97,11 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            flex-shrink: 0;
+            z-index: 10;
         }
 
+        /* [সার্চ বক্স] - টিপস খোঁজার ইনপুট ফিল্ড */
         .search-box {
             padding: 20px;
             border-bottom: 1px solid var(--border-color);
@@ -127,13 +135,14 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
+        /* [মেনু লিস্ট] - স্ক্রলযোগ্য টিপস আইটেমের তালিকা */
         .menu-list {
             overflow-y: auto;
             flex-grow: 1;
             padding: 10px 0;
         }
 
-        /* Custom Scrollbar for Sidebar */
+        /* [কাস্টম স্ক্রলবার] - সাইডবার এবং ডিটেইলস প্যানেলের ভেতরের সুন্দর স্ক্রলবার */
         .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
             width: 6px;
         }
@@ -142,6 +151,7 @@
             border-radius: 4px;
         }
 
+        /* [মেনু আইটেম] - প্রতিটি সিঙ্গেল টিপস বাটনের স্টাইল */
         .menu-item {
             display: flex;
             align-items: center;
@@ -187,17 +197,19 @@
             text-overflow: ellipsis;
         }
 
-        /* COLUMN 2: Details Panel */
+        /* [কলাম ২: ডিটেইলস প্যানেল] - ডান পাশের মূল লেখা বা বিস্তারিত অংশ */
         .details-panel {
             flex-grow: 1;
             background: #0b0f19;
             padding: 40px;
             overflow-y: auto;
             scroll-behavior: smooth;
+            height: 100%;
         }
 
+        /* [টিপস কনটেন্ট সেকশন] - প্রতিটি টিপসের ভেতরের বিস্তারিত তথ্য */
         .tip-content-section {
-            display: none; /* Hidden by default, toggled via JS */
+            display: none; /* ডিফল্টভাবে হাইড থাকে, জাভাস্ক্রিপ্ট দিয়ে শো করা হয় */
             max-width: 800px;
             margin: 0 auto 60px auto;
             animation: fadeIn 0.4s ease;
@@ -207,6 +219,7 @@
             display: block;
         }
 
+        /* [ফেড ইন অ্যানিমেশন] - টিপস পরিবর্তনের সময় স্মুথ ইফেক্ট */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -233,9 +246,11 @@
             line-height: 1.3;
         }
 
+        /* [মেটা ইনফো] - লেভেল, সময় ও ট্যাগ দেখানোর এরিয়া */
         .meta-info {
             display: flex;
-            gap: 20px;
+            flex-wrap: wrap; /* ছোট ডিভাইসে নিচে নামার জন্য */
+            gap: 15px 20px;
             color: var(--text-muted);
             font-size: 13px;
             margin-bottom: 30px;
@@ -248,6 +263,7 @@
             color: var(--accent-color);
         }
 
+        /* [নির্দেশনা কার্ড] - মূল টিপসের বক্স কন্টেইনার */
         .instruction-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -273,7 +289,7 @@
             margin-bottom: 15px;
         }
 
-        /* Step by Step styling */
+        /* [স্টেপ লিস্ট স্টাইল] - ১, ২, ৩ বা টিকচিহ্ন তালিকার ডিজাইন */
         .step-list {
             list-style: none;
         }
@@ -298,7 +314,7 @@
             font-size: 14px;
         }
 
-        /* Warning / Pro Tip Box */
+        /* [নোট/প্রো-টিপ বক্স] - গুরুত্বপূর্ণ সতর্কবার্তা বা প্রো-টিপ হাইলাইট এরিয়া */
         .note-box {
             background: rgba(245, 158, 11, 0.1);
             border-left: 4px solid #f59e0b;
@@ -321,7 +337,7 @@
             line-height: 1.5;
         }
 
-        /* Command / Code Box */
+        /* [কোড/কমান্ড বক্স] - সিএমডি কমান্ড ও কপি বাটন এরিয়া */
         .code-box {
             background: #090d16;
             border: 1px solid #1e293b;
@@ -332,11 +348,13 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 15px;
+            gap: 10px; /* মোবাইল রেসপনসিভের জন্য অতিরিক্ত সেফটি স্পেস */
         }
 
         .code-text {
             color: #38bdf8;
             font-size: 14px;
+            word-break: break-all; /* বড় কোড মোবাইলে যেন স্ক্রিন থেকে বের না হয়ে যায় */
         }
 
         .copy-btn {
@@ -348,6 +366,7 @@
             cursor: pointer;
             font-size: 12px;
             transition: 0.2s;
+            flex-shrink: 0; /* বাটন ছোট হয়ে যেন টেক্সট চ্যাপ্টা না হয় */
         }
 
         .copy-btn:hover {
@@ -356,17 +375,83 @@
             border-color: var(--accent-color);
         }
 
-        /* Responsive Layout */
+        /* ==========================================================================
+           [রেসপনসিভ মিডিয়া কোয়েরি] - এই অংশটি মোবাইল ও ট্যাবলেটে ডিভাইস ফ্রেন্ডলি লেআউট নিশ্চিত করে।
+           ========================================================================== */
+        
+        /* ল্যাপটপ বা মাঝারি স্ক্রিনের জন্য সাইডবার উইডথ অ্যাডজাস্টমেন্ট */
         @media (max-width: 992px) {
             .sidebar {
                 width: 280px;
+            }
+        }
+
+        /* ট্যাবলেট এবং মোবাইল ফোন (Screen width 768px বা তার কম) */
+        @media (max-width: 768px) {
+            body {
+                overflow-y: auto; /* মোবাইলে পুরো বডি স্ক্রল হতে পারবে */
+            }
+
+            header {
+                padding: 10px 15px;
+                height: auto;
+                flex-direction: column; /* লোগো আর স্ট্যাটাস ব্যাজ নিচে নিচে আসবে */
+                gap: 8px;
+                text-align: center;
+            }
+
+            .logo-area h1 {
+                font-size: 18px;
+            }
+
+            .stats-badge {
+                font-size: 12px;
+                padding: 4px 12px;
+            }
+
+            /* ওয়ার্কস্পেস ফ্লেক্স ডিরেকশন কলাম হবে, ফলে সাইডবার উপরে এবং ডিটেইলস নিচে চলে যাবে */
+            .workspace {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%; /* মোবাইলে মেনু পুরো স্ক্রিন জুড়ে থাকবে */
+                height: 300px; /* মেনুর জন্য একটি নির্দিষ্ট উচ্চতা নির্ধারণ */
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .details-panel {
+                width: 100%;
+                padding: 20px 15px; /* প্যাডিং কমিয়ে আনা হয়েছে স্ক্রিন স্পেস বাঁচানোর জন্য */
+                height: auto;
+                overflow-y: visible; /* ভেতরের স্ক্রল বন্ধ করে বডি স্ক্রল ব্যবহার হবে */
+            }
+
+            .tip-detail-title {
+                font-size: 22px; /* ছোট স্ক্রিনের জন্য ফন্ট সাইজ সামঞ্জস্য করা হয়েছে */
+            }
+
+            .instruction-card {
+                padding: 15px; /* প্যাডিং কম */
+            }
+
+            .code-box {
+                flex-direction: column; /* কোড ও কপি বাটন নিচে নিচে আসবে */
+                align-items: flex-start;
+            }
+
+            .copy-btn {
+                align-self: flex-end; /* কপি বাটন ডান পাশে অ্যালাইন হবে */
+                width: auto;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Header (শীর্ষ অংশ) -->
     <header>
         <div class="logo-area">
             <i class="fa-solid fa-laptop-code"></i>
@@ -377,11 +462,12 @@
         </div>
     </header>
 
-    <!-- Workspace Area -->
+    <!-- Workspace Area (প্রধান কাজের ক্ষেত্র) -->
     <div class="workspace">
 
-        <!-- COLUMN 1: Sidebar (বাম সাইট মেনু) -->
+        <!-- COLUMN 1: Sidebar (বাম সাইড মেনু / মোবাইলে উপরের মেনু) -->
         <aside class="sidebar">
+            <!-- সার্চ বক্স: যেখানে ইউজার লিখে টিপস ফিল্টার করতে পারেন -->
             <div class="search-box">
                 <div class="search-wrapper">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -389,8 +475,8 @@
                 </div>
             </div>
             
+            <!-- টিপস নেভিগেশন লিস্ট: মেনু আইটেমগুলো এখানে থাকে -->
             <div class="menu-list" id="menuList">
-                <!-- Navigation Items -->
                 <a href="#shortcut-recovery" class="menu-item active" onclick="showTip(event, 'shortcut-recovery')">
                     <span class="tip-id">TIP 01</span>
                     <span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span>
@@ -414,10 +500,10 @@
             </div>
         </aside>
 
-        <!-- COLUMN 2: Details Panel (ডান সাইট ডিটেইলস) -->
+        <!-- COLUMN 2: Details Panel (ডান সাইড ডিটেইলস / মোবাইলে নিচের মূল কন্টেন্ট) -->
         <main class="details-panel" id="detailsPanel">
 
-            <!-- Tip 1 Detail -->
+            <!-- Tip 1 Detail: পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি -->
             <section id="shortcut-recovery" class="tip-content-section active">
                 <span class="category-tag">Storage & Fix</span>
                 <h2 class="tip-detail-title">পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
@@ -439,50 +525,47 @@
                     </ul>
 
                     <div class="code-box">
-                        <!-- ইউনিক আইডি: cmdCode1 -->
                         <span class="code-text" id="cmdCode1">attrib -h -r -s /s /d G:\*.*</span>
                         <button class="copy-btn" onclick="copyText('cmdCode1', event)">কপি করুন</button>
                     </div>
 
                     <div class="note-box">
                         <h4>💡 প্রো টিপ</h4>
-                        <p>এই কমান্ড রান করার পর পেনড্রাইভে একটি নামহীন ফোল্ডার তৈরি হবে। আপনার সমস্ত মূল ফাইল ওই ফোল্ডারের ভেতরে সুরক্ষিত অবস্থায় ফিরে পাবেন। শর্টকাট ফাইলগুলো ম্যানুয়ালি ডিলিট করে দিন।</p>
+                        <p>এই কমান্ড রান করার পর পেনড্রাইভে একটি নামহীন ফোল্ডার তৈরি হবে। আপনার সমস্ত মূল ফাইল ওই ফোল্ডারের ভেতরে সুরক্ষিত অবস্থায় ফিরে পাবেন। শর্টকাট ফাইলগুলো ম্যানুয়ালি ডিলিট করে দিন.</p>
                     </div>
                 </div>
             </section>
 
-            <!-- Tip 2 Detail -->
+            <!-- Tip 2 Detail: LAN কেবল দিয়ে পিসি কানেক্ট -->
             <section id="multi-pc-connect" class="tip-content-section">
                 <span class="category-tag">Networking</span>
                 <h2 class="tip-detail-title">LAN কেবল দিয়ে একাধিক পিসি কানেক্ট করার পদ্ধতি</h2>
                 
                 <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> : লেভেল: অ্যাডভান্সড</span>
+                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: অ্যাডভান্সড</span>
                     <span><i class="fa-solid fa-clock"></i> সময়: ৫ মিনিট</span>
                     <span><i class="fa-solid fa-tags"></i> LAN, Sharing</span>
                 </div>
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-network-wired"></i> স্টেপ-বাই-স্টেপ কানেকশন</h3>
-                    <p>ইন্টারনেট ছাড়াই দুটি কম্পিউটারের মধ্যে দ্রুত ফাইল আদান-প্রদান করতে একটি সাধারণ ইথারনেট (LAN) কেবল ব্যবহার করতে পারেন। নিচে আলাদা আলাদা আইপি সেটআপ দেওয়া হলো:</p>
+                    <p>ইন্টারনেট ছাড়াই দুটি কম্পিউটারের মধ্যে দ্রুত ফাইল আদান-প্রদান করতে একটি সাধারণ ইথারনেট (LAN) কেবল ব্যবহার করতে পারেন। নিচে আলাদা আলাদা আইপি সেটআপ দেওয়া হলো:</p>
                     
                     <ul class="step-list">
                         <li>উভয় পিসিকে একটি LAN কেবল দিয়ে যুক্ত করুন।</li>
-                        <li>১ম পিসিতে গিয়ে IPv4 সেটিংসে নিচের আইপিটি বসান:</li>
+                        <li>১ম পিসিতে গিয়ে IPv4 সেটিংসে নিচের আইপিটি বসান:</li>
                     </ul>
 
                     <div class="code-box">
-                        <!-- প্রথম কপি বাটন (ইউনিক আইডি: ipPC1) -->
                         <span class="code-text" id="ipPC1">192.168.1.1</span>
                         <button class="copy-btn" onclick="copyText('ipPC1', event)">কপি করুন</button>
                     </div>
 
                     <ul class="step-list" style="margin-top: 15px;">
-                        <li>২য় পিসিতে গিয়ে IPv4 সেটিংসে এই আইপিটি বসান:</li>
+                        <li>২য় পিসিতে গিয়ে IPv4 সেটিংসে এই আইপিটি বসান:</li>
                     </ul>
 
                     <div class="code-box">
-                        <!-- দ্বিতীয় কপি বাটন (ইউনিক আইডি: ipPC2) -->
                         <span class="code-text" id="ipPC2">192.168.1.2</span>
                         <button class="copy-btn" onclick="copyText('ipPC2', event)">কপি করুন</button>
                     </div>
@@ -494,7 +577,7 @@
                 </div>
             </section>
 
-            <!-- Tip 3 Detail -->
+            <!-- Tip 3 Detail: প্রিন্টার ড্রাইভার সেটআপ -->
             <section id="printer-setup" class="tip-content-section">
                 <span class="category-tag">Hardware</span>
                 <h2 class="tip-detail-title">যেকোনো প্রিন্টার ড্রাইভার পারফেক্টলি সেটআপ করুন</h2>
@@ -517,7 +600,7 @@
                 </div>
             </section>
 
-            <!-- Tip 4 Detail -->
+            <!-- Tip 4 Detail: পিসি স্পিডআপ -->
             <section id="pc-speedup" class="tip-content-section">
                 <span class="category-tag">System Optimization</span>
                 <h2 class="tip-detail-title">কম্পিউটারের স্পিড রকেটের মতো বৃদ্ধির জন্য মেগা টিপস</h2>
@@ -530,7 +613,7 @@
 
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-gauge-high"></i> জাঙ্ক ফাইল এবং টেম্পোরারি ফাইল রিমুভ</h3>
-                    <p>পিসিতে জমতে থাকা অপ্রয়োজনীয় ফাইল প্রসেসর ও র‍্যামের গতি কমিয়ে দেয়। প্রতি সপ্তাহে অন্তত একবার এই ক্লিনআপ করা উচিত। নিচে ৪টি ভিন্ন ভিন্ন রান কমান্ড দেওয়া হলো:</p>
+                    <p>পিসিতে জমতে থাকা অপ্রয়োজনীয় ফাইল প্রসেসর ও র‍্যামের গতি কমিয়ে দেয়। প্রতি সপ্তাহে অন্তত একবার এই ক্লিনআপ করা উচিত। নিচে ৪টি ভিন্ন ভিন্ন রান কমান্ড দেওয়া হলো:</p>
                     
                     <div class="code-box">
                         <span class="code-text" id="speedCode1">%temp%</span>
@@ -549,7 +632,7 @@
                 </div>
             </section>
 
-            <!-- Tip 5 Detail -->
+            <!-- Tip 5 Detail: উইন্ডোজ গড মোড -->
             <section id="god-mode" class="tip-content-section">
                 <span class="category-tag">Windows Secret</span>
                 <h2 class="tip-detail-title">উইন্ডোজ গড মোড (God Mode) অ্যাক্টিভেশন ট্রিক</h2>
@@ -566,11 +649,10 @@
                     
                     <ul class="step-list">
                         <li>ডেস্কটপের ফাঁকা স্থানে রাইট ক্লিক করে একটি <b>New Folder</b> তৈরি করুন।</li>
-                        <li>ফোল্ডারটির নাম পরিবর্তন (Rename) করে হুবহু নিচের কোডটি পেস্ট করে দিন:</li>
+                        <li>ফোল্ডারটির নাম পরিবর্তন (Rename) করে হুবху নিচের কোডটি পেস্ট করে দিন:</li>
                     </ul>
 
                     <div class="code-box">
-                        <!-- ইউনিক আইডি: godCode -->
                         <span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span>
                         <button class="copy-btn" onclick="copyText('godCode', event)">কপি করুন</button>
                     </div>
@@ -585,9 +667,11 @@
         </main>
     </div>
 
-    <!-- Interactive JavaScript -->
+    <!-- ==========================================================================
+       [ইন্টারেক্টিভ জাভাস্ক্রিপ্ট] - ড্যাশবোর্ডের সব লজিক এবং ফাংশনালিটি এখানে রয়েছে।
+       ========================================================================== -->
     <script>
-        // ১. মেনু পরিবর্তনের সহজ এবং চমৎকার ফাংশন
+        // ১. [মেনু পরিবর্তন ফাংশন] - বামে ক্লিক করলে ডানে সঠিক কনটেন্ট দেখায় এবং মোবাইল স্ক্রিনে স্মুথলি নিচে স্ক্রল করে নিয়ে যায়।
         function showTip(event, targetId) {
             event.preventDefault();
             
@@ -606,12 +690,19 @@
             const activeSection = document.getElementById(targetId);
             if (activeSection) {
                 activeSection.classList.add('active');
-                // স্মুথ স্ক্রোল করে উপরে নিয়ে যাওয়া
-                document.getElementById('detailsPanel').scrollTop = 0;
+                
+                // মোবাইল এবং সাধারণ ডিভাইসের জন্য স্ক্রল টার্গেট লজিক
+                if (window.innerWidth <= 768) {
+                    // মোবাইলের ক্ষেত্রে পুরো পেজ স্ক্রল করে লেখার অংশে নিয়ে যাবে
+                    activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    // ডেস্কটপের ক্ষেত্রে শুধু ডান পাশের প্যানেলটি উপরে উঠে যাবে
+                    document.getElementById('detailsPanel').scrollTop = 0;
+                }
             }
         }
 
-        // ২. ডায়নামিক কপি ফাংশন (একাধিক কপি বাটন সাপোর্ট করে)
+        // ২. [ডায়নামিক কপি ফাংশন] - ক্লিপবোর্ডে লেখা কপি করে এবং ২ সেকেন্ডের জন্য বাটনের ডিজাইন পরিবর্তন করে সবুজ সাকসেস মেসেজ দেখায়।
         function copyText(elementId, event) {
             const textElement = document.getElementById(elementId);
             
@@ -619,15 +710,14 @@
                 const textToCopy = textElement.innerText;
                 
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    // ক্লিকের ইভেন্ট থেকে টার্গেট বাটনটি চিহ্নিত করা
                     const activeButton = event.currentTarget;
                     const originalText = activeButton.innerText;
                     
                     activeButton.innerText = "কপি হয়েছে! ✓";
-                    activeButton.style.background = "#10b981"; // সবুজ রঙ
+                    activeButton.style.background = "#10b981"; // সবুজ ব্যাকগ্রাউন্ড
                     activeButton.style.borderColor = "#10b981";
                     
-                    // ২ সেকেন্ড পর বাটন আগের অবস্থায় যাবে
+                    // ২ সেকেন্ড পর বাটন আবার আগের স্টাইলে ফেরত যাবে
                     setTimeout(() => {
                         activeButton.innerText = originalText;
                         activeButton.style.background = ""; 
@@ -640,7 +730,7 @@
             }
         }
 
-        // ৩. সার্চ ফিল্টার (বাম পাশের মেনুর জন্য)
+        // ৩. [লাইভ সার্চ ফিল্টার] - সার্চ বক্সে টাইপ করার সাথে সাথে রিয়েল-টাইমে বাম পাশের মেনু ফিল্টার করে ম্যাচিং আইটেমগুলো দেখায়।
         document.getElementById('tipSearch').addEventListener('keyup', function() {
             let filter = this.value.toUpperCase();
             let menuItems = document.querySelectorAll('.menu-item');
@@ -648,9 +738,9 @@
             menuItems.forEach(item => {
                 let text = item.querySelector('.tip-title').innerText;
                 if (text.toUpperCase().indexOf(filter) > -1) {
-                    item.style.display = "";
+                    item.style.display = ""; // মিল থাকলে দেখাবে
                 } else {
-                    item.style.display = "none";
+                    item.style.display = "none"; // মিল না থাকলে হাইড করে দেবে
                 }
             });
         });
