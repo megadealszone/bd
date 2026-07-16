@@ -7,44 +7,44 @@
     <!-- Font Awesome for Premium Icons (আইকন প্রদর্শনের জন্য লাইব্রেরি) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts (বাংলা ও ইংরেজি ফন্টের জন্য গুগলের ফ্রি ফন্ট) -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
-        /* [গ্লোবাল ভেরিয়েবল কালার স্কিম] - ডিফল্টভাবে লাইট মোড (Light Mode) */
+        /* [গ্লোবাল ভেরিয়েবল কালার স্কিম] - ডিফল্টভাবে লাইট মোড (Light Mode) এর রঙসমূহ */
         :root {
-            --bg-dark: #f8fafc;
-            --sidebar-bg: #ffffff;
-            --card-bg: #ffffff;
-            --accent-color: #3b82f6;
-            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
-            --panel-bg: #f1f5f9;
-            --code-bg: #0f172a;
-            --code-text: #38bdf8;
-            --note-bg: rgba(245, 158, 11, 0.1);
-            --note-border: #f59e0b;
-            --note-text: #b45309;
+            --bg-dark: #f8fafc;             /* মূল ব্যাকগ্রাউন্ডের রঙ */
+            --sidebar-bg: #ffffff;          /* সাইডবারের ব্যাকগ্রাউন্ড */
+            --card-bg: #ffffff;             /* ইনফরমেশন কার্ডের ব্যাকগ্রাউন্ড */
+            --accent-color: #3b82f6;        /* থিমের মূল হাইলাইট রঙ (নীল) */
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6); /* গ্রেডিয়েন্ট কালার এফেক্ট */
+            --text-main: #0f172a;           /* প্রধান লেখার টেক্সট কালার */
+            --text-muted: #64748b;          /* আবছা বা সেকেন্ডারি লেখার টেক্সট কালার */
+            --border-color: #e2e8f0;        /* বর্ডার বা লাইনের রঙ */
+            --panel-bg: #f1f5f9;            /* ডানদিকের ডিটেইলস প্যানেলের ব্যাকগ্রাউন্ড */
+            --code-bg: #0f172a;             /* কোড বক্সের ব্যাকগ্রাউন্ড */
+            --code-text: #38bdf8;           /* কোড বক্সের ভেতরের লেখার রঙ */
+            --note-bg: rgba(245, 158, 11, 0.1); /* প্রো-টিপ বক্সের ব্যাকগ্রাউন্ড */
+            --note-border: #f59e0b;         /* প্রো-টিপ বক্সের বামপাশের বর্ডার */
+            --note-text: #b45309;           /* প্রো-টিপ বক্সের লেখার রঙ */
         }
 
-        /* [ডার্ক মোড ভেরিয়েবলস] - ডার্ক ক্লাসের জন্য থিম পরিবর্তন */
+        /* [ডার্ক মোড ভেরিয়েবলস] - ডার্ক থিম অ্যাক্টিভ হলে ভেরিয়েবলের মানগুলো বদলে যাবে */
         .dark-theme {
-            --bg-dark: #0f172a;
-            --sidebar-bg: #1e293b;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-color: #334155;
-            --panel-bg: #0b0f19;
-            --code-bg: #090d16;
-            --code-text: #38bdf8;
-            --note-bg: rgba(245, 158, 11, 0.1);
-            --note-border: #f59e0b;
-            --note-text: #fef08a;
+            --bg-dark: #0f172a;             /* ডার্ক মোডের মূল ব্যাকগ্রাউন্ড */
+            --sidebar-bg: #1e293b;          /* ডার্ক মোডের সাইডবার ব্যাকগ্রাউন্ড */
+            --card-bg: #1e293b;             /* ডার্ক মোডের কার্ড ব্যাকগ্রাউন্ড */
+            --text-main: #f8fafc;           /* ডার্ক মোডের প্রধান লেখার রঙ (সাদাটে) */
+            --text-muted: #94a3b8;          /* ডার্ক মোডের আবছা লেখার রঙ */
+            --border-color: #334155;        /* ডার্ক মোডের বর্ডার বা লাইনের রঙ */
+            --panel-bg: #0b0f19;            /* ডার্ক মোডের ডিটেইলস প্যানেল ব্যাকগ্রাউন্ড */
+            --code-bg: #090d16;             /* ডার্ক মোডের কোড বক্স ব্যাকগ্রাউন্ড */
+            --code-text: #38bdf8;           /* ডার্ক মোডের কোড বক্সের টেক্সট রঙ */
+            --note-bg: rgba(245, 158, 11, 0.1); /* ডার্ক মোডের প্রো-টিপ ব্যাকগ্রাউন্ড */
+            --note-border: #f59e0b;         /* ডার্ক মোডের প্রো-টিপ বর্ডার */
+            --note-text: #fef08a;           /* ডার্ক মোডের প্রো-টিপ টেক্সট রঙ */
         }
 
-        /* [রিসেট সেটিংস] */
+        /* [গ্লোবাল রিসেট সেটিংস] - মার্জিন, প্যাডিং রিমুভ এবং ট্রানজিশন স্মুথ করার জন্য */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -52,17 +52,21 @@
             transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
+        /* [বডি স্টাইল] - ডিফল্ট ফন্ট, ব্যাকগ্রাউন্ড এবং স্ক্রিন লেআউট নির্ধারণ */
         body {
-            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+            font-family: 'Inter', 'Hind Siliguri', 'SolaimanLipi', 'Kalpurush', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
         }
 
-        /* [টপ হেডার] */
+        /* [টপ হেডার] - লোগো এবং কন্ট্রোল এরিয়ার টপ সেকশন */
         header {
             background: var(--sidebar-bg);
             border-bottom: 1px solid var(--border-color);
@@ -74,6 +78,7 @@
             flex-shrink: 0;
         }
 
+        /* লোগো সেকশনের ভেতরের আইকন ও টেক্সট স্টাইল */
         .logo-area {
             display: flex;
             align-items: center;
@@ -93,14 +98,35 @@
             letter-spacing: 0.5px;
         }
 
-        /* ডানদিকের কন্ট্রোল এরিয়া (সুইচ + ব্যাজ) */
+        /* ডানদিকের কন্ট্রোল এরিয়া (বাটন, মোড টগল ও ব্যাজ এর কন্টেইনার) */
         .header-controls {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        /* লাইট/ডার্ক মোড টগল সুইচ স্টাইল */
+        /* হোম ভিজিট বাটন - যা নির্দিষ্ট ইউআরএল-এ নিয়ে যাবে */
+        .external-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+            font-family: inherit;
+        }
+
+        .external-home-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* লাইট/ডার্ক মোড টগল সুইচের মূল স্ট্রাকচার */
         .theme-switch-wrapper {
             display: flex;
             align-items: center;
@@ -118,6 +144,7 @@
             display: none;
         }
 
+        /* টগল সুইচের গোলাকার ট্র্যাক বা ব্যাকগ্রাউন্ড */
         .slider {
             background-color: #cbd5e1;
             bottom: 0;
@@ -130,6 +157,7 @@
             border-radius: 34px;
         }
 
+        /* সুইচের ভেতরের গোল সাদা বাটনটি */
         .slider:before {
             background-color: white;
             bottom: 4px;
@@ -143,10 +171,12 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        /* সুইচ অন করা হলে গ্রেডিয়েন্ট কালার সক্রিয় হবে */
         input:checked + .slider {
             background: var(--accent-gradient);
         }
 
+        /* সুইচ অন হলে সাদা গোল বাটনটি ডানে সরে যাবে */
         input:checked + .slider:before {
             transform: translateX(24px);
         }
@@ -156,6 +186,7 @@
             font-size: 14px;
         }
 
+        /* স্ট্যাটাস কাউন্টার ব্যাজ স্টাইল */
         .stats-badge {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
@@ -170,7 +201,7 @@
             color: #60a5fa;
         }
 
-        /* [ওয়ার্কস্পেস কন্টেইনার] */
+        /* [প্রধান ওয়ার্কস্পেস কন্টেইনার] - দুই কলামের লেআউট */
         .workspace {
             display: flex;
             height: calc(100vh - 70px);
@@ -178,7 +209,7 @@
             position: relative;
         }
 
-        /* [কলাম ১: সাইডবার মেনু] */
+        /* [কলাম ১: সাইডবার কন্টেইনার] */
         .sidebar {
             width: 350px;
             background-color: var(--sidebar-bg);
@@ -190,11 +221,13 @@
             z-index: 10;
         }
 
+        /* সাইডবারের ভেতরের সার্চ বক্সের প্যাডিং */
         .search-box {
             padding: 20px;
             border-bottom: 1px solid var(--border-color);
         }
 
+        /* সার্চ বক্সের ইনপুট ও সার্চ আইকনের পজিশনিং */
         .search-wrapper {
             position: relative;
         }
@@ -209,12 +242,13 @@
 
         .search-wrapper input {
             width: 100%;
-            padding: 10px 10px 10px 40px;
+            padding: 11px 10px 11px 40px;
             background: var(--bg-dark);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             color: var(--text-main);
             outline: none;
+            font-family: inherit;
         }
 
         .search-wrapper input:focus {
@@ -222,12 +256,14 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
+        /* স্ক্রোলযোগ্য মেনু লিস্ট কন্টেইনার */
         .menu-list {
             overflow-y: auto;
             flex-grow: 1;
             padding: 10px 0;
         }
 
+        /* স্ক্রোলবার কাস্টমাইজেশন */
         .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
             width: 6px;
         }
@@ -236,6 +272,7 @@
             border-radius: 4px;
         }
 
+        /* প্রতিটি মেনু আইটেমের লিংক স্টাইল */
         .menu-item {
             display: flex;
             align-items: center;
@@ -253,12 +290,14 @@
             color: var(--text-main);
         }
 
+        /* বর্তমানে যে মেনুটি সিলেক্টেড থাকবে তার স্টাইল */
         .menu-item.active {
             background: rgba(59, 130, 246, 0.08);
             color: var(--text-main);
             border-left-color: var(--accent-color);
         }
 
+        /* মেনুর বামপাশে থাকা TIP ID ব্যাজ */
         .menu-item .tip-id {
             font-size: 11px;
             font-weight: bold;
@@ -276,15 +315,16 @@
             color: white;
         }
 
+        /* মেনুর টাইটেল টেক্সট (অতিরিক্ত বড় হলে ডট ডট দেখাবে) */
         .menu-item .tip-title {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* [কলাম ২: ডিটেইলস প্যানেল] */
+        /* [কলাম ২: ডিটেইলস রাইট প্যানেল] */
         .details-panel {
             flex-grow: 1;
             background: var(--panel-bg);
@@ -294,6 +334,7 @@
             height: 100%;
         }
 
+        /* প্রতিটি টিপসের মূল কন্টেন্ট এরিয়া (ডিফল্ট অবস্থায় হাইড থাকে) */
         .tip-content-section {
             display: none;
             max-width: 800px;
@@ -301,15 +342,18 @@
             animation: fadeIn 0.4s ease;
         }
 
+        /* একটিভ সেকশনটি দেখানোর জন্য */
         .tip-content-section.active {
             display: block;
         }
 
+        /* কন্টেন্ট পরিবর্তনের সময় অ্যানিমেশন এফেক্ট */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* ক্যাটাগরি বা ট্যাগ স্টাইল */
         .category-tag {
             display: inline-block;
             padding: 4px 12px;
@@ -321,22 +365,25 @@
             background: rgba(139, 92, 246, 0.15);
             color: #8b5cf6;
             border: 1px solid rgba(139, 92, 246, 0.3);
+            letter-spacing: 0.5px;
         }
 
+        /* বড় হেডলাইন বা টিপস টাইটেল স্টাইল */
         .tip-detail-title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             margin-bottom: 20px;
             color: var(--text-main);
-            line-height: 1.3;
+            line-height: 1.4;
         }
 
+        /* মেটা ইনফো বার (লেভেল, সময়, ট্যাগস) */
         .meta-info {
             display: flex;
             flex-wrap: wrap;
             gap: 15px 20px;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 13.5px;
             margin-bottom: 30px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
@@ -347,22 +394,25 @@
             color: var(--accent-color);
         }
 
+        /* নির্দেশনা কার্ড ডিজাইন */
         .instruction-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 25px;
             margin-bottom: 25px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
 
         .instruction-card h3 {
             font-size: 18px;
-            margin-bottom: 15px;
+            font-weight: 700;
+            margin-bottom: 16px;
             color: #2563eb;
             display: flex;
             align-items: center;
             gap: 10px;
+            line-height: 1.4;
         }
         
         .dark-theme .instruction-card h3 {
@@ -372,10 +422,11 @@
         .instruction-card p {
             color: var(--text-main);
             font-size: 15px;
-            line-height: 1.7;
+            line-height: 1.8;
             margin-bottom: 15px;
         }
 
+        /* স্টেপস সম্বলিত চেকলিস্টের স্টাইল */
         .step-list {
             list-style: none;
         }
@@ -383,45 +434,49 @@
         .step-list li {
             position: relative;
             padding-left: 30px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             color: var(--text-main);
             font-size: 15px;
-            line-height: 1.6;
+            line-height: 1.8;
         }
 
+        /* তালিকার বামে টিক চিহ্ন বসানোর ফন্ট-অসাম ফন্ট ট্রিক */
         .step-list li::before {
             content: "\f00c";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             position: absolute;
             left: 0;
-            top: 2px;
+            top: 3px;
             color: #10b981;
             font-size: 14px;
         }
 
+        /* গুরুত্বপূর্ণ নোট বা প্রবাদ-বাক্য বক্সের ডিজাইন */
         .note-box {
             background: var(--note-bg);
             border-left: 4px solid var(--note-border);
-            padding: 15px 20px;
+            padding: 16px 20px;
             border-radius: 0 8px 8px 0;
-            margin: 20px 0;
+            margin: 24px 0;
         }
 
         .note-box h4 {
             color: var(--note-border);
             font-size: 14px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .note-box p {
             color: var(--note-text);
-            font-size: 13.5px;
-            line-height: 1.5;
+            font-size: 14px;
+            line-height: 1.7;
         }
 
+        /* কোড কপি বক্সের লেআউট */
         .code-box {
             background: var(--code-bg);
             border: 1px solid var(--border-color);
@@ -441,6 +496,7 @@
             word-break: break-all;
         }
 
+        /* কোড ও টেক্সট কপির বাটন স্টাইল */
         .copy-btn {
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
@@ -450,6 +506,7 @@
             cursor: pointer;
             font-size: 12px;
             flex-shrink: 0;
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
         }
 
         .copy-btn:hover {
@@ -458,7 +515,7 @@
             border-color: var(--accent-color);
         }
 
-        /* ফিচার গ্রিড (হোম পেজের জন্য) */
+        /* হোম সেকশনের ফিচার গ্রিড লেআউট (৩ কলাম) */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -469,37 +526,39 @@
         .feature-item {
             background: var(--bg-dark);
             border: 1px solid var(--border-color);
-            padding: 20px;
+            padding: 22px 20px;
             border-radius: 10px;
             text-align: center;
         }
 
         .feature-item i {
             font-size: 30px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             color: var(--accent-color);
         }
 
         .feature-item h4 {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-size: 16px;
+            font-weight: 700;
         }
 
         .feature-item p {
-            font-size: 13px;
+            font-size: 13.5px;
             color: var(--text-muted);
-            line-height: 1.5;
+            line-height: 1.7;
         }
 
-        /* [রেসপনসিভ মিডিয়া কোয়েরি] */
+        /* [রেসপনসিভ মিডিয়া কোয়েরি] - ট্যাবলেট ও ল্যাপটপের জন্য */
         @media (max-width: 992px) {
             .sidebar { width: 280px; }
         }
 
+        /* [মোবাইল লেআউট রেসপনসিভনেস] - মোবাইল স্ক্রিনে ব্লকগুলোকে উপর-নিচে সাজানোর জন্য */
         @media (max-width: 768px) {
             body { overflow-y: auto; }
             header {
-                padding: 10px 15px;
+                padding: 15px;
                 height: auto;
                 flex-direction: column;
                 gap: 12px;
@@ -509,12 +568,14 @@
                 flex-direction: row;
                 justify-content: space-between;
                 width: 100%;
+                flex-wrap: wrap;
+                gap: 10px;
             }
             .workspace { flex-direction: column; height: auto; }
             .sidebar { width: 100%; height: 300px; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .details-panel { width: 100%; padding: 20px 15px; height: auto; overflow-y: visible; }
+            .details-panel { width: 100%; padding: 25px 15px; height: auto; overflow-y: visible; }
             .tip-detail-title { font-size: 22px; }
-            .instruction-card { padding: 15px; }
+            .instruction-card { padding: 20px 15px; }
             .code-box { flex-direction: column; align-items: flex-start; }
             .copy-btn { align-self: flex-end; width: auto; }
         }
@@ -522,14 +583,21 @@
 </head>
 <body>
 
-    <!-- Header (শীর্ষ অংশ) -->
+    <!-- Header Section: ড্যাশবোর্ডের শীর্ষভাগ -->
     <header>
+        <!-- লোগো এরিয়া -->
         <div class="logo-area">
             <i class="fa-solid fa-laptop-code"></i>
             <h1>PC Tips & Tricks Hub</h1>
         </div>
+        <!-- কন্ট্রোল এরিয়া: যেখানে বাটন ও ডার্ক মোড অপশন রয়েছে -->
         <div class="header-controls">
-            <!-- ডার্ক/লাইট মোড সুইচ বাটন -->
+            <!-- হোম ভিজিট বাটন: মূল এক্সটার্নাল লিংকে ঢোকার জন্য -->
+            <a href="https://megadealszone.github.io/bd/index.html" class="external-home-btn">
+                <i class="fa-solid fa-house-laptop"></i> হোম ভিজিট
+            </a>
+
+            <!-- লাইট/ডার্ক থিম টগল করার চেকবক্স সুইচ -->
             <div class="theme-switch-wrapper">
                 <i class="fa-solid fa-sun theme-icon"></i>
                 <label class="theme-switch" for="checkbox">
@@ -538,17 +606,20 @@
                 </label>
                 <i class="fa-solid fa-moon theme-icon"></i>
             </div>
+            
+            <!-- মোট কয়টি ডেমো ডাটা আছে তার ব্যাজ -->
             <div class="stats-badge">
                 <i class="fa-solid fa-fire-flame"></i> ৫টি ডেমো লোড করা হয়েছে
             </div>
         </div>
     </header>
 
-    <!-- Workspace Area (প্রধান কাজের ক্ষেত্র) -->
+    <!-- Workspace Container: সাইডবার মেনু ও মূল কন্টেন্ট প্যানেল -->
     <div class="workspace">
 
-        <!-- COLUMN 1: Sidebar -->
+        <!-- COLUMN 1: বামদিকের সাইডবার সেকশন -->
         <aside class="sidebar">
+            <!-- সার্চ করার ইনপুট ফিল্ড -->
             <div class="search-box">
                 <div class="search-wrapper">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -556,29 +627,35 @@
                 </div>
             </div>
             
+            <!-- সার্চ বক্সের ঠিক নিচে ইন্টারনাল মেনু আইটেমের তালিকা -->
             <div class="menu-list" id="menuList">
-                <!-- আপডেটকৃত হোম মেনু লিংক (megadealszone.github.io/bd) -->
-                <a href="https://megadealszone.github.io/bd" class="menu-item active" onclick="showTip(event, 'home-section', true)">
+                <!-- ইন্টারনাল ড্যাশবোর্ড হোম সেকশন দেখার মেনু -->
+                <a href="#home" class="menu-item active" onclick="showTip(event, 'home-section')">
                     <span class="tip-id"><i class="fa-solid fa-house"></i></span>
                     <span class="tip-title">হোম মেনু</span>
                 </a>
                 
+                <!-- টিপস ১ মেনু লিংক -->
                 <a href="#shortcut-recovery" class="menu-item" onclick="showTip(event, 'shortcut-recovery')">
                     <span class="tip-id">TIP 01</span>
                     <span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span>
                 </a>
+                <!-- টিপস ২ মেনু লিংক -->
                 <a href="#multi-pc-connect" class="menu-item" onclick="showTip(event, 'multi-pc-connect')">
                     <span class="tip-id">TIP 02</span>
                     <span class="tip-title">একাধিক পিসি কানেক্ট পদ্ধতি</span>
                 </a>
+                <!-- টিপস ৩ মেনু লিংক -->
                 <a href="#printer-setup" class="menu-item" onclick="showTip(event, 'printer-setup')">
                     <span class="tip-id">TIP 03</span>
                     <span class="tip-title">প্রিন্টার ড্রাইভার সেটআপ</span>
                 </a>
+                <!-- টিপস ৪ মেনু লিংক -->
                 <a href="#pc-speedup" class="menu-item" onclick="showTip(event, 'pc-speedup')">
                     <span class="tip-id">TIP 04</span>
                     <span class="tip-title">পিসি স্পিড বৃদ্ধির মেগা টিপস</span>
                 </a>
+                <!-- টিপস ৫ মেনু লিংক -->
                 <a href="#god-mode" class="menu-item" onclick="showTip(event, 'god-mode')">
                     <span class="tip-id">TIP 05</span>
                     <span class="tip-title">উইন্ডোজ গড মোড অ্যাক্টিভেশন</span>
@@ -586,10 +663,10 @@
             </div>
         </aside>
 
-        <!-- COLUMN 2: Details Panel -->
+        <!-- COLUMN 2: ডানদিকের প্রধান কন্টেন্ট বা ডিটেইলস প্রদর্শন প্যানেল -->
         <main class="details-panel" id="detailsPanel">
 
-            <!-- Home Section Detail: হোম ড্যাশবোর্ড স্ক্রিন (ডিফল্ট অ্যাক্টিভ) -->
+            <!-- ড্যাশবোর্ডের ডিফল্ট হোম স্ক্রিন ইনফরমেশন সেকশন -->
             <section id="home-section" class="tip-content-section active">
                 <span class="category-tag">All-in-One Guide</span>
                 <h2 class="tip-detail-title">প্রযুক্তিগত সমস্যার সহজ সমাধান ও মাস্টার ড্যাশবোর্ড!</h2>
@@ -598,6 +675,7 @@
                     <h3><i class="fa-solid fa-wand-magic-sparkles"></i> এখানে আপনি কী কী টিপস ও ট্রিকস পাবেন?</h3>
                     <p>আমাদের এই ড্যাশবোর্ডে প্রাত্যহিক জীবনের সকল ডিজিটাল ডিভাইস ও প্রযুক্তির জটিল সমস্যাগুলোর ওয়ান-ক্লিক এবং শর্টকাট গাইডলাইন দেওয়া হয়েছে। নিচে প্রধান ক্যাটাগরিগুলো দেওয়া হলো:</p>
                     
+                    <!-- ফিচারের ৩ কলাম বিশিষ্ট গ্রিড লেআউট -->
                     <div class="feature-grid">
                         <div class="feature-item">
                             <i class="fa-solid fa-desktop"></i>
@@ -617,17 +695,18 @@
                     </div>
                 </div>
 
+                <!-- ইউজার গাইডলাইনের নির্দেশনাবলী কার্ড -->
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
                     <ul class="step-list">
                         <li>যে কোনো ক্যাটাগরির বিস্তারিত জানতে বামপাশের মেনু লিস্ট ব্যবহার করুন।</li>
-                        <li>যদি আপনি মূল ওয়েবসাইটে ফিরে যেতে চান তবে <b>"হোম মেনু"</b> বাটনে ডাবল-ক্লিক করতে পারেন বা সরাসরি লিংকে ভিজিট করতে পারেন।</li>
+                        <li>যদি আপনি মূল ওয়েবসাইটে প্রবেশ করতে চান, তবে ওপরে ডার্ক মোডের পাশে থাকা <b>"হোম ভিজিট"</b> বাটনে ক্লিক করুন।</li>
                         <li>রাত বা দিনে স্বাচ্ছন্দ্যে পড়ার জন্য উপরে থাকা <b>সুইচ ব্যবহার করে লাইট/ডার্ক মোড</b> পরিবর্তন করে নিন।</li>
                     </ul>
                 </div>
             </section>
 
-            <!-- Tip 1 Detail: পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি -->
+            <!-- TIP 01: পেনড্রাইভ শর্টকাট রিকভারি কন্টেন্ট এরিয়া -->
             <section id="shortcut-recovery" class="tip-content-section">
                 <span class="category-tag">Storage & Fix</span>
                 <h2 class="tip-detail-title">পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
@@ -648,6 +727,7 @@
                         <li>নিচের কোডটি হুবহু কপি করুন এবং কোডের <b>F:</b> অক্ষরের জায়গায় আপনার পেনড্রাইভের লেটারটি বসিয়ে এন্টার চাপুন।</li>
                     </ul>
 
+                    <!-- কোড ও ডাটা কপির বক্স ১ -->
                     <div class="code-box">
                         <span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span>
                         <button class="copy-btn" onclick="copyText('cmdCode1', event)">কপি করুন</button>
@@ -658,6 +738,7 @@
                         <li>আবার আপনার <b>Command Prompt (CMD)</b> খুলে নিচের কমান্ডটি দিয়ে সিস্টেম ফোল্ডারটি প্রটেক্ট করুন:</li>
                     </ul>
 
+                    <!-- কোড ও ডাটা কপির বক্স ২ -->
                     <div class="code-box">
                         <span class="code-text" id="ipPC_sys">F: attrib +h +s "System Volume Information"</span>
                         <button class="copy-btn" onclick="copyText('ipPC_sys', event)">কপি করুন</button>
@@ -670,7 +751,7 @@
                 </div>
             </section>
 
-            <!-- Tip 2 Detail: LAN কেবল দিয়ে পিসি কানেক্ট -->
+            <!-- TIP 02: ল্যান কেবল কানেকশন কন্টেন্ট এরিয়া -->
             <section id="multi-pc-connect" class="tip-content-section">
                 <span class="category-tag">Networking</span>
                 <h2 class="tip-detail-title">LAN কেবল দিয়ে একাধিক পিসি কানেক্ট করার পদ্ধতি</h2>
@@ -706,7 +787,7 @@
                 </div>
             </section>
 
-            <!-- Tip 3 Detail: প্রিন্টার ড্রাইভার সেটআপ -->
+            <!-- TIP 03: প্রিন্টার সেটআপ কন্টেন্ট এরিয়া -->
             <section id="printer-setup" class="tip-content-section">
                 <span class="category-tag">Hardware</span>
                 <h2 class="tip-detail-title">যেকোনো প্রিন্টার ড্রাইভার পারফেক্টলি সেটআপ করুন</h2>
@@ -727,7 +808,7 @@
                 </div>
             </section>
 
-            <!-- Tip 4 Detail: পিসি স্পিডআপ -->
+            <!-- TIP 04: পিসি স্পিডআপ ট্রিক কন্টেন্ট এরিয়া -->
             <section id="pc-speedup" class="tip-content-section">
                 <span class="category-tag">System Optimization</span>
                 <h2 class="tip-detail-title">কম্পিউটারের স্পিড রকেটের মতো বৃদ্ধির জন্য মেগা টিপস</h2>
@@ -754,7 +835,7 @@
                 </div>
             </section>
 
-            <!-- Tip 5 Detail: উইন্ডোজ গড মোড -->
+            <!-- TIP 05: উইন্ডোজ গড মোড অ্যাক্টিভেশন কন্টেন্ট এরিয়া -->
             <section id="god-mode" class="tip-content-section">
                 <span class="category-tag">Windows Secret</span>
                 <h2 class="tip-detail-title">উইন্ডোজ গড মোড (God Mode) অ্যাক্টিভেশন ট্রিক</h2>
@@ -779,41 +860,47 @@
         </main>
     </div>
 
-    <!-- ইন্টারেক্টিভ জাভাস্ক্রিপ্ট -->
+    <!-- ইন্টারেক্টিভ জাভাস্ক্রিপ্ট কোড সেকশন -->
     <script>
-        // ১. [থিম পরিবর্তন লজিক] - লাইট মোড থেকে ডার্ক মোডে পরিবর্তন
+        /**
+         * ১. [থিম পরিবর্তন লজিক]
+         * এই ফাংশনটি টগল সুইচ অন/অফ করার উপর ভিত্তি করে HTML body ট্যাগে 'dark-theme' ক্লাস যুক্ত বা রিমুভ করে।
+         * ফলে সিএসএস (CSS) ভেরিয়েবল অনুযায়ী কালার স্কিম ইনস্ট্যান্ট পরিবর্তিত হয়ে যায়।
+         */
         function toggleTheme(checkbox) {
             if (checkbox.checked) {
-                document.body.classList.add('dark-theme');
+                document.body.classList.add('dark-theme'); // সুইচ অন হলে ডার্ক মোড অন হবে
             } else {
-                document.body.classList.remove('dark-theme');
+                document.body.classList.remove('dark-theme'); // সুইচ অফ হলে লাইট মোড অন হবে
             }
         }
 
-        // ২. [মেনু পরিবর্তন ফাংশন]
-        function showTip(event, targetId, isHomeLink = false) {
-            // যদি ইউজার শুধু এক ক্লিকে ড্যাশবোর্ড কন্টেন্ট দেখতে চায়
-            if (isHomeLink) {
-                // ২ সেকেন্ড পর অটোমেটিক এক্সটার্নাল লিংকে নিয়ে যাবে না যদি ড্যাশবোর্ড দেখতে চায়। 
-                // তবে সাধারণ ক্লিকে আমরা পেজ চেঞ্জ ছাড়াই ড্যাশবোর্ড লোড করবো।
-                // ইউজার যদি নতুন ট্যাবে খুলতে চায়, রাইট ক্লিক বা ডাবল ক্লিক করতে পারে।
-                event.preventDefault(); 
-            } else {
-                event.preventDefault();
-            }
+        /**
+         * ২. [মেনু এবং সেকশন পরিবর্তন ফাংশন]
+         * বামদিকের কোনো মেনু আইটেমে ক্লিক করা হলে এই ফাংশনটি রান করে।
+         * এটি আগের একটিভ মেনু থেকে 'active' ক্লাস সরিয়ে দেয় এবং যেটিতে ক্লিক করা হয়েছে সেটিতে 'active' ক্লাস যোগ করে।
+         * একই সাথে ডানদিকের প্যানেলে নির্দিষ্ট ইনফরমেশন সেকশনটিকে দৃশ্যমান (Active) করে তোলে।
+         */
+        function showTip(event, targetId) {
+            event.preventDefault(); // লিংকের ডিফল্ট পেজ রিফ্রেশ হওয়া বন্ধ করে
             
+            // সব মেনু আইটেম থেকে 'active' ক্লাস রিমুভ করা হচ্ছে
             const menuItems = document.querySelectorAll('.menu-item');
             menuItems.forEach(item => item.classList.remove('active'));
             
+            // সব কন্টেন্ট সেকশন থেকে 'active' ক্লাস রিমুভ করে হাইড করা হচ্ছে
             const contentSections = document.querySelectorAll('.tip-content-section');
             contentSections.forEach(section => section.classList.remove('active'));
             
+            // বর্তমান ক্লিক করা মেনু আইটেমটিকে মার্ক করা হচ্ছে
             event.currentTarget.classList.add('active');
             
+            // ক্লিক করা মেনুর আইডি অনুযায়ী নির্দিষ্ট কন্টেন্ট সেকশন প্রদর্শন করা হচ্ছে
             const activeSection = document.getElementById(targetId);
             if (activeSection) {
                 activeSection.classList.add('active');
                 
+                // মোবাইল রেসপনসিভনেস: স্ক্রিন ছোট হলে স্ক্রোল করে কন্টেন্টে নিয়ে যাবে, বড় স্ক্রিনে স্ক্রোল পজিশন টপে সেট হবে
                 if (window.innerWidth <= 768) {
                     activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
@@ -822,19 +909,26 @@
             }
         }
 
-        // ৩. [ডায়নামিক কপি ফাংশন]
+        /**
+         * ৩. [ডায়নামিক কপি ফাংশন]
+         * এই ফাংশনটি নির্দিষ্ট একটি এলিমেন্টের ভেতরের কোড বা টেক্সট সরাসরি ইউজারের ক্লিপবোর্ডে কপি করে দেয়।
+         * কপি সফল হলে বাটনের লেখা সাময়িকভাবে পরিবর্তন করে সবুজ সংকেত (কপি হয়েছে! ✓) দেখায়।
+         */
         function copyText(elementId, event) {
             const textElement = document.getElementById(elementId);
             if (textElement) {
                 const textToCopy = textElement.innerText;
+                // আধুনিক ব্রাউজারের Clipboard API ব্যবহার করে টেক্সট কপি করা হচ্ছে
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    const activeButton = event.currentTarget;
+                    const activeButton = event.currentTarget; // বর্তমানে ক্লিক করা বাটনটি ধরা হচ্ছে
                     const originalText = activeButton.innerText;
                     
+                    // বাটনটির স্টাইল সাময়িকভাবে সবুজ করা হচ্ছে
                     activeButton.innerText = "কপি হয়েছে! ✓";
                     activeButton.style.background = "#10b981"; 
                     activeButton.style.borderColor = "#10b981";
                     
+                    // ২ সেকেন্ড পর বাটনটিকে আবার আগের রূপ ও কালারে ফিরিয়ে আনা হচ্ছে
                     setTimeout(() => {
                         activeButton.innerText = originalText;
                         activeButton.style.background = ""; 
@@ -844,17 +938,23 @@
             }
         }
 
-        // ৪. [লাইভ সার্চ ফিল্টার]
+        /**
+         * ৪. [লাইভ সার্চ ফিল্টার লজিক]
+         * সার্চ বক্সে কিছু টাইপ করার সাথে সাথে এই লিসেনারটি চালু হয়।
+         * এটি ইনপুট করা অক্ষরের সাথে মেনু আইটেমগুলোর নামের তুলনা করে।
+         * যদি মিল খুঁজে পায় তবে মেনুটি দেখায়, মিল না পেলে সিএসএস 'display: none' করে হাইড করে দেয়।
+         */
         document.getElementById('tipSearch').addEventListener('keyup', function() {
-            let filter = this.value.toUpperCase();
+            let filter = this.value.toUpperCase(); // কেস-সেন্সিটিভিটি এড়াতে সব লেখা আপারকেস করা হচ্ছে
             let menuItems = document.querySelectorAll('.menu-item');
 
             menuItems.forEach(item => {
                 let text = item.querySelector('.tip-title').innerText;
+                // সার্চ কি-ওয়ার্ডের সাথে মেনুর লেখার ইন্ডেক্স চেক করা হচ্ছে
                 if (text.toUpperCase().indexOf(filter) > -1) {
-                    item.style.display = ""; 
+                    item.style.display = ""; // মিল থাকলে মেনু প্রদর্শিত হবে
                 } else {
-                    item.style.display = "none"; 
+                    item.style.display = "none"; // মিল না থাকলে মেনু লুকিয়ে ফেলা হবে
                 }
             });
         });
