@@ -4,44 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PC Master Tips & Tricks Dashboard</title>
-    <!-- Font Awesome for Premium Icons (আইকন প্রদর্শনের জন্য লাইব্রেরি) -->
+    <!-- Font Awesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (বাংলা ও ইংরেজি ফন্টের জন্য গুগলের ফ্রি ফন্ট) -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Google Fonts Premium Newspaper Serif Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Galada&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* [গ্লোবাল ভেরিয়েবল কালার স্কিম] - ডিফল্টভাবে লাইট মোড (Light Mode) এর রঙসমূহ */
+        /* [গ্লোবাল ভ্যারিয়েবল কালার স্কিম] - ডিফল্টভাবে লাইট মোড (Light Mode) এর রংসমূহ */
         :root {
-            --bg-dark: #f8fafc;             /* মূল ব্যাকগ্রাউন্ডের রঙ */
-            --sidebar-bg: #ffffff;          /* সাইডবারের ব্যাকগ্রাউন্ড */
-            --card-bg: #ffffff;             /* ইনফরমেশন কার্ডের ব্যাকগ্রাউন্ড */
-            --accent-color: #3b82f6;        /* থিমের মূল হাইলাইট রঙ (নীল) */
+            --bg-dark: #f8fafc;                         /* মূল ব্যাকগ্রাউন্ডের রঙ */
+            --sidebar-bg: #ffffff;                      /* সাইডবারের ব্যাকগ্রাউন্ড */
+            --card-bg: #ffffff;                         /* ইনফরমেশন কার্ডের ব্যাকগ্রাউন্ড */
+            --accent-color: #3b82f6;                    /* থিমের মূল হাইলাইট রঙ (নীল) */
             --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6); /* গ্রেডিয়েন্ট কালার এফেক্ট */
-            --text-main: #0f172a;           /* প্রধান লেখার টেক্সট কালার */
-            --text-muted: #64748b;          /* আবছা বা সেকেন্ডারি লেখার টেক্সট কালার */
-            --border-color: #e2e8f0;        /* বর্ডার বা লাইনের রঙ */
-            --panel-bg: #f1f5f9;            /* ডানদিকের ডিটেইলস প্যানেলের ব্যাকগ্রাউন্ড */
-            --code-bg: #0f172a;             /* কোড বক্সের ব্যাকগ্রাউন্ড */
-            --code-text: #38bdf8;           /* কোড বক্সের ভেতরের লেখার রঙ */
-            --note-bg: rgba(245, 158, 11, 0.1); /* প্রো-টিপ বক্সের ব্যাকগ্রাউন্ড */
-            --note-border: #f59e0b;         /* প্রো-টিপ বক্সের বামপাশের বর্ডার */
-            --note-text: #b45309;           /* প্রো-টিপ বক্সের লেখার রঙ */
+            --text-main: #0f172a;                       /* প্রধান লেখার টেক্সট কালার */
+            --text-muted: #64748b;                      /* আবছা বা সেকেন্ডারি লেখার টেক্সট কালার */
+            --border-color: #e2e8f0;                    /* বর্ডার বা লাইনের রঙ */
+            --panel-bg: #f1f5f9;                        /* ডানদিকের ডিটেইলস প্যানেলের ব্যাকগ্রাউন্ড */
+            --code-bg: #0f172a;                         /* কোড বক্সের ব্যাকগ্রাউন্ড */
+            --code-text: #38bdf8;                       /* কোড বক্সের ভেতরের লেখার রঙ */
+            --note-bg: rgba(245, 158, 11, 0.1);         /* প্রো-টিপ বক্সের ব্যাকগ্রাউন্ড */
+            --note-border: #f59e0b;                     /* প্রো-টিপ বক্সের বামপাশের বর্ডার */
+            --note-text: #b45309;                       /* প্রো-টিপ বক্সের লেখার রঙ */
         }
 
-        /* [ডার্ক মোড ভেরিয়েবলস] - ডার্ক থিম অ্যাক্টিভ হলে ভেরিয়েবলের মানগুলো বদলে যাবে */
+        /* [ডার্ক মোড ভ্যারিয়েবলস] - ডার্ক থিম অ্যাক্টিভ হলে ভ্যারিয়েবলের মানগুলো বদলে যাবে */
         .dark-theme {
-            --bg-dark: #0f172a;             /* ডার্ক মোডের মূল ব্যাকগ্রাউন্ড */
-            --sidebar-bg: #1e293b;          /* ডার্ক মোডের সাইডবার ব্যাকগ্রাউন্ড */
-            --card-bg: #1e293b;             /* ডার্ক মোডের কার্ড ব্যাকগ্রাউন্ড */
-            --text-main: #f8fafc;           /* ডার্ক মোডের প্রধান লেখার রঙ (সাদাটে) */
-            --text-muted: #94a3b8;          /* ডার্ক মোডের আবছা লেখার রঙ */
-            --border-color: #334155;        /* ডার্ক মোডের বর্ডার বা লাইনের রঙ */
-            --panel-bg: #0b0f19;            /* ডার্ক মোডের ডিটেইলস প্যানেল ব্যাকগ্রাউন্ড */
-            --code-bg: #090d16;             /* ডার্ক মোডের কোড বক্স ব্যাকগ্রাউন্ড */
-            --code-text: #38bdf8;           /* ডার্ক মোডের কোড বক্সের টেক্সট রঙ */
-            --note-bg: rgba(245, 158, 11, 0.1); /* ডার্ক মোডের প্রো-টিপ ব্যাকগ্রাউন্ড */
-            --note-border: #f59e0b;         /* ডার্ক মোডের প্রো-টিপ বর্ডার */
-            --note-text: #fef08a;           /* ডার্ক মোডের প্রো-টিপ টেক্সট রঙ */
+            --bg-dark: #0f172a;                         /* ডার্ক মোডের মূল ব্যাকগ্রাউন্ড */
+            --sidebar-bg: #1e293b;                      /* ডার্ক মোডের সাইডবার ব্যাকগ্রাউন্ড */
+            --card-bg: #1e293b;                         /* ডার্ক মোডের কার্ড ব্যাকগ্রাউন্ড */
+            --text-main: #f8fafc;                       /* ডার্ক মোডের প্রধান লেখার রঙ (সাদাটে) */
+            --text-muted: #94a3b8;                      /* ডার্ক মোডের আবছা লেখার রঙ */
+            --border-color: #334155;                    /* ডার্ক মোডের বর্ডার বা লাইনের রঙ */
+            --panel-bg: #0b0f19;                        /* ডার্ক মোডের ডিটেইলস প্যানেল ব্যাকগ্রাউন্ড */
+            --code-bg: #090d16;                         /* ডার্ক মোডের কোড বক্স ব্যাকগ্রাউন্ড */
+            --code-text: #38bdf8;                       /* ডার্ক মোডের কোড বক্সের টেক্সট রঙ */
+            --note-bg: rgba(245, 158, 11, 0.1);         /* ডার্ক মোডের প্রো-টিপ ব্যাকগ্রাউন্ড */
+            --note-border: #f59e0b;                     /* ডার্ক মোডের প্রো-টিপ বর্ডার */
+            --note-text: #fef08a;                       /* ডার্ক মোডের প্রো-টিপ টেক্সট রঙ */
         }
 
         /* [গ্লোবাল রিসেট সেটিংস] - মার্জিন, প্যাডিং রিমুভ এবং ট্রানজিশন স্মুথ করার জন্য */
@@ -54,7 +54,7 @@
 
         /* [বডি স্টাইল] - ডিফল্ট ফন্ট, ব্যাকগ্রাউন্ড এবং স্ক্রিন লেআউট নির্ধারণ */
         body {
-            font-family: 'Inter', 'Hind Siliguri', 'SolaimanLipi', 'Kalpurush', sans-serif;
+            font-family: 'Noto Serif Bengali', 'Lora', 'Georgia', serif;
             background-color: var(--bg-dark);
             color: var(--text-main);
             min-height: 100vh;
@@ -66,7 +66,7 @@
             text-rendering: optimizeLegibility;
         }
 
-        /* [টপ হেডার] - লোগো এবং কন্ট্রোল এরিয়ার টপ সেকশন */
+        /* হেডার ও ব্র্যান্ডিং এরিয়া স্টাইল */
         header {
             background: var(--sidebar-bg);
             border-bottom: 1px solid var(--border-color);
@@ -78,7 +78,6 @@
             flex-shrink: 0;
         }
 
-        /* লোগো সেকশনের ভেতরের আইকন ও টেক্সট স্টাইল */
         .logo-area {
             display: flex;
             align-items: center;
@@ -93,19 +92,19 @@
         }
 
         .logo-area h1 {
-            font-size: 20px;
+            font-family: 'Galada', 'Playfair Display', serif;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
 
-        /* ডানদিকের কন্ট্রোল এরিয়া (বাটন, মোড টগল ও ব্যাজ এর কন্টেইনার) */
         .header-controls {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        /* হোম ভিজিট বাটন - যা নির্দিষ্ট ইউআরএল-এ নিয়ে যাবে */
+        /* হোম ভিজিট বাটন স্টাইল */
         .external-home-btn {
             display: inline-flex;
             align-items: center;
@@ -126,7 +125,7 @@
             transform: translateY(-1px);
         }
 
-        /* লাইট/ডার্ক মোড টগল সুইচের মূল স্ট্রাকচার */
+        /* থিম টগল করার স্লাইডার সুইচের মেকানিজম ও ডিজাইন */
         .theme-switch-wrapper {
             display: flex;
             align-items: center;
@@ -144,7 +143,6 @@
             display: none;
         }
 
-        /* টগল সুইচের গোলাকার ট্র্যাক বা ব্যাকগ্রাউন্ড */
         .slider {
             background-color: #cbd5e1;
             bottom: 0;
@@ -157,7 +155,6 @@
             border-radius: 34px;
         }
 
-        /* সুইচের ভেতরের গোল সাদা বাটনটি */
         .slider:before {
             background-color: white;
             bottom: 4px;
@@ -171,12 +168,10 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* সুইচ অন করা হলে গ্রেডিয়েন্ট কালার সক্রিয় হবে */
         input:checked + .slider {
             background: var(--accent-gradient);
         }
 
-        /* সুইচ অন হলে সাদা গোল বাটনটি ডানে সরে যাবে */
         input:checked + .slider:before {
             transform: translateX(24px);
         }
@@ -186,7 +181,6 @@
             font-size: 14px;
         }
 
-        /* স্ট্যাটাস কাউন্টার ব্যাজ স্টাইল */
         .stats-badge {
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
@@ -201,7 +195,7 @@
             color: #60a5fa;
         }
 
-        /* [প্রধান ওয়ার্কস্পেস কন্টেইনার] - দুই কলামের লেআউট */
+        /* ওয়ার্কস্পেস এবং সাইডবার লেআউট সেটিংস */
         .workspace {
             display: flex;
             height: calc(100vh - 70px);
@@ -209,7 +203,6 @@
             position: relative;
         }
 
-        /* [কলাম ১: সাইডবার কন্টেইনার] */
         .sidebar {
             width: 350px;
             background-color: var(--sidebar-bg);
@@ -221,13 +214,12 @@
             z-index: 10;
         }
 
-        /* সাইডবারের ভেতরের সার্চ বক্সের প্যাডিং */
+        /* সার্চ বক্সের ইনপুট ফিল্ড ডিজাইন */
         .search-box {
             padding: 20px;
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* সার্চ বক্সের ইনপুট ও সার্চ আইকনের পজিশনিং */
         .search-wrapper {
             position: relative;
         }
@@ -256,14 +248,13 @@
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
-        /* স্ক্রোলযোগ্য মেনু লিস্ট কন্টেইনার */
+        /* বামদিকের স্ক্রোলিং মেনু লিস্ট স্টাইল */
         .menu-list {
             overflow-y: auto;
             flex-grow: 1;
             padding: 10px 0;
         }
 
-        /* স্ক্রোলবার কাস্টমাইজেশন */
         .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
             width: 6px;
         }
@@ -272,7 +263,7 @@
             border-radius: 4px;
         }
 
-        /* প্রতিটি মেনু আইটেমের লিংক স্টাইল */
+        /* ইন্ডিভিজুয়াল মেনু আইটেম স্টাইল */
         .menu-item {
             display: flex;
             align-items: center;
@@ -290,14 +281,12 @@
             color: var(--text-main);
         }
 
-        /* বর্তমানে যে মেনুটি সিলেক্টেড থাকবে তার স্টাইল */
         .menu-item.active {
             background: rgba(59, 130, 246, 0.08);
             color: var(--text-main);
             border-left-color: var(--accent-color);
         }
 
-        /* মেনুর বামপাশে থাকা TIP ID ব্যাজ */
         .menu-item .tip-id {
             font-size: 11px;
             font-weight: bold;
@@ -308,6 +297,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            min-width: 55px;
         }
 
         .menu-item.active .tip-id {
@@ -315,16 +305,39 @@
             color: white;
         }
 
-        /* মেনুর টাইটেল টেক্সট (অতিরিক্ত বড় হলে ডট ডট দেখাবে) */
         .menu-item .tip-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* [কলাম ২: ডিটেইলস রাইট প্যানেল] */
+        /* মেনু হাইড/আনহাইড (Collapse) করার জন্য অ্যানিমেশন ও কন্টেইনার স্টাইল */
+        .sub-menu-container {
+            max-height: 3000px;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .sub-menu-container.collapsed {
+            max-height: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-item .toggle-arrow {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item.collapsed-mode .toggle-arrow {
+            transform: rotate(-90deg);
+        }
+
+        /* ডানদিকের প্রধান বিবরণী প্যানেল */
         .details-panel {
             flex-grow: 1;
             background: var(--panel-bg);
@@ -334,7 +347,7 @@
             height: 100%;
         }
 
-        /* প্রতিটি টিপসের মূল কন্টেন্ট এরিয়া (ডিফল্ট অবস্থায় হাইড থাকে) */
+        /* একটি টিপ সিলেক্ট করলে ফেড-ইন অ্যানিমেশন দিয়ে শো করার লজিক */
         .tip-content-section {
             display: none;
             max-width: 800px;
@@ -342,18 +355,16 @@
             animation: fadeIn 0.4s ease;
         }
 
-        /* একটিভ সেকশনটি দেখানোর জন্য */
         .tip-content-section.active {
             display: block;
         }
 
-        /* কন্টেন্ট পরিবর্তনের সময় অ্যানিমেশন এফেক্ট */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ক্যাটাগরি বা ট্যাগ স্টাইল */
+        /* ক্যাটাগরি ব্যাজ এবং মেটা টেক্সট ডিজাইন */
         .category-tag {
             display: inline-block;
             padding: 4px 12px;
@@ -368,22 +379,21 @@
             letter-spacing: 0.5px;
         }
 
-        /* বড় হেডলাইন বা টিপস টাইটেল স্টাইল */
         .tip-detail-title {
-            font-size: 26px;
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
+            font-size: 30px;
             font-weight: 700;
             margin-bottom: 20px;
             color: var(--text-main);
             line-height: 1.4;
         }
 
-        /* মেটা ইনফো বার (লেভেল, সময়, ট্যাগস) */
         .meta-info {
             display: flex;
             flex-wrap: wrap;
             gap: 15px 20px;
             color: var(--text-muted);
-            font-size: 13.5px;
+            font-size: 14px;
             margin-bottom: 30px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 15px;
@@ -394,7 +404,7 @@
             color: var(--accent-color);
         }
 
-        /* নির্দেশনা কার্ড ডিজাইন */
+        /* কার্ড এলিমেন্ট এবং স্টেপ গাইডলাইন স্টাইল */
         .instruction-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -405,7 +415,8 @@
         }
 
         .instruction-card h3 {
-            font-size: 18px;
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
+            font-size: 20px;
             font-weight: 700;
             margin-bottom: 16px;
             color: #2563eb;
@@ -421,12 +432,11 @@
 
         .instruction-card p {
             color: var(--text-main);
-            font-size: 15px;
-            line-height: 1.8;
+            font-size: 16px;
+            line-height: 1.9;
             margin-bottom: 15px;
         }
 
-        /* স্টেপস সম্বলিত চেকলিস্টের স্টাইল */
         .step-list {
             list-style: none;
         }
@@ -436,23 +446,22 @@
             padding-left: 30px;
             margin-bottom: 14px;
             color: var(--text-main);
-            font-size: 15px;
-            line-height: 1.8;
+            font-size: 16px;
+            line-height: 1.9;
         }
 
-        /* তালিকার বামে টিক চিহ্ন বসানোর ফন্ট-অসাম ফন্ট ট্রিক */
         .step-list li::before {
             content: "\f00c";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             position: absolute;
             left: 0;
-            top: 3px;
+            top: 4px;
             color: #10b981;
             font-size: 14px;
         }
 
-        /* গুরুত্বপূর্ণ নোট বা প্রবাদ-বাক্য বক্সের ডিজাইন */
+        /* নোট ও বিশেষ সতর্কবার্তা বক্সের স্টাইল */
         .note-box {
             background: var(--note-bg);
             border-left: 4px solid var(--note-border);
@@ -462,8 +471,9 @@
         }
 
         .note-box h4 {
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
             color: var(--note-border);
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             margin-bottom: 6px;
             text-transform: uppercase;
@@ -472,11 +482,11 @@
 
         .note-box p {
             color: var(--note-text);
-            font-size: 14px;
-            line-height: 1.7;
+            font-size: 15px;
+            line-height: 1.8;
         }
 
-        /* কোড কপি বক্সের লেআউট */
+        /* কমান্ড কপি করার কোড বক্স ও কপি বাটন ডিজাইন */
         .code-box {
             background: var(--code-bg);
             border: 1px solid var(--border-color);
@@ -496,7 +506,6 @@
             word-break: break-all;
         }
 
-        /* কোড ও টেক্সট কপির বাটন স্টাইল */
         .copy-btn {
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
@@ -504,9 +513,9 @@
             padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 13px;
             flex-shrink: 0;
-            font-family: 'Inter', 'Hind Siliguri', sans-serif;
+            font-family: 'Noto Serif Bengali', serif;
         }
 
         .copy-btn:hover {
@@ -515,7 +524,7 @@
             border-color: var(--accent-color);
         }
 
-        /* হোম সেকশনের ফিচার গ্রিড লেআউট (৩ কলাম) */
+        /* হোমপেজের ৩টি ক্যাটাগরি বক্সের গ্রিড লেআউট */
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -538,23 +547,23 @@
         }
 
         .feature-item h4 {
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
             margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 700;
         }
 
         .feature-item p {
-            font-size: 13.5px;
+            font-size: 14.5px;
             color: var(--text-muted);
-            line-height: 1.7;
+            line-height: 1.8;
         }
 
-        /* [রেসপনসিভ মিডিয়া কোয়েরি] - ট্যাবলেট ও ল্যাপটপের জন্য */
+        /* মোবাইল ও ট্যাবলেট রেসপন্সিভ মিডিয়া কোয়েরি সেটিংস */
         @media (max-width: 992px) {
             .sidebar { width: 280px; }
         }
 
-        /* [মোবাইল লেআউট রেসপনসিভনেস] - মোবাইল স্ক্রিনে ব্লকগুলোকে উপর-নিচে সাজানোর জন্য */
         @media (max-width: 768px) {
             body { overflow-y: auto; }
             header {
@@ -572,9 +581,9 @@
                 gap: 10px;
             }
             .workspace { flex-direction: column; height: auto; }
-            .sidebar { width: 100%; height: 300px; border-right: none; border-bottom: 1px solid var(--border-color); }
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
             .details-panel { width: 100%; padding: 25px 15px; height: auto; overflow-y: visible; }
-            .tip-detail-title { font-size: 22px; }
+            .tip-detail-title { font-size: 24px; }
             .instruction-card { padding: 20px 15px; }
             .code-box { flex-direction: column; align-items: flex-start; }
             .copy-btn { align-self: flex-end; width: auto; }
@@ -583,21 +592,15 @@
 </head>
 <body>
 
-    <!-- Header Section: ড্যাশবোর্ডের শীর্ষভাগ -->
     <header>
-        <!-- লোগো এরিয়া -->
         <div class="logo-area">
             <i class="fa-solid fa-laptop-code"></i>
             <h1>PC Tips & Tricks Hub</h1>
         </div>
-        <!-- কন্ট্রোল এরিয়া: যেখানে বাটন ও ডার্ক মোড অপশন রয়েছে -->
         <div class="header-controls">
-            <!-- হোম ভিজিট বাটন: মূল এক্সটার্নাল লিংকে ঢোকার জন্য -->
             <a href="https://megadealszone.github.io/bd/index.html" class="external-home-btn">
                 <i class="fa-solid fa-house-laptop"></i> হোম ভিজিট
             </a>
-
-            <!-- লাইট/ডার্ক থিম টগল করার চেকবক্স সুইচ -->
             <div class="theme-switch-wrapper">
                 <i class="fa-solid fa-sun theme-icon"></i>
                 <label class="theme-switch" for="checkbox">
@@ -606,20 +609,14 @@
                 </label>
                 <i class="fa-solid fa-moon theme-icon"></i>
             </div>
-            
-            <!-- মোট কয়টি ডেমো ডাটা আছে তার ব্যাজ -->
-            <div class="stats-badge">
-                <i class="fa-solid fa-fire-flame"></i> ৫টি ডেমো লোড করা হয়েছে
+            <div class="stats-badge" id="statsBadge">
+                <i class="fa-solid fa-fire-flame"></i> ৫০টি ডেমো লোড করা হয়েছে
             </div>
         </div>
     </header>
 
-    <!-- Workspace Container: সাইডবার মেনু ও মূল কন্টেন্ট প্যানেল -->
     <div class="workspace">
-
-        <!-- COLUMN 1: বামদিকের সাইডবার সেকশন -->
         <aside class="sidebar">
-            <!-- সার্চ করার ইনপুট ফিল্ড -->
             <div class="search-box">
                 <div class="search-wrapper">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -627,75 +624,105 @@
                 </div>
             </div>
             
-            <!-- সার্চ বক্সের ঠিক নিচে ইন্টারনাল মেনু আইটেমের তালিকা -->
             <div class="menu-list" id="menuList">
-                <!-- ইন্টারনাল ড্যাশবোর্ড হোম সেকশন দেখার মেনু -->
-                <a href="#home" class="menu-item active" onclick="showTip(event, 'home-section')">
+                <a href="#home" id="homeMenuItem" class="menu-item active" onclick="showTip(event, 'home-section'); toggleMenuCollapse();">
                     <span class="tip-id"><i class="fa-solid fa-house"></i></span>
                     <span class="tip-title">হোম মেনু</span>
+                    <i class="fa-solid fa-chevron-down toggle-arrow"></i>
                 </a>
                 
-                <!-- টিপস ১ মেনু লিংক -->
-                <a href="#shortcut-recovery" class="menu-item" onclick="showTip(event, 'shortcut-recovery')">
-                    <span class="tip-id">TIP 01</span>
-                    <span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span>
-                </a>
-                <!-- টিপস ২ মেনু লিংক -->
-                <a href="#multi-pc-connect" class="menu-item" onclick="showTip(event, 'multi-pc-connect')">
-                    <span class="tip-id">TIP 02</span>
-                    <span class="tip-title">একাধিক পিসি কানেক্ট পদ্ধতি</span>
-                </a>
-                <!-- টিপস ৩ মেনু লিংক -->
-                <a href="#printer-setup" class="menu-item" onclick="showTip(event, 'printer-setup')">
-                    <span class="tip-id">TIP 03</span>
-                    <span class="tip-title">প্রিন্টার ড্রাইভার সেটআপ</span>
-                </a>
-                <!-- টিপস ৪ মেনু লিংক -->
-                <a href="#pc-speedup" class="menu-item" onclick="showTip(event, 'pc-speedup')">
-                    <span class="tip-id">TIP 04</span>
-                    <span class="tip-title">পিসি স্পিড বৃদ্ধির মেগা টিপস</span>
-                </a>
-                <!-- টিপস ৫ মেনু লিংক -->
-                <a href="#god-mode" class="menu-item" onclick="showTip(event, 'god-mode')">
-                    <span class="tip-id">TIP 05</span>
-                    <span class="tip-title">উইন্ডোজ গড মোড অ্যাক্টিভেশন</span>
-                </a>
+                <div id="subMenuContainer" class="sub-menu-container">
+                    <!-- ১ থেকে ৫ পূর্বের মেনু -->
+                    <a href="#shortcut-recovery" class="menu-item" onclick="showTip(event, 'shortcut-recovery')"><span class="tip-id">TIP 01</span><span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span></a>
+                    <a href="#multi-pc-connect" class="menu-item" onclick="showTip(event, 'multi-pc-connect')"><span class="tip-id">TIP 02</span><span class="tip-title">একাধিক পিসি কানেক্ট পদ্ধতি</span></a>
+                    <a href="#printer-setup" class="menu-item" onclick="showTip(event, 'printer-setup')"><span class="tip-id">TIP 03</span><span class="tip-title">প্রিন্টার ড্রাইভার সেটআপ</span></a>
+                    <a href="#pc-speedup" class="menu-item" onclick="showTip(event, 'pc-speedup')"><span class="tip-id">TIP 04</span><span class="tip-title">পিসি স্পিড বৃদ্ধির মেগা টিপস</span></a>
+                    <a href="#god-mode" class="menu-item" onclick="showTip(event, 'god-mode')"><span class="tip-id">TIP 05</span><span class="tip-title">উইন্ডোজ গড মোড অ্যাক্টিভেশন</span></a>
+
+                    <!-- ৬ থেকে ৫০ নতুন ৪৫টি মেনু -->
+                    <a href="#dns-flush" class="menu-item" onclick="showTip(event, 'dns-flush')"><span class="tip-id">TIP 06</span><span class="tip-title">ইন্টারনেট স্পিড ও DNS ফ্লাশ</span></a>
+                    <a href="#win-key" class="menu-item" onclick="showTip(event, 'win-key')"><span class="tip-id">TIP 07</span><span class="tip-title">অরিজিনাল উইন্ডোজ কি চেক</span></a>
+                    <a href="#chrome-ram" class="menu-item" onclick="showTip(event, 'chrome-ram')"><span class="tip-id">TIP 08</span><span class="tip-title">ক্রোম ব্রাউজারের RAM সেভিং</span></a>
+                    <a href="#startup-apps" class="menu-item" onclick="showTip(event, 'startup-apps')"><span class="tip-id">TIP 09</span><span class="tip-title">স্টার্টআপ অ্যাপস বন্ধ করা</span></a>
+                    <a href="#folder-lock" class="menu-item" onclick="showTip(event, 'folder-lock')"><span class="tip-id">TIP 10</span><span class="tip-title">কোড ছাড়া ফোল্ডার লক ট্রিক</span></a>
+                    
+                    <a href="#android-developer" class="menu-item" onclick="showTip(event, 'android-developer')"><span class="tip-id">TIP 11</span><span class="tip-title">অ্যান্ড্রয়েড ডেভেলপার মোড</span></a>
+                    <a href="#battery-health" class="menu-item" onclick="showTip(event, 'battery-health')"><span class="tip-id">TIP 12</span><span class="tip-title">ল্যাপটপ ব্যাটারি হেলথ রিপোর্ট</span></a>
+                    <a href="#youtube-bg" class="menu-item" onclick="showTip(event, 'youtube-bg')"><span class="tip-id">TIP 13</span><span class="tip-title">ইউটিউব ব্যাকগ্রাউন্ড প্লে</span></a>
+                    <a href="#wifi-pass" class="menu-item" onclick="showTip(event, 'wifi-pass')"><span class="tip-id">TIP 14</span><span class="tip-title">কানেক্টেড ওয়াইফাই পাসওয়ার্ড</span></a>
+                    <a href="#clear-cache" class="menu-item" onclick="showTip(event, 'clear-cache')"><span class="tip-id">TIP 15</span><span class="tip-title">অ্যান্ড্রয়েড ক্যাশ ফাইল রিমুভ</span></a>
+
+                    <a href="#virtual-ram" class="menu-item" onclick="showTip(event, 'virtual-ram')"><span class="tip-id">TIP 16</span><span class="tip-title">পিসিতে ভার্চুয়াল RAM বৃদ্ধি</span></a>
+                    <a href="#clipboard-history" class="menu-item" onclick="showTip(event, 'clipboard-history')"><span class="tip-id">TIP 17</span><span class="tip-title">উইন্ডোজ ক্লিপবোর্ড হিস্ট্রি</span></a>
+                    <a href="#whatsapp-web" class="menu-item" onclick="showTip(event, 'whatsapp-web')"><span class="tip-id">TIP 18</span><span class="tip-title">হোয়াটসঅ্যাপ সিক্রেট মাল্টি-ডিভাইস</span></a>
+                    <a href="#task-mgr" class="menu-item" onclick="showTip(event, 'task-mgr')"><span class="tip-id">TIP 19</span><span class="tip-title">সরাসরি টাস্ক ম্যানেজার ওপেন</span></a>
+                    <a href="#phone-track" class="menu-item" onclick="showTip(event, 'phone-track')"><span class="tip-id">TIP 20</span><span class="tip-title">হারিয়ে যাওয়া ফোন ট্র্যাকিং</span></a>
+
+                    <a href="#malware-remove" class="menu-item" onclick="showTip(event, 'malware-remove')"><span class="tip-id">TIP 21</span><span class="tip-title">উইন্ডোজ ইন-বিল্ট ম্যালওয়্যার রিমুভার</span></a>
+                    <a href="#imei-check" class="menu-item" onclick="showTip(event, 'imei-check')"><span class="tip-id">TIP 22</span><span class="tip-title">মোবাইল আসল না নকল চেক</span></a>
+                    <a href="#shut-down-slide" class="menu-item" onclick="showTip(event, 'shut-down-slide')"><span class="tip-id">TIP 23</span><span class="tip-title">স্লাইড টু শাটডাউন বাটন</span></a>
+                    <a href="#data-saver" class="menu-item" onclick="showTip(event, 'data-saver')"><span class="tip-id">TIP 24</span><span class="tip-title">স্মার্টফোন ডাটা সেভিং মেথড</span></a>
+                    <a href="#auto-update" class="menu-item" onclick="showTip(event, 'auto-update')"><span class="tip-id">TIP 25</span><span class="tip-title">উইন্ডোজ অটো আপডেট বন্ধ করা</span></a>
+
+                    <a href="#hardware-info" class="menu-item" onclick="showTip(event, 'hardware-info')"><span class="tip-id">TIP 26</span><span class="tip-title">পিসির ফুল স্পেসিফিকেশন দেখা</span></a>
+                    <a href="#emergency-sos" class="menu-item" onclick="showTip(event, 'emergency-sos')"><span class="tip-id">TIP 27</span><span class="tip-title">মোবাইল ইমার্জেন্সি SOS সেটআপ</span></a>
+                    <a href="#screen-record" class="menu-item" onclick="showTip(event, 'screen-record')"><span class="tip-id">TIP 28</span><span class="tip-title">ফ্রি উইন্ডোজ স্ক্রিন রেকর্ডার</span></a>
+                    <a href="#spam-call" class="menu-item" onclick="showTip(event, 'spam-call')"><span class="tip-id">TIP 29</span><span class="tip-title">অযাচিত স্প্যাম কল ব্লক ট্রিক</span></a>
+                    <a href="#corrupt-file" class="menu-item" onclick="showTip(event, 'corrupt-file')"><span class="tip-id">TIP 30</span><span class="tip-title">উইন্ডোজ ড্যামেজ ফাইল ফিক্স</span></a>
+
+                    <a href="#app-cloner" class="menu-item" onclick="showTip(event, 'app-cloner')"><span class="tip-id">TIP 31</span><span class="tip-title">এক ফোনে দুটি হোয়াটসঅ্যাপ ব্যবহার</span></a>
+                    <a href="#ip-check" class="menu-item" onclick="showTip(event, 'ip-check')"><span class="tip-id">TIP 32</span><span class="tip-title">পিসির লোকাল আইপি অ্যাড্রেস</span></a>
+                    <a href="#dark-mode-all" class="menu-item" onclick="showTip(event, 'dark-mode-all')"><span class="tip-id">TIP 33</span><span class="tip-title">সব সাইটে ফোর্স ডার্ক মোড</span></a>
+                    <a href="#keyboard-mouse" class="menu-item" onclick="showTip(event, 'keyboard-mouse')"><span class="tip-id">TIP 34</span><span class="tip-title">কীবোর্ড দিয়ে মাউস কার্সার নিয়ন্ত্রণ</span></a>
+                    <a href="#smart-lock" class="menu-item" onclick="showTip(event, 'smart-lock')"><span class="tip-id">TIP 35</span><span class="tip-title">অ্যান্ড্রয়েড স্মার্ট লক ট্রিক</span></a>
+
+                    <a href="#pdf-to-word" class="menu-item" onclick="showTip(event, 'pdf-to-word')"><span class="tip-id">TIP 36</span><span class="tip-title">অফলাইনে PDF থেকে Word ফাইল</span></a>
+                    <a href="#guest-mode" class="menu-item" onclick="showTip(event, 'guest-mode')"><span class="tip-id">TIP 37</span><span class="tip-title">অ্যান্ড্রয়েড গেস্ট মোড সক্রিয়করণ</span></a>
+                    <a href="#fast-boot" class="menu-item" onclick="showTip(event, 'fast-boot')"><span class="tip-id">TIP 38</span><span class="tip-title">উইন্ডোজ ফাস্ট বুট এনাবল</span></a>
+                    <a href="#notification-history" class="menu-item" onclick="showTip(event, 'notification-history')"><span class="tip-id">TIP 39</span><span class="tip-title">ডিলিট হওয়া মেসেজ ও নোটিফিকেশন</span></a>
+                    <a href="#ping-test" class="menu-item" onclick="showTip(event, 'ping-test')"><span class="tip-id">TIP 40</span><span class="tip-title">নেটওয়ার্ক পিং (Ping) লাইভ টেস্ট</span></a>
+
+                    <a href="#safe-mode" class="menu-item" onclick="showTip(event, 'safe-mode')"><span class="tip-id">TIP 41</span><span class="tip-title">উইন্ডোজ সেফ মোড অন করার নিয়ম</span></a>
+                    <a href="#focus-mode" class="menu-item" onclick="showTip(event, 'focus-mode')"><span class="tip-id">TIP 42</span><span class="tip-title">অ্যান্ড্রয়েড ফোকাস মোড ট্রিক</span></a>
+                    <a href="#mac-address" class="menu-item" onclick="showTip(event, 'mac-address')"><span class="tip-id">TIP 43</span><span class="tip-title">পিসির ফিজিক্যাল MAC অ্যাড্রেস</span></a>
+                    <a href="#photo-compress" class="menu-item" onclick="showTip(event, 'photo-compress')"><span class="tip-id">TIP 44</span><span class="tip-title">কোয়ালিটি ঠিক রেখে ছবি কমপ্রেস</span></a>
+                    <a href="#drive-hide" class="menu-item" onclick="showTip(event, 'drive-hide')"><span class="tip-id">TIP 45</span><span class="tip-title">উইন্ডোজের পুরো হার্ডডিস্ক ড্রাইভ হাইড</span></a>
+
+                    <a href="#find-my-device-pc" class="menu-item" onclick="showTip(event, 'find-my-device-pc')"><span class="tip-id">TIP 46</span><span class="tip-title">ল্যাপটপ ট্র্যাকিং অন করা</span></a>
+                    <a href="#screen-pinning" class="menu-item" onclick="showTip(event, 'screen-pinning')"><span class="tip-id">TIP 47</span><span class="tip-title">মোবাইল স্ক্রিন পিনিং সিকিউরিটি</span></a>
+                    <a href="#hibernation" class="menu-item" onclick="showTip(event, 'hibernation')"><span class="tip-id">TIP 48</span><span class="tip-title">উইন্ডোজ হাইবারনেশন অপশন চালু</span></a>
+                    <a href="#text-from-img" class="menu-item" onclick="showTip(event, 'text-from-img')"><span class="tip-id">TIP 49</span><span class="tip-title">ছবি থেকে বাংলা টেক্সট কনভার্ট</span></a>
+                    <a href="#hosts-block" class="menu-item" onclick="showTip(event, 'hosts-block')"><span class="tip-id">TIP 50</span><span class="tip-title">সফটওয়্যার ছাড়া নির্দিষ্ট ওয়েবসাইট ব্লক</span></a>
+                </div>
             </div>
         </aside>
 
-        <!-- COLUMN 2: ডানদিকের প্রধান কন্টেন্ট বা ডিটেইলস প্রদর্শন প্যানেল -->
         <main class="details-panel" id="detailsPanel">
-
-            <!-- ড্যাশবোর্ডের ডিফল্ট হোম স্ক্রিন ইনফরমেশন সেকশন -->
+            <!-- হোম সেকশন -->
             <section id="home-section" class="tip-content-section active">
                 <span class="category-tag">All-in-One Guide</span>
                 <h2 class="tip-detail-title">প্রযুক্তিগত সমস্যার সহজ সমাধান ও মাস্টার ড্যাশবোর্ড!</h2>
-                
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-wand-magic-sparkles"></i> এখানে আপনি কী কী টিপস ও ট্রিকস পাবেন?</h3>
                     <p>আমাদের এই ড্যাশবোর্ডে প্রাত্যহিক জীবনের সকল ডিজিটাল ডিভাইস ও প্রযুক্তির জটিল সমস্যাগুলোর ওয়ান-ক্লিক এবং শর্টকাট গাইডলাইন দেওয়া হয়েছে। নিচে প্রধান ক্যাটাগরিগুলো দেওয়া হলো:</p>
-                    
-                    <!-- ফিচারের ৩ কলাম বিশিষ্ট গ্রিড লেআউট -->
                     <div class="feature-grid">
                         <div class="feature-item">
                             <i class="fa-solid fa-desktop"></i>
                             <h4>কম্পিউটার সমাধান</h4>
-                            <p>উইন্ডোজের সিক্রেট ট্রিকস, স্লো পিসি ফাস্ট করা, ও কমান্ড প্রম্পট (CMD) শর্টকাট সমাধান।</p>
+                            <p>উইন্ডোজের সিক্রেট ট্রিকস, স্লো পিসি ফাস্ট করা, ও কমান্ড প্রম্পট (CMD) শর্টকাট সমাধান。</p>
                         </div>
                         <div class="feature-item">
                             <i class="fa-solid fa-mobile-screen-button"></i>
                             <h4>মোবাইল ট্রিকস</h4>
-                            <p>স্মার্টফোনের হিডেন ফোল্ডার আনলক, স্টোরেজ সমস্যা দূরীকরণ ও অ্যাপস অপ্টিমাইজেশন গাইড।</p>
+                            <p>স্মার্টফোনের হিডেন ফোল্ডার আনলক, স্টোরেজ সমস্যা দূরীকরণ ও অ্যাপস অপ্টিমাইজেশন গাইড。</p>
                         </div>
                         <div class="feature-item">
                             <i class="fa-solid fa-screwdriver-wrench"></i>
                             <h4>অন্যান্য টিপস</h4>
-                            <p>নেটওয়ার্কিং সেটআপ, ল্যান কানেকশন, পেনড্রাইভ ফিক্সিং ও হার্ডওয়্যার ড্রাইভারের ইনস্টলেশন ট্রিকস।</p>
+                            <p>নেটওয়ার্কিং সেটআপ, ল্যান কানেকশন, পেনড্রাইভ ফিক্সিং ও হার্ডওয়্যার ড্রাইভারের ইনস্টলেশন ট্রিকস。</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- ইউজার গাইডলাইনের নির্দেশনাবলী কার্ড -->
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
                     <ul class="step-list">
@@ -706,229 +733,501 @@
                 </div>
             </section>
 
-            <!-- TIP 01: পেনড্রাইভ শর্টকাট রিকভারি কন্টেন্ট এরিয়া -->
+            <!-- ১ থেকে ৫ পূর্বের কন্টেন্ট সেকশন -->
             <section id="shortcut-recovery" class="tip-content-section">
                 <span class="category-tag">Storage & Fix</span>
                 <h2 class="tip-detail-title">পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
-                
-                <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: মাঝারি</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span>
-                    <span><i class="fa-solid fa-tags"></i> USB, Antivirus</span>
-                </div>
-
+                <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
                 <div class="instruction-card">
-                    <h3><i class="fa-solid fa-circle-play"></i>Pendrive Shortcut/Hide/Unhide সমস্যা ও সমাধান</h3>
-                    <p>পেনড্রাইভে ভাইরাস ঢুকে প্রায়শই সমস্ত প্রয়োজনীয় ফাইলকে ওয়ান-ক্লিক শর্টকাটে রূপান্তর করে ফেলে এবং মূল ফাইলগুলো হাইড করে দেয়। কোনো থার্ড-পার্টি সফটওয়্যার ছাড়াই এটি ঠিক করা সম্ভব।</p>
-                    
-                    <ul class="step-list">
-                        <li>পেনড্রাইভটি কম্পিউটারে প্লাগ করুন এবং ড্রাইভ লেটারটি দেখে নিন (যেমন: <b>F:</b>)।</li>
-                        <li>উইন্ডোজ সার্চ বারে গিয়ে <b>CMD</b> লিখে রাইট ক্লিক করে <b>Run as Administrator</b> হিসেবে ওপেন করুন।</li>
-                        <li>নিচের কোডটি হুবহু কপি করুন এবং কোডের <b>F:</b> অক্ষরের জায়গায় আপনার পেনড্রাইভের লেটারটি বসিয়ে এন্টার চাপুন।</li>
-                    </ul>
-
-                    <!-- কোড ও ডাটা কপির বক্স ১ -->
-                    <div class="code-box">
-                        <span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span>
-                        <button class="copy-btn" onclick="copyText('cmdCode1', event)">কপি করুন</button>
-                    </div>
-
-                    <ul class="step-list" style="margin-top: 15px;">
-                        <li>Pendrive Unhide হওয়ার পর System Volume Information ফোল্ডারটি হাইড করে রাখুন, ডিলিট করার কোনো প্রয়োজন নেই।</li>
-                        <li>আবার আপনার <b>Command Prompt (CMD)</b> খুলে নিচের কমান্ডটি দিয়ে সিস্টেম ফোল্ডারটি প্রটেক্ট করুন:</li>
-                    </ul>
-
-                    <!-- কোড ও ডাটা কপির বক্স ২ -->
-                    <div class="code-box">
-                        <span class="code-text" id="ipPC_sys">F: attrib +h +s "System Volume Information"</span>
-                        <button class="copy-btn" onclick="copyText('ipPC_sys', event)">কপি করুন</button>
-                    </div>
-
-                    <div class="note-box">
-                        <h4>💡 প্রো টিপ</h4>
-                        <p>এই কমান্ড রান করার পর পেনড্রাইভে আপনার সমস্ত মূল ফাইল ফিরে পাবেন। শর্টকাট ফাইলগুলো ম্যানুয়ালি Shift+Delete চেপে স্থায়ীভাবে মুছে দিন।</p>
-                    </div>
+                    <h3><i class="fa-solid fa-circle-play"></i> Pendrive Shortcut/Hide সমস্যা</h3>
+                    <p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</p>
+                    <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span><button class="copy-btn" onclick="copyText('cmdCode1', event)">কপি করুন</button></div>
                 </div>
             </section>
 
-            <!-- TIP 02: ল্যান কেবল কানেকশন কন্টেন্ট এরিয়া -->
             <section id="multi-pc-connect" class="tip-content-section">
                 <span class="category-tag">Networking</span>
                 <h2 class="tip-detail-title">LAN কেবল দিয়ে একাধিক পিসি কানেক্ট করার পদ্ধতি</h2>
-                
-                <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: অ্যাডভান্সড</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ৫ মিনিট</span>
-                    <span><i class="fa-solid fa-tags"></i> LAN, Sharing</span>
-                </div>
-
+                <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> লেভেল: অ্যাডভান্সড</span></div>
                 <div class="instruction-card">
-                    <h3><i class="fa-solid fa-network-wired"></i> স্টেপ-বাই-স্টেপ কানেকশন</h3>
-                    <p>ইন্টারনেট ছাড়াই দুটি কম্পিউটারের মধ্যে দ্রুত ফাইল আদান-প্রদান করতে একটি সাধারণ ইথারনেট (LAN) কেবল ব্যবহার করতে পারেন।</p>
-                    
-                    <ul class="step-list">
-                        <li>উভয় পিসিকে একটি LAN কেবল দিয়ে যুক্ত করুন।</li>
-                        <li>১ম পিসিতে গিয়ে IPv4 সেটিংসে নিচের আইপিটি বসান:</li>
-                    </ul>
-
-                    <div class="code-box">
-                        <span class="code-text" id="ipPC1">192.168.1.1</span>
-                        <button class="copy-btn" onclick="copyText('ipPC1', event)">কপি করুন</button>
-                    </div>
-
-                    <ul class="step-list" style="margin-top: 15px;">
-                        <li>২য় পিসিতে গিয়ে IPv4 সেটিংসে এই আইপিটি বসান:</li>
-                    </ul>
-
-                    <div class="code-box">
-                        <span class="code-text" id="ipPC2">192.168.1.2</span>
-                        <button class="copy-btn" onclick="copyText('ipPC2', event)">কপি করুন</button>
-                    </div>
+                    <p>১ম পিসিতে ইথারনেট আইপি সেট করুন:</p>
+                    <div class="code-box"><span class="code-text" id="ipPC1">192.168.1.1</span><button class="copy-btn" onclick="copyText('ipPC1', event)">কপি করুন</button></div>
+                    <p style="margin-top:15px;">২য় পিসিতে ইথারনেট আইপি সেট করুন:</p>
+                    <div class="code-box"><span class="code-text" id="ipPC2">192.168.1.2</span><button class="copy-btn" onclick="copyText('ipPC2', event)">কপি করুন</button></div>
                 </div>
             </section>
 
-            <!-- TIP 03: প্রিন্টার সেটআপ কন্টেন্ট এরিয়া -->
             <section id="printer-setup" class="tip-content-section">
                 <span class="category-tag">Hardware</span>
                 <h2 class="tip-detail-title">যেকোনো প্রিন্টার ড্রাইভার পারফেক্টলি সেটআপ করুন</h2>
-                
-                <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: সহজ</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
-                    <span><i class="fa-solid fa-tags"></i> Printer, Drivers</span>
-                </div>
-
                 <div class="instruction-card">
-                    <h3><i class="fa-solid fa-print"></i> সঠিক সেটআপ গাইডলাইন</h3>
-                    <p>সঠিক নিয়মে ড্রাইভার সেটআপ দেওয়া না হলে প্রিন্টার কম্পিউটারে কাজ করে না।</p>
-                    <ul class="step-list">
-                        <li>প্রিন্টারটি সংযোগ না করেই প্রথমে অফিশিয়াল সাইট থেকে ড্রাইভার নামিয়ে নিন।</li>
-                        <li>সেটআপ ফাইলটি রান করে নির্দেশনা অনুসরণ করুন, যখন ইউএসবি প্লাগ করতে বলবে ঠিক তখনই কেবলটি যুক্ত করুন।</li>
-                    </ul>
+                    <p>প্রিন্টারটি সংযোগ না করেই প্রথমে অফিশিয়াল সাইট থেকে ড্রাইভার নামিয়ে নিন। সেটআপ করার সময় স্ক্রিনে যখন বলবে, তখনই কেবল যুক্ত করুন।</p>
                 </div>
             </section>
 
-            <!-- TIP 04: পিসি স্পিডআপ ট্রিক কন্টেন্ট এরিয়া -->
             <section id="pc-speedup" class="tip-content-section">
                 <span class="category-tag">System Optimization</span>
                 <h2 class="tip-detail-title">কম্পিউটারের স্পিড রকেটের মতো বৃদ্ধির জন্য মেগা টিপস</h2>
-                
-                <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: সহজ</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ৩ মিনিট</span>
-                    <span><i class="fa-solid fa-tags"></i> Speed, Storage, Temp</span>
-                </div>
-
                 <div class="instruction-card">
-                    <h3><i class="fa-solid fa-gauge-high"></i> জাঙ্ক ফাইল এবং টেম্পোরারি ফাইল রিমুভ</h3>
-                    <p>পিসিতে জমতে থাকা অপ্রয়োজনীয় জাঙ্ক ফাইল রিমুভ করার জন্য নিচে কমান্ডগুলো দেওয়া হলো:</p>
-                    
-                    <div class="code-box">
-                        <span class="code-text" id="speedCode1">%temp%</span>
-                        <button class="copy-btn" onclick="copyText('speedCode1', event)">কপি করুন</button>
-                    </div>
-                    
-                    <div class="code-box">
-                        <span class="code-text" id="speedCode2">prefetch</span>
-                        <button class="copy-btn" onclick="copyText('speedCode2', event)">কপি করুন</button>
-                    </div>
+                    <p>Run ডায়ালগ বক্সে (Win + R) গিয়ে এই কমান্ডগুলো দিয়ে ফাইল ডিলিট করুন:</p>
+                    <div class="code-box"><span class="code-text" id="speedCode1">%temp%</span><button class="copy-btn" onclick="copyText('speedCode1', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="speedCode2">prefetch</span><button class="copy-btn" onclick="copyText('speedCode2', event)">কপি করুন</button></div>
                 </div>
             </section>
 
-            <!-- TIP 05: উইন্ডোজ গড মোড অ্যাক্টিভেশন কন্টেন্ট এরিয়া -->
             <section id="god-mode" class="tip-content-section">
                 <span class="category-tag">Windows Secret</span>
                 <h2 class="tip-detail-title">উইন্ডোজ গড মোড (God Mode) অ্যাক্টিভেশন ট্রিক</h2>
-                
-                <div class="meta-info">
-                    <span><i class="fa-solid fa-circle-info"></i> লেভেল: এক্সপার্ট</span>
-                    <span><i class="fa-solid fa-clock"></i> সময়: ১ মিনিট</span>
-                    <span><i class="fa-solid fa-tags"></i> Windows, Shortcut</span>
-                </div>
-
                 <div class="instruction-card">
-                    <h3><i class="fa-solid fa-mask"></i> এক ফোল্ডারে সব কন্ট্রোল</h3>
-                    <p>উইন্ডোজের সিক্রেট কন্ট্রোল প্যানেল ফোল্ডার বানানোর কোড:</p>
-                    
-                    <div class="code-box">
-                        <span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span>
-                        <button class="copy-btn" onclick="copyText('godCode', event)">কপি করুন</button>
-                    </div>
+                    <p>ডেস্কটপে একটি নতুন ফোল্ডার তৈরি করে তার নাম হুবহু নিচের কোডটি দিন:</p>
+                    <div class="code-box"><span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span><button class="copy-btn" onclick="copyText('godCode', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <!-- ৬ থেকে ৫০ নতুন কন্টেন্ট সেকশন -->
+            <section id="dns-flush" class="tip-content-section">
+                <span class="category-tag">Internet</span>
+                <h2 class="tip-detail-title">ইন্টারনেট কানেক্টিভিটি ও DNS ক্যাশ ফ্লাশ করার নিয়ম</h2>
+                <div class="instruction-card">
+                    <p>ইন্টারনেট বা ব্রাউজিং স্লো হলে CMD এডমিন মোডে খুলে এই কমান্ডটি রান করুন:</p>
+                    <div class="code-box"><span class="code-text" id="c6">ipconfig /flushdns</span><button class="copy-btn" onclick="copyText('c6', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="win-key" class="tip-content-section">
+                <span class="category-tag">Windows</span>
+                <h2 class="tip-detail-title">পিসিতে সচল উইন্ডোজের অরিজিনাল লাইসেন্স কি দেখা</h2>
+                <div class="instruction-card">
+                    <p>আপনার পিসির মাদারবোর্ডে সেভ থাকা অফিশিয়াল জেনুইন উইন্ডোজ প্রোডাক্ট কি বের করার কমান্ড:</p>
+                    <div class="code-box"><span class="code-text" id="c7">wmic path softwarelicensingservice get OA3xOriginalProductKey</span><button class="copy-btn" onclick="copyText('c7', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="chrome-ram" class="tip-content-section">
+                <span class="category-tag">Browser</span>
+                <h2 class="tip-detail-title">ক্রোম ব্রাউজারের অতিরিক্ত RAM খাওয়া বন্ধ করার উপায়</h2>
+                <div class="instruction-card">
+                    <p>Chrome Settings > Performance-এ যান। সেখানে <b>Memory Saver</b> অপশনটি অন করে দিন। এটি ব্যাকগ্রাউন্ড ট্যাবের মেমোরি রিলিজ করে পিসি ফাস্ট রাখবে।</p>
+                </div>
+            </section>
+
+            <section id="startup-apps" class="tip-content-section">
+                <span class="category-tag">System</span>
+                <h2 class="tip-detail-title">পিসি অন হওয়ার সময় স্লোনেস বা স্টার্টআপ অ্যাপস বন্ধ</h2>
+                <div class="instruction-card">
+                    <p>Ctrl + Shift + Esc চেপে Task Manager-এ যান। <b>Startup Apps</b> ট্যাবে ক্লিক করে অপ্রয়োজনীয় অ্যাপসগুলো রাইট ক্লিক করে Disable করে দিন।</p>
+                </div>
+            </section>
+
+            <section id="folder-lock" class="tip-content-section">
+                <span class="category-tag">Security</span>
+                <h2 class="tip-detail-title">কোনো সফটওয়্যার ছাড়া উইন্ডোজ ফোল্ডার হাইড ট্রিক</h2>
+                <div class="instruction-card">
+                    <p>CMD এর মাধ্যমে ফোল্ডারকে এমনভাবে গায়েব করুন যা সাধারণ Unhide করলেও আসবে না:</p>
+                    <div class="code-box"><span class="code-text" id="c10">attrib +h +s +r "Folder_Name"</span><button class="copy-btn" onclick="copyText('c10', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="android-developer" class="tip-content-section">
+                <span class="category-tag">Mobile</span>
+                <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনের সিক্রেট ডেভেলপার মোড অন করা</h2>
+                <div class="instruction-card">
+                    <p>মোবাইলের Settings > About Phone-এ যান। সেখানে <b>Build Number</b> এর ওপর টানা ৭ বার ক্লিক করুন। ডেভেলপার অপশনটি এনাবল হয়ে যাবে।</p>
+                </div>
+            </section>
+
+            <section id="battery-health" class="tip-content-section">
+                <span class="category-tag">Laptop</span>
+                <h2 class="tip-detail-title">ল্যাপটপের অরিজিনাল ব্যাটারি হেলথ রিপোর্ট বের করা</h2>
+                <div class="instruction-card">
+                    <p>CMD ওপেন করে নিচের কোডটি পেস্ট করলে ডিরেক্ট একটি HTML ব্যাটারি লাইফ ফাইল জেনারেট হবে:</p>
+                    <div class="code-box"><span class="code-text" id="c12">powercfg /batteryreport</span><button class="copy-btn" onclick="copyText('c12', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="youtube-bg" class="tip-content-section">
+                <span class="category-tag">Mobile Trick</span>
+                <h2 class="tip-detail-title">প্রিমিয়াম ছাড়া মোবাইল স্ক্রিন অফ রেখে ইউটিউব শোনা</h2>
+                <div class="instruction-card">
+                    <p>ফোনের Google Chrome ব্রাউজারে গিয়ে YouTube ওপেন করুন এবং থ্রি-ডট থেকে <b>Desktop Site</b> করুন। গান প্লে করে মিনিমাইজ করুন এবং নোটিফিকেশন বার থেকে প্লে চাপুন।</p>
+                </div>
+            </section>
+
+            <section id="wifi-pass" class="tip-content-section">
+                <span class="category-tag">WiFi</span>
+                <h2 class="tip-detail-title">পিসিতে কানেক্টেড থাকা ওয়াইফাই এর পাসওয়ার্ড বের করা</h2>
+                <div class="instruction-card">
+                    <p>কমান্ড প্রম্পট (CMD) এডমিন মোডে ওপেন করে ওয়াইফাই এর সংরক্ষিত পাসওয়ার্ড দেখতে রান করুন (WiFi_Name এর জায়গায় নাম লিখুন):</p>
+                    <div class="code-box"><span class="code-text" id="c14">netsh wlan show profile name="WiFi_Name" key=clear</span><button class="copy-btn" onclick="copyText('c14', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="clear-cache" class="tip-content-section">
+                <span class="category-tag">Mobile</span>
+                <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনের ইন্টারনাল স্টোরেজ ও ক্যাশ ফাইল ক্লিয়ার</h2>
+                <div class="instruction-card">
+                    <p>ফোনের Settings > Storage > Apps-এ যান। ফেইসবুক, ইউটিউবের মতো বড় অ্যাপসগুলোর ভেতরে ঢুকে <b>Clear Cache</b> করুন। কোনো ডাটা হারানো ছাড়াই জিবি জিবি মেমোরি খালি হবে।</p>
+                </div>
+            </section>
+
+            <section id="virtual-ram" class="tip-content-section">
+                <span class="category-tag">PC Speed</span>
+                <h2 class="tip-detail-title">হার্ডডিস্ক বা SSD ব্যবহার করে পিসির ভার্চুয়াল RAM বৃদ্ধি</h2>
+                <div class="instruction-card">
+                    <p>This PC > Properties > Advanced System Settings > Performance Settings > Advanced > Virtual Memory Change-এ যান। Automatically টিক তুলে দিয়ে কাস্টম সাইজ সেট করুন।</p>
+                </div>
+            </section>
+
+            <section id="clipboard-history" class="tip-content-section">
+                <span class="category-tag">Windows</span>
+                <h2 class="tip-detail-title">উইন্ডোজের একাদিক কপি করা ডাটা ও ক্লিপবোর্ড হিস্ট্রি</h2>
+                <div class="instruction-card">
+                    <p>কীবোর্ড থেকে একসঙ্গে <b>Windows Key + V</b> প্রেস করুন。 একটি পপআপ আসবে, সেখান থেকে Turn On করুন। এখন থেকে অতীতে কপি করা সব টেক্সটের লিস্ট এখানে পাবেন।</p>
+                </div>
+            </section>
+
+            <section id="whatsapp-web" class="tip-content-section">
+                <span class="category-tag">WhatsApp</span>
+                <h2 class="tip-detail-title">মোবাইল অফলাইনে রেখেও কম্পিউটারে হোয়াটসঅ্যাপ চালানো</h2>
+                <div class="instruction-card">
+                    <p>হোয়াটসঅ্যাপের <b>Linked Devices</b> ফিচার ব্যবহার করে একবার কিউআর কোড স্ক্যান করে নিলে মোবাইল সম্পূর্ণ বন্ধ বা ইন্টারনেটহীন থাকলেও কম্পিউটারে চ্যাট করা যাবে।</p>
+                </div>
+            </section>
+
+            <section id="task-mgr" class="tip-content-section">
+                <span class="category-tag">Shortcuts</span>
+                <h2 class="tip-detail-title">মাউস হ্যাং হলে সরাসরি টাস্ক ম্যানেজার ওপেন করার শর্টকাট</h2>
+                <div class="instruction-card">
+                    <p>উইন্ডোজ পিসি হঠাৎ ফ্রিজ বা হ্যাং হয়ে গেলে সরাসরি কীবোর্ড থেকে এই বাটন তিনটি একসঙ্গে চাপুন:</p>
+                    <div class="code-box"><span class="code-text" id="c19">Ctrl + Shift + Esc</span><button class="copy-btn" onclick="copyText('c19', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="phone-track" class="tip-content-section">
+                <span class="category-tag">Mobile Security</span>
+                <h2 class="tip-detail-title">হারিয়ে যাওয়া অ্যান্ড্রয়েড ফোন গুগল দিয়ে ট্র্যাকিং ও লক</h2>
+                <div class="instruction-card">
+                    <p>যেকোনো ব্রাউজার থেকে <b>google.com/android/find</b> লিংকে যান। আপনার হারিয়ে যাওয়া ফোনের জিমেইল দিয়ে লগইন করে লাইভ লোকেশন দেখা ও রিমোটলি ডাটা ডিলিট করতে পারবেন।</p>
+                </div>
+            </section>
+
+            <section id="malware-remove" class="tip-content-section">
+                <span class="category-tag">Security</span>
+                <h2 class="tip-detail-title">উইন্ডোজের নিজস্ব হিডেন মালিশিয়াস ম্যালওয়্যার রিমুভার</h2>
+                <div class="instruction-card">
+                    <p>উইন্ডোজে একটি ইন-বিল্ট ভাইরাস স্ক্যানার টুল থাকে। এটি ওপেন করতে Run বক্সে (Win + R) গিয়ে নিচের কোডটি লিখে এন্টার দিন:</p>
+                    <div class="code-box"><span class="code-text" id="c21">mrt</span><button class="copy-btn" onclick="copyText('c21', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="imei-check" class="tip-content-section">
+                <span class="category-tag">Mobile</span>
+                <h2 class="tip-detail-title">নতুন বা পুরাতন স্মার্টফোনটি আসল নাকি ক্লোন (নকল) চেক</h2>
+                <div class="instruction-card">
+                    <p>আপনার ফোনের ডায়াল প্যাডে গিয়ে নিচের সিক্রেট কোডটি ডায়াল করে IMEI নম্বরটি সংগ্রহ করুন এবং তা অফিশিয়াল পোর্টালে ভেরিফাই করুন:</p>
+                    <div class="code-box"><span class="code-text" id="c22">*#06#</span><button class="copy-btn" onclick="copyText('c22', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="shut-down-slide" class="tip-content-section">
+                <span class="category-tag">Windows Secret</span>
+                <h2 class="tip-detail-title">ডেস্কটপে স্লাইড টু শাটডাউন (Slide to Shutdown) বাটন তৈরি</h2>
+                <div class="instruction-card">
+                    <p>ডেস্কটপে রাইট ক্লিক করে New > Shortcut-এ যান এবং লোকেশন বক্সে নিচের টেক্সটটি পেস্ট করে ফিনিশ করুন:</p>
+                    <div class="code-box"><span class="code-text" id="c23">slidetoshutdown.exe</span><button class="copy-btn" onclick="copyText('c23', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="data-saver" class="tip-content-section">
+                <span class="category-tag">Mobile Data</span>
+                <h2 class="tip-detail-title">মোবাইল ইন্টারনেট ডাটা দ্রুত শেষ হওয়া বন্ধ করার উপায়</h2>
+                <div class="instruction-card">
+                    <p>ফোনের Settings > Network > <b>Data Saver</b> অন করুন। এছাড়া Google Play Store এবং YouTube অ্যাপের ভেতর গিয়ে 'Auto-Update' ও 'Auto-Play' সম্পূর্ণ বন্ধ করে রাখুন।</p>
+                </div>
+            </section>
+
+            <section id="auto-update" class="tip-content-section">
+                <span class="category-tag">Windows</span>
+                <h2 class="tip-detail-title">উইন্ডোজ ১০/১১ অটোমেটিক আপডেট স্থায়ীভাবে বন্ধ করা</h2>
+                <div class="instruction-card">
+                    <p>Win + R চেপে লিখুন <b>services.msc</b>। এরপর নিচে স্ক্রোল করে "Windows Update" খুঁজে বের করুন, ডাবল ক্লিক করে Startup Type টি 'Disabled' করে দিন।</p>
+                </div>
+            </section>
+
+            <section id="hardware-info" class="tip-content-section">
+                <span class="category-tag">PC Info</span>
+                <h2 class="tip-detail-title">স프트ওয়্যার ছাড়া কম্পিউটারের পুরো হার্ডওয়্যার ইনফরমেশন দেখা</h2>
+                <div class="instruction-card">
+                    <p>আপনার কম্পিউটারের প্রসেসর, র‍্যাম, মাদারবোর্ড এবং গ্রাফিক্স কার্ডের লাইভ তথ্য এক ক্লিকে দেখার ডিরেক্ট রান কমান্ড:</p>
+                    <div class="code-box"><span class="code-text" id="c26">msinfo32</span><button class="copy-btn" onclick="copyText('c26', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="emergency-sos" class="tip-content-section">
+                <span class="category-tag">Mobile Safety</span>
+                <h2 class="tip-detail-title">বিপদকালীন সুরক্ষায় মোবাইলের ইমার্জেন্সি SOS সেটআপ</h2>
+                <div class="instruction-card">
+                    <p>Settings > Safety & Emergency > <b>Emergency SOS</b> চালু করুন। বিপদে পড়লে ফোনের পাওয়ার বাটন টানা ৫ বার প্রেস করলে বিশ্বস্ত নম্বরে অটোমেটিক লোকেশন ও মেসেজ চলে যাবে।</p>
+                </div>
+            </section>
+
+            <section id="screen-record" class="tip-content-section">
+                <span class="category-tag">Shortcuts</span>
+                <h2 class="tip-detail-title">কোনো থার্ড-পার্টি অ্যাপ ছাড়া উইন্ডোজ স্ক্রিন রেকর্ডার</h2>
+                <div class="instruction-card">
+                    <p>উইন্ডোজের ইন-বিল্ট এক্সবক্স গেম বার স্ক্রিন রেকর্ডার সচল করতে কীবোর্ড থেকে এই বাটনগুলো চাপুন:</p>
+                    <div class="code-box"><span class="code-text" id="c28">Windows Key + Alt + R</span><button class="copy-btn" onclick="copyText('c28', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="spam-call" class="tip-content-section">
+                <span class="category-tag">Mobile</span>
+                <h2 class="tip-detail-title">কোম্পানির বিরক্তিকর স্প্যাম কল ও প্রমোশনাল মেসেজ ব্লক</h2>
+                <div class="instruction-card">
+                    <p>অ্যান্ড্রয়ের ডিফল্ট Phone app > Settings > <b>Caller ID & Spam</b> অপশনে যান। সেখানে 'Filter Spam Calls' অন করে দিলে স্প্যাম কলগুলো আপনার ফোনে রিং হওয়া ছাড়াই ব্লক হবে।</p>
+                </div>
+            </section>
+
+            <section id="corrupt-file" class="tip-content-section">
+                <span class="category-tag">Windows Fix</span>
+                <h2 class="tip-detail-title">উইন্ডোজের মিসিং বা ড্যামেজড সিস্টেম ফাইল অটো-ফিক্স করা</h2>
+                <div class="instruction-card">
+                    <p>পিসি ঘন ঘন এরর দেখালে CMD রান অ্যাজ এডমিনিস্ট্রেটর হিসেবে চালু করে এই সিস্টেম ফাইল chekker কমান্ডটি রান করুন:</p>
+                    <div class="code-box"><span class="code-text" id="c30">sfc /scannow</span><button class="copy-btn" onclick="copyText('c30', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="app-cloner" class="tip-content-section">
+                <span class="category-tag">Mobile</span>
+                <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনে অফিশিয়ালি দুটি হোয়াটস্যাপ/ফেসবুক অ্যাপ</h2>
+                <div class="instruction-card">
+                    <p>ফোনের Settings > Apps > <b>Dual Apps / App Cloner</b> (ব্র্যান্ডভেদে নাম আলাদা হতে পারে) অপশনে গিয়ে হোয়াটসঅ্যাপ অন করে দিলেই স্ক্রিনে ক্লোন অ্যাপ চলে আসবে।</p>
+                </div>
+            </section>
+
+            <section id="ip-check" class="tip-content-section">
+                <span class="category-tag">Networking</span>
+                <h2 class="tip-detail-title">পিসির লোকাল আইপি (Local IP) এবং গেটওয়ে অ্যাড্রেস দেখা</h2>
+                <div class="instruction-card">
+                    <p>আপনার রাউটার বা লোকাল নেটওয়ার্কের সাথে যুক্ত থাকা পিসির ইন্টারনাল IP দেখতে CMD-তে লিখুন:</p>
+                    <div class="code-box"><span class="code-text" id="c32">ipconfig</span><button class="copy-btn" onclick="copyText('c32', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="dark-mode-all" class="tip-content-section">
+                <span class="category-tag">Browser</span>
+                <h2 class="tip-detail-title">গুগল ক্রোমের মাধ্যমে সব ওয়েবসাইটে জোরপূর্বক ডার্ক মোড</h2>
+                <div class="instruction-card">
+                    <p>ক্রোম ব্রাউজারের অ্যাড্রেস বারে গিয়ে লিখুন <code>chrome://flags</code> এবং অনুসন্ধান বক্সে <b>Auto Dark Mode for Web Contents</b> খুঁজে তা Enabled করে দিন।</p>
+                </div>
+            </section>
+
+            <section id="keyboard-mouse" class="tip-content-section">
+                <span class="category-tag">Accessibility</span>
+                <h2 class="tip-detail-title">মাউস নষ্ট হয়ে গেলে কীবোর্ডের মাধ্যমে কার্সার নিয়ন্ত্রণ</h2>
+                <div class="instruction-card">
+                    <p>উইন্ডোজের <b>Left Alt + Left Shift + Num Lock</b> একসাথে প্রেস করুন। একটি পপআপ আসবে, ইয়েস করুন। এখন কীবোর্ডের ডানদিকের নাম্বার প্যাড দিয়ে মাউস নাড়াতে পারবেন।</p>
+                </div>
+            </section>
+
+            <section id="smart-lock" class="tip-content-section">
+                <span class="category-tag">Mobile</span>
+                <h2 class="tip-detail-title">বাড়িতে বা নিরাপদ স্থানে মোবাইল অটো-আনলক রাখার ট্রিক</h2>
+                <div class="instruction-card">
+                    <p>Settings > Security > <b>Smart Lock</b> (বা Extend Unlock)-এ যান। সেখানে Trusted Places হিসেবে আপনার বাড়ি সিলেক্ট করলে নির্দিষ্ট স্থানে ফোন লক টাইপ করতে হবে না।</p>
+                </div>
+            </section>
+
+            <section id="pdf-to-word" class="tip-content-section">
+                <span class="category-tag">Office Tools</span>
+                <h2 class="tip-detail-title">কোনো ইন্টারনেট বা টুলস ছাড়া PDF থেকে Word ফাইলে কনভার্ট</h2>
+                <div class="instruction-card">
+                    <p>আপনার কম্পিউটারের <b>Microsoft Word</b> অ্যাপটি ওপেন করুন। এবার যেকোনো PDF ফাইলকে ড্র্যাগ অ্যান্ড ড্রপ করে সরাসরি ওয়ার্ডের ওপর ছেড়ে দিন। ফাইলটি অটো এডিটেবল টেক্সট হয়ে যাবে।</p>
+                </div>
+            </section>
+
+            <section id="guest-mode" class="tip-content-section">
+                <span class="category-tag">Mobile Privacy</span>
+                <h2 class="tip-detail-title">অন্য কাউকে ফোন দেওয়ার আগে 'গেস্ট মোড' অন করার নিয়ম</h2>
+                <div class="instruction-card">
+                    <p>মোবাইলের নোটিফিকেশন বার নামিয়ে প্রোফাইল আইকনে ক্লিক করে <b>Add Guest</b> সিলেক্ট করুন। ফোনটি একদম নতুনের মতো হয়ে যাবে, আপনার গ্যালারি বা পার্সোনাল মেসেজ কেউ দেখতে পাবে না।</p>
+                </div>
+            </section>
+
+            <section id="fast-boot" class="tip-content-section">
+                <span class="category-tag">PC Speed</span>
+                <h2 class="tip-detail-title">উইন্ডোজ ১০/১১ অপারেটিং সিস্টেমের ফাস্ট স্টার্টআপ অন</h2>
+                <div class="instruction-card">
+                    <p>Control Panel > Power Options > Choose what the power buttons do-তে যান। Change settings text-এ ক্লিক করে নিচে থাকা <b>Turn on fast startup</b> বক্সে টিক দিন।</p>
+                </div>
+            </section>
+
+            <section id="notification-history" class="tip-content-section">
+                <span class="category-tag">Mobile Settings</span>
+                <h2 class="tip-detail-title">অন্যের ডিলিট করে দেওয়া হোয়াটসঅ্যাপ বা মেসেঞ্জার বার্তা দেখা</h2>
+                <div class="instruction-card">
+                    <p>ফোনের Settings > Notifications > Advanced > <b>Notification History</b> অপশনে গিয়ে এটি চালু করে দিন。 এরপর কেউ মেসেজ ডিলিট করলেও তার রেকর্ড ২৪ ঘণ্টা পর্যন্ত এখানে থাকবে।</p>
+                </div>
+            </section>
+
+            <section id="ping-test" class="tip-content-section">
+                <span class="category-tag">Internet</span>
+                <h2 class="tip-detail-title">নেটওয়ার্ক বা গেম খেলার সময় পিং (Ping) লাইভ চেক করা</h2>
+                <div class="instruction-card">
+                    <p>আপনার ইন্টারনেট রেসপন্স টাইম বা পিং কত মিলিসেকেন্ড তা রিয়েল-টাইম মনিটর করার জন্য CMD তে রান করুন:</p>
+                    <div class="code-box"><span class="code-text" id="c40">ping google.com -t</span><button class="copy-btn" onclick="copyText('c40', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="safe-mode" class="tip-content-section">
+                <span class="category-tag">Windows Fix</span>
+                <h2 class="tip-detail-title">উইন্ডোজ ক্র্যাশ করলে ডিরেক্ট সেফ মোডে (Safe Mode) বুট করা</h2>
+                <div class="instruction-card">
+                    <p>পিসি অন করার সময় ক্রমাগত <b>F8 বা Shift + F8</b> কী প্রেস করতে থাকুন। অ্যাডভান্সড রিকভারি স্ক্রিন আসলে সেখান থেকে Safe Mode সিলেক্ট করে পিসি ট্রাবলশুট করতে পারবেন।</p>
+                </div>
+            </section>
+
+            <section id="focus-mode" class="tip-content-section">
+                <span class="category-tag">Mobile Productivity</span>
+                <h2 class="tip-detail-title">পড়াশোনা বা কাজের সময় ফেসবুক/ইউটিউবের নোটিফিকেশন অফ</h2>
+                <div class="instruction-card">
+                    <p>ফোনের Settings > Digital Wellbeing > <b>Focus Mode</b>-এ যান। ডিস্ট্র্যাক্ট করে এমন অ্যাপস (যেমন FB, Insta) সিলেক্ট করে টার্ন অন করুন। মোডটি সচল থাকা অবস্থায় ওই অ্যাপসগুলো সম্পূর্ণ পজ থাকবে।</p>
+                </div>
+            </section>
+
+            <section id="mac-address" class="tip-content-section">
+                <span class="category-tag">Networking</span>
+                <h2 class="tip-detail-title">ওয়াইফাই রাউটারে ফিল্টারিং এর জন্য পিসির MAC অ্যাড্রেস দেখা</h2>
+                <div class="instruction-card">
+                    <p>আপনার কম্পিউটারের ইউনিক নেটওয়ার্ক হার্ডওয়্যার আইডি বা ফিজিক্যাল ম্যাক অ্যাড্রেস এক লাইনে বের করার কমান্ড:</p>
+                    <div class="code-box"><span class="code-text" id="c43">getmac</span><button class="copy-btn" onclick="copyText('c43', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="photo-compress" class="tip-content-section">
+                <span class="category-tag">Other Tips</span>
+                <h2 class="tip-detail-title">কোয়ালিটি ঠিক রেখে মেগাপিক্সেল ছবির সাইজ কিলোবাইটে আনা</h2>
+                <div class="instruction-card">
+                    <p>কোনো অনলাইন টুল ছাড়া উইন্ডোজের ডিফল্ট <b>Paint</b> অ্যাপে ছবিটি ওপেন করুন। ওপরে থাকা 'Resize' অপশনে ক্লিক করে Percentage ১০০ থেকে কমিয়ে ৫০ বা আপনার প্রয়োজন অনুযায়ী দিয়ে সেভ এন্টার দিন।</p>
+                </div>
+            </section>
+
+            <section id="drive-hide" class="tip-content-section">
+                <span class="category-tag">Windows Secret</span>
+                <h2 class="tip-detail-title">উইন্ডোজ কম্পিউটারের ড্রাইভ (যেমন: D, E ড্রাইভ) লুকিয়ে ফেলা</h2>
+                <div class="instruction-card">
+                    <p>Start-এ রাইট ক্লিক করে <b>Disk Management</b>-এ যান। যে ড্রাইভটি লুকাতে চান তার ওপর রাইট ক্লিক করে 'Change Drive Letter and Paths' সিলেক্ট করে Remove-এ ক্লিক করুন। ড্রাইভটি হাইড হয়ে যাবে।</p>
+                </div>
+            </section>
+
+            <section id="find-my-device-pc" class="tip-content-section">
+                <span class="category-tag">Windows</span>
+                <h2 class="tip-detail-title">ল্যাপটপ চুরি বা হারিয়ে গেলে ট্র্যাক করার অপশন চালু করা</h2>
+                <div class="instruction-card">
+                    <p>Windows Settings > Privacy & Security > <b>Find my device</b> অপশনে গিয়ে এটি অন করে দিন। ল্যাপটপ হারিয়ে গেলে অন্য ডিভাইস থেকে মাইক্রোসফট অ্যাকাউন্টে লগইন করে সেটির শেষ লোকেশন দেখতে পাবেন।</p>
+                </div>
+            </section>
+
+            <section id="screen-pinning" class="tip-content-section">
+                <span class="category-tag">Mobile Security</span>
+                <h2 class="tip-detail-title">বাচ্চাদের হাতে ফোন দেওয়ার আগে স্ক্রিন অ্যাপ পিন সিকিউরিটি</h2>
+                <div class="instruction-card">
+                    <p>Settings > Security > Advanced > <b>App Pinning</b> অন করুন। এবার রিসেন্ট অ্যাপস স্ক্রিনে গিয়ে অ্যাপ আইকনে ক্লিক করে Pin করে দিন। লক না খোলা পর্যন্ত ওই নির্দিষ্ট অ্যাপ ছাড়া অন্য কোথাও যাওয়া যাবে না।</p>
+                </div>
+            </section>
+
+            <section id="hibernation" class="tip-content-section">
+                <span class="category-tag">Windows</span>
+                <h2 class="tip-detail-title">চলতি সব কাজ ওপেন রেখেই ল্যাপটপ জিরো ব্যাটারিতে অফ করা</h2>
+                <div class="instruction-card">
+                    <p>উইন্ডোজের পাওয়ার অপশনে <b>Hibernation</b> চালু করতে CMD এডমিন মোডে রান করে এই কমান্ডটি পেস্ট করুন। এর ফলে কম্পিউটার বন্ধ করলেও আগের সব ওপেন ফাইল সুরক্ষিত থাকবে:</p>
+                    <div class="code-box"><span class="code-text" id="c48">powercfg /hibernate on</span><button class="copy-btn" onclick="copyText('c48', event)">কপি করুন</button></div>
+                </div>
+            </section>
+
+            <section id="text-from-img" class="tip-content-section">
+                <span class="category-tag">Other Tips</span>
+                <h2 class="tip-detail-title">যেকোনো বই বা কাগজপত্রের ছবি থেকে সরাসরি বাংলা টেক্সট রূপান্তর</h2>
+                <div class="instruction-card">
+                    <p>আপনার মোবাইল বা পিসির ব্রাউজার থেকে **Google Lens** অথবা Google Keep ওপেন করুন। সেখানে ছবি আপলোড করে **Grab Image Text** অপশনে ক্লিক করলে মাত্র ১ সেকেন্ডে সব টেক্সট কপি করার উপযোগী হয়ে যাবে।</p>
+                </div>
+            </section>
+
+            <section id="hosts-block" class="tip-content-section">
+                <span class="category-tag">Security</span>
+                <h2 class="tip-detail-title">সফটওয়্যার ছাড়া পিসিতে যেকোনো অ্যাডাল্ট বা নির্দিষ্ট সাইট ব্লক</h2>
+                <div class="instruction-card">
+                    <p><code>C:\Windows\System32\drivers\etc</code> ফোল্ডারে যান এবং <b>hosts</b> ফাইলটি Notepad দিয়ে এডমিন মোডে ওপেন করুন। একদম নিচে <code>127.0.0.1 www.website.com</code> লিখে ফাইলটি সেভ করে দিন।</p>
                 </div>
             </section>
 
         </main>
     </div>
 
-    <!-- ইন্টারেক্টিভ জাভাস্ক্রিপ্ট কোড সেকশন -->
     <script>
-        /**
-         * ১. [থিম পরিবর্তন লজিক]
-         * এই ফাংশনটি টগল সুইচ অন/অফ করার উপর ভিত্তি করে HTML body ট্যাগে 'dark-theme' ক্লাস যুক্ত বা রিমুভ করে।
-         * ফলে সিএসএস (CSS) ভেরিয়েবল অনুযায়ী কালার স্কিম ইনস্ট্যান্ট পরিবর্তিত হয়ে যায়।
-         */
+        // ১. থিম পরিবর্তনের ফাংশন (চেক বক্স অন থাকলে ডার্ক-থিম ক্লাস যুক্ত হবে, নতুবা রিমুভ হবে)
         function toggleTheme(checkbox) {
             if (checkbox.checked) {
-                document.body.classList.add('dark-theme'); // সুইচ অন হলে ডার্ক মোড অন হবে
+                document.body.classList.add('dark-theme');
             } else {
-                document.body.classList.remove('dark-theme'); // সুইচ অফ হলে লাইট মোড অন হবে
+                document.body.classList.remove('dark-theme');
             }
         }
 
-        /**
-         * ২. [মেনু এবং সেকশন পরিবর্তন ফাংশন]
-         * বামদিকের কোনো মেনু আইটেমে ক্লিক করা হলে এই ফাংশনটি রান করে।
-         * এটি আগের একটিভ মেনু থেকে 'active' ক্লাস সরিয়ে দেয় এবং যেটিতে ক্লিক করা হয়েছে সেটিতে 'active' ক্লাস যোগ করে।
-         * একই সাথে ডানদিকের প্যানেলে নির্দিষ্ট ইনফরমেশন সেকশনটিকে দৃশ্যমান (Active) করে তোলে।
-         */
+        // ২. নির্দিষ্ট টিপস সেকশন দেখানোর ফাংশন (মেনু ক্লিকে একটি সক্রিয় করবে এবং বাকিগুলো হাইড করবে)
         function showTip(event, targetId) {
-            event.preventDefault(); // লিংকের ডিফল্ট পেজ রিফ্রেশ হওয়া বন্ধ করে
+            event.preventDefault(); // ক্লিকের ডিফল্ট অ্যাঙ্কর বিহেভিয়ার বন্ধ করার জন্য
             
-            // সব মেনু আইটেম থেকে 'active' ক্লাস রিমুভ করা হচ্ছে
+            // সব মেনু আইটেম থেকে অ্যাক্টিভ ক্লাস রিমুভ করা
             const menuItems = document.querySelectorAll('.menu-item');
             menuItems.forEach(item => item.classList.remove('active'));
             
-            // সব কন্টেন্ট সেকশন থেকে 'active' ক্লাস রিমুভ করে হাইড করা হচ্ছে
+            // সব টিপস বিবরণী সেকশন থেকে অ্যাক্টিভ ক্লাস রিমুভ করা
             const contentSections = document.querySelectorAll('.tip-content-section');
             contentSections.forEach(section => section.classList.remove('active'));
             
-            // বর্তমান ক্লিক করা মেনু আইটেমটিকে মার্ক করা হচ্ছে
+            // বর্তমান ক্লিক করা মেনু আইটেমটিকে অ্যাক্টিভ করা
             event.currentTarget.classList.add('active');
             
-            // ক্লিক করা মেনুর আইডি অনুযায়ী নির্দিষ্ট কন্টেন্ট সেকশন প্রদর্শন করা হচ্ছে
+            // টার্গেট আইডি অনুযায়ী ডানদিকের প্যানেলে কন্টেন্ট দৃশ্যমান করা এবং মোবাইল রেসপন্সিভ স্ক্রোল হ্যান্ডেল করা
             const activeSection = document.getElementById(targetId);
             if (activeSection) {
                 activeSection.classList.add('active');
                 
-                // মোবাইল রেসপনসিভনেস: স্ক্রিন ছোট হলে স্ক্রোল করে কন্টেন্টে নিয়ে যাবে, বড় স্ক্রিনে স্ক্রোল পজিশন টপে সেট হবে
                 if (window.innerWidth <= 768) {
                     activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
-                    document.getElementById('detailsPanel').scrollTop = 0;
+                    document.getElementById('detailsPanel').scrollTop = 0; // স্ক্রোল টপ পজিশনে নেওয়া
                 }
             }
         }
 
-        /**
-         * ৩. [ডায়নামিক কপি ফাংশন]
-         * এই ফাংশনটি নির্দিষ্ট একটি এলিমেন্টের ভেতরের কোড বা টেক্সট সরাসরি ইউজারের ক্লিপবোর্ডে কপি করে দেয়।
-         * কপি সফল হলে বাটনের লেখা সাময়িকভাবে পরিবর্তন করে সবুজ সংকেত (কপি হয়েছে! ✓) দেখায়।
-         */
+        // ৩. হোম মেনু ক্লিকে সাব-মেনু কন্টেইনার ফোল্ড/আনফোল্ড (Collapse) করার লজিক
+        function toggleMenuCollapse() {
+            const subMenu = document.getElementById('subMenuContainer');
+            const homeItem = document.getElementById('homeMenuItem');
+            
+            if (subMenu && homeItem) {
+                subMenu.classList.toggle('collapsed');
+                homeItem.classList.toggle('collapsed-mode');
+            }
+        }
+
+        // ৪. ক্লিপবোর্ডে টেক্সট/কমান্ড ওয়ান-ক্লিক কপি করার ফাংশন এবং সাকসেস মেসেজ ট্র্যাকিং
         function copyText(elementId, event) {
             const textElement = document.getElementById(elementId);
             if (textElement) {
                 const textToCopy = textElement.innerText;
-                // আধুনিক ব্রাউজারের Clipboard API ব্যবহার করে টেক্সট কপি করা হচ্ছে
                 navigator.clipboard.writeText(textToCopy).then(() => {
-                    const activeButton = event.currentTarget; // বর্তমানে ক্লিক করা বাটনটি ধরা হচ্ছে
+                    const activeButton = event.currentTarget;
                     const originalText = activeButton.innerText;
                     
-                    // বাটনটির স্টাইল সাময়িকভাবে সবুজ করা হচ্ছে
+                    // কপি সাকসেসফুল হলে বাটনের টেক্সট ও কালার সাময়িক পরিবর্তন করা
                     activeButton.innerText = "কপি হয়েছে! ✓";
                     activeButton.style.background = "#10b981"; 
                     activeButton.style.borderColor = "#10b981";
                     
-                    // ২ সেকেন্ড পর বাটনটিকে আবার আগের রূপ ও কালারে ফিরিয়ে আনা হচ্ছে
+                    // ২ সেকেন্ড পর বাটনটিকে পূর্বের স্বাভাবিক অবস্থায় ফিরিয়ে আনা
                     setTimeout(() => {
                         activeButton.innerText = originalText;
                         activeButton.style.background = ""; 
@@ -938,23 +1237,18 @@
             }
         }
 
-        /**
-         * ৪. [লাইভ সার্চ ফিল্টার লজিক]
-         * সার্চ বক্সে কিছু টাইপ করার সাথে সাথে এই লিসেনারটি চালু হয়।
-         * এটি ইনপুট করা অক্ষরের সাথে মেনু আইটেমগুলোর নামের তুলনা করে।
-         * যদি মিল খুঁজে পায় তবে মেনুটি দেখায়, মিল না পেলে সিএসএস 'display: none' করে হাইড করে দেয়।
-         */
+        // ৫. কি-আপ ইভেন্ট লিসেনার ব্যবহার করে লাইভ রিয়েল-টাইম মেনু সার্চিং লজিক
         document.getElementById('tipSearch').addEventListener('keyup', function() {
-            let filter = this.value.toUpperCase(); // কেস-সেন্সিটিভিটি এড়াতে সব লেখা আপারকেস করা হচ্ছে
-            let menuItems = document.querySelectorAll('.menu-item');
+            let filter = this.value.toUpperCase();
+            let menuItems = document.querySelectorAll('.sub-menu-container .menu-item');
 
+            // ইউজার ইনপুটের সাথে মিল থাকলে মেনু শো করবে, অমিল থাকলে হাইড (display: none) হবে
             menuItems.forEach(item => {
                 let text = item.querySelector('.tip-title').innerText;
-                // সার্চ কি-ওয়ার্ডের সাথে মেনুর লেখার ইন্ডেক্স চেক করা হচ্ছে
                 if (text.toUpperCase().indexOf(filter) > -1) {
-                    item.style.display = ""; // মিল থাকলে মেনু প্রদর্শিত হবে
+                    item.style.display = "";
                 } else {
-                    item.style.display = "none"; // মিল না থাকলে মেনু লুকিয়ে ফেলা হবে
+                    item.style.display = "none";
                 }
             });
         });
