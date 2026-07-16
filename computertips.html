@@ -252,7 +252,7 @@
         .menu-list {
             overflow-y: auto;
             flex-grow: 1;
-            padding: 10px 0;
+            padding: 0 0 10px 0; /* প্যাডিং উপরে ০ করা হয়েছে যাতে স্টিকি এলিমেন্ট গ্যাপ না তৈরি করে */
         }
 
         .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
@@ -285,6 +285,14 @@
             background: rgba(59, 130, 246, 0.08);
             color: var(--text-main);
             border-left-color: var(--accent-color);
+        }
+
+        /* ১, ২, ৩ নম্বর আপডেট: হোম মেনুটিকে টপে লক, z-index এবং সলিড ব্যাকগ্রাউন্ড সেট */
+        #homeMenuItem {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--sidebar-bg); /* সলিড থিম ব্যাকগ্রাউন্ড */
         }
 
         .menu-item .tip-id {
@@ -582,6 +590,10 @@
             }
             .workspace { flex-direction: column; height: auto; }
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+            
+            /* মোবাইল ভিউতে স্টিকি বিহেভিয়ার বন্ধ বা নরমাল রাখার জন্য */
+            #homeMenuItem { position: relative; top: initial; z-index: initial; }
+            
             .details-panel { width: 100%; padding: 25px 15px; height: auto; overflow-y: visible; }
             .tip-detail-title { font-size: 24px; }
             .instruction-card { padding: 20px 15px; }
@@ -690,7 +702,7 @@
 
                     <a href="#find-my-device-pc" class="menu-item" onclick="showTip(event, 'find-my-device-pc')"><span class="tip-id">TIP 46</span><span class="tip-title">ল্যাপটপ ট্র্যাকিং অন করা</span></a>
                     <a href="#screen-pinning" class="menu-item" onclick="showTip(event, 'screen-pinning')"><span class="tip-id">TIP 47</span><span class="tip-title">মোবাইল স্ক্রিন পিনিং সিকিউরিটি</span></a>
-                    <a href="#hibernation" class="menu-item" onclick="showTip(event, 'hibernation')"><span class="tip-id">TIP 48</span><span class="tip-title">উইন্ডোজ হাইবারনেশন অপশন চালু</span></a>
+                    <a href="#hibernation" class="menu-item" onclick="showTip(event, 'hibernation')"><span class="tip-id">TIP 48</span><span class="tip-title">উইন্ডোজের হাইবারনেশন অপশন চালু</span></a>
                     <a href="#text-from-img" class="menu-item" onclick="showTip(event, 'text-from-img')"><span class="tip-id">TIP 49</span><span class="tip-title">ছবি থেকে বাংলা টেক্সট কনভার্ট</span></a>
                     <a href="#hosts-block" class="menu-item" onclick="showTip(event, 'hosts-block')"><span class="tip-id">TIP 50</span><span class="tip-title">সফটওয়্যার ছাড়া নির্দিষ্ট ওয়েবসাইট ব্লক</span></a>
                 </div>
@@ -967,7 +979,7 @@
                 <span class="category-tag">Mobile Safety</span>
                 <h2 class="tip-detail-title">বিপদকালীন সুরক্ষায় মোবাইলের ইমার্জেন্সি SOS সেটআপ</h2>
                 <div class="instruction-card">
-                    <p>Settings > Safety & Emergency > <b>Emergency SOS</b> চালু করুন। বিপদে পড়লে ফোনের পাওয়ার বাটন টানা ৫ বার প্রেস করলে বিশ্বস্ত নম্বরে অটোমেটিক লোকেশন ও মেসেজ চলে যাবে।</p>
+                    <p>Settings > Safety & Emergency > <b>Emergency SOS</b> চালু করুন। বিপদে পড়লে জনের পাওয়ার বাটন টানা ৫ বার প্রেস করলে বিশ্বস্ত নম্বরে অটোমেটিক লোকেশন ও মেসেজ চলে যাবে।</p>
                 </div>
             </section>
 
@@ -982,7 +994,7 @@
 
             <section id="spam-call" class="tip-content-section">
                 <span class="category-tag">Mobile</span>
-                <h2 class="tip-detail-title">কোম্পানির বিরক্তিকর স্প্যাম কল ও প্রমোশনাল মেসেজ ব্লক</h2>
+                <h2 class="tip-detail-title">কোম্পানির বিরক্তিকর স্প্যাম কল ও প্রমোショナル মেসেজ ব্লক</h2>
                 <div class="instruction-card">
                     <p>অ্যান্ড্রয়ের ডিফল্ট Phone app > Settings > <b>Caller ID & Spam</b> অপশনে যান। সেখানে 'Filter Spam Calls' অন করে দিলে স্প্যাম কলগুলো আপনার ফোনে রিং হওয়া ছাড়াই ব্লক হবে।</p>
                 </div>
@@ -1149,7 +1161,7 @@
                 <span class="category-tag">Other Tips</span>
                 <h2 class="tip-detail-title">যেকোনো বই বা কাগজপত্রের ছবি থেকে সরাসরি বাংলা টেক্সট রূপান্তর</h2>
                 <div class="instruction-card">
-                    <p>আপনার মোবাইল বা পিসির ব্রাউজার থেকে **Google Lens** অথবা Google Keep ওপেন করুন। সেখানে ছবি আপলোড করে **Grab Image Text** অপশনে ক্লিক করলে মাত্র ১ সেকেন্ডে সব টেক্সট কপি করার উপযোগী হয়ে যাবে।</p>
+                    <p>আপনার মোবাইল বা পিসির ব্রাউজার থেকে **Google Lens** অথবা Google Keep ওপেন করুন। সেখানে ছবি আপলোড করে **Grab Image Text** অপশনে ক্লিক করলে মাত্র ১ সেকেন্ডে সব টেক্সট কপি করার উপযোগী হয়ে যাবে。</p>
                 </div>
             </section>
 
@@ -1178,7 +1190,7 @@
         function showTip(event, targetId) {
             event.preventDefault(); // ক্লিকের ডিফল্ট অ্যাঙ্কর বিহেভিয়ার বন্ধ করার জন্য
             
-            // সব মেনু আইটেম থেকে অ্যাক্টিভ ক্লাস রিমুভ করা
+            // সব মেনু আইটেম থেকে্যাক্টিভ ক্লাস রিমুভ করা
             const menuItems = document.querySelectorAll('.menu-item');
             menuItems.forEach(item => item.classList.remove('active'));
             
@@ -1255,4 +1267,3 @@
     </script>
 </body>
 </html>
-
