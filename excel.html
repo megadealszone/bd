@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Master Tips & Tricks Dashboard</title>
+    <!-- Font Awesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Premium Newspaper Serif Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Galada&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* [গ্লোবাল ভ্যারিয়েবল কালার স্কিম] - ডিফল্টভাবে লাইট মোড (Light Mode) এর রংসমূহ */
+        :root {
+            --bg-dark: #f8fafc;                         /* মূল ব্যাকগ্রাউন্ডের রঙ */
+            --sidebar-bg: #ffffff;                      /* সাইডবারের ব্যাকগ্রাউন্ড */
+            --card-bg: #ffffff;                         /* ইনফরমেশন কার্ডের ব্যাকগ্রাউন্ড */
+            --accent-color: #3b82f6;                    /* থিমের মূল হাইলাইট রঙ (নীল) */
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6); /* গ্রেডিয়েন্ট কালার এফেক্ট */
+            --text-main: #0f172a;                       /* প্রধান লেখার টেক্সট কালার */
+            --text-muted: #64748b;                      /* আবছা বা সেকেন্ডারি লেখার টেক্সট কালার */
+            --border-color: #e2e8f0;                    /* বর্ডার বা লাইনের রঙ */
+            --panel-bg: #f1f5f9;                        /* ডানদিকের ডিটেইলস প্যানেলের ব্যাকগ্রাউন্ড */
+            --code-bg: #0f172a;                         /* কোড বক্সের ব্যাকগ্রাউন্ড */
+            --code-text: #38bdf8;                       /* কোড বক্সের ভেতরের লেখার রঙ */
+            
+            /* সুপার প্রিমিয়াম নোট বক্স ভ্যারিয়েবল (Light Mode) */
+            --note-bg: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(239, 68, 68, 0.03));
+            --note-border: #fd0000;                     
+            --note-text: #a01010;                       
+            --note-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.08), 0 8px 10px -6px rgba(245, 158, 11, 0.05);
+        }
+
+        /* [ডার্ক মোড ভ্যারিয়েবলস] - ডার্ক থিম অ্যাক্টিভ হলে ভ্যারিয়েবলের মানগুলো বদলে যাবে */
+        .dark-theme {
+            --bg-dark: #0f172a;                         /* ডার্ক মোডের মূল ব্যাকগ্রাউন্ড */
+            --sidebar-bg: #1e293b;                      /* ডার্ক মোডের সাইডবার ব্যাকগ্রাউন্ড */
+            --card-bg: #1e293b;                         /* ডার্ক মোডের কার্ড ব্যাকগ্রাউন্ড */
+            --text-main: #f8fafc;                       /* ডার্ক মোডের প্রধান লেখার রঙ (সাদাটে) */
+            --text-muted: #94a3b8;                      /* ডার্ক মোডের আবছা লেখার রঙ */
+            --border-color: #334155;                    /* ডার্ক মোডের বর্ডার বা লাইনের রঙ */
+            --panel-bg: #0b0f19;                        /* ডার্ক মোডের ডিটেইলস প্যানেল ব্যাকগ্রাউন্ড */
+            --code-bg: #090d16;                         /* ডার্ক মোডের কোড বক্স ব্যাকগ্রাউন্ড */
+            --code-text: #38bdf8;                       /* ডার্ক মোডের কোড বক্সের টেক্সট রঙ */
+            
+            /* সুপার প্রিমিয়াম নোট বক্স ভ্যারিয়েবল (Dark Mode) */
+            --note-bg: linear-gradient(135deg, rgba(239, 68, 68, 0.07), rgba(245, 158, 11, 0.04));
+            --note-border: #f87171;                     
+            --note-text: #fecaa3;                       
+            --note-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* [গ্লোবাল রিসেট সেটিংস] - মার্জিন, প্যাডিং রিমুভ এবং ট্রানজিশন স্মুথ করার জন্য */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* [বডি স্টাইল] - ডিফল্ট ফন্ট, ব্যাকগ্রাউন্ড এবং স্ক্রিন লেআউট নির্ধারণ */
+        body {
+            font-family: 'Noto Serif Bengali', 'Lora', 'Georgia', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        /* [এই অংশটুকু আমি ইডিট করে দিয়েছি টেক্সগুলো জাস্টিফাই করার জন্য   ------------------শুরু --------------- */
+* {
+  text-align: justify;
+}
+p {
+  text-align: justify;
+}
+     /* [এই অংশটুকু আমি ইডিট করে দিয়েছি টেক্সগুলো জাস্টিফাই করার জন্য   ------------------শেষ --------------- */
+
+       
+
+        /* হেডার ও ব্র্যান্ডিং এরিয়া স্টাইল */
+        header {
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            flex-shrink: 0;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area i {
+            font-size: 24px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-area h1 {
+            font-family: 'Galada', 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* হোম ভিজিট বাটন স্টাইল */
+        .external-home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+            font-family: inherit;
+        }
+
+        .external-home-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* থিম টগল করার স্লাইডার সুইচের মেকানিজম ও ডিজাইন */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 26px;
+            position: relative;
+            width: 50px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: #cbd5e1;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: white;
+            bottom: 4px;
+            content: "";
+            height: 18px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 18px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background: var(--accent-gradient);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+
+        .theme-icon {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .stats-badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        
+        .dark-theme .stats-badge {
+            color: #60a5fa;
+        }
+
+        /* ওয়ার্কস্পেস এবং সাইডবার লেআউট সেটিিংস */
+        .workspace {
+            display: flex;
+            height: calc(100vh - 70px);
+            width: 100%;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 350px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        /* সার্চ বক্সের ইনপুট ফিল্ড ডিজাইন */
+        .search-box {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 11px 10px 11px 40px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-wrapper input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        /* বামদিকের স্ক্রোলিং মেনু লিস্ট স্টাইল */
+        .menu-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            padding: 0 0 10px 0;
+        }
+
+        .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .menu-list::-webkit-scrollbar-thumb, .details-panel::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* ইন্ডিভিজুয়াল মেনু আইটেম স্টাইল */
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px 20px;
+            text-decoration: none;
+            color: var(--text-muted);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .menu-item:hover {
+            background: rgba(59, 130, 246, 0.04);
+            color: var(--text-main);
+        }
+
+        .menu-item.active {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--text-main);
+            border-left-color: var(--accent-color);
+        }
+
+        #homeMenuItem {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--sidebar-bg);
+        }
+
+        .menu-item .tip-id {
+            font-size: 11px;
+            font-weight: bold;
+            background: var(--border-color);
+            padding: 4px 6px;
+            border-radius: 4px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 55px;
+        }
+
+        .menu-item.active .tip-id {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .menu-item .tip-title {
+            font-size: 15px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* মেনু হাইড/আনহাইড (Collapse) করার জন্য অ্যানিমেশন ও কন্টেইনার স্টাইল */
+        .sub-menu-container {
+            max-height: 3000px;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .sub-menu-container.collapsed {
+            max-height: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .menu-item .toggle-arrow {
+            margin-left: auto;
+            font-size: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item.collapsed-mode .toggle-arrow {
+            transform: rotate(-90deg);
+        }
+
+        /* ডানদিকের প্রধান বিবরণী প্যানেল */
+        .details-panel {
+            flex-grow: 1;
+            background: var(--panel-bg);
+            padding: 40px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            height: 100%;
+        }
+
+        /* একটি টিপ সিলেক্ট করলে ফেড-ইন অ্যানিমেশন দিয়ে শো করার লজিক */
+        .tip-content-section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tip-content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ক্যাটাগরি ব্যাজ এবং মেটা টেক্সট ডিজাইন */
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .tip-detail-title {
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            line-height: 1.4;
+        }
+
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .meta-info span i {
+            margin-right: 6px;
+            color: var(--accent-color);
+        }
+
+        /* কার্ড এলিমেন্ট এবং স্টেপ গাইডলাইন স্টাইল */
+        .instruction-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .instruction-card h3 {
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+        
+        .dark-theme .instruction-card h3 {
+            color: #60a5fa;
+        }
+
+        .instruction-card p {
+            color: var(--text-main);
+            font-size: 16px;
+            line-height: 1.9;
+            margin-bottom: 15px;
+        }
+
+        .step-list {
+            list-style: none;
+        }
+
+        .step-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 14px;
+            color: var(--text-main);
+            font-size: 16px;
+            line-height: 1.9;
+        }
+
+        .step-list li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 4px;
+            color: #10b981;
+            font-size: 14px;
+        }
+
+        /* [সুপার প্রিমিয়াম ডিজাইন] - নতুন গর্জিয়াস নোট ও সতর্কবার্তা বক্স */
+        .note-box {
+            background: var(--note-bg);
+            border-left: 5px solid var(--note-border);
+            padding: 20px 24px;
+            border-radius: 6px 16px 16px 6px;
+            margin: 28px 0;
+            box-shadow: var(--note-shadow);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-top: 1px solid rgba(239, 68, 68, 0.08);
+            border-right: 1px solid rgba(239, 68, 68, 0.08);
+            border-bottom: 1px solid rgba(239, 68, 68, 0.08);
+        }
+
+        .note-box::after {
+            content: "\f071";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            bottom: -15px;
+            font-size: 70px;
+            color: rgba(239, 68, 68, 0.04);
+            pointer-events: none;
+        }
+
+        .note-box h4 {
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
+            color: var(--note-border);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-box p {
+            color: var(--note-text);
+            font-size: 15px;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        /* কমান্ড কপি করার কোড বক্স ও প্রিমিয়াম কপি বাটন ডিজাইন */
+        .code-box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .code-text {
+            color: var(--code-text);
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        /* প্রিমিয়াম কপি বাটন গ্লোবাল স্টাইল */
+        .copy-btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+            flex-shrink: 0;
+            font-family: 'Noto Serif Bengali', serif;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        /* হোমপেজের ৩টি ক্যাটাগরি বক্সের গ্রিড লেআউট */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .feature-item {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 22px 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .feature-item i {
+            font-size: 30px;
+            margin-bottom: 14px;
+            color: var(--accent-color);
+        }
+
+        .feature-item h4 {
+            font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .feature-item p {
+            font-size: 14.5px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        /* মোবাইল ও ট্যাবলেট রেসপন্সিভ মিডিয়া কোয়েরি সেটিংস */
+        @media (max-width: 992px) {
+            .sidebar { width: 280px; }
+        }
+
+        @media (max-width: 768px) {
+            body { overflow-y: auto; }
+            header {
+                padding: 15px;
+                height: auto;
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            .header-controls {
+                flex-direction: row;
+                justify-content: space-between;
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .workspace { flex-direction: column; height: auto; }
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
+            
+            #homeMenuItem { position: relative; top: initial; z-index: initial; }
+            
+            .details-panel { width: 100%; padding: 25px 15px; height: auto; overflow-y: visible; }
+            .tip-detail-title { font-size: 24px; }
+            .instruction-card { padding: 20px 15px; }
+            .code-box { flex-direction: column; align-items: flex-start; }
+            .copy-btn { align-self: flex-end; width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h1>PC Tips & Tricks Hub</h1>
+        </div>
+        <div class="header-controls">
+            <a href="https://megadealszone.github.io/bd/index.html" class="external-home-btn">
+                <i class="fa-solid fa-house-laptop"></i> হোম ভিজিট
+            </a>
+            <div class="theme-switch-wrapper">
+                <i class="fa-solid fa-sun theme-icon"></i>
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" onchange="toggleTheme(this)">
+                    <div class="slider"></div>
+                </label>
+                <i class="fa-solid fa-moon theme-icon"></i>
+            </div>
+            <div class="stats-badge" id="statsBadge">
+                <i class="fa-solid fa-fire-flame"></i> Md. Roman Islam Habib
+            </div>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <aside class="sidebar">
+            <div class="search-box">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tipSearch" placeholder="টিপস খুঁজুন...">
+                </div>
+            </div>
+            
+            <div class="menu-list" id="menuList">
+                <a href="#home" id="homeMenuItem" class="menu-item active" onclick="showTip(event, 'home-section'); toggleMenuCollapse();">
+                    <span class="tip-id"><i class="fa-solid fa-house"></i></span>
+                    <span class="tip-title">হোম মেনু</span>
+                    <i class="fa-solid fa-chevron-down toggle-arrow"></i>
+                </a>
+                
+                <div id="subMenuContainer" class="sub-menu-container">
+                   
+                  
+                  <!-- ১ থেকে ৫ পূর্বের মেনু -->
+                        <a href="#excel-formula1" class="menu-item" onclick="showTip(event, 'excel-formula1')"><span class="tip-id">TIP 51</span><span class="tip-title">Excel Formula</span></a>
+                               
+                
+                </div>
+            </div>
+        </aside>
+
+        <main class="details-panel" id="detailsPanel">
+            <!-- হোম সেকশন -->
+            <section id="home-section" class="tip-content-section active">
+                <span class="category-tag">All-in-One Guide</span>
+                <h2 class="tip-detail-title">প্রযুক্তিগত সমস্যার সহজ সমাধান ও মাস্টার ড্যাশবোর্ড!</h2>
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-wand-magic-sparkles"></i> এখানে আপনি কী কী টিপস ও ট্রিকস পাবেন?</h3>
+                    <p>আমাদের এই ড্যাশবোর্ডে প্রাত্যহিক জীবনের সকল ডিজিটাল ডিভাইস ও প্রযুক্তির জটিল সমস্যাগুলোর ওয়ান-ক্লিক এবং শর্টকাট গাইডলাইন দেওয়া হয়েছে। নিচে প্রধান ক্যাটাগরিগুলো দেওয়া হলো:</p>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <i class="fa-solid fa-desktop"></i>
+                            <h4>কম্পিউটার সমাধান</h4>
+                            <p>উইন্ডোজের সিক্রেট ট্রিকস, স্লো পিসি ফাস্ট করা, ও কমান্ড প্রম্পট (CMD) শর্টকাট সমাধান。</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <h4>মোবাইল ট্রিকস</h4>
+                            <p>স্মার্টফোনের হিডেন ফোল্ডার আনলক, স্টোরেজ সমস্যা দূরীকরণ ও অ্যাপস অপ্টিমাইজেশন গাইড。</p>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                            <h4>অন্যান্য টিপস</h4>
+                            <p>নেটওয়ার্কিং সেটআপ, ল্যান কানেকশন, পেনড্রাইভ ফিক্সিং ও হার্ডওয়্যার ড্রাইভারের ইনস্টলেশন ট্রিকস。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
+                    <ul class="step-list">
+                        <li>যে কোনো ক্যাটাগরির বিস্তারিত জানতে বামপাশের মেনু লিস্ট ব্যবহার করুন।</li>
+                        <li>যদি আপনি মূল ওয়েবসাইটে প্রবেশ করতে চান, তবে ওপরে ডার্ক মোডের পাশে থাকা <b>"হোম ভিজিট"</b> বাটনে ক্লিক করুন।</li>
+                        <li>রাত বা দিনে স্বাচ্ছন্দ্যে পড়ার জন্য উপরে থাকা <b>সুইচ ব্যবহার করে লাইট/ডার্ক মোড</b> পরিবর্তন করে নিন।</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ১ থেকে ৫ পূর্বের কন্টেন্ট সেকশন -->
+
+           <section id="excel-formula1" class="tip-content-section">
+                <span class="category-tag">Storage & Fix</span>
+                <h2 class="tip-detail-title"> नष्ट পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
+                <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> : লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
+                    <ul class="step-list">
+                        <li><p>যদি পূর্ববর্তী ঘরগুলোর মোট যোগফল (SUM) মোট টার্গেট বা বাজেটের ($C2) চেয়ে কম হয়, তবেই ফর্মুলাটি পরবর্তী হিসাব শুরু করবে; অন্যথায় সরাসরি ০ (শূন্য) বসিয়ে দেবে।</p></li>
+                        <li><p>শর্ত সত্যি হলে, ফর্মুলাটি দুটি সংখ্যার মধ্যে যেটি সবচেয়ে ছোট (MIN), সেটি বেছে নেবে।</p></li>
+                        <li><p>প্রথম সংখ্যাটি হলো মোট টার্গেট থেকে বর্তমান যোগফল বাদ দিলে আর যতটুকু বাকি থাকে ($C2-SUM($D2:D2))।</p></li>
+                        <li><p>দ্বিতীয় সংখ্যাটি হলো একটি নির্দিষ্ট অনুপাত হিসাব—যেখানে ৫০,০০,০০০ (৫ মিলিয়ন) কে বর্তমান রো-এর টার্গেট দিয়ে গুণ করে, পুরো রেঞ্জের মোট টার্গেট (SUM($C$2:$C$15)) দিয়ে ভাগ করা হয়।</p></li>
+                        <li><p>সবশেষে, MIN ফাংশনটি এই বাকি থাকা অংশ এবং অনুপাতের হিসাবের মধ্যে যেটি ছোট, সেই মানটি ঘরে বসিয়ে দেয় যাতে কোনোভাবেই টার্গেট অতিক্রম না করে।</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">=IF(SUM($D2:D2)&lt;$C2, MIN($C2-SUM($D2:D2), 5000000 * ($C2/SUM($C$2:$C$15))), 0)</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                    </ul>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>কোড বক্সের ভেতরে ফর্মুলার < চিহ্নটিকে এইচটিএমএল সেফ রাখার জন্য &lt; হিসেবে লেখা হয়েছে, যা কপি করার সময় ঠিকঠাক < হিসেবেই কপি হবে।)</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ১. থিম পরিবর্তনের ফাংশন
+        function toggleTheme(checkbox) {
+            if (checkbox.checked) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        // ২. নির্দিষ্ট টিপস সেকশন দেখানোর ফাংশন
+        function showTip(event, targetId) {
+            event.preventDefault();
+            
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+            
+            const contentSections = document.querySelectorAll('.tip-content-section');
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            event.currentTarget.classList.add('active');
+            
+            const activeSection = document.getElementById(targetId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+                
+                if (window.innerWidth <= 768) {
+                    activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    document.getElementById('detailsPanel').scrollTop = 0;
+                }
+            }
+        }
+
+        // ৩. হোম মেনু ক্লিকে সাব-মেনু কন্টেইনার ফোল্ড/আনফোল্ড করার লজিক
+        function toggleMenuCollapse() {
+            const subMenu = document.getElementById('subMenuContainer');
+            const homeItem = document.getElementById('homeMenuItem');
+            
+            if (subMenu && homeItem) {
+                subMenu.classList.toggle('collapsed');
+                homeItem.classList.toggle('collapsed-mode');
+            }
+        }
+
+        // ৪. ক্লিপবোর্ডে টেক্সট কপি করার পারফেক্ট ইউনিভার্সাল ফাংশন (সব ধরণের ব্রাউজারে কাজ করবে)
+        function copyText(elementId, event) {
+            const textElement = document.getElementById(elementId);
+            if (textElement) {
+                const textToCopy = textElement.innerText;
+                const activeButton = event.currentTarget;
+                const originalHTML = activeButton.innerHTML;
+
+                // টেক্সট কপি করার ইউনিভার্সাল লজিক (যা about:blank বা লোকাল মোডেও শতভাগ কাজ করে)
+                function updateButtonUI() {
+                    activeButton.innerHTML = '<i class="fa-solid fa-circle-check"></i> কপি হয়েছে!';
+                    activeButton.style.background = "linear-gradient(135deg, #10b981, #059669)"; 
+                    activeButton.style.boxShadow = "0 4px 10px rgba(16, 185, 129, 0.4)";
+                    
+                    setTimeout(() => {
+                        activeButton.innerHTML = originalHTML;
+                        activeButton.style.background = ""; 
+                        activeButton.style.boxShadow = "";
+                    }, 2000);
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy).then(updateButtonUI).catch(err => fallbackCopy(textToCopy));
+                } else {
+                    fallbackCopy(textToCopy);
+                }
+
+                function fallbackCopy(text) {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.opacity = "0";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        updateButtonUI();
+                    } catch (err) {
+                        console.error('কপি করা সম্ভব হয়নি: ', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
+            }
+        }
+
+        // ৫. রিয়েল-টাইম মেনু সার্চিং লজিক
+        document.getElementById('tipSearch').addEventListener('keyup', function() {
+            let filter = this.value.toUpperCase();
+            let menuItems = document.querySelectorAll('.sub-menu-container .menu-item');
+
+            menuItems.forEach(item => {
+                let text = item.querySelector('.tip-title').innerText;
+                if (text.toUpperCase().indexOf(filter) > -1) {
+                    item.style.display = "";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
