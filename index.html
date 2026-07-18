@@ -1270,48 +1270,101 @@ html {
   </section>
   <!-- HERO END -->
 
-<!-- LATEST NEWS START -->
+<!-- LATEST NEWS------------------------------------------- START----------------------------------------------   -->
 <!-- Bengali News Ticker Start -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali&display=swap" rel="stylesheet" />
+<!-- Premium Bengali News Ticker Start -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@500;700&display=swap" rel="stylesheet" />
 
 <style>
-#news-ticker {
-  background: #fcd303;
-  color: #000;
-  padding: 10px 0;
+#news-ticker-container {
+  display: flex;
+  align-items: center;
+  background: #111827; /* মডার্ন ডার্ক ব্যাকগ্রাউন্ড */
+  border: 1px solid #374151;
+  border-radius: 8px;
   overflow: hidden;
-  font-size: 14px;
-  font-weight: bold;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   font-family: 'Noto Sans Bengali', Arial, sans-serif;
-  border: 2px solid #e6b800;
-  border-radius: 5px;
+  height: 48px;
+}
+
+/* ব্রেকিং নিউজ প্রিমিয়াম ব্যাজ */
+#ticker-badge {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); /* আকর্ষণীয় লাল গ্রেডিয়েন্ট */
+  color: #ffffff;
+  padding: 0 16px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  z-index: 10;
+  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
   position: relative;
+}
+
+#ticker-badge::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 8px solid #b91c1c;
+}
+
+#news-ticker {
+  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  position: relative;
+  height: 100%;
 }
 
 #breaking-news-wrapper {
   display: flex;
   width: max-content;
-  animation: tickerScroll 120s linear infinite;
+  animation: tickerScroll 160s linear infinite; 
+}
+
+/* মাউস রাখলে অ্যানিমেশন সফটভাবে থামবে */
+#news-ticker-container:hover #breaking-news-wrapper {
+  animation-play-state: paused;
 }
 
 #breaking-news-container {
   display: flex;
-  gap: 30px;
+  gap: 40px;
   white-space: nowrap;
+  align-items: center;
 }
 
 #breaking-news-container a {
   text-decoration: none;
-  color: inherit;
-  padding: 0 5px;
-  border-radius: 3px;
+  color: #f3f4f6; /* হালকা সাদা টেক্সট */
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s, color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease;
 }
 
+/* হোভার করলে টেক্সটের কালার লালচে-লাল হবে */
 #breaking-news-container a:hover {
-  background: #ffdddd;
-  color: #b30000;
+  color: #f87171;
+}
+
+/* খবরের মাঝের প্রিমিয়াম ডট */
+.ticker-separator {
+  color: #4b5563;
+  font-size: 12px;
 }
 
 @keyframes tickerScroll {
@@ -1324,10 +1377,13 @@ html {
 }
 </style>
 
-<div id="news-ticker">
-  <div id="breaking-news-wrapper">
-    <div id="breaking-news-container">🔄 লোড হচ্ছে...</div>
-    <div id="breaking-news-container" class="clone">🔄 লোড হচ্ছে...</div>
+<div id="news-ticker-container">
+  <div id="ticker-badge">⚡ ব্রেকিং নিউজ</div>
+  <div id="news-ticker">
+    <div id="breaking-news-wrapper">
+      <div id="breaking-news-container">🔄 লোড হচ্ছে...</div>
+      <div id="breaking-news-container" class="clone">🔄 লোড হচ্ছে...</div>
+    </div>
   </div>
 </div>
 
@@ -1338,11 +1394,16 @@ function decodeHTMLEntities(text) {
   return txt.value;
 }
 
-async function fetchRSS(url, count = 10) {
+async function fetchRSS(url, count = 5) {
   const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
-  const resp = await fetch(proxy + encodeURIComponent(url));
-  const data = await resp.json();
-  return (data.items || []).slice(0, count);
+  try {
+    const resp = await fetch(proxy + encodeURIComponent(url));
+    const data = await resp.json();
+    return (data.items || []).slice(0, count);
+  } catch (e) {
+    console.error('Error fetching RSS:', url, e);
+    return [];
+  }
 }
 
 async function loadNews() {
@@ -1352,17 +1413,24 @@ async function loadNews() {
       fetchRSS('https://thedhakapost.com/rss.xml', 5),
       fetchRSS('https://www.jagonews24.com/rss/allnews', 5),
       fetchRSS('https://feeds.bbci.co.uk/bengali/rss.xml', 5),
-      fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5)
+      fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5),
+      fetchRSS('https://www.kalerkantho.com/rss.xml', 5),
+      fetchRSS('https://samakal.com/rss', 5),
+      fetchRSS('https://www.daily-sun.com/rss', 5)
     ]);
 
     const all = sources.flat();
 
+    if (all.length === 0) throw new Error('No news items found');
+
     const headlines = all.map(item => {
       const title = decodeHTMLEntities(item.title);
-      return `<a href="${item.link}" target="_blank" rel="noopener noreferrer">🟢 ${title}</a>`;
+      // প্রিমিয়াম লুকের জন্য লাল ডট ও মডার্ন এলাইনমেন্ট
+      return `<a href="${item.link}" target="_blank" rel="noopener noreferrer"><span style="color: #ef4444;">●</span> ${title}</a>`;
     });
 
-    const finalHTML = headlines.join(' 🔸 ');
+    // প্রতিটি সংবাদের মাঝে একটি সুন্দর ও সূক্ষ্ম ডিভাইডার (🔸 বদলে ❘ )
+    const finalHTML = headlines.join(' <span class="ticker-separator">❘</span> ');
 
     document.querySelectorAll('#breaking-news-container').forEach(container => {
       container.innerHTML = finalHTML;
@@ -1371,16 +1439,15 @@ async function loadNews() {
   } catch (err) {
     console.error('News load error:', err);
     document.querySelectorAll('#breaking-news-container').forEach(container => {
-      container.textContent = '❌ নিউজ পাওয়া যায়নি!';
+      container.innerHTML = '<span style="color: #ef4444; font-size: 14px;">❌ এই মুহূর্তে নিউজ লোড করা যাচ্ছে না!</span>';
     });
   }
 }
 
 loadNews();
 </script>
-<!-- Bengali News Ticker End -->
-  
-<!-- LATEST NEWS END -->
+<!-- Premium Bengali News Ticker End -->
+<!-- LATEST NEWS-------------------------------------------- END------------------------------------------- -->
 
 <!-- DIGITAL CLOCK START -->
 
