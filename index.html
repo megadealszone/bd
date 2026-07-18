@@ -1272,181 +1272,196 @@ html {
 
 <!-- LATEST NEWS------------------------------------------- START----------------------------------------------   -->
 <!-- Bengali News Ticker Start -->
-<!-- Premium Bengali News Ticker Start -->
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@500;700&display=swap" rel="stylesheet" />
+<!-- Fully Isolated Premium Bengali News Ticker Start -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@500;700;800&display=swap" rel="stylesheet" />
 
 <style>
-#news-ticker-container {
-  display: flex;
-  align-items: center;
-  background: #111827; /* মডার্ন ডার্ক ব্যাকগ্রাউন্ড */
-  border: 1px solid #374151;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  font-family: 'Noto Sans Bengali', Arial, sans-serif;
-  height: 48px;
+/* সব স্টাইলের আগে bnt- প্রিফিক্স ব্যবহার করা হয়েছে যাতে গ্লোবাল সিএসএস-এ প্রভাব না পড়ে */
+#bnt-news-ticker-container {
+  display: flex !important;
+  align-items: center !important;
+  background: #0f172a !important;
+  border: 1px solid #1e293b !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
+  font-family: 'Noto Sans Bengali', Arial, sans-serif !important;
+  height: 56px !important;
+  box-sizing: border-box !important;
 }
 
-/* ব্রেকিং নিউজ প্রিমিয়াম ব্যাজ */
-#ticker-badge {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); /* আকর্ষণীয় লাল গ্রেডিয়েন্ট */
-  color: #ffffff;
-  padding: 0 16px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-  z-index: 10;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
-  position: relative;
+#bnt-news-ticker-container *, #bnt-news-ticker-container *::before, #bnt-news-ticker-container *::after {
+  box-sizing: border-box !important;
 }
 
-#ticker-badge::after {
-  content: '';
-  position: absolute;
-  right: -8px;
-  top: 14px;
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-left: 8px solid #b91c1c;
+#bnt-ticker-badge {
+  background: linear-gradient(135deg, #ff0055 0%, #990026 100%) !important;
+  color: #ffffff !important;
+  padding: 0 16px 0 12px !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  font-weight: 800 !important;
+  font-size: 15px !important;
+  letter-spacing: 0.5px !important;
+  white-space: nowrap !important;
+  z-index: 10 !important;
+  clip-path: polygon(0 0, 92% 0, 100% 100%, 0 100%) !important;
+  box-shadow: 5px 0 15px rgba(255, 0, 85, 0.3) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+  position: relative !important;
 }
 
-#news-ticker {
-  overflow: hidden;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  position: relative;
-  height: 100%;
+#bnt-ticker-badge::before {
+  content: '' !important;
+  display: inline-block !important;
+  width: 8px !important;
+  height: 8px !important;
+  background-color: #fff !important;
+  border-radius: 50% !important;
+  margin-right: 8px !important;
+  animation: bntBadgeBlink 1.2s ease-in-out infinite !important;
 }
 
-#breaking-news-wrapper {
-  display: flex;
-  width: max-content;
-  animation: tickerScroll 160s linear infinite; 
+#bnt-news-ticker {
+  overflow: hidden !important;
+  flex-grow: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  position: relative !important;
+  height: 100% !important;
+  padding-left: 10px !important;
 }
 
-/* মাউস রাখলে অ্যানিমেশন সফটভাবে থামবে */
-#news-ticker-container:hover #breaking-news-wrapper {
-  animation-play-state: paused;
+#bnt-breaking-news-wrapper {
+  display: flex !important;
+  width: max-content !important;
+  animation: bntTickerScroll 80s linear infinite !important; 
 }
 
-#breaking-news-container {
-  display: flex;
-  gap: 40px;
-  white-space: nowrap;
-  align-items: center;
+#bnt-news-ticker-container:hover #bnt-breaking-news-wrapper {
+  animation-play-state: paused !important;
 }
 
-#breaking-news-container a {
-  text-decoration: none;
-  color: #f3f4f6; /* হালকা সাদা টেক্সট */
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: color 0.2s ease;
+.bnt-breaking-news-container {
+  display: flex !important;
+  gap: 45px !important; 
+  white-space: nowrap !important;
+  align-items: center !important;
 }
 
-/* হোভার করলে টেক্সটের কালার লালচে-লাল হবে */
-#breaking-news-container a:hover {
-  color: #f87171;
+.bnt-breaking-news-container a {
+  text-decoration: none !important;
+  color: #f1f5f9 !important;
+  font-size: 20px !important; 
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  transition: color 0.2s ease !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-/* খবরের মাঝের প্রিমিয়াম ডট */
-.ticker-separator {
-  color: #4b5563;
-  font-size: 12px;
+.bnt-breaking-news-container a:hover {
+  color: #f43f5e !important; 
 }
 
-@keyframes tickerScroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+.bnt-ticker-separator {
+  color: #334155 !important;
+  font-size: 16px !important; 
+}
+
+/* ইউনিক অ্যানিমেশন নেম */
+@keyframes bntBadgeBlink {
+  0%, 100% { opacity: 0.3; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+@keyframes bntTickerScroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
 }
 </style>
 
-<div id="news-ticker-container">
-  <div id="ticker-badge">⚡ ব্রেকিং নিউজ</div>
-  <div id="news-ticker">
-    <div id="breaking-news-wrapper">
-      <div id="breaking-news-container">🔄 লোড হচ্ছে...</div>
-      <div id="breaking-news-container" class="clone">🔄 লোড হচ্ছে...</div>
+<div id="bnt-news-ticker-container">
+  <div id="bnt-ticker-badge">ব্রেকিং নিউজ</div>
+  <div id="bnt-news-ticker">
+    <div id="bnt-breaking-news-wrapper">
+      <div class="bnt-breaking-news-container">🔄 লোড হচ্ছে...</div>
+      <div class="bnt-breaking-news-container bnt-clone">🔄 লোড হচ্ছে...</div>
     </div>
   </div>
 </div>
 
 <script>
-function decodeHTMLEntities(text) {
-  const txt = document.createElement("textarea");
-  txt.innerHTML = text;
-  return txt.value;
-}
-
-async function fetchRSS(url, count = 5) {
-  const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
-  try {
-    const resp = await fetch(proxy + encodeURIComponent(url));
-    const data = await resp.json();
-    return (data.items || []).slice(0, count);
-  } catch (e) {
-    console.error('Error fetching RSS:', url, e);
-    return [];
+// সম্পূর্ণ জাভাস্ক্রিপ্ট কোডটিকে একটি লোকাল স্কোপে (IIFE) রাখা হলো যাতে বাইরের কোনো কোডের সাথে সংঘর্ষ না হয়
+(function() {
+  function decodeHTMLEntities(text) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = text;
+    return txt.value;
   }
-}
 
-async function loadNews() {
-  try {
-    const sources = await Promise.all([
-      fetchRSS('https://www.prothomalo.com/feed', 5),
-      fetchRSS('https://thedhakapost.com/rss.xml', 5),
-      fetchRSS('https://www.jagonews24.com/rss/allnews', 5),
-      fetchRSS('https://feeds.bbci.co.uk/bengali/rss.xml', 5),
-      fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5),
-      fetchRSS('https://www.kalerkantho.com/rss.xml', 5),
-      fetchRSS('https://samakal.com/rss', 5),
-      fetchRSS('https://www.daily-sun.com/rss', 5)
-    ]);
-
-    const all = sources.flat();
-
-    if (all.length === 0) throw new Error('No news items found');
-
-    const headlines = all.map(item => {
-      const title = decodeHTMLEntities(item.title);
-      // প্রিমিয়াম লুকের জন্য লাল ডট ও মডার্ন এলাইনমেন্ট
-      return `<a href="${item.link}" target="_blank" rel="noopener noreferrer"><span style="color: #ef4444;">●</span> ${title}</a>`;
-    });
-
-    // প্রতিটি সংবাদের মাঝে একটি সুন্দর ও সূক্ষ্ম ডিভাইডার (🔸 বদলে ❘ )
-    const finalHTML = headlines.join(' <span class="ticker-separator">❘</span> ');
-
-    document.querySelectorAll('#breaking-news-container').forEach(container => {
-      container.innerHTML = finalHTML;
-    });
-
-  } catch (err) {
-    console.error('News load error:', err);
-    document.querySelectorAll('#breaking-news-container').forEach(container => {
-      container.innerHTML = '<span style="color: #ef4444; font-size: 14px;">❌ এই মুহূর্তে নিউজ লোড করা যাচ্ছে না!</span>';
-    });
+  async function fetchRSS(url, count = 5) {
+    const proxy = 'https://api.rss2json.com/v1/api.json?rss_url=';
+    try {
+      const resp = await fetch(proxy + encodeURIComponent(url));
+      const data = await resp.json();
+      return (data.items || []).slice(0, count);
+    } catch (e) {
+      console.error('Error fetching RSS:', url, e);
+      return [];
+    }
   }
-}
 
-loadNews();
+  async function loadNews() {
+    try {
+      const sources = await Promise.all([
+        fetchRSS('https://www.prothomalo.com/feed', 5),
+        fetchRSS('https://thedhakapost.com/rss.xml', 5),
+        fetchRSS('https://www.jagonews24.com/rss/allnews', 5),
+        fetchRSS('https://feeds.bbci.co.uk/bengali/rss.xml', 5),
+        fetchRSS('https://bdnews24.com/world/?getXmlFeed=true&widgetId=1210&widgetName=rssfeed', 5),
+        fetchRSS('https://www.kalerkantho.com/rss.xml', 5),
+        fetchRSS('https://samakal.com/rss', 5),
+        fetchRSS('https://www.daily-sun.com/rss', 5)
+      ]);
+
+      const all = sources.flat();
+
+      if (all.length === 0) throw new Error('No news items found');
+
+      const headlines = all.map(item => {
+        const title = decodeHTMLEntities(item.title);
+        return `<a href="${item.link}" target="_blank" rel="noopener noreferrer"><span style="color: #ff0055; font-size: 14px;">●</span> ${title}</a>`;
+      });
+
+      const finalHTML = headlines.join(' <span class="bnt-ticker-separator">❘</span> ');
+
+      document.querySelectorAll('.bnt-breaking-news-container').forEach(container => {
+        container.innerHTML = finalHTML;
+      });
+
+    } catch (err) {
+      console.error('News load error:', err);
+      document.querySelectorAll('.bnt-breaking-news-container').forEach(container => {
+        container.innerHTML = '<span style="color: #ff0055; font-size: 16px;">❌ এই মুহূর্তে নিউজ লোড করা যাচ্ছে না!</span>';
+      });
+    }
+  }
+
+  // পেজ লোড হওয়ার পর রান হবে
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadNews);
+  } else {
+    loadNews();
+  }
+})();
 </script>
-<!-- Premium Bengali News Ticker End -->
+<!-- Fully Isolated Premium Bengali News Ticker End -->
 <!-- LATEST NEWS-------------------------------------------- END------------------------------------------- -->
 
 <!-- DIGITAL CLOCK START -->
