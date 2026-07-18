@@ -654,7 +654,7 @@
                 
                 <div id="subMenuContainer" class="sub-menu-container">
                     <!-- ১ থেকে ৫ পূর্বের মেনু -->
-                    <a href="#shortcut-recovery" class="menu-item" onclick="showTip(event, 'shortcut-recovery')"><span class="tip-id">TIP 01</span><span class="tip-title">পেনড্রাইভ শর্টকাট রিকভারি</span></a>
+                    <a href="#shortcut-recovery" class="menu-item" onclick="showTip(event, 'shortcut-recovery')"><span class="tip-id">TIP 01</span><span class="tip-title">নষ্ট পেনড্রাইভ শর্টকাট রিকভারি</span></a>
                     <a href="#multi-pc-connect" class="menu-item" onclick="showTip(event, 'multi-pc-connect')"><span class="tip-id">TIP 02</span><span class="tip-title">একাধিক পিসি কানেক্ট পদ্ধতি</span></a>
                     <a href="#printer-setup" class="menu-item" onclick="showTip(event, 'printer-setup')"><span class="tip-id">TIP 03</span><span class="tip-title">প্রিন্টার ড্রাইভার সেটআপ</span></a>
                     <a href="#pc-speedup" class="menu-item" onclick="showTip(event, 'pc-speedup')"><span class="tip-id">TIP 04</span><span class="tip-title">পিসি স্পিড বৃদ্ধির মেগা টিপস</span></a>
@@ -757,16 +757,21 @@
             <!-- ১ থেকে ৫ পূর্বের কন্টেন্ট সেকশন -->
             <section id="shortcut-recovery" class="tip-content-section">
                 <span class="category-tag">Storage & Fix</span>
-                <h2 class="tip-detail-title">পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
+                <h2 class="tip-detail-title"> নষ্ট পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
                 <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> : লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
                     <ul class="step-list">
-                        <li>যে কোনো ক্যাটাগরির বিস্তারিত জানতে বামপাশের মেনু লিস্ট ব্যবহার করুন।</li>
-                        <li>যদি আপনি মূল ওয়েবসাইটে প্রবেশ করতে চান, তবে ওপরে ডার্ক মোডের পাশে থাকা <b>"হোম ভিজিট"</b> বাটনে ক্লিক করুন।</li>
-                        <li>রাত বা দিনে স্বাচ্ছন্দ্যে পড়ার জন্য উপরে থাকা <b>সুইচ ব্যবহার করে লাইট/ডার্ক মোড</b> পরিবর্তন করে নিন।</li>
-                        <li><p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</p></li>
+                        <li><p>প্রথমে "This PC" বা "My Computer"-এ যান।</p></li>
+                        <li><p>আপনার পেনড্রাইভটি সেখানে কোন ড্রাইভ লেটার (যেমন: F:, G:, H:) দেখাচ্ছে, তা লক্ষ্য করুন।</p></li>
+                        <li><p>যদি আপনার পেনড্রাইভটি G: ড্রাইভে থাকে, তবে কমান্ডের F: এর পরিবর্তে G: ব্যবহার করতে হবে।</p></li>
+                        <li><p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন: </p></li>
                         <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li>এরপর `F:` ড্রাইভ খুলে দেখুন ফাইলগুলো ফিরে এসেছে কি না।</li>
+                        <li>স্ক্রিনশটটি দেখে খুব ভালো লাগলো যে আপনার মূল ডেটা (ফোল্ডারটি) অক্ষত অবস্থায় ফিরে এসেছে!</li>
+                        <li>বাকি যে দুটি ফোল্ডার দেখছেন—**System Volume Information** এবং **sysvolume**—এগুলো মূলত উইন্ডোজের সিস্টেম ফাইল এবং ভাইরাসের অবশিষ্টাংশ। এগুলোকে আগের মতো লুকিয়ে ফেলতে এবং শুধুমাত্র আপনার Main ফোল্ডারটি দৃশ্যমান রাখতে উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib +h +s "System Volume Information"</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li>**sysvolume**—এগুলো মূলত ভাইরাসের অবশিষ্টাংশ। এরপর ফাইলটি সিলেক্ট করে Shift + Delete চাপলে সাধারণত এটি ডিলিট হয়ে যাবে।</li>
                     </ul>
                 </div>
             </section>
