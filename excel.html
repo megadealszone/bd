@@ -705,6 +705,139 @@ p {
         </aside>
 
         <main class="details-panel" id="detailsPanel">
+           
+            <!-- ---------------------------Youtube----------------------------Start------------- -->
+             <!--***-->
+<!--***-->
+<!-- YouTube Video Scroller Start -->
+<style>
+  .scroll-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    position: relative;
+    background: #f9f9f9;
+    padding: 10px 0;
+  }
+
+  .scroll-track {
+    display: inline-flex;
+    gap: 15px;
+    animation: scroll 40s linear infinite;
+    will-change: transform;
+  }
+
+  .scroll-container:hover .scroll-track {
+    animation-play-state: paused;
+  }
+
+  .video-card {
+    width: 250px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+
+  .video-card:hover {
+    transform: scale(1.05);
+  }
+
+  .video-thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .video-title {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    height: 3em;
+    overflow: hidden;
+  }
+
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .video-card {
+      width: 180px;
+    }
+
+    .video-title {
+      font-size: 12px;
+    }
+
+    .scroll-track {
+      gap: 10px;
+    }
+  }
+</style>
+
+
+<div class='scroll-container'>
+  <div class='scroll-track' id='videoTrack'>
+    <!-- Videos will load here -->
+  </div>
+</div>
+
+<script>
+  const apiKey = &#39;AIzaSyCGU5fy0M_TxzSRUNIGA9LUNfKN8ifnip8&#39;; // এখ&#2494;ন&#2503; আপন&#2494;র YouTube API Key বস&#2494;ন
+  const channelId = &#39;UCys0_XYtMbcvbJGuWoketsw&#39;; // এখ&#2494;ন&#2503; আপন&#2494;র YouTube Channel ID বস&#2494;ন (URL নয&#2492;)
+  const maxResults = 15;
+
+  const apiUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&amp;channelId=${channelId}&amp;part=snippet,id&amp;order=date&amp;maxResults=${maxResults}`;
+
+  fetch(apiUrl)
+    .then(response =&gt; response.json())
+    .then(data =&gt; {
+      const track = document.getElementById(&#39;videoTrack&#39;);
+
+      data.items.forEach(item =&gt; {
+        if (item.id.kind === &quot;youtube#video&quot;) {
+          const videoId = item.id.videoId;
+          const thumbnail = item.snippet.thumbnails.medium.url;
+          const title = item.snippet.title;
+
+          const card = document.createElement(&#39;div&#39;);
+          card.className = &#39;video-card&#39;;
+          card.innerHTML = `
+            <div class='video-thumbnail'>
+    <a href='https://www.youtube.com/watch?v=${videoId}' target='_blank'>
+      <img alt='${title}' src='${thumbnail}'/>
+    </a>
+  			</div>
+            <div class='video-title'>${title}</div>
+          `;
+          track.appendChild(card);
+        }
+      });
+
+      const clone = track.cloneNode(true);
+      track.parentNode.appendChild(clone);
+    })
+    .catch(error =&gt; {
+      console.error(&#39;ভ&#2495;ড&#2495;ও ল&#2507;ড করত&#2503; সমস&#2509;য&#2494; হয&#2492;&#2503;ছ&#2503;:&#39;, error);
+    });
+</script>
+<!-- YouTube Video Scroller End -->
+<!--***-->
+
+
+   
             <!-- হোম সেকশন -->
             <section id="home-section" class="tip-content-section active">
                 <span class="category-tag">All-in-One Guide</span>
