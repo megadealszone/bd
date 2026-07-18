@@ -23,9 +23,12 @@
             --panel-bg: #f1f5f9;                        /* ডানদিকের ডিটেইলস প্যানেলের ব্যাকগ্রাউন্ড */
             --code-bg: #0f172a;                         /* কোড বক্সের ব্যাকগ্রাউন্ড */
             --code-text: #38bdf8;                       /* কোড বক্সের ভেতরের লেখার রঙ */
-            --note-bg: rgba(245, 158, 11, 0.1);         /* প্রো-টিপ বক্সের ব্যাকগ্রাউন্ড */
-            --note-border: #f59e0b;                     /* প্রো-টিপ বক্সের বামপাশের বর্ডার */
-            --note-text: #b45309;                       /* প্রো-টিপ বক্সের লেখার রঙ */
+            
+            /* সুপার প্রিমিয়াম নোট বক্স ভ্যারিয়েবল (Light Mode) */
+            --note-bg: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(239, 68, 68, 0.03));
+            --note-border: #fd0000;                     
+            --note-text: #a01010;                       
+            --note-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.08), 0 8px 10px -6px rgba(245, 158, 11, 0.05);
         }
 
         /* [ডার্ক মোড ভ্যারিয়েবলস] - ডার্ক থিম অ্যাক্টিভ হলে ভ্যারিয়েবলের মানগুলো বদলে যাবে */
@@ -39,9 +42,12 @@
             --panel-bg: #0b0f19;                        /* ডার্ক মোডের ডিটেইলস প্যানেল ব্যাকগ্রাউন্ড */
             --code-bg: #090d16;                         /* ডার্ক মোডের কোড বক্স ব্যাকগ্রাউন্ড */
             --code-text: #38bdf8;                       /* ডার্ক মোডের কোড বক্সের টেক্সট রঙ */
-            --note-bg: rgba(245, 158, 11, 0.1);         /* ডার্ক মোডের প্রো-টিপ ব্যাকগ্রাউন্ড */
-            --note-border: #f59e0b;                     /* ডার্ক মোডের প্রো-টিপ বর্ডার */
-            --note-text: #fef08a;                       /* ডার্ক মোডের প্রো-টিপ টেক্সট রঙ */
+            
+            /* সুপার প্রিমিয়াম নোট বক্স ভ্যারিয়েবল (Dark Mode) */
+            --note-bg: linear-gradient(135deg, rgba(239, 68, 68, 0.07), rgba(245, 158, 11, 0.04));
+            --note-border: #f87171;                     
+            --note-text: #fecaa3;                       
+            --note-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
         }
 
         /* [গ্লোবাল রিসেট সেটিংস] - মার্জিন, প্যাডিং রিমুভ এবং ট্রানজিশন স্মুথ করার জন্য */
@@ -195,7 +201,7 @@
             color: #60a5fa;
         }
 
-        /* ওয়ার্কস্পেস এবং সাইডবার লেআউট সেটিংস */
+        /* ওয়ার্কস্পেস এবং সাইডবার লেআউট সেটিিংস */
         .workspace {
             display: flex;
             height: calc(100vh - 70px);
@@ -468,29 +474,53 @@
             font-size: 14px;
         }
 
-        /* নোট ও বিশেষ সতর্কবার্তা باکسের স্টাইল */
+        /* [সুপার প্রিমিয়াম ডিজাইন] - নতুন গর্জিয়াস নোট ও সতর্কবার্তা বক্স */
         .note-box {
             background: var(--note-bg);
-            border-left: 4px solid var(--note-border);
-            padding: 16px 20px;
-            border-radius: 0 8px 8px 0;
-            margin: 24px 0;
+            border-left: 5px solid var(--note-border);
+            padding: 20px 24px;
+            border-radius: 6px 16px 16px 6px;
+            margin: 28px 0;
+            box-shadow: var(--note-shadow);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-top: 1px solid rgba(239, 68, 68, 0.08);
+            border-right: 1px solid rgba(239, 68, 68, 0.08);
+            border-bottom: 1px solid rgba(239, 68, 68, 0.08);
+        }
+
+        .note-box::after {
+            content: "\f071";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 20px;
+            bottom: -15px;
+            font-size: 70px;
+            color: rgba(239, 68, 68, 0.04);
+            pointer-events: none;
         }
 
         .note-box h4 {
             font-family: 'Playfair Display', 'Noto Serif Bengali', serif;
             color: var(--note-border);
-            font-size: 15px;
-            font-weight: bold;
-            margin-bottom: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .note-box p {
             color: var(--note-text);
             font-size: 15px;
             line-height: 1.8;
+            font-weight: 500;
         }
 
         /* কমান্ড কপি করার কোড বক্স ও প্রিমিয়াম কপি বাটন ডিজাইন */
@@ -680,13 +710,13 @@
                     <a href="#phone-track" class="menu-item" onclick="showTip(event, 'phone-track')"><span class="tip-id">TIP 20</span><span class="tip-title">হারিয়ে যাওয়া ফোন ট্র্যাকিং</span></a>
 
                     <a href="#malware-remove" class="menu-item" onclick="showTip(event, 'malware-remove')"><span class="tip-id">TIP 21</span><span class="tip-title">উইন্ডোজ ইন-বিল্ট ম্যালওয়্যার রিমুভার</span></a>
-                    <a href="#imei-check" class="menu-item" onclick="showTip(event, 'imei-check')"><span class="tip-id">TIP 22</span><span class="tip-title">মোবাইল আসল না নকল চেক</span></a>
+                    <a href="#imei-check" class="menu-item" onclick="showTip(event, 'imei-check')"><span class="tip-id">TIP 22</span><span class="tip-title">মোাবইল আসল না নকল চেক</span></a>
                     <a href="#shut-down-slide" class="menu-item" onclick="showTip(event, 'shut-down-slide')"><span class="tip-id">TIP 23</span><span class="tip-title">স্লাইড টু শাটডাউন বাটন</span></a>
                     <a href="#data-saver" class="menu-item" onclick="showTip(event, 'data-saver')"><span class="tip-id">TIP 24</span><span class="tip-title">স্মার্টফোন ডাটা সেভিং মেথড</span></a>
                     <a href="#auto-update" class="menu-item" onclick="showTip(event, 'auto-update')"><span class="tip-id">TIP 25</span><span class="tip-title">উইন্ডোজ অটো আপডেট বন্ধ করা</span></a>
 
                     <a href="#hardware-info" class="menu-item" onclick="showTip(event, 'hardware-info')"><span class="tip-id">TIP 26</span><span class="tip-title">পিসির ফুল স্পেসিফিকেশন দেখা</span></a>
-                    <a href="#emergency-sos" class="menu-item" onclick="showTip(event, 'emergency-sos')"><span class="tip-id">TIP 27</span><span class="tip-title">মোবাইল ইমার্জেন্সি SOS সেটআপ</span></a>
+                    <a href="#emergency-sos" class="menu-item" onclick="showTip(event, 'emergency-sos')"><span class="tip-id">TIP 27</span><span class="tip-title">মোাবইল ইমার্জেন্সি SOS সেটআপ</span></a>
                     <a href="#screen-record" class="menu-item" onclick="showTip(event, 'screen-record')"><span class="tip-id">TIP 28</span><span class="tip-title">ফ্রি উইন্ডোজ স্ক্রিন রেকর্ডার</span></a>
                     <a href="#spam-call" class="menu-item" onclick="showTip(event, 'spam-call')"><span class="tip-id">TIP 29</span><span class="tip-title">অযাচিত স্প্যাম কল ব্লক ট্রিক</span></a>
                     <a href="#corrupt-file" class="menu-item" onclick="showTip(event, 'corrupt-file')"><span class="tip-id">TIP 30</span><span class="tip-title">উইন্ডোজ ড্যামেজ ফাইল ফিক্স</span></a>
@@ -707,10 +737,10 @@
                     <a href="#focus-mode" class="menu-item" onclick="showTip(event, 'focus-mode')"><span class="tip-id">TIP 42</span><span class="tip-title">অ্যান্ড্রয়েড ফোকাস মোড ট্রিক</span></a>
                     <a href="#mac-address" class="menu-item" onclick="showTip(event, 'mac-address')"><span class="tip-id">TIP 43</span><span class="tip-title">পিসির ফিজিক্যাল MAC অ্যাড্রেস</span></a>
                     <a href="#photo-compress" class="menu-item" onclick="showTip(event, 'photo-compress')"><span class="tip-id">TIP 44</span><span class="tip-title">কোয়ালিটি ঠিক রেখে ছবি কমপ্রেস</span></a>
-                    <a href="#drive-hide" class="menu-item" onclick="showTip(event, 'drive-hide')"><span class="tip-id">TIP 45</span><span class="tip-title">উইন্ডোজের পুরো হার্ডডিস্ক ড্রাইভ হাইд</span></a>
+                    <a href="#drive-hide" class="menu-item" onclick="showTip(event, 'drive-hide')"><span class="tip-id">TIP 45</span><span class="tip-title">উইন্ডোজের পুরো হার্ডডিস্ক ড্রাইভ হাইড</span></a>
 
                     <a href="#find-my-device-pc" class="menu-item" onclick="showTip(event, 'find-my-device-pc')"><span class="tip-id">TIP 46</span><span class="tip-title">ল্যাপটপ ট্র্যাকিং অন করা</span></a>
-                    <a href="#screen-pinning" class="menu-item" onclick="showTip(event, 'screen-pinning')"><span class="tip-id">TIP 47</span><span class="tip-title">মোবাইল স্ক্রিন পিনিং সিকিউরিটি</span></a>
+                    <a href="#screen-pinning" class="menu-item" onclick="showTip(event, 'screen-pinning')"><span class="tip-id">TIP 47</span><span class="tip-title">মোাবইল স্ক্রিন পিনিং সিকিউরিটি</span></a>
                     <a href="#hibernation" class="menu-item" onclick="showTip(event, 'hibernation')"><span class="tip-id">TIP 48</span><span class="tip-title">উইন্ডোজের হাইবারনেশন অপশন চালু</span></a>
                     <a href="#text-from-img" class="menu-item" onclick="showTip(event, 'text-from-img')"><span class="tip-id">TIP 49</span><span class="tip-title">ছবি থেকে বাংলা টেক্সট কনভার্ট</span></a>
                     <a href="#hosts-block" class="menu-item" onclick="showTip(event, 'hosts-block')"><span class="tip-id">TIP 50</span><span class="tip-title">সফটওয়্যার ছাড়া নির্দিষ্ট ওয়েবসাইট ব্লক</span></a>
@@ -757,7 +787,7 @@
             <!-- ১ থেকে ৫ পূর্বের কন্টেন্ট সেকশন -->
             <section id="shortcut-recovery" class="tip-content-section">
                 <span class="category-tag">Storage & Fix</span>
-                <h2 class="tip-detail-title"> নষ্ট পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
+                <h2 class="tip-detail-title"> नष्ट পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
                 <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> : লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
@@ -770,9 +800,13 @@
                         <li>এরপর `F:` ড্রাইভ খুলে দেখুন ফাইলগুলো ফিরে এসেছে কি না।</li>
                         <li>স্ক্রিনশটটি দেখে খুব ভালো লাগলো যে আপনার মূল ডেটা (ফোল্ডারটি) অক্ষত অবস্থায় ফিরে এসেছে!</li>
                         <li>বাকি যে দুটি ফোল্ডার দেখছেন—**System Volume Information** এবং **sysvolume**—এগুলো মূলত উইন্ডোজের সিস্টেম ফাইল এবং ভাইরাসের অবশিষ্টাংশ। এগুলোকে আগের মতো লুকিয়ে ফেলতে এবং শুধুমাত্র আপনার Main ফোল্ডারটি দৃশ্যমান রাখতে উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</li>
-                        <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib +h +s "System Volume Information"</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">F: attrib +h +s "System Volume Information"</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                         <li>**sysvolume**—এগুলো মূলত ভাইরাসের অবশিষ্টাংশ। এরপর ফাইলটি সিলেক্ট করে Shift + Delete চাপলে সাধারণত এটি ডিলিট হয়ে যাবে।</li>
                     </ul>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>কমান্ড ব্যবহারের সময় আপনার পেনড্রাইভের সঠিক ড্রাইভ লেটারটি ব্যবহার করা নিশ্চিত করুন। ভুল ড্রাইভ লেটার দিলে অন্য ড্রাইভের ফাইল হাইড বা আনহাইড হয়ে যেতে পারে।</p>
                 </div>
             </section>
 
@@ -786,6 +820,10 @@
                     <p style="margin-top:15px;">২য় পিসিতে ইথারনেট আইপি সেট করুন:</p>
                     <div class="code-box"><span class="code-text" id="ipPC2">192.168.1.2</span><button class="copy-btn" onclick="copyText('ipPC2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>আইপি অ্যাড্রেস সেট করার পর উভয় কম্পিউটারের ফাইল শেয়ারিং অপশনটি টার্ন অন রাখতে হবে, অন্যথায় ডাটা আদান-প্রদান করা সম্ভব হবে না।</p>
+                </div>
             </section>
 
             <section id="printer-setup" class="tip-content-section">
@@ -793,6 +831,10 @@
                 <h2 class="tip-detail-title">যেকোনো প্রিন্টার ড্রাইভার পারফেক্টলি সেটআপ করুন</h2>
                 <div class="instruction-card">
                     <p>প্রিন্টারটি সংযোগ না করেই প্রথমে অফিশিয়াল সাইট থেকে ড্রাইভার নামিয়ে নিন। সেটআপ করার সময় স্ক্রিনে যখন বলবে, তখনই কেবল যুক্ত করুন।</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>উইন্ডোজের সংস্করণ (৩২-বিট নাকি ৬৪-বিট) চেক করে সেই অনুযায়ী সঠিক ড্রাইভার ফাইলটি ডাউনলোড করুন।</p>
                 </div>
             </section>
 
@@ -804,6 +846,10 @@
                     <div class="code-box"><span class="code-text" id="speedCode1">%temp%</span><button class="copy-btn" onclick="copyText('speedCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                     <div class="code-box"><span class="code-text" id="speedCode2">prefetch</span><button class="copy-btn" onclick="copyText('speedCode2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই ফোল্ডারগুলোর কিছু ফাইল ব্যবহারের কারণে ডিলিট হতে নাও পারে, সেগুলোকে স্কিপ (Skip) করে দিন। এগুলো মূলত ক্যাশ ফাইল, ডিলিট করলে কোনো ব্যক্তিগত ফাইল harabe না।</p>
+                </div>
             </section>
 
             <section id="god-mode" class="tip-content-section">
@@ -812,6 +858,10 @@
                 <div class="instruction-card">
                     <p>ডেস্কটপে একটি নতুন ফোল্ডার তৈরি করে তার নাম হুবহু নিচের কোডটি দিন:</p>
                     <div class="code-box"><span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span><button class="copy-btn" onclick="copyText('godCode', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>কোডটির শুরুতে থাকা 'GodMode' টেক্সটটি আপনি চাইলে পরিবর্তন করতে পারেন, তবে ডট (.) এবং পরের কার্লি ব্র্যাকেটের ভেতরের অংশটি হুবহু এক রাখতে হবে।</p>
                 </div>
             </section>
 
@@ -823,6 +873,10 @@
                     <p>ইন্টারনেট বা ব্রাউজিং স্লো হলে CMD এডমিন মোডে খুলে এই কমান্ডটি রান করুন:</p>
                     <div class="code-box"><span class="code-text" id="c6">ipconfig /flushdns</span><button class="copy-btn" onclick="copyText('c6', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>কমান্ডটি সফলভাবে রান হওয়ার পর আপনার ব্রাউজারটি একবার রিস্টার্ট করুন। এটি পুরনো ও ত্রুটিপূর্ণ DNS রেকর্ড মুছে ফেলে নতুন কানেকশন তৈরি করে।</p>
+                </div>
             </section>
 
             <section id="win-key" class="tip-content-section">
@@ -832,6 +886,10 @@
                     <p>আপনার পিসির মাদারবোর্ডে সেভ থাকা অফিশিয়াল জেনুইন উইন্ডোজ প্রোডাক্ট কি বের করার কমান্ড:</p>
                     <div class="code-box"><span class="code-text" id="c7">wmic path softwarelicensingservice get OA3xOriginalProductKey</span><button class="copy-btn" onclick="copyText('c7', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই ট্রিকটি মূলত OEM লাইসেন্স (যা ল্যাপটপ বা ব্র্যান্ডেড পিসির সাথে প্রি-ইনস্টলড থাকে) এর ক্ষেত্রে মাদারবোর্ড থেকে সরাসরি কি বের করতে কাজ করে।</p>
+                </div>
             </section>
 
             <section id="chrome-ram" class="tip-content-section">
@@ -840,6 +898,10 @@
                 <div class="instruction-card">
                     <p>Chrome Settings > Performance-এ যান। সেখানে <b>Memory Saver</b> অপশনটি অন করে দিন। এটি ব্যাকগ্রাউন্ড ট্যাবের মেমোরি রিলিজ করে পিসি ফাস্ট রাখবে।</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>মেমোরি সেভার অন থাকলে ইন-অ্যাক্টিভ ট্যাবগুলো সাময়িকভাবে স্লিপ মোডে চলে যায়। পুনরায় সেই ট্যাবে ক্লিক করলে পৃষ্ঠাটি আবার রিফ্রেশ হবে。</p>
+                </div>
             </section>
 
             <section id="startup-apps" class="tip-content-section">
@@ -847,6 +909,10 @@
                 <h2 class="tip-detail-title">পিসি অন হওয়ার সময় স্লোনেস বা স্টার্টআপ অ্যাপস বন্ধ</h2>
                 <div class="instruction-card">
                     <p>Ctrl + Shift + Esc চেপে Task Manager-এ যান। <b>Startup Apps</b> ট্যাবে ক্লিক করে অপ্রয়োজনীয় অ্যাপসগুলো রাইট ক্লিক করে Disable করে দিন।</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এখান থেকে কোনো অ্যান্টিভাইরাস বা সিস্টেম ড্রাইভার (যেমন অডিও/গ্রাফিক্স কন্ট্রোল) ডিজেবল করবেন না, শুধুমাত্র থার্ড-পার্টি অ্যাপস বন্ধ করুন।</p>
                 </div>
             </section>
 
@@ -857,6 +923,10 @@
                     <p>CMD এর মাধ্যমে ফোল্ডারকে এমনভাবে গায়েব করুন যা সাধারণ Unhide করলেও আসবে না:</p>
                     <div class="code-box"><span class="code-text" id="c10">attrib +h +s +r "Folder_Name"</span><button class="copy-btn" onclick="copyText('c10', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ফোল্ডারটি পুনরায় ফিরে পেতে চাইলে প্লাসের জায়গায় মাইনাস ব্যবহার করে <code>attrib -h -r -s "Folder_Name"</code> কমান্ডটি রান করুন।</p>
+                </div>
             </section>
 
             <section id="android-developer" class="tip-content-section">
@@ -864,6 +934,10 @@
                 <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনের সিক্রেট ডেভেলপার মোড অন করা</h2>
                 <div class="instruction-card">
                     <p>মোাবাইল এর Settings > About Phone-এ যান। সেখানে <b>Build Number</b> এর ওপর টানা ৭ বার ক্লিক করুন। ডেভেলপার অপশনটি এনাবল হয়ে যাবে।</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ডেভেলপার মোডের ভেতরে থাকা কোনো অপশন না বুঝে পরিবর্তন করবেন না, এতে ফোনের স্বাভাবিক কার্যক্ষমতা বা ডিসপ্লে সেটিংসে সমস্যা হতে পারে।</p>
                 </div>
             </section>
 
@@ -874,13 +948,21 @@
                     <p>CMD ওপেন করে নিচের কোডটি পেস্ট করলে ডিরেক্ট একটি HTML ব্যাটারি লাইফ ফাইল জেনারেট হবে:</p>
                     <div class="code-box"><span class="code-text" id="c12">powercfg /batteryreport</span><button class="copy-btn" onclick="copyText('c12', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>কমান্ডটি রান করার পর স্ক্রিনে একটি ফাইল পাথ (Path) দেখাবে। সেই পাথে গিয়ে <code>battery-report.html</code> ফাইলটি ডাবল ক্লিক করে ওপেন করলেই বিস্তারিত দেখতে পাবেন।</p>
+                </div>
             </section>
 
             <section id="youtube-bg" class="tip-content-section">
                 <span class="category-tag">Mobile Trick</span>
                 <h2 class="tip-detail-title">প্রিমিয়াম ছাড়া মোবাইল স্ক্রিন অফ রেখে ইউটিউব শোনা</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Google Chrome ব্রাউজারে গিয়ে YouTube ওপেন করুন এবং থ্রি-ডট থেকে <b>Desktop Site</b> করুন। গান প্লে করে মিনিমাইজ করুন এবং নোটিফিকেশন বার থেকে প্লে চাপুন।</p>
+                    <p>ফোনের Google Chrome ব্রাউজারে গিয়ে YouTube ওপেন করুন এবং থ্রি-ডট থেকে <b>Desktop Site</b> করুন। গান প্লে করে মিনিমাইজ করুন এবং নোটিফিকেশন বার থেকে প্লে চাপুন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>যদি মিনিমাইজ করার পর নোটিফিকেশন প্যানেলে প্লে বাটন না আসে, তবে ক্রোমের নোটিফিকেশন পারমিশন ফোনের সেটিংসে অন আছে কি না তা চেক করুন।</p>
                 </div>
             </section>
 
@@ -891,13 +973,21 @@
                     <p>কমান্ড প্রম্পট (CMD) এডমিন মোডে ওপেন করে ওয়াইফাই এর সংরক্ষিত পাসওয়ার্ড দেখতে রান করুন (WiFi_Name এর জায়গায় নাম লিখুন):</p>
                     <div class="code-box"><span class="code-text" id="c14">netsh wlan show profile name="WiFi_Name" key=clear</span><button class="copy-btn" onclick="copyText('c14', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>কমান্ড রেজাল্টের <b>Security settings</b> সেকশনের নিচে থাকা <b>Key Content</b> ফিল্ডেই মূলত আপনার ওয়াইফাই পাসওয়ার্ডটি দৃশ্যমান হবে।</p>
+                </div>
             </section>
 
             <section id="clear-cache" class="tip-content-section">
                 <span class="category-tag">Mobile</span>
                 <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনের ইন্টারনাল স্টোরেজ ও ক্যাশ ফাইল ক্লিয়ার</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Storage > Apps-এ যান। ফেইসবুক, ইউটিউবের মতো বড় অ্যাপসগুলোর ভেতরে ঢুকে <b>Clear Cache</b> করুন। কোনো ডাটা হারানো ছাড়াই জিবি জিবি মেমোরি খালি হবে।</p>
+                    <p>ফোনের Settings > Storage > Apps-এ যান。 ফেইসবুক, ইউটিউবের মতো বড় অ্যাপসগুলোর ভেতরে ঢুকে <b>Clear Cache</b> করুন। কোনো ডাটা harano ছাড়াই জিবি জিবি মেমোরি খালি হবে।</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ভুলবশত 'Clear Data' বা 'Clear Storage' বাটনে ক্লিক করবেন না, তা করলে ওই অ্যাপ থেকে আপনার অ্যাকাউন্ট লগআউট হয়ে যাবে এবং ড্রাফট ডাটা মুছে যাবে।</p>
                 </div>
             </section>
 
@@ -905,7 +995,11 @@
                 <span class="category-tag">PC Speed</span>
                 <h2 class="tip-detail-title">হার্ডডিস্ক বা SSD ব্যবহার করে পিসির ভার্চুয়াল RAM বৃদ্ধি</h2>
                 <div class="instruction-card">
-                    <p>This PC > Properties > Advanced System Settings > Performance Settings > Advanced > Virtual Memory Change-এ যান। Automatically টিক তুলে দিয়ে কাস্টম সাইজ সেট করুন।</p>
+                    <p>This PC > Properties > Advanced System Settings > Performance Settings > Advanced > Virtual Memory Change-এ যান। Automatically টিক তুলে দিয়ে কাস্টম সাইজ সেট করুন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ভার্চুয়াল র‍্যামের ইনিশিয়াল সাইজ আপনার মূল র‍্যামের দেড় গুণ এবং ম্যাক্সিমাম সাইজ মূল র‍্যামের তিন গুণ রাখা নিরাপদ এবং কার্যকারী।</p>
                 </div>
             </section>
 
@@ -915,6 +1009,10 @@
                 <div class="instruction-card">
                     <p>কীবোর্ড থেকে একসঙ্গে <b>Windows Key + V</b> প্রেস করুন。 একটি পপআপ আসবে, সেখান থেকে Turn On করুন। এখন থেকে অতীতে কপি করা সব টেক্সটের লিস্ট এখানে পাবেন।</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>পিসি রিস্টার্ট দিলে ক্লিপবোর্ডের এই হিস্ট্রি স্বয়ংক্রিয়ভাবে মুছে যায়। তবে কোনো বিশেষ টেক্সট পিন (Pin) করে রাখলে তা রিস্টার্টের পরেও থেকে যাবে।</p>
+                </div>
             </section>
 
             <section id="whatsapp-web" class="tip-content-section">
@@ -922,6 +1020,10 @@
                 <h2 class="tip-detail-title">মোাইল অফলাইনে রেখেও কম্পিউটারে হোয়াটসঅ্যাপ চালানো</h2>
                 <div class="instruction-card">
                     <p>হোয়াটসঅ্যাপের <b>Linked Devices</b> ফিচার ব্যবহার করে একবার কিউআর কোড স্ক্যান করে নিলে মোবাইল সম্পূর্ণ বন্ধ বা ইন্টারনেটহীন থাকলেও কম্পিউটারে চ্যাট করা যাবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>নিরাপত্তার স্বার্থে যদি আপনার লিংক করা কম্পিউটারটি ১৪ দিনের বেশি সময় অব্যবহৃত থাকে, তবে হোয়াটসঅ্যাপ ডিভাইসটি স্বয়ংক্রিয়ভাবে লগআউট করে দেবে।</p>
                 </div>
             </section>
 
@@ -932,6 +1034,10 @@
                     <p>উইন্ডোজ পিসি হঠাৎ ফ্রিজ বা হ্যাং হয়ে গেলে সরাসরি কীবোর্ড থেকে এই বাটন তিনটি একসঙ্গে চাপুন:</p>
                     <div class="code-box"><span class="code-text" id="c19">Ctrl + Shift + Esc</span><button class="copy-btn" onclick="copyText('c19', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>টাস্ক ম্যানেজার ওপেন করার পর যেソフトওয়্যারের কারণে পিসি হ্যাং হয়েছে তা সিলেক্ট করে নিচে থাকা 'End Task' বাটনে ক্লিক করলেই পিসি আবার সচল হবে।</p>
+                </div>
             </section>
 
             <section id="phone-track" class="tip-content-section">
@@ -939,6 +1045,10 @@
                 <h2 class="tip-detail-title">হারিয়ে যাওয়া অ্যান্ড্রয়েড ফোন গুগল দিয়ে ট্র্যাকিং ও লক</h2>
                 <div class="instruction-card">
                     <p>যেকোনো ব্রাউজার থেকে <b>google.com/android/find</b> লিংকে যান। আপনার হারিয়ে যাওয়া ফোনের জিমেইল দিয়ে লগইন করে লাইভ লোকেশন দেখা ও রিমোটলি ডাটা ডিলিট করতে পারবেন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই ট্র্যাকিং ফিচারটি কাজ করার জন্য হারিয়ে যাওয়া ফোনটি অবশ্যই অন থাকতে হবে এবং তাতে ইন্টারনেট সংযোগ ও লোকেশন (GPS) অপশন চালু থাকা আবশ্যক।</p>
                 </div>
             </section>
 
@@ -949,14 +1059,22 @@
                     <p>উইন্ডোজে একটি ইন-বিল্ট ভাইরাস স্ক্যানার টুল থাকে। এটি ওপেন করতে Run বক্সে (Win + R) গিয়ে নিচের কোডটি লিখে এন্টার দিন:</p>
                     <div class="code-box"><span class="code-text" id="c21">mrt</span><button class="copy-btn" onclick="copyText('c21', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই টুলটি পিসির ব্যাকগ্রাউন্ডে থাকা ক্ষতিকারক সফটওয়্যার খুঁজে বের করতে দারুণ কার্যকর, তবে এটি কোনো ফুল-টাইম রিয়েল-টাইম অ্যান্টিভাইরাসের বিকল্প নয়।</p>
+                </div>
             </section>
 
             <section id="imei-check" class="tip-content-section">
                 <span class="category-tag">Mobile</span>
-                <h2 class="tip-detail-title">নতুন বা পুরাতন স্মার্টফোনটি আসল নাকি ক্লোন (নকল) চেক</h2>
+                <h2 class="tip-detail-title">নতুন বা পুরাতন スマートফোনটি আসল নাকি ক্লোন (নকল) চেক</h2>
                 <div class="instruction-card">
                     <p>আপনার জনের ডায়াল প্যাডে গিয়ে নিচের সিক্রেট কোডটি ডায়াল করে IMEI নম্বরটি সংগ্রহ করুন এবং তা অফিশিয়াল পোর্টালে ভেরিফাই করুন:</p>
                     <div class="code-box"><span class="code-text" id="c22">*#06#</span><button class="copy-btn" onclick="copyText('c22', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>IMEI নম্বরটি পাওয়ার পর বাংলাদেশের ক্ষেত্রে BTRC এর অফিশিয়াল পোর্টালে অথবা মেসেজে KYD লিখে ১৫ ডিজিটের আইএমইআই নম্বরটি দিয়ে 16002 তে পাঠিয়ে ফোনটি বৈধ কি না যাচাই করতে পারেন।</p>
                 </div>
             </section>
 
@@ -967,13 +1085,21 @@
                     <p>ডেস্কটপে রাইট ক্লিক করে New > Shortcut-এ যান এবং লোকেশন বক্সে নিচের টেক্সটটি পেস্ট করে ফিনিশ করুন:</p>
                     <div class="code-box"><span class="code-text" id="c23">slidetoshutdown.exe</span><button class="copy-btn" onclick="copyText('c23', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>শর্টকাটটি তৈরি হওয়ার পর আপনি চাইলে সেটির রাইট ক্লিকে প্রোপার্টিজে গিয়ে 'Change Icon' থেকে একটি আকর্ষণীয় পাওয়ার বাটন আইকন সেট করে নিতে পারেন।</p>
+                </div>
             </section>
 
             <section id="data-saver" class="tip-content-section">
                 <span class="category-tag">Mobile Data</span>
                 <h2 class="tip-detail-title">মোবাইল ইন্টারনেট ডাটা দ্রুত শেষ হওয়া বন্ধ করার উপায়</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Network > <b>Data Saver</b> অন করুন। এছাড়া Google Play Store এবং YouTube অ্যাপের ভেতর গিয়ে 'Auto-Update' ও 'Auto-Play' সম্পূর্ণ বন্ধ করে রাখুন。</p>
+                    <p>ফোনের Settings > Network > <b>Data Saver</b> অন করুন。 এছাড়া Google Play Store এবং YouTube অ্যাপের ভেতর গিয়ে 'Auto-Update' ও 'Auto-Play' সম্পূর্ণ বন্ধ করে রাখুন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ডাটা সেভার অন থাকলে ব্যাকগ্রাউন্ডে থাকা অ্যাপসগুলো ইন্টারনেট ব্যবহার করতে পারে না, ফলে মেসেঞ্জার বা হোয়াটসঅ্যাপের মেসেজ অ্যাপ ওপেন না করা পর্যন্ত কিছুটা দেরিতে আসতে পারে।</p>
                 </div>
             </section>
 
@@ -981,16 +1107,24 @@
                 <span class="category-tag">Windows</span>
                 <h2 class="tip-detail-title">উইন্ডোজ ১০/১১ অটোমেটিক আপডেট স্থায়ীভাবে বন্ধ করা</h2>
                 <div class="instruction-card">
-                    <p>Win + R চেপে লিখুন <b>services.msc</b>। এরপর নিচে স্ক্রোল করে "Windows Update" খুঁজে বের করুন, ডাবল ক্লিক করে Startup Type টি 'Disabled' করে দিন।</p>
+                    <p>Win + R চেপে লিখুন <b>services.msc</b>। এরপর নিচে স্ক্রোল করে "Windows Update" খুঁজে বের করুন, ডাবল ক্লিক করে Startup Type টি 'Disabled' করে দিন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>নিরাপত্তা নিশ্চিত করতে মাঝে মাঝে উইন্ডোজ ম্যানুয়ালি আপডেট করা ভালো। ফিচারটি আবার চালু করতে চাইলে একইভাবে 'Disabled' থেকে 'Automatic' বা 'Manual' সেট করুন।</p>
                 </div>
             </section>
 
             <section id="hardware-info" class="tip-content-section">
                 <span class="category-tag">PC Info</span>
-                <h2 class="tip-detail-title">সফ্টওয়্যার ছাড়া কম্পিউটারের পুরো হার্ডওয়্যার ইনফরমেশন দেখা</h2>
+                <h2 class="tip-detail-title">سف্টওয়্যার ছাড়া কম্পিউটারের পুরো হার্ডওয়্যার ইনফরমেশন দেখা</h2>
                 <div class="instruction-card">
-                    <p>আপনার কম্পিউটারের প্রসেসর, র‍্যাম, মাদারবোর্ড এবং গ্রাফিক্স কার্ডের লাইভ তথ্য এক ক্লিকে দেখার ডিরেক্ট রান কমান্ড:</p>
+                    <p>আপনার কম্পিউটারের প্রসেসর, র‍্যাম, মাদারবোর্ড এবং গ্রাফিক্স কার্ডের লাইভ তথ্য এক ক্লিকে দেখার ডিরেক্ট রান আদেশ:</p>
                     <div class="code-box"><span class="code-text" id="c26">msinfo32</span><button class="copy-btn" onclick="copyText('c26', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এটি উইন্ডোজের সবচেয়ে নির্ভরযোগ্য ডায়াগনস্টিক উইন্ডো, এখান থেকে আপনার বায়োস (BIOS) ভার্সন এবং মাদারবোর্ডের মডেল নম্বর খুব সহজেই নোট করতে পারবেন।</p>
                 </div>
             </section>
 
@@ -999,6 +1133,10 @@
                 <h2 class="tip-detail-title">বিপদকালীন সুরক্ষায় মোবাইলের ইমার্জেন্সি SOS সেটআপ</h2>
                 <div class="instruction-card">
                     <p>Settings > Safety & Emergency > <b>Emergency SOS</b> চালু করুন। বিপদে পড়লে জনের পাওয়ার বাটন টানা ৫ বার প্রেস করলে বিশ্বস্ত নম্বরে অটোমেটিক লোকেশন ও মেসেজ চলে যাবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ফিচারটি সেট করার সময় আপনার পরিবারের অন্তত ২ জন বিশ্বস্ত মানুষের সচল মোবাইল নম্বর ইমার্জেন্সি কন্টাক্ট হিসেবে অ্যাড করে রাখুন।</p>
                 </div>
             </section>
 
@@ -1009,6 +1147,10 @@
                     <p>উইন্ডোজের ইন-বিল্ট এক্সবক্স গেম বার স্ক্রিন রেকর্ডার সচল করতে কীবোর্ড থেকে এই বাটনগুলো চাপুন:</p>
                     <div class="code-box"><span class="code-text" id="c28">Windows Key + Alt + R</span><button class="copy-btn" onclick="copyText('c28', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই রেকর্ডারটি সাধারণত গেমপ্লে বা নির্দিষ্ট কোনো অ্যাপ উইন্ডো রেকর্ড করতে ডিজাইন করা হয়েছে। এটি দিয়ে সরাসরি নরমাল ডেস্কটপ স্ক্রিন বা ফাইল এক্সপ্লোরার রেকর্ড নাও হতে পারে।</p>
+                </div>
             </section>
 
             <section id="spam-call" class="tip-content-section">
@@ -1016,6 +1158,10 @@
                 <h2 class="tip-detail-title">কোম্পানির বিরক্তিকর স্প্যাম কল ও প্রমোショナル মেসেজ ব্লক</h2>
                 <div class="instruction-card">
                     <p>অ্যান্ড্রয়ের ডিফল্ট Phone app > Settings > <b>Caller ID & Spam</b> অপশনে যান। সেখানে 'Filter Spam Calls' অন করে দিলে স্প্যাম কলগুলো আপনার ফোনে রিং হওয়া ছাড়াই ব্লক হবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই ফিল্টারিং সিস্টেমটি গুগলের ডেটাবেজের ওপর ভিত্তি করে কাজ করে। নতুন কোনো নম্বর স্প্যাম হলে তা প্রথম অবস্থায় ব্লক নাও হতে পারে, সেক্ষেত্রে আপনাকে ম্যানুয়ালি ব্লক করতে হবে।</p>
                 </div>
             </section>
 
@@ -1026,6 +1172,10 @@
                     <p>পিসি ঘন ঘন এরর দেখালে CMD রান অ্যাজ এডমিনিস্ট্রেটর হিসেবে চালু করে এই সিস্টেম ফাইল chekker কমান্ডটি রান করুন:</p>
                     <div class="code-box"><span class="code-text" id="c30">sfc /scannow</span><button class="copy-btn" onclick="copyText('c30', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই প্রসেসটি সম্পন্ন হতে পিসির পারফরম্যান্স ভেদে ৫ থেকে ১৫ মিনিট সময় নিতে পারে। স্ক্যান চলাকালীন কমান্ড প্রম্পট উইন্ডোটি কোনোভাবেই বন্ধ করবেন না।</p>
+                </div>
             </section>
 
             <section id="app-cloner" class="tip-content-section">
@@ -1033,6 +1183,10 @@
                 <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনে অফিশিয়ালি দুটি হোয়াটস্যাপ/ফেসবুক অ্যাপ</h2>
                 <div class="instruction-card">
                     <p>ফোনের Settings > Apps > <b>Dual Apps / App Cloner</b> (ব্র্যান্ডভেদে নাম আলাদা হতে পারে) অপশনে গিয়ে হোয়াটসঅ্যাপ অন করে দিলেই স্ক্রিনে ক্লোন অ্যাপ চলে আসবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ক্লোন করা দ্বিতীয় অ্যাপটির ডাটা সম্পূর্ণ আলাদা ফোল্ডারে সংরক্ষিত থাকে। মূল অ্যাপটি আনইনস্টল করে দিলে ক্লোন অ্যাপের ডাটাও স্বয়ংক্রিয়ভাবে মুছে যাবে।</p>
                 </div>
             </section>
 
@@ -1043,6 +1197,10 @@
                     <p>আপনার রাউটার বা লোকাল নেটওয়ার্কের সাথে যুক্ত থাকা পিসির ইন্টারনাল IP দেখতে CMD-তে লিখুন:</p>
                     <div class="code-box"><span class="code-text" id="c32">ipconfig</span><button class="copy-btn" onclick="copyText('c32', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এখানে দেখানো IPv4 Address-টি হলো আপনার লোকাল নেটওয়ার্ক আইপি এবং Default Gateway হলো আপনার রাউডারের অ্যাডমিন প্যানেলে ঢোকার আইপি।</p>
+                </div>
             </section>
 
             <section id="dark-mode-all" class="tip-content-section">
@@ -1051,13 +1209,21 @@
                 <div class="instruction-card">
                     <p>ক্রোম ব্রাউজারের অ্যাড্রেস বারে গিয়ে লিখুন <code>chrome://flags</code> এবং অনুসন্ধান বক্সে <b>Auto Dark Mode for Web Contents</b> খুঁজে তা Enabled করে দিন。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এটি একটি এক্সপেরিমেন্টাল ফিচার হওয়ায় কিছু কিছু ওয়েবসাইটের কালার কম্বিনেশন বা ইমেজ দেখতে কিছুটা অদ্ভুত লাগতে পারে। আগের অবস্থায় ফিরতে এটিকে পুনরায় 'Default' করে দিন।</p>
+                </div>
             </section>
 
             <section id="keyboard-mouse" class="tip-content-section">
                 <span class="category-tag">Accessibility</span>
                 <h2 class="tip-detail-title">মাউস নষ্ট হয়ে গেলে কীবোর্ডের মাধ্যমে কার্সার নিয়ন্ত্রণ</h2>
                 <div class="instruction-card">
-                    <p>উইন্ডোজের <b>Left Alt + Left Shift + Num Lock</b> একসাথে প্রেস করুন। একটি পপআপ আসবে, ইয়েস করুন। এখন কীবোর্ডের ডানদিকের নাম্বার প্যাড দিয়ে মাউস নাড়াতে পারবেন。</p>
+                    <p>উইন্ডোজের <b>Left Alt + Left Shift + Num Lock</b> একসাথে press করুন। একটি পপআপ আসবে, ইয়েস করুন। এখন কীবোর্ডের ডানদিকের নাম্বার প্যাড দিয়ে মাউস নাড়াতে পারবেন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>এই ফিচারটি অন থাকা অবস্থায় নাম্বার প্যাডের ৫ বাটনটি মাউসের 'Left Click' হিসেবে এবং প্লাস (+) বাটনটি 'Double Click' হিসেবে কাজ করে।</p>
                 </div>
             </section>
 
@@ -1067,6 +1233,10 @@
                 <div class="instruction-card">
                     <p>Settings > Security > <b>Smart Lock</b> (বা Extend Unlock)-এ যান। সেখানে Trusted Places হিসেবে আপনার বাড়ি সিলেক্ট করলে নির্দিষ্ট স্থানে ফোন লক টাইপ করতে হবে না。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>নিরাপত্তার স্বার্থে আপনার নির্বাচিত স্থান থেকে চারপাশের নির্দিষ্ট ব্যাসার্ধের বাইরে চলে গেলে ফোনটি আবার স্বয়ংক্রিয়ভাবে লক হয়ে যাবে।</p>
+                </div>
             </section>
 
             <section id="pdf-to-word" class="tip-content-section">
@@ -1074,6 +1244,10 @@
                 <h2 class="tip-detail-title">কোনো ইন্টারনেট বাツールস ছাড়া PDF থেকে Word ফাইলে কনভার্ট</h2>
                 <div class="instruction-card">
                     <p>আপনার কম্পিউটারের <b>Microsoft Word</b> অ্যাপটি ওপেন করুন। এবার যেকোনো PDF ফাইলকে ড্র্যাগ অ্যান্ড ড্রপ করে সরাসরি ওয়ার্ডের ওপর ছেড়ে দিন। ফাইলটি অটো এডিটেবল টেক্সট হয়ে যাবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>স্ক্যান করা ইমেজ ফরম্যাটের পিডিএফ ফাইলের ক্ষেত্রে এই ট্রিকটি শতভাগ টেক্সট কনভার্ট নাও করতে পারে। সাধারণ টেক্সট ও অফিসিয়াল ডকুমেন্টের পিডিএফ এ খুব ভালো কাজ করে।</p>
                 </div>
             </section>
 
@@ -1083,6 +1257,10 @@
                 <div class="instruction-card">
                     <p>মোবাইলের নোটিফিকেশন বার নামিয়ে প্রোফাইল আইকনে ক্লিক করে <b>Add Guest</b> সিলেক্ট করুন। ফোনটি একদম নতুনের মতো হয়ে যাবে, আপনার গ্যালারি বা পার্সোনাল মেসেজ কেউ দেখতে পাবে না。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>গেস্ট মোড থেকে নিজের মোডে ফিরে আসার সময় আপনার ফোনের মূল লক স্ক্রিন পাসওয়ার্ড বা প্যাটার্নটি দিতে হবে, ফলে অন্য কেউ চাইলেই আপনার ডাটাতে অ্যাক্সেস করতে পারবে না।</p>
+                </div>
             </section>
 
             <section id="fast-boot" class="tip-content-section">
@@ -1091,6 +1269,10 @@
                 <div class="instruction-card">
                     <p>Control Panel > Power Options > Choose what the power buttons do-তে যান। Change settings text-এ ক্লিক করে নিচে থাকা <b>Turn on fast startup</b> বক্সে টিক দিন。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>যদি আপনার পিসিতে ডুয়াল বুট (উইন্ডোজের সাথে লিনাক্স বা অন্য ওএস) সেটআপ করা থাকে, তবে ফাস্ট স্টার্টআপ অন রাখলে অন্য ওএস বুট করতে সমস্যা হতে পারে।</p>
+                </div>
             </section>
 
             <section id="notification-history" class="tip-content-section">
@@ -1098,6 +1280,10 @@
                 <h2 class="tip-detail-title">অন্যের ডিলিট করে দেওয়া হোয়াটসঅ্যাপ বা মেসেঞ্জার বার্তা দেখা</h2>
                 <div class="instruction-card">
                     <p>ফোনের Settings > Notifications > Advanced > <b>Notification History</b> অপশনে গিয়ে এটি চালু করে দিন Spain  এরপর কেউ মেসেজ ডিলিট করলেও তার রেকর্ড ২৪ ঘণ্টা পর্যন্ত এখানে থাকবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ফিচারটি অন করার পর থেকে আসা নোটিফিকেশনগুলোই কেবল এখানে রেকর্ড হবে। অন করার আগের কোনো ডিলিট হওয়া মেসেজ এখানে দেখা সম্ভব নয়।</p>
                 </div>
             </section>
 
@@ -1108,6 +1294,10 @@
                     <p>আপনার ইন্টারনেট রেসপন্স টাইম বা পিং কত মিলিসেকেন্ড তা রিয়েল-টাইম মনিটর করার জন্য CMD তে রান করুন:</p>
                     <div class="code-box"><span class="code-text" id="c40">ping google.com -t</span><button class="copy-btn" onclick="copyText('c40', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>লাইভ পিং টেস্ট উইন্ডোটি বন্ধ করতে কীবোর্ড থেকে <b>Ctrl + C</b> প্রেস করুন, তাহলে এটি বন্ধ হবে এবং গড় পিং এর একটি স্ট্যাটিস্টিকস দেখাবে।</p>
+                </div>
             </section>
 
             <section id="safe-mode" class="tip-content-section">
@@ -1116,22 +1306,34 @@
                 <div class="instruction-card">
                     <p>পিসি অন করার সময় ক্রমাগত <b>F8 বা Shift + F8</b> কী প্রেস করতে থাকুন। অ্যাডভান্সড রিকভারি স্ক্রিন আসলে সেখান থেকে Safe Mode সিলেক্ট করে পিসি ট্রাবলশুট করতে পারবেন。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>নতুন উইন্ডোজ ১০ বা ১১ পিসিতে যদি F8 কাজ না করে, তবে সেটিংসের Recovery অপশন থেকে Advanced Startup এর মাধ্যমে সেফ মোডে প্রবেশ করতে হবে।</p>
+                </div>
             </section>
 
             <section id="focus-mode" class="tip-content-section">
                 <span class="category-tag">Mobile Productivity</span>
                 <h2 class="tip-detail-title">পড়াশোনা বা কাজের সময় ফেসবুক/ইউটিউবের নোটিফিকেশন অফ</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Digital Wellbeing > <b>Focus Mode</b>-এ যান। ডিস্ট্র্যাক্ট করে এমন অ্যাপস (যেমন FB, Insta) সিলেক্ট করে টার্ন অন করুন। মোডটি সচল থাকা অবস্থায় ওই অ্যাপসগুলো সম্পূর্ণ পজ থাকবে。</p>
+                    <p>ফোনের Settings > Digital Wellbeing > <b>Focus Mode</b>-এ যান。 ডিস্ট্র্যাক্ট করে এমন অ্যাপস (যেমন FB, Insta) সিলেক্ট করে টার্ন অন করুন। মোডটি সচল থাকা অবস্থায় ওই অ্যাপসগুলো সম্পূর্ণ পজ থাকবে。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>আপনি চাইলে ফোকাস মোডে একটি নির্দিষ্ট সময় (Schedule) সেট করে রাখতে পারেন, যাতে প্রতিদিন আপনার কাজের বা পড়ার সময় এটি অটোমেটিক অন হয়ে যায়।</p>
                 </div>
             </section>
 
             <section id="mac-address" class="tip-content-section">
                 <span class="category-tag">Networking</span>
-                <h2 class="tip-detail-title">ওয়াইফাই রাউটারে ফিল্টারিং এর জন্য পিসির MAC অ্যাড্রেস দেখা</h2>
+                <h2 class="tip-detail-title">ওয়াইফাই রাউটারে ফিল্টারিং এর জন্য পিসির MAC অ্যাড্রেস دیکھا</h2>
                 <div class="instruction-card">
                     <p>আপনার কম্পিউটারের ইউনিক নেটওয়ার্ক হার্ডওয়্যার আইডি বা ফিজিক্যাল ম্যাক অ্যাড্রেস এক লাইনে বের করার কমান্ড:</p>
                     <div class="code-box"><span class="code-text" id="c43">getmac</span><button class="copy-btn" onclick="copyText('c43', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>পিসিতে একাধিক নেটওয়ার্ক অ্যাডাপ্টার (যেমন ওয়াইফাই এবং ল্যান কেবল) থাকলে এখানে একাধিক ম্যাক অ্যাড্রেস দেখাতে পারে। আপনার সচল কানেকশনটির আইডিটিই বেছে নিন।</p>
                 </div>
             </section>
 
@@ -1139,7 +1341,11 @@
                 <span class="category-tag">Other Tips</span>
                 <h2 class="tip-detail-title">কোয়ালিটি ঠিক রেখে মেগাপিক্সেল ছবির সাইজ কিলোবাইটে আনা</h2>
                 <div class="instruction-card">
-                    <p>কোনো অনলাইন টুল ছাড়া উইন্ডোজের ডিফল্ট <b>Paint</b> অ্যাপে ছবিটি ওপেন করুন। ওপরে থাকা 'Resize' অপশনে ক্লিক করে Percentage ১০০ থেকে কমিয়ে ৫০ বা আপনার প্রয়োজন অনুযায়ী দিয়ে সেভ এন্টার দিন。</p>
+                    <p>কোনো অনলাইনツール ছাড়া উইন্ডোজের ডিফল্ট <b>Paint</b> অ্যাপে ছবিটি ওপেন করুন। ওপরে থাকা 'Resize' অপশনে ক্লিক করে Percentage ১০০ থেকে কমিয়ে ৫০ বা আপনার প্রয়োজন অনুযায়ী দিয়ে সেভ এন্টার দিন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>মূল ছবিটি নষ্ট না করতে চাইলে সাইজ কমানোর পর ফাইলটি সরাসরি Save না করে <b>Save As</b> দিয়ে নতুন একটি নামে সেভ করুন, এতে অরিজিনাল ছবিটি সুরক্ষিত থাকবে।</p>
                 </div>
             </section>
 
@@ -1149,6 +1355,10 @@
                 <div class="instruction-card">
                     <p>Start-এ রাইট ক্লিক করে <b>Disk Management</b>-এ যান। যে ড্রাইভটি লুকাতে চান তার ওপর রাইট ক্লিক করে 'Change Drive Letter and Paths' সিলেক্ট করে Remove-এ ক্লিক করুন। ড্রাইভটি হাইড হয়ে যাবে。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ড্রাইভটি আবার ফিরিয়ে আনতে একই নিয়মে গিয়ে 'Add' বাটনে ক্লিক করে যেকোনো একটি ড্রাইভ লেটার (যেমন D: বা E:) সিলেক্ট করে দিলেই ফাইলসহ ড্রাইভটি আবার শো করবে।</p>
+                </div>
             </section>
 
             <section id="find-my-device-pc" class="tip-content-section">
@@ -1156,6 +1366,10 @@
                 <h2 class="tip-detail-title">ল্যাপটপ চুরি বা হারিয়ে গেলে ট্র্যাক করার অপশন চালু করা</h2>
                 <div class="instruction-card">
                     <p>Windows Settings > Privacy & Security > <b>Find my device</b> অপশনে গিয়ে এটি অন করে দিন। ল্যাপটপ হারিয়ে গেলে অন্য ডিভাইস থেকে মাইক্রোসফট অ্যাকাуন্টে লগইন করে সেটির শেষ লোকেশন দেখতে পাবেন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>লোকেশন ট্র্যাকিং সঠিক পাওয়ার জন্য আপনার ল্যাপটপে মাইক্রোসফট অ্যাকাউন্ট দিয়ে লগইন করা থাকা এবং উইন্ডোজের লোকেশন সার্ভিস অন থাকা বাধ্যতামূূলক।</p>
                 </div>
             </section>
 
@@ -1165,14 +1379,22 @@
                 <div class="instruction-card">
                     <p>Settings > Security > Advanced > <b>App Pinning</b> অন করুন। এবার রিসেন্ট অ্যাপস স্ক্রিনে গিয়ে অ্যাপ আইকনে ক্লিক করে Pin করে দিন। লক না খোলা পর্যন্ত ওই নির্দিষ্ট অ্যাপ ছাড়া অন্য কোথাও যাওয়া যাবে না。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>পিন করা অ্যাপ থেকে বের হতে ফোনের Back এবং Home (অথবা রিসেন্ট) বাটন দুটি একসাথে চেপে ধরতে হবে। এতে স্ক্রিন লক হয়ে যাবে এবং পাসওয়ার্ড ছাড়া খোলা যাবে না।</p>
+                </div>
             </section>
 
             <section id="hibernation" class="tip-content-section">
                 <span class="category-tag">Windows</span>
                 <h2 class="tip-detail-title">চলতি সব কাজ ওপেন রেখেই ল্যাপটপ জিরো ব্যাটারিতে অফ করা</h2>
                 <div class="instruction-card">
-                    <p>উইন্ডোজের পাওয়ার অপশনে <b>Hibernation</b> চালু করতে CMD এডমিন মোডে রান করে এই কমান্ডটি পেস্ট করুন। এর ফলে কম্পিউটার বন্ধ করলেও আগের সব ওপেন ফাইল সুরক্ষিত থাকবে:</p>
+                    <p>উইন্ডোজের পাওয়ার অপশনে <b>Hibernation</b> চালু করতে CMD এডমিন মোডেরান করে এই কমান্ডটি পেস্ট করুন। এর ফলে কম্পিউটার বন্ধ করলেও আগের সব ওপেন ফাইল সুরক্ষিত থাকবে:</p>
                     <div class="code-box"><span class="code-text" id="c48">powercfg /hibernate on</span><button class="copy-btn" onclick="copyText('c48', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>হাইবারনেট ফিচারটি আপনার ওপেন থাকা কাজের রানিং স্টেটটি র‍্যাম থেকে হার্ডডিস্ক বা SSD-তে সেভ করে পিসি পুরোপুরি অফ করে, তাই সি-ড্রাইভে (C:) পর্যাপ্ত স্পেস থাকা জরুরি।</p>
                 </div>
             </section>
 
@@ -1182,6 +1404,10 @@
                 <div class="instruction-card">
                     <p>আপনার মোবাইল বা পিসির ব্রাউজার থেকে **Google Lens** অথবা Google Keep ওপেন করুন। সেখানে ছবি আপলোড করে **Grab Image Text** অপশনে ক্লিক করলে মাত্র ১ সেকেন্ডে সব টেক্সট কপি করার উপযোগী হয়ে যাবে。</p>
                 </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ছবি তোলার সময় লাইটিং এবং লেখার ফোকাস স্পষ্ট রাখলে গুগল লেন্স বাংলা বানানের নির্ভুলতা প্রায় ৯৫% পর্যন্ত নিখুঁতভাবে কনভার্ট করতে পারে।</p>
+                </div>
             </section>
 
             <section id="hosts-block" class="tip-content-section">
@@ -1189,6 +1415,10 @@
                 <h2 class="tip-detail-title">সফটওয়্যার ছাড়া পিসিতে যেকোনো অ্যাডাল্ট বা নির্দিষ্ট সাইট ব্লক</h2>
                 <div class="instruction-card">
                     <p><code>C:\Windows\System32\drivers\etc</code> ফোল্ডারে যান এবং <b>hosts</b> ফাইলটি Notepad দিয়ে এডমিন মোডে ওপেন করুন। একদম নিচে <code>127.0.0.1 www.website.com</code> লিখে ফাইলটি সেভ করে দিন。</p>
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ফাইলটি সেভ করার সময় কোনো এক্সটেনশন (যেমন .txt) যেন যুক্ত না হয় তা নিশ্চিত করুন। ফাইল ফরম্যাট 'All Files' সিলেক্ট করে সেভ করতে হবে।</p>
                 </div>
             </section>
 
