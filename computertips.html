@@ -934,12 +934,25 @@ p {
                 <span class="category-tag">Security</span>
                 <h2 class="tip-detail-title">কোনো সফটওয়্যার ছাড়া উইন্ডোজ ফোল্ডার হাইড ট্রিক</h2>
                 <div class="instruction-card">
-                    <p>CMD এর মাধ্যমে ফোল্ডারকে এমনভাবে গায়েব করুন যা সাধারণ Unhide করলেও আসবে না:</p>
-                    <div class="code-box"><span class="code-text" id="c10">attrib +h +s +r "Folder_Name"</span><button class="copy-btn" onclick="copyText('c10', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                    <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
+                    <ul class="step-list">
+                        <li><p>আপনার কীবোর্ডের Windows Key + R একসাথে চাপুন।</p></li>
+                        <li><p>একটি ছোট Run বক্স আসবে, সেখানে cmd লিখে এন্টার (Enter) চাপুন। কালো রঙের কমান্ড প্রম্পট উইন্ডো চালু হবে।</p></li>
+                        <li><p>কমান্ড প্রম্পটে নিচের লেখাটি হুবহু কপি করে পেস্ট করুন এবং এন্টার চাপুন:</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">cd "C:\Users\roman\OneDrive\Desktop\New folder"</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p>এবার ফোল্ডারটি হাইড করার জন্য নিচের কমান্ডটি লিখে এন্টার চাপুন: ব্যস, কাজ শেষ! এখন আপনার ডেস্কটপের 'New folder'-এর ভেতর গিয়ে দেখুন, roman ফোল্ডারটি গায়েব হয়ে গেছে। কেউ সহজে এটি খুঁজে পাবে না।</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">attrib +h +s +r "roman"</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                       
+                        <li><p>Unlock করার নিয়ম যখন আপনার ফোল্ডারটি আবার দেখার প্রয়োজন হবে, তখন একইভাবে কমান্ড প্রম্পট (CMD) ওপেন করে নিচের দুটি কমান্ড একে একে দিন:</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">cd "C:\Users\roman\OneDrive\Desktop\New folder"</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p>এরপর আনলক করার কমান্ড দিন (এখানে প্লাসের জায়গায় মাইনাস ব্যবহার করতে হবে):</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">attrib -h -s -r "roman"</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p>এন্টার চাপলেই ফোল্ডারটি আবার আগের জায়গায় দেখতে পাবেন।</p></li>
+                    </ul>
                 </div>
                 <div class="note-box">
                     <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
-                    <p>ফোল্ডারটি পুনরায় ফিরে পেতে চাইলে প্লাসের জায়গায় মাইনাস ব্যবহার করে <code>attrib -h -r -s "Folder_Name"</code> কমান্ডটি রান করুন।</p>
+                    <p>একটি জরুরি কথা: এই পদ্ধতিতে ফোল্ডারটি লুকিয়ে রাখা যায়, কিন্তু এতে কোনো পাসওয়ার্ড সেট হয় না। কেউ যদি এই attrib কমান্ডের নিয়মটি জানে, সে কিন্তু সহজেই আপনার ফোল্ডারটি বের করে ফেলতে পারবে। পুরোপুরি পাসওয়ার্ড দিয়ে লক করতে চাইলে আগের দেখানো 7-Zip বা WinRAR পদ্ধতিটি ব্যবহার করাই সবচেয়ে নিরাপদ।</p>
                 </div>
             </section>
 
