@@ -654,59 +654,7 @@ p {
 </head>
 <body>
 
-    <header>
-        <div class="logo-area">
-            <i class="fa-solid fa-laptop-code"></i>
-            <h1>PC Tips & Tricks Hub</h1>
-        </div>
-        <div class="header-controls">
-            <a href="https://megadealszone.github.io/bd/index.html" class="external-home-btn">
-                <i class="fa-solid fa-house-laptop"></i> হোম ভিজিট
-            </a>
-            <div class="theme-switch-wrapper">
-                <i class="fa-solid fa-sun theme-icon"></i>
-                <label class="theme-switch" for="checkbox">
-                    <input type="checkbox" id="checkbox" onchange="toggleTheme(this)">
-                    <div class="slider"></div>
-                </label>
-                <i class="fa-solid fa-moon theme-icon"></i>
-            </div>
-            <div class="stats-badge" id="statsBadge">
-                <i class="fa-solid fa-fire-flame"></i> Md. Roman Islam Habib
-            </div>
-        </div>
-    </header>
-
-    <div class="workspace">
-        <aside class="sidebar">
-            <div class="search-box">
-                <div class="search-wrapper">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="tipSearch" placeholder="টিপস খুঁজুন...">
-                </div>
-            </div>
-            
-            <div class="menu-list" id="menuList">
-                <a href="#home" id="homeMenuItem" class="menu-item active" onclick="showTip(event, 'home-section'); toggleMenuCollapse();">
-                    <span class="tip-id"><i class="fa-solid fa-house"></i></span>
-                    <span class="tip-title">হোম মেনু</span>
-                    <i class="fa-solid fa-chevron-down toggle-arrow"></i>
-                </a>
-                
-                <div id="subMenuContainer" class="sub-menu-container">
-                   
-                  
-                  <!-- ১ থেকে ৫ পূর্বের মেনু -->
-                        <a href="#excel-formula1" class="menu-item" onclick="showTip(event, 'excel-formula1')"><span class="tip-id">TIP 51</span><span class="tip-title">এক্সেল কন্ডিশনাল ডিস্ট্রিবিউশন ফর্মুলা</span></a>
-                               
-                
-                </div>
-            </div>
-        </aside>
-
-        <main class="details-panel" id="detailsPanel">
-           
-            <!-- ---------------------------Youtube----------------------------Start------------- -->
+     <!-- ---------------------------Youtube----------------------------Start------------- -->
              <!--***-->
 <!--***-->
 <!-- YouTube Video Scroller Start -->
@@ -838,6 +786,58 @@ p {
 
 
    
+
+    <header>
+        <div class="logo-area">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h1>PC Tips & Tricks Hub</h1>
+        </div>
+        <div class="header-controls">
+            <a href="https://megadealszone.github.io/bd/index.html" class="external-home-btn">
+                <i class="fa-solid fa-house-laptop"></i> হোম ভিজিট
+            </a>
+            <div class="theme-switch-wrapper">
+                <i class="fa-solid fa-sun theme-icon"></i>
+                <label class="theme-switch" for="checkbox">
+                    <input type="checkbox" id="checkbox" onchange="toggleTheme(this)">
+                    <div class="slider"></div>
+                </label>
+                <i class="fa-solid fa-moon theme-icon"></i>
+            </div>
+            <div class="stats-badge" id="statsBadge">
+                <i class="fa-solid fa-fire-flame"></i> Md. Roman Islam Habib
+            </div>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <aside class="sidebar">
+            <div class="search-box">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tipSearch" placeholder="টিপস খুঁজুন...">
+                </div>
+            </div>
+            
+            <div class="menu-list" id="menuList">
+                <a href="#home" id="homeMenuItem" class="menu-item active" onclick="showTip(event, 'home-section'); toggleMenuCollapse();">
+                    <span class="tip-id"><i class="fa-solid fa-house"></i></span>
+                    <span class="tip-title">হোম মেনু</span>
+                    <i class="fa-solid fa-chevron-down toggle-arrow"></i>
+                </a>
+                
+                <div id="subMenuContainer" class="sub-menu-container">
+                   
+                  
+                  <!-- ১ থেকে ৫ পূর্বের মেনু -->
+                        <a href="#excel-formula1" class="menu-item" onclick="showTip(event, 'excel-formula1')"><span class="tip-id">TIP 51</span><span class="tip-title">এক্সেল কন্ডিশনাল ডিস্ট্রিবিউশন ফর্মুলা</span></a>
+                               
+                
+                </div>
+            </div>
+        </aside>
+
+        <main class="details-panel" id="detailsPanel">
             <!-- হোম সেকশন -->
             <section id="home-section" class="tip-content-section active">
                 <span class="category-tag">All-in-One Guide</span>
