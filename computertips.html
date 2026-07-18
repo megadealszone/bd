@@ -252,7 +252,7 @@
         .menu-list {
             overflow-y: auto;
             flex-grow: 1;
-            padding: 0 0 10px 0; /* প্যাডিং উপরে ০ করা হয়েছে যাতে স্টিকি এলিমেন্ট গ্যাপ না তৈরি করে */
+            padding: 0 0 10px 0;
         }
 
         .menu-list::-webkit-scrollbar, .details-panel::-webkit-scrollbar {
@@ -287,12 +287,11 @@
             border-left-color: var(--accent-color);
         }
 
-        /* ১, ২, ৩ নম্বর আপডেট: হোম মেনুটিকে টপে লক, z-index এবং সলিড ব্যাকগ্রাউন্ড সেট */
         #homeMenuItem {
             position: sticky;
             top: 0;
             z-index: 100;
-            background-color: var(--sidebar-bg); /* সলিড থিম ব্যাকগ্রাউন্ড */
+            background-color: var(--sidebar-bg);
         }
 
         .menu-item .tip-id {
@@ -469,7 +468,7 @@
             font-size: 14px;
         }
 
-        /* নোট ও বিশেষ সতর্কবার্তা বক্সের স্টাইল */
+        /* নোট ও বিশেষ সতর্কবার্তা باکسের স্টাইল */
         .note-box {
             background: var(--note-bg);
             border-left: 4px solid var(--note-border);
@@ -494,7 +493,7 @@
             line-height: 1.8;
         }
 
-        /* কমান্ড কপি করার কোড বক্স ও কপি বাটন ডিজাইন */
+        /* কমান্ড কপি করার কোড বক্স ও প্রিমিয়াম কপি বাটন ডিজাইন */
         .code-box {
             background: var(--code-bg);
             border: 1px solid var(--border-color);
@@ -514,22 +513,33 @@
             word-break: break-all;
         }
 
+        /* প্রিমিয়াম কপি বাটন গ্লোবাল স্টাইল */
         .copy-btn {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #cbd5e1;
-            padding: 6px 12px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            border: none;
+            color: white;
+            padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
             flex-shrink: 0;
             font-family: 'Noto Serif Bengali', serif;
+            transition: all 0.2s ease;
         }
 
         .copy-btn:hover {
-            background: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
         }
 
         /* হোমপেজের ৩টি ক্যাটাগরি বক্সের গ্রিড লেআউট */
@@ -591,7 +601,6 @@
             .workspace { flex-direction: column; height: auto; }
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
             
-            /* মোবাইল ভিউতে স্টিকি বিহেভিয়ার বন্ধ বা নরমাল রাখার জন্য */
             #homeMenuItem { position: relative; top: initial; z-index: initial; }
             
             .details-panel { width: 100%; padding: 25px 15px; height: auto; overflow-y: visible; }
@@ -698,7 +707,7 @@
                     <a href="#focus-mode" class="menu-item" onclick="showTip(event, 'focus-mode')"><span class="tip-id">TIP 42</span><span class="tip-title">অ্যান্ড্রয়েড ফোকাস মোড ট্রিক</span></a>
                     <a href="#mac-address" class="menu-item" onclick="showTip(event, 'mac-address')"><span class="tip-id">TIP 43</span><span class="tip-title">পিসির ফিজিক্যাল MAC অ্যাড্রেস</span></a>
                     <a href="#photo-compress" class="menu-item" onclick="showTip(event, 'photo-compress')"><span class="tip-id">TIP 44</span><span class="tip-title">কোয়ালিটি ঠিক রেখে ছবি কমপ্রেস</span></a>
-                    <a href="#drive-hide" class="menu-item" onclick="showTip(event, 'drive-hide')"><span class="tip-id">TIP 45</span><span class="tip-title">উইন্ডোজের পুরো হার্ডডিস্ক ড্রাইভ হাইড</span></a>
+                    <a href="#drive-hide" class="menu-item" onclick="showTip(event, 'drive-hide')"><span class="tip-id">TIP 45</span><span class="tip-title">উইন্ডোজের পুরো হার্ডডিস্ক ড্রাইভ হাইд</span></a>
 
                     <a href="#find-my-device-pc" class="menu-item" onclick="showTip(event, 'find-my-device-pc')"><span class="tip-id">TIP 46</span><span class="tip-title">ল্যাপটপ ট্র্যাকিং অন করা</span></a>
                     <a href="#screen-pinning" class="menu-item" onclick="showTip(event, 'screen-pinning')"><span class="tip-id">TIP 47</span><span class="tip-title">মোবাইল স্ক্রিন পিনিং সিকিউরিটি</span></a>
@@ -749,11 +758,16 @@
             <section id="shortcut-recovery" class="tip-content-section">
                 <span class="category-tag">Storage & Fix</span>
                 <h2 class="tip-detail-title">পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
-                <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
+                <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> : লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
                 <div class="instruction-card">
-                    <h3><i class="fa-solid fa-circle-play"></i> Pendrive Shortcut/Hide সমস্যা</h3>
-                    <p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</p>
-                    <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span><button class="copy-btn" onclick="copyText('cmdCode1', event)">কপি করুন</button></div>
+                    <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
+                    <ul class="step-list">
+                        <li>যে কোনো ক্যাটাগরির বিস্তারিত জানতে বামপাশের মেনু লিস্ট ব্যবহার করুন।</li>
+                        <li>যদি আপনি মূল ওয়েবসাইটে প্রবেশ করতে চান, তবে ওপরে ডার্ক মোডের পাশে থাকা <b>"হোম ভিজিট"</b> বাটনে ক্লিক করুন।</li>
+                        <li>রাত বা দিনে স্বাচ্ছন্দ্যে পড়ার জন্য উপরে থাকা <b>সুইচ ব্যবহার করে লাইট/ডার্ক মোড</b> পরিবর্তন করে নিন।</li>
+                        <li><p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                    </ul>
                 </div>
             </section>
 
@@ -763,9 +777,9 @@
                 <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> লেভেল: অ্যাডভান্সড</span></div>
                 <div class="instruction-card">
                     <p>১ম পিসিতে ইথারনেট আইপি সেট করুন:</p>
-                    <div class="code-box"><span class="code-text" id="ipPC1">192.168.1.1</span><button class="copy-btn" onclick="copyText('ipPC1', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="ipPC1">192.168.1.1</span><button class="copy-btn" onclick="copyText('ipPC1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                     <p style="margin-top:15px;">২য় পিসিতে ইথারনেট আইপি সেট করুন:</p>
-                    <div class="code-box"><span class="code-text" id="ipPC2">192.168.1.2</span><button class="copy-btn" onclick="copyText('ipPC2', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="ipPC2">192.168.1.2</span><button class="copy-btn" onclick="copyText('ipPC2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -782,8 +796,8 @@
                 <h2 class="tip-detail-title">কম্পিউটারের স্পিড রকেটের মতো বৃদ্ধির জন্য মেগা টিপস</h2>
                 <div class="instruction-card">
                     <p>Run ডায়ালগ বক্সে (Win + R) গিয়ে এই কমান্ডগুলো দিয়ে ফাইল ডিলিট করুন:</p>
-                    <div class="code-box"><span class="code-text" id="speedCode1">%temp%</span><button class="copy-btn" onclick="copyText('speedCode1', event)">কপি করুন</button></div>
-                    <div class="code-box"><span class="code-text" id="speedCode2">prefetch</span><button class="copy-btn" onclick="copyText('speedCode2', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="speedCode1">%temp%</span><button class="copy-btn" onclick="copyText('speedCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="speedCode2">prefetch</span><button class="copy-btn" onclick="copyText('speedCode2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -792,7 +806,7 @@
                 <h2 class="tip-detail-title">উইন্ডোজ গড মোড (God Mode) অ্যাক্টিভেশন ট্রিক</h2>
                 <div class="instruction-card">
                     <p>ডেস্কটপে একটি নতুন ফোল্ডার তৈরি করে তার নাম হুবহু নিচের কোডটি দিন:</p>
-                    <div class="code-box"><span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span><button class="copy-btn" onclick="copyText('godCode', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="godCode">GodMode.{ED7BA470-8E54-465E-825C-99712043E01C}</span><button class="copy-btn" onclick="copyText('godCode', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -802,7 +816,7 @@
                 <h2 class="tip-detail-title">ইন্টারনেট কানেক্টিভিটি ও DNS ক্যাশ ফ্লাশ করার নিয়ম</h2>
                 <div class="instruction-card">
                     <p>ইন্টারনেট বা ব্রাউজিং স্লো হলে CMD এডমিন মোডে খুলে এই কমান্ডটি রান করুন:</p>
-                    <div class="code-box"><span class="code-text" id="c6">ipconfig /flushdns</span><button class="copy-btn" onclick="copyText('c6', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c6">ipconfig /flushdns</span><button class="copy-btn" onclick="copyText('c6', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -811,7 +825,7 @@
                 <h2 class="tip-detail-title">পিসিতে সচল উইন্ডোজের অরিজিনাল লাইসেন্স কি দেখা</h2>
                 <div class="instruction-card">
                     <p>আপনার পিসির মাদারবোর্ডে সেভ থাকা অফিশিয়াল জেনুইন উইন্ডোজ প্রোডাক্ট কি বের করার কমান্ড:</p>
-                    <div class="code-box"><span class="code-text" id="c7">wmic path softwarelicensingservice get OA3xOriginalProductKey</span><button class="copy-btn" onclick="copyText('c7', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c7">wmic path softwarelicensingservice get OA3xOriginalProductKey</span><button class="copy-btn" onclick="copyText('c7', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -836,7 +850,7 @@
                 <h2 class="tip-detail-title">কোনো সফটওয়্যার ছাড়া উইন্ডোজ ফোল্ডার হাইড ট্রিক</h2>
                 <div class="instruction-card">
                     <p>CMD এর মাধ্যমে ফোল্ডারকে এমনভাবে গায়েব করুন যা সাধারণ Unhide করলেও আসবে না:</p>
-                    <div class="code-box"><span class="code-text" id="c10">attrib +h +s +r "Folder_Name"</span><button class="copy-btn" onclick="copyText('c10', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c10">attrib +h +s +r "Folder_Name"</span><button class="copy-btn" onclick="copyText('c10', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -844,7 +858,7 @@
                 <span class="category-tag">Mobile</span>
                 <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনের সিক্রেট ডেভেলপার মোড অন করা</h2>
                 <div class="instruction-card">
-                    <p>মোবাইলের Settings > About Phone-এ যান। সেখানে <b>Build Number</b> এর ওপর টানা ৭ বার ক্লিক করুন। ডেভেলপার অপশনটি এনাবল হয়ে যাবে।</p>
+                    <p>মোাবাইল এর Settings > About Phone-এ যান। সেখানে <b>Build Number</b> এর ওপর টানা ৭ বার ক্লিক করুন। ডেভেলপার অপশনটি এনাবল হয়ে যাবে।</p>
                 </div>
             </section>
 
@@ -853,7 +867,7 @@
                 <h2 class="tip-detail-title">ল্যাপটপের অরিজিনাল ব্যাটারি হেলথ রিপোর্ট বের করা</h2>
                 <div class="instruction-card">
                     <p>CMD ওপেন করে নিচের কোডটি পেস্ট করলে ডিরেক্ট একটি HTML ব্যাটারি লাইফ ফাইল জেনারেট হবে:</p>
-                    <div class="code-box"><span class="code-text" id="c12">powercfg /batteryreport</span><button class="copy-btn" onclick="copyText('c12', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c12">powercfg /batteryreport</span><button class="copy-btn" onclick="copyText('c12', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -870,7 +884,7 @@
                 <h2 class="tip-detail-title">পিসিতে কানেক্টেড থাকা ওয়াইফাই এর পাসওয়ার্ড বের করা</h2>
                 <div class="instruction-card">
                     <p>কমান্ড প্রম্পট (CMD) এডমিন মোডে ওপেন করে ওয়াইফাই এর সংরক্ষিত পাসওয়ার্ড দেখতে রান করুন (WiFi_Name এর জায়গায় নাম লিখুন):</p>
-                    <div class="code-box"><span class="code-text" id="c14">netsh wlan show profile name="WiFi_Name" key=clear</span><button class="copy-btn" onclick="copyText('c14', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c14">netsh wlan show profile name="WiFi_Name" key=clear</span><button class="copy-btn" onclick="copyText('c14', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -900,9 +914,9 @@
 
             <section id="whatsapp-web" class="tip-content-section">
                 <span class="category-tag">WhatsApp</span>
-                <h2 class="tip-detail-title">মোবাইল অফলাইনে রেখেও কম্পিউটারে হোয়াটসঅ্যাপ চালানো</h2>
+                <h2 class="tip-detail-title">মোাইল অফলাইনে রেখেও কম্পিউটারে হোয়াটসঅ্যাপ চালানো</h2>
                 <div class="instruction-card">
-                    <p>হোয়াটসঅ্যাপের <b>Linked Devices</b> ফিচার ব্যবহার করে একবার কিউআর কোড স্ক্যান করে নিলে মোবাইল সম্পূর্ণ বন্ধ বা ইন্টারনেটহীন থাকলেও কম্পিউটারে চ্যাট করা যাবে।</p>
+                    <p>হোয়াটসঅ্যাপের <b>Linked Devices</b> ফিচার ব্যবহার করে একবার কিউআর কোড স্ক্যান করে নিলে মোবাইল সম্পূর্ণ বন্ধ বা ইন্টারনেটহীন থাকলেও কম্পিউটারে চ্যাট করা যাবে。</p>
                 </div>
             </section>
 
@@ -911,7 +925,7 @@
                 <h2 class="tip-detail-title">মাউস হ্যাং হলে সরাসরি টাস্ক ম্যানেজার ওপেন করার শর্টকাট</h2>
                 <div class="instruction-card">
                     <p>উইন্ডোজ পিসি হঠাৎ ফ্রিজ বা হ্যাং হয়ে গেলে সরাসরি কীবোর্ড থেকে এই বাটন তিনটি একসঙ্গে চাপুন:</p>
-                    <div class="code-box"><span class="code-text" id="c19">Ctrl + Shift + Esc</span><button class="copy-btn" onclick="copyText('c19', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c19">Ctrl + Shift + Esc</span><button class="copy-btn" onclick="copyText('c19', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -919,7 +933,7 @@
                 <span class="category-tag">Mobile Security</span>
                 <h2 class="tip-detail-title">হারিয়ে যাওয়া অ্যান্ড্রয়েড ফোন গুগল দিয়ে ট্র্যাকিং ও লক</h2>
                 <div class="instruction-card">
-                    <p>যেকোনো ব্রাউজার থেকে <b>google.com/android/find</b> লিংকে যান। আপনার হারিয়ে যাওয়া ফোনের জিমেইল দিয়ে লগইন করে লাইভ লোকেশন দেখা ও রিমোটলি ডাটা ডিলিট করতে পারবেন।</p>
+                    <p>যেকোনো ব্রাউজার থেকে <b>google.com/android/find</b> লিংকে যান। আপনার হারিয়ে যাওয়া ফোনের জিমেইল দিয়ে লগইন করে লাইভ লোকেশন দেখা ও রিমোটলি ডাটা ডিলিট করতে পারবেন。</p>
                 </div>
             </section>
 
@@ -928,7 +942,7 @@
                 <h2 class="tip-detail-title">উইন্ডোজের নিজস্ব হিডেন মালিশিয়াস ম্যালওয়্যার রিমুভার</h2>
                 <div class="instruction-card">
                     <p>উইন্ডোজে একটি ইন-বিল্ট ভাইরাস স্ক্যানার টুল থাকে। এটি ওপেন করতে Run বক্সে (Win + R) গিয়ে নিচের কোডটি লিখে এন্টার দিন:</p>
-                    <div class="code-box"><span class="code-text" id="c21">mrt</span><button class="copy-btn" onclick="copyText('c21', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c21">mrt</span><button class="copy-btn" onclick="copyText('c21', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -936,8 +950,8 @@
                 <span class="category-tag">Mobile</span>
                 <h2 class="tip-detail-title">নতুন বা পুরাতন স্মার্টফোনটি আসল নাকি ক্লোন (নকল) চেক</h2>
                 <div class="instruction-card">
-                    <p>আপনার ফোনের ডায়াল প্যাডে গিয়ে নিচের সিক্রেট কোডটি ডায়াল করে IMEI নম্বরটি সংগ্রহ করুন এবং তা অফিশিয়াল পোর্টালে ভেরিফাই করুন:</p>
-                    <div class="code-box"><span class="code-text" id="c22">*#06#</span><button class="copy-btn" onclick="copyText('c22', event)">কপি করুন</button></div>
+                    <p>আপনার জনের ডায়াল প্যাডে গিয়ে নিচের সিক্রেট কোডটি ডায়াল করে IMEI নম্বরটি সংগ্রহ করুন এবং তা অফিশিয়াল পোর্টালে ভেরিফাই করুন:</p>
+                    <div class="code-box"><span class="code-text" id="c22">*#06#</span><button class="copy-btn" onclick="copyText('c22', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -946,7 +960,7 @@
                 <h2 class="tip-detail-title">ডেস্কটপে স্লাইড টু শাটডাউন (Slide to Shutdown) বাটন তৈরি</h2>
                 <div class="instruction-card">
                     <p>ডেস্কটপে রাইট ক্লিক করে New > Shortcut-এ যান এবং লোকেশন বক্সে নিচের টেক্সটটি পেস্ট করে ফিনিশ করুন:</p>
-                    <div class="code-box"><span class="code-text" id="c23">slidetoshutdown.exe</span><button class="copy-btn" onclick="copyText('c23', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c23">slidetoshutdown.exe</span><button class="copy-btn" onclick="copyText('c23', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -954,7 +968,7 @@
                 <span class="category-tag">Mobile Data</span>
                 <h2 class="tip-detail-title">মোবাইল ইন্টারনেট ডাটা দ্রুত শেষ হওয়া বন্ধ করার উপায়</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Network > <b>Data Saver</b> অন করুন। এছাড়া Google Play Store এবং YouTube অ্যাপের ভেতর গিয়ে 'Auto-Update' ও 'Auto-Play' সম্পূর্ণ বন্ধ করে রাখুন।</p>
+                    <p>ফোনের Settings > Network > <b>Data Saver</b> অন করুন। এছাড়া Google Play Store এবং YouTube অ্যাপের ভেতর গিয়ে 'Auto-Update' ও 'Auto-Play' সম্পূর্ণ বন্ধ করে রাখুন。</p>
                 </div>
             </section>
 
@@ -968,10 +982,10 @@
 
             <section id="hardware-info" class="tip-content-section">
                 <span class="category-tag">PC Info</span>
-                <h2 class="tip-detail-title">স프트ওয়্যার ছাড়া কম্পিউটারের পুরো হার্ডওয়্যার ইনফরমেশন দেখা</h2>
+                <h2 class="tip-detail-title">সফ্টওয়্যার ছাড়া কম্পিউটারের পুরো হার্ডওয়্যার ইনফরমেশন দেখা</h2>
                 <div class="instruction-card">
                     <p>আপনার কম্পিউটারের প্রসেসর, র‍্যাম, মাদারবোর্ড এবং গ্রাফিক্স কার্ডের লাইভ তথ্য এক ক্লিকে দেখার ডিরেক্ট রান কমান্ড:</p>
-                    <div class="code-box"><span class="code-text" id="c26">msinfo32</span><button class="copy-btn" onclick="copyText('c26', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c26">msinfo32</span><button class="copy-btn" onclick="copyText('c26', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -979,7 +993,7 @@
                 <span class="category-tag">Mobile Safety</span>
                 <h2 class="tip-detail-title">বিপদকালীন সুরক্ষায় মোবাইলের ইমার্জেন্সি SOS সেটআপ</h2>
                 <div class="instruction-card">
-                    <p>Settings > Safety & Emergency > <b>Emergency SOS</b> চালু করুন। বিপদে পড়লে জনের পাওয়ার বাটন টানা ৫ বার প্রেস করলে বিশ্বস্ত নম্বরে অটোমেটিক লোকেশন ও মেসেজ চলে যাবে।</p>
+                    <p>Settings > Safety & Emergency > <b>Emergency SOS</b> চালু করুন। বিপদে পড়লে জনের পাওয়ার বাটন টানা ৫ বার প্রেস করলে বিশ্বস্ত নম্বরে অটোমেটিক লোকেশন ও মেসেজ চলে যাবে。</p>
                 </div>
             </section>
 
@@ -988,7 +1002,7 @@
                 <h2 class="tip-detail-title">কোনো থার্ড-পার্টি অ্যাপ ছাড়া উইন্ডোজ স্ক্রিন রেকর্ডার</h2>
                 <div class="instruction-card">
                     <p>উইন্ডোজের ইন-বিল্ট এক্সবক্স গেম বার স্ক্রিন রেকর্ডার সচল করতে কীবোর্ড থেকে এই বাটনগুলো চাপুন:</p>
-                    <div class="code-box"><span class="code-text" id="c28">Windows Key + Alt + R</span><button class="copy-btn" onclick="copyText('c28', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c28">Windows Key + Alt + R</span><button class="copy-btn" onclick="copyText('c28', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -996,7 +1010,7 @@
                 <span class="category-tag">Mobile</span>
                 <h2 class="tip-detail-title">কোম্পানির বিরক্তিকর স্প্যাম কল ও প্রমোショナル মেসেজ ব্লক</h2>
                 <div class="instruction-card">
-                    <p>অ্যান্ড্রয়ের ডিফল্ট Phone app > Settings > <b>Caller ID & Spam</b> অপশনে যান। সেখানে 'Filter Spam Calls' অন করে দিলে স্প্যাম কলগুলো আপনার ফোনে রিং হওয়া ছাড়াই ব্লক হবে।</p>
+                    <p>অ্যান্ড্রয়ের ডিফল্ট Phone app > Settings > <b>Caller ID & Spam</b> অপশনে যান। সেখানে 'Filter Spam Calls' অন করে দিলে স্প্যাম কলগুলো আপনার ফোনে রিং হওয়া ছাড়াই ব্লক হবে。</p>
                 </div>
             </section>
 
@@ -1005,7 +1019,7 @@
                 <h2 class="tip-detail-title">উইন্ডোজের মিসিং বা ড্যামেজড সিস্টেম ফাইল অটো-ফিক্স করা</h2>
                 <div class="instruction-card">
                     <p>পিসি ঘন ঘন এরর দেখালে CMD রান অ্যাজ এডমিনিস্ট্রেটর হিসেবে চালু করে এই সিস্টেম ফাইল chekker কমান্ডটি রান করুন:</p>
-                    <div class="code-box"><span class="code-text" id="c30">sfc /scannow</span><button class="copy-btn" onclick="copyText('c30', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c30">sfc /scannow</span><button class="copy-btn" onclick="copyText('c30', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -1013,7 +1027,7 @@
                 <span class="category-tag">Mobile</span>
                 <h2 class="tip-detail-title">অ্যান্ড্রয়েড ফোনে অফিশিয়ালি দুটি হোয়াটস্যাপ/ফেসবুক অ্যাপ</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Apps > <b>Dual Apps / App Cloner</b> (ব্র্যান্ডভেদে নাম আলাদা হতে পারে) অপশনে গিয়ে হোয়াটসঅ্যাপ অন করে দিলেই স্ক্রিনে ক্লোন অ্যাপ চলে আসবে।</p>
+                    <p>ফোনের Settings > Apps > <b>Dual Apps / App Cloner</b> (ব্র্যান্ডভেদে নাম আলাদা হতে পারে) অপশনে গিয়ে হোয়াটসঅ্যাপ অন করে দিলেই স্ক্রিনে ক্লোন অ্যাপ চলে আসবে。</p>
                 </div>
             </section>
 
@@ -1022,7 +1036,7 @@
                 <h2 class="tip-detail-title">পিসির লোকাল আইপি (Local IP) এবং গেটওয়ে অ্যাড্রেস দেখা</h2>
                 <div class="instruction-card">
                     <p>আপনার রাউটার বা লোকাল নেটওয়ার্কের সাথে যুক্ত থাকা পিসির ইন্টারনাল IP দেখতে CMD-তে লিখুন:</p>
-                    <div class="code-box"><span class="code-text" id="c32">ipconfig</span><button class="copy-btn" onclick="copyText('c32', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c32">ipconfig</span><button class="copy-btn" onclick="copyText('c32', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -1030,7 +1044,7 @@
                 <span class="category-tag">Browser</span>
                 <h2 class="tip-detail-title">গুগল ক্রোমের মাধ্যমে সব ওয়েবসাইটে জোরপূর্বক ডার্ক মোড</h2>
                 <div class="instruction-card">
-                    <p>ক্রোম ব্রাউজারের অ্যাড্রেস বারে গিয়ে লিখুন <code>chrome://flags</code> এবং অনুসন্ধান বক্সে <b>Auto Dark Mode for Web Contents</b> খুঁজে তা Enabled করে দিন।</p>
+                    <p>ক্রোম ব্রাউজারের অ্যাড্রেস বারে গিয়ে লিখুন <code>chrome://flags</code> এবং অনুসন্ধান বক্সে <b>Auto Dark Mode for Web Contents</b> খুঁজে তা Enabled করে দিন。</p>
                 </div>
             </section>
 
@@ -1038,7 +1052,7 @@
                 <span class="category-tag">Accessibility</span>
                 <h2 class="tip-detail-title">মাউস নষ্ট হয়ে গেলে কীবোর্ডের মাধ্যমে কার্সার নিয়ন্ত্রণ</h2>
                 <div class="instruction-card">
-                    <p>উইন্ডোজের <b>Left Alt + Left Shift + Num Lock</b> একসাথে প্রেস করুন। একটি পপআপ আসবে, ইয়েস করুন। এখন কীবোর্ডের ডানদিকের নাম্বার প্যাড দিয়ে মাউস নাড়াতে পারবেন।</p>
+                    <p>উইন্ডোজের <b>Left Alt + Left Shift + Num Lock</b> একসাথে প্রেস করুন। একটি পপআপ আসবে, ইয়েস করুন। এখন কীবোর্ডের ডানদিকের নাম্বার প্যাড দিয়ে মাউস নাড়াতে পারবেন。</p>
                 </div>
             </section>
 
@@ -1046,15 +1060,15 @@
                 <span class="category-tag">Mobile</span>
                 <h2 class="tip-detail-title">বাড়িতে বা নিরাপদ স্থানে মোবাইল অটো-আনলক রাখার ট্রিক</h2>
                 <div class="instruction-card">
-                    <p>Settings > Security > <b>Smart Lock</b> (বা Extend Unlock)-এ যান। সেখানে Trusted Places হিসেবে আপনার বাড়ি সিলেক্ট করলে নির্দিষ্ট স্থানে ফোন লক টাইপ করতে হবে না।</p>
+                    <p>Settings > Security > <b>Smart Lock</b> (বা Extend Unlock)-এ যান। সেখানে Trusted Places হিসেবে আপনার বাড়ি সিলেক্ট করলে নির্দিষ্ট স্থানে ফোন লক টাইপ করতে হবে না。</p>
                 </div>
             </section>
 
             <section id="pdf-to-word" class="tip-content-section">
                 <span class="category-tag">Office Tools</span>
-                <h2 class="tip-detail-title">কোনো ইন্টারনেট বা টুলস ছাড়া PDF থেকে Word ফাইলে কনভার্ট</h2>
+                <h2 class="tip-detail-title">কোনো ইন্টারনেট বাツールস ছাড়া PDF থেকে Word ফাইলে কনভার্ট</h2>
                 <div class="instruction-card">
-                    <p>আপনার কম্পিউটারের <b>Microsoft Word</b> অ্যাপটি ওপেন করুন। এবার যেকোনো PDF ফাইলকে ড্র্যাগ অ্যান্ড ড্রপ করে সরাসরি ওয়ার্ডের ওপর ছেড়ে দিন। ফাইলটি অটো এডিটেবল টেক্সট হয়ে যাবে।</p>
+                    <p>আপনার কম্পিউটারের <b>Microsoft Word</b> অ্যাপটি ওপেন করুন। এবার যেকোনো PDF ফাইলকে ড্র্যাগ অ্যান্ড ড্রপ করে সরাসরি ওয়ার্ডের ওপর ছেড়ে দিন। ফাইলটি অটো এডিটেবল টেক্সট হয়ে যাবে。</p>
                 </div>
             </section>
 
@@ -1062,7 +1076,7 @@
                 <span class="category-tag">Mobile Privacy</span>
                 <h2 class="tip-detail-title">অন্য কাউকে ফোন দেওয়ার আগে 'গেস্ট মোড' অন করার নিয়ম</h2>
                 <div class="instruction-card">
-                    <p>মোবাইলের নোটিফিকেশন বার নামিয়ে প্রোফাইল আইকনে ক্লিক করে <b>Add Guest</b> সিলেক্ট করুন। ফোনটি একদম নতুনের মতো হয়ে যাবে, আপনার গ্যালারি বা পার্সোনাল মেসেজ কেউ দেখতে পাবে না।</p>
+                    <p>মোবাইলের নোটিফিকেশন বার নামিয়ে প্রোফাইল আইকনে ক্লিক করে <b>Add Guest</b> সিলেক্ট করুন। ফোনটি একদম নতুনের মতো হয়ে যাবে, আপনার গ্যালারি বা পার্সোনাল মেসেজ কেউ দেখতে পাবে না。</p>
                 </div>
             </section>
 
@@ -1070,7 +1084,7 @@
                 <span class="category-tag">PC Speed</span>
                 <h2 class="tip-detail-title">উইন্ডোজ ১০/১১ অপারেটিং সিস্টেমের ফাস্ট স্টার্টআপ অন</h2>
                 <div class="instruction-card">
-                    <p>Control Panel > Power Options > Choose what the power buttons do-তে যান। Change settings text-এ ক্লিক করে নিচে থাকা <b>Turn on fast startup</b> বক্সে টিক দিন।</p>
+                    <p>Control Panel > Power Options > Choose what the power buttons do-তে যান। Change settings text-এ ক্লিক করে নিচে থাকা <b>Turn on fast startup</b> বক্সে টিক দিন。</p>
                 </div>
             </section>
 
@@ -1078,7 +1092,7 @@
                 <span class="category-tag">Mobile Settings</span>
                 <h2 class="tip-detail-title">অন্যের ডিলিট করে দেওয়া হোয়াটসঅ্যাপ বা মেসেঞ্জার বার্তা দেখা</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Notifications > Advanced > <b>Notification History</b> অপশনে গিয়ে এটি চালু করে দিন。 এরপর কেউ মেসেজ ডিলিট করলেও তার রেকর্ড ২৪ ঘণ্টা পর্যন্ত এখানে থাকবে।</p>
+                    <p>ফোনের Settings > Notifications > Advanced > <b>Notification History</b> অপশনে গিয়ে এটি চালু করে দিন Spain  এরপর কেউ মেসেজ ডিলিট করলেও তার রেকর্ড ২৪ ঘণ্টা পর্যন্ত এখানে থাকবে。</p>
                 </div>
             </section>
 
@@ -1087,7 +1101,7 @@
                 <h2 class="tip-detail-title">নেটওয়ার্ক বা গেম খেলার সময় পিং (Ping) লাইভ চেক করা</h2>
                 <div class="instruction-card">
                     <p>আপনার ইন্টারনেট রেসপন্স টাইম বা পিং কত মিলিসেকেন্ড তা রিয়েল-টাইম মনিটর করার জন্য CMD তে রান করুন:</p>
-                    <div class="code-box"><span class="code-text" id="c40">ping google.com -t</span><button class="copy-btn" onclick="copyText('c40', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c40">ping google.com -t</span><button class="copy-btn" onclick="copyText('c40', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -1095,7 +1109,7 @@
                 <span class="category-tag">Windows Fix</span>
                 <h2 class="tip-detail-title">উইন্ডোজ ক্র্যাশ করলে ডিরেক্ট সেফ মোডে (Safe Mode) বুট করা</h2>
                 <div class="instruction-card">
-                    <p>পিসি অন করার সময় ক্রমাগত <b>F8 বা Shift + F8</b> কী প্রেস করতে থাকুন। অ্যাডভান্সড রিকভারি স্ক্রিন আসলে সেখান থেকে Safe Mode সিলেক্ট করে পিসি ট্রাবলশুট করতে পারবেন।</p>
+                    <p>পিসি অন করার সময় ক্রমাগত <b>F8 বা Shift + F8</b> কী প্রেস করতে থাকুন। অ্যাডভান্সড রিকভারি স্ক্রিন আসলে সেখান থেকে Safe Mode সিলেক্ট করে পিসি ট্রাবলশুট করতে পারবেন。</p>
                 </div>
             </section>
 
@@ -1103,7 +1117,7 @@
                 <span class="category-tag">Mobile Productivity</span>
                 <h2 class="tip-detail-title">পড়াশোনা বা কাজের সময় ফেসবুক/ইউটিউবের নোটিফিকেশন অফ</h2>
                 <div class="instruction-card">
-                    <p>ফোনের Settings > Digital Wellbeing > <b>Focus Mode</b>-এ যান। ডিস্ট্র্যাক্ট করে এমন অ্যাপস (যেমন FB, Insta) সিলেক্ট করে টার্ন অন করুন। মোডটি সচল থাকা অবস্থায় ওই অ্যাপসগুলো সম্পূর্ণ পজ থাকবে।</p>
+                    <p>ফোনের Settings > Digital Wellbeing > <b>Focus Mode</b>-এ যান। ডিস্ট্র্যাক্ট করে এমন অ্যাপস (যেমন FB, Insta) সিলেক্ট করে টার্ন অন করুন। মোডটি সচল থাকা অবস্থায় ওই অ্যাপসগুলো সম্পূর্ণ পজ থাকবে。</p>
                 </div>
             </section>
 
@@ -1112,7 +1126,7 @@
                 <h2 class="tip-detail-title">ওয়াইফাই রাউটারে ফিল্টারিং এর জন্য পিসির MAC অ্যাড্রেস দেখা</h2>
                 <div class="instruction-card">
                     <p>আপনার কম্পিউটারের ইউনিক নেটওয়ার্ক হার্ডওয়্যার আইডি বা ফিজিক্যাল ম্যাক অ্যাড্রেস এক লাইনে বের করার কমান্ড:</p>
-                    <div class="code-box"><span class="code-text" id="c43">getmac</span><button class="copy-btn" onclick="copyText('c43', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c43">getmac</span><button class="copy-btn" onclick="copyText('c43', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -1120,7 +1134,7 @@
                 <span class="category-tag">Other Tips</span>
                 <h2 class="tip-detail-title">কোয়ালিটি ঠিক রেখে মেগাপিক্সেল ছবির সাইজ কিলোবাইটে আনা</h2>
                 <div class="instruction-card">
-                    <p>কোনো অনলাইন টুল ছাড়া উইন্ডোজের ডিফল্ট <b>Paint</b> অ্যাপে ছবিটি ওপেন করুন। ওপরে থাকা 'Resize' অপশনে ক্লিক করে Percentage ১০০ থেকে কমিয়ে ৫০ বা আপনার প্রয়োজন অনুযায়ী দিয়ে সেভ এন্টার দিন।</p>
+                    <p>কোনো অনলাইন টুল ছাড়া উইন্ডোজের ডিফল্ট <b>Paint</b> অ্যাপে ছবিটি ওপেন করুন। ওপরে থাকা 'Resize' অপশনে ক্লিক করে Percentage ১০০ থেকে কমিয়ে ৫০ বা আপনার প্রয়োজন অনুযায়ী দিয়ে সেভ এন্টার দিন。</p>
                 </div>
             </section>
 
@@ -1128,7 +1142,7 @@
                 <span class="category-tag">Windows Secret</span>
                 <h2 class="tip-detail-title">উইন্ডোজ কম্পিউটারের ড্রাইভ (যেমন: D, E ড্রাইভ) লুকিয়ে ফেলা</h2>
                 <div class="instruction-card">
-                    <p>Start-এ রাইট ক্লিক করে <b>Disk Management</b>-এ যান। যে ড্রাইভটি লুকাতে চান তার ওপর রাইট ক্লিক করে 'Change Drive Letter and Paths' সিলেক্ট করে Remove-এ ক্লিক করুন। ড্রাইভটি হাইড হয়ে যাবে।</p>
+                    <p>Start-এ রাইট ক্লিক করে <b>Disk Management</b>-এ যান। যে ড্রাইভটি লুকাতে চান তার ওপর রাইট ক্লিক করে 'Change Drive Letter and Paths' সিলেক্ট করে Remove-এ ক্লিক করুন। ড্রাইভটি হাইড হয়ে যাবে。</p>
                 </div>
             </section>
 
@@ -1136,7 +1150,7 @@
                 <span class="category-tag">Windows</span>
                 <h2 class="tip-detail-title">ল্যাপটপ চুরি বা হারিয়ে গেলে ট্র্যাক করার অপশন চালু করা</h2>
                 <div class="instruction-card">
-                    <p>Windows Settings > Privacy & Security > <b>Find my device</b> অপশনে গিয়ে এটি অন করে দিন। ল্যাপটপ হারিয়ে গেলে অন্য ডিভাইস থেকে মাইক্রোসফট অ্যাকাউন্টে লগইন করে সেটির শেষ লোকেশন দেখতে পাবেন।</p>
+                    <p>Windows Settings > Privacy & Security > <b>Find my device</b> অপশনে গিয়ে এটি অন করে দিন। ল্যাপটপ হারিয়ে গেলে অন্য ডিভাইস থেকে মাইক্রোসফট অ্যাকাуন্টে লগইন করে সেটির শেষ লোকেশন দেখতে পাবেন。</p>
                 </div>
             </section>
 
@@ -1144,7 +1158,7 @@
                 <span class="category-tag">Mobile Security</span>
                 <h2 class="tip-detail-title">বাচ্চাদের হাতে ফোন দেওয়ার আগে স্ক্রিন অ্যাপ পিন সিকিউরিটি</h2>
                 <div class="instruction-card">
-                    <p>Settings > Security > Advanced > <b>App Pinning</b> অন করুন। এবার রিসেন্ট অ্যাপস স্ক্রিনে গিয়ে অ্যাপ আইকনে ক্লিক করে Pin করে দিন। লক না খোলা পর্যন্ত ওই নির্দিষ্ট অ্যাপ ছাড়া অন্য কোথাও যাওয়া যাবে না।</p>
+                    <p>Settings > Security > Advanced > <b>App Pinning</b> অন করুন। এবার রিসেন্ট অ্যাপস স্ক্রিনে গিয়ে অ্যাপ আইকনে ক্লিক করে Pin করে দিন। লক না খোলা পর্যন্ত ওই নির্দিষ্ট অ্যাপ ছাড়া অন্য কোথাও যাওয়া যাবে না。</p>
                 </div>
             </section>
 
@@ -1153,7 +1167,7 @@
                 <h2 class="tip-detail-title">চলতি সব কাজ ওপেন রেখেই ল্যাপটপ জিরো ব্যাটারিতে অফ করা</h2>
                 <div class="instruction-card">
                     <p>উইন্ডোজের পাওয়ার অপশনে <b>Hibernation</b> চালু করতে CMD এডমিন মোডে রান করে এই কমান্ডটি পেস্ট করুন। এর ফলে কম্পিউটার বন্ধ করলেও আগের সব ওপেন ফাইল সুরক্ষিত থাকবে:</p>
-                    <div class="code-box"><span class="code-text" id="c48">powercfg /hibernate on</span><button class="copy-btn" onclick="copyText('c48', event)">কপি করুন</button></div>
+                    <div class="code-box"><span class="code-text" id="c48">powercfg /hibernate on</span><button class="copy-btn" onclick="copyText('c48', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                 </div>
             </section>
 
@@ -1169,7 +1183,7 @@
                 <span class="category-tag">Security</span>
                 <h2 class="tip-detail-title">সফটওয়্যার ছাড়া পিসিতে যেকোনো অ্যাডাল্ট বা নির্দিষ্ট সাইট ব্লক</h2>
                 <div class="instruction-card">
-                    <p><code>C:\Windows\System32\drivers\etc</code> ফোল্ডারে যান এবং <b>hosts</b> ফাইলটি Notepad দিয়ে এডমিন মোডে ওপেন করুন। একদম নিচে <code>127.0.0.1 www.website.com</code> লিখে ফাইলটি সেভ করে দিন।</p>
+                    <p><code>C:\Windows\System32\drivers\etc</code> ফোল্ডারে যান এবং <b>hosts</b> ফাইলটি Notepad দিয়ে এডমিন মোডে ওপেন করুন। একদম নিচে <code>127.0.0.1 www.website.com</code> লিখে ফাইলটি সেভ করে দিন。</p>
                 </div>
             </section>
 
@@ -1177,7 +1191,7 @@
     </div>
 
     <script>
-        // ১. থিম পরিবর্তনের ফাংশন (চেক বক্স অন থাকলে ডার্ক-থিম ক্লাস যুক্ত হবে, নতুবা রিমুভ হবে)
+        // ১. থিম পরিবর্তনের ফাংশন
         function toggleTheme(checkbox) {
             if (checkbox.checked) {
                 document.body.classList.add('dark-theme');
@@ -1186,22 +1200,18 @@
             }
         }
 
-        // ২. নির্দিষ্ট টিপস সেকশন দেখানোর ফাংশন (মেনু ক্লিকে একটি সক্রিয় করবে এবং বাকিগুলো হাইড করবে)
+        // ২. নির্দিষ্ট টিপস সেকশন দেখানোর ফাংশন
         function showTip(event, targetId) {
-            event.preventDefault(); // ক্লিকের ডিফল্ট অ্যাঙ্কর বিহেভিয়ার বন্ধ করার জন্য
+            event.preventDefault();
             
-            // সব মেনু আইটেম থেকে্যাক্টিভ ক্লাস রিমুভ করা
             const menuItems = document.querySelectorAll('.menu-item');
             menuItems.forEach(item => item.classList.remove('active'));
             
-            // সব টিপস বিবরণী সেকশন থেকে অ্যাক্টিভ ক্লাস রিমুভ করা
             const contentSections = document.querySelectorAll('.tip-content-section');
             contentSections.forEach(section => section.classList.remove('active'));
             
-            // বর্তমান ক্লিক করা মেনু আইটেমটিকে অ্যাক্টিভ করা
             event.currentTarget.classList.add('active');
             
-            // টার্গেট আইডি অনুযায়ী ডানদিকের প্যানেলে কন্টেন্ট দৃশ্যমান করা এবং মোবাইল রেসপন্সিভ স্ক্রোল হ্যান্ডেল করা
             const activeSection = document.getElementById(targetId);
             if (activeSection) {
                 activeSection.classList.add('active');
@@ -1209,12 +1219,12 @@
                 if (window.innerWidth <= 768) {
                     activeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
-                    document.getElementById('detailsPanel').scrollTop = 0; // স্ক্রোল টপ পজিশনে নেওয়া
+                    document.getElementById('detailsPanel').scrollTop = 0;
                 }
             }
         }
 
-        // ৩. হোম মেনু ক্লিকে সাব-মেনু কন্টেইনার ফোল্ড/আনফোল্ড (Collapse) করার লজিক
+        // ৩. হোম মেনু ক্লিকে সাব-মেনু কন্টেইনার ফোল্ড/আনফোল্ড করার লজিক
         function toggleMenuCollapse() {
             const subMenu = document.getElementById('subMenuContainer');
             const homeItem = document.getElementById('homeMenuItem');
@@ -1225,36 +1235,57 @@
             }
         }
 
-        // ৪. ক্লিপবোর্ডে টেক্সট/কমান্ড ওয়ান-ক্লিক কপি করার ফাংশন এবং সাকসেস মেসেজ ট্র্যাকিং
+        // ৪. ক্লিপবোর্ডে টেক্সট কপি করার পারফেক্ট ইউনিভার্সাল ফাংশন (সব ধরণের ব্রাউজারে কাজ করবে)
         function copyText(elementId, event) {
             const textElement = document.getElementById(elementId);
             if (textElement) {
                 const textToCopy = textElement.innerText;
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    const activeButton = event.currentTarget;
-                    const originalText = activeButton.innerText;
+                const activeButton = event.currentTarget;
+                const originalHTML = activeButton.innerHTML;
+
+                // টেক্সট কপি করার ইউনিভার্সাল লজিক (যা about:blank বা লোকাল মোডেও শতভাগ কাজ করে)
+                function updateButtonUI() {
+                    activeButton.innerHTML = '<i class="fa-solid fa-circle-check"></i> কপি হয়েছে!';
+                    activeButton.style.background = "linear-gradient(135deg, #10b981, #059669)"; 
+                    activeButton.style.boxShadow = "0 4px 10px rgba(16, 185, 129, 0.4)";
                     
-                    // কপি সাকসেসফুল হলে বাটনের টেক্সট ও কালার সাময়িক পরিবর্তন করা
-                    activeButton.innerText = "কপি হয়েছে! ✓";
-                    activeButton.style.background = "#10b981"; 
-                    activeButton.style.borderColor = "#10b981";
-                    
-                    // ২ সেকেন্ড পর বাটনটিকে পূর্বের স্বাভাবিক অবস্থায় ফিরিয়ে আনা
                     setTimeout(() => {
-                        activeButton.innerText = originalText;
+                        activeButton.innerHTML = originalHTML;
                         activeButton.style.background = ""; 
-                        activeButton.style.borderColor = "";
+                        activeButton.style.boxShadow = "";
                     }, 2000);
-                });
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy).then(updateButtonUI).catch(err => fallbackCopy(textToCopy));
+                } else {
+                    fallbackCopy(textToCopy);
+                }
+
+                function fallbackCopy(text) {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = text;
+                    textArea.style.position = "fixed";
+                    textArea.style.opacity = "0";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        updateButtonUI();
+                    } catch (err) {
+                        console.error('কপি করা সম্ভব হয়নি: ', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
             }
         }
 
-        // ৫. কি-আপ ইভেন্ট লিসেনার ব্যবহার করে লাইভ রিয়েল-টাইম মেনু সার্চিং লজিক
+        // ৫. রিয়েল-টাইম মেনু সার্চিং লজিক
         document.getElementById('tipSearch').addEventListener('keyup', function() {
             let filter = this.value.toUpperCase();
             let menuItems = document.querySelectorAll('.sub-menu-container .menu-item');
 
-            // ইউজার ইনপুটের সাথে মিল থাকলে মেনু শো করবে, অমিল থাকলে হাইড (display: none) হবে
             menuItems.forEach(item => {
                 let text = item.querySelector('.tip-title').innerText;
                 if (text.toUpperCase().indexOf(filter) > -1) {
