@@ -830,6 +830,7 @@ p {
                     <div class="code-box"><span class="code-text" id="ipPC1">192.168.1.1</span><button class="copy-btn" onclick="copyText('ipPC1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                     <p style="margin-top:15px;">২য় পিসিতে ইথারনেট আইপি সেট করুন:</p>
                     <div class="code-box"><span class="code-text" id="ipPC2">192.168.1.2</span><button class="copy-btn" onclick="copyText('ipPC2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                
                 </div>
                 <div class="note-box">
                     <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
@@ -879,7 +880,7 @@ p {
                 </div>
             </section>
 
-            <!-- ৬ থেকে ৫০ নতুন কন্টেন্ট সেকশন -->
+            <!-- ৬ থেকে ৫০ নতুন কন্টেন্ট সেকশন------------------------------------- -->
             <section id="dns-flush" class="tip-content-section">
                 <span class="category-tag">Internet</span>
                 <h2 class="tip-detail-title">ইন্টারনেট কানেক্টিভিটি ও DNS ক্যাশ ফ্লাশ করার নিয়ম</h2>
@@ -908,13 +909,22 @@ p {
                     <p>**এক নজরে পরামর্শ:** আপনার ইন্টারনেট যদি সাধারণ স্লো হয়, তবে শুধু `ipconfig /flushdns` করাই যথেষ্ট। কিন্তু যদি ইন্টারনেট কানেকশন পুরোপুরি আটকে যায় বা "No Internet" দেখায়, কেবল তখনই `netsh int ip reset` কমান্ডটি ব্যবহার করা উচিত।</p>
                 </div>
             </section>
-
+<!-- ৮ থেকে ৫০ নতুন কন্টেন্ট সেকশন------------------------------------- -->
             <section id="win-key" class="tip-content-section">
                 <span class="category-tag">Windows</span>
                 <h2 class="tip-detail-title">পিসিতে সচল উইন্ডোজের অরিজিনাল লাইসেন্স কি দেখা</h2>
                 <div class="instruction-card">
                     <p>আপনার পিসির মাদারবোর্ডে সেভ থাকা অফিশিয়াল জেনুইন উইন্ডোজ প্রোডাক্ট কি বের করার কমান্ড:</p>
                     <div class="code-box"><span class="code-text" id="c7">wmic path softwarelicensingservice get OA3xOriginalProductKey</span><button class="copy-btn" onclick="copyText('c7', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <h3>সুবিধা (Pros)</h3>
+                        <li><p><br />লাইসেন্স কি উদ্ধার: কম্পিউটার ফরম্যাট বা নতুন করে উইন্ডোজ ইনস্টল করার আগে আপনার আসল প্রোডাক্ট কি-টি ভুলে গেলে, এর মাধ্যমে খুব সহজে তা খুঁজে বের করা যায়।</p></li>
+                        <li><p><br />সহজ অ্যাক্টিভেশন: নতুন করে উইন্ডোজ দেওয়ার পর যদি অটো-অ্যাক্টিভেট না হয়, তবে এই কি-টি কপি করে ম্যানুয়ালি বসিয়ে উইন্ডোজ জেনুইন করা যায়।</p></li>
+                        <li><p><br />জেনুইন লাইসেন্স যাচাই: আপনার কম্পিউটারটি মাদারবোর্ডের সাথে অফিশিয়ালভাবে লাইসেন্সপ্রাপ্ত (Genuine OEM License) কিনা তা নিশ্চিত হওয়া যায়।</p></li>
+                        
+                        <h3>অসুবিধা (Cons)</h3>
+                        <li><p><br />নিরাপত্তা ঝুঁকি (Privacy Risk): কমান্ডটি রান করলেই গোপন প্রোডাক্ট কি-টি স্ক্রিনে সরাসরি দেখা যায়। পাশে কেউ থাকলে বা স্ক্রিন শেয়ার করা থাকলে কি-টি চুরি হয়ে যাওয়ার সম্ভাবনা থাকে।</p></li>
+                        <li><p><br />পাইরেটেড উইন্ডোজে অকার্যকর: কাস্টম বিল্ড পিসিতে যদি পাইরেটেড বা ক্র্যাক করা উইন্ডোজ ব্যবহার করা হয়, তবে এই কমান্ডটি কোনো রেজাল্ট দেখাবে না (খালি থাকবে)।</p></li>
+                        <li><p><br />রিটেইল লাইসেন্স দেখায় না: মাইক্রোসফটের দোকান থেকে আলাদাভাবে কেনা রিটেইল (Retail) লাইসেন্স মাদারবোর্ডে সেভ হয় না, তাই এই কমান্ডের মাধ্যমে সেই কি (Key) খুঁজে পাওয়া যায় না।</p></li>
                 </div>
                 <div class="note-box">
                     <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
@@ -945,7 +955,7 @@ p {
                     <p>এখান থেকে কোনো অ্যান্টিভাইরাস বা সিস্টেম ড্রাইভার (যেমন অডিও/গ্রাফিক্স কন্ট্রোল) ডিজেবল করবেন না, শুধুমাত্র থার্ড-পার্টি অ্যাপস বন্ধ করুন।</p>
                 </div>
             </section>
-
+<!-- ১২ থেকে ৫০ নতুন কন্টেন্ট সেকশন------------------------------------- -->
             <section id="folder-lock" class="tip-content-section">
                 <span class="category-tag">Security</span>
                 <h2 class="tip-detail-title">কোনো সফটওয়্যার ছাড়া উইন্ডোজ ফোল্ডার হাইড ট্রিক</h2>
@@ -1008,7 +1018,7 @@ p {
                     <p>যদি মিনিমাইজ করার পর নোটিফিকেশন প্যানেলে প্লে বাটন না আসে, তবে ক্রোমের নোটিফিকেশন পারমিশন ফোনের সেটিংসে অন আছে কি না তা চেক করুন।</p>
                 </div>
             </section>
-
+<!-- ১৭ থেকে ৫০ নতুন কন্টেন্ট সেকশন------------------------------------- -->
             <section id="wifi-pass" class="tip-content-section">
                 <span class="category-tag">WiFi</span>
                 <h2 class="tip-detail-title">পিসিতে কানেক্টেড থাকা ওয়াইফাই এর পাসওয়ার্ড বের করা</h2>
@@ -1045,7 +1055,7 @@ p {
                     <p>ভার্চুয়াল র‍্যামের ইনিশিয়াল সাইজ আপনার মূল র‍্যামের দেড় গুণ এবং ম্যাক্সিমাম সাইজ মূল র‍্যামের তিন গুণ রাখা নিরাপদ এবং কার্যকারী।</p>
                 </div>
             </section>
-
+<!-- ২০ থেকে ৫০ নতুন কন্টেন্ট সেকশন------------------------------------- -->
             <section id="clipboard-history" class="tip-content-section">
                 <span class="category-tag">Windows</span>
                 <h2 class="tip-detail-title">উইন্ডোজের একাদিক কপি করা ডাটা ও ক্লিপবোর্ড হিস্ট্রি</h2>
