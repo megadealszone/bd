@@ -403,7 +403,7 @@
     }
 
     /* হিরো স্লাইডার সেকশন */
-    .hero {
+    . {
       height: 476px;
       position: relative;
       overflow: hidden;
@@ -418,7 +418,7 @@
     }
 
     /* স্লাইডারের ছবি কন্টেইনার */
-    .hero-slide {
+    .-slide {
       position: absolute;
       top: 0;
       left: 0;
@@ -435,18 +435,18 @@
     }
 
     /* সক্রিয় স্লাইডার স্টেট */
-    .hero-slide.active {
+    .-slide.active {
       opacity: 1;
       transform: scale(1);
     }
 
     /* পূর্ববর্তী স্লাইডার স্টেট */
-    .hero-slide.previous {
+    .-slide.previous {
       opacity: 0;
     }
 
     /* স্লাইডারের উপরের কালো বা ডার্ক প্রলেপ (Overlay) */
-    .hero-overlay {
+    .-overlay {
       position: absolute;
       top: 0;
       left: 0;
@@ -457,7 +457,7 @@
     }
 
     /* হিরো কন্টেন্ট বক্স (লেখা ও বাটন) */
-    .hero-content {
+    .-content {
       position: relative;
       z-index: 2;
       width: 100%;
@@ -467,7 +467,7 @@
     }
 
     /* স্লাইডার ডট সুচক কন্টেইনার */
-    .hero-dots {
+    .-dots {
       position: absolute;
       bottom: 15px;
       left: 50%;
@@ -478,7 +478,7 @@
     }
 
     /* প্রতিটি স্লাইডার ডট */
-    .hero-dot {
+    .-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
@@ -489,14 +489,14 @@
     }
 
     /* একটিভ স্লাইডার ডট */
-    .hero-dot.active {
+    .-dot.active {
       background: #38bdf8;
       transform: scale(1.2);
       border-color: #38bdf8;
     }
 
     /* হিরো সেকশনের মূল শিরোনাম (আরবি ক্যালিগ্রাফি) */
-    .hero-content h1 {
+    .-content h1 {
       font-size: 36px;
       margin-bottom: 12px;
       line-height: 1.3;
@@ -505,7 +505,7 @@
     }
 
     /* হিরো সেকশনের বিবরণী টেক্সট */
-    .hero-content p {
+    .-content p {
       font-size: 16px;
       margin-bottom: 20px;
       line-height: 1.5;
@@ -1154,6 +1154,59 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
+
+
+
+    /* হিরো কন্টেন্ট বক্স-----------slide box text aliment */
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 800px;
+  padding: 15px;
+  animation: fadeIn 1s ease;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* উপাদানগুলোকে বামে এলাইন রাখার জন্য */
+}
+
+/* ১. এইচ১ (আরবি লেখা) - একদম টপে থাকবে */
+.hero-content h1 {
+  font-size: 45px;
+  line-height: 1.3;
+  font-weight: 700;
+  text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  width: 100%;
+  text-align: center;   /* আরবি ক্যালিগ্রাফি দেখতে সুন্দর লাগার জন্য সেন্টারে রাখা হয়েছে */
+  margin-top: 0;        /* একদম উপরে চড়ে থাকবে */
+  margin-bottom: 160px;  /* নিচের p ট্যাগের সাথে দূরত্ব */
+}
+
+/* ২. পি ট্যাগ - তিন লাইনে জাস্টিফাই ও বামে থাকবে */
+.hero-content p {
+  font-size: 16px;
+  line-height: 1.6;      /* ৩ লাইনে সুন্দরভাবে বসার জন্য লাইন-হাইট সমন্বয় করা হলো */
+  font-weight: 400;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  
+  max-width: 230px;      /* টেক্সটকে ৩ লাইনে ভাঙার জন্য প্রস্থ নির্দিষ্ট করা হলো */
+  text-align: justify;   /* লেখা দুই পাশ সমান (Justify) করবে */
+  margin-top: 10px;      /* নিচে নামানোর জন্য মার্জিন */
+  margin-bottom: 25px;
+}
+
+/* ৩. বাটন (বামে থাকবে) */
+.hero-content .slider-btn {
+  align-self: flex-start;
+}
+
+
+
+
+
+
+    
   </style>
 
   <meta name="google-site-verification" content="gJTIuSaJpH2jwKGQ4kLtdwj8B61OyxUun5I5-5sAMww" />
