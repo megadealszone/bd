@@ -18,6 +18,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Orbitron:wght@600&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Three.js & OrbitControls Libraries for 3D Solar System -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
   <style> 
     /* রুট ভ্যারিয়েবল: ডিফল্ট (লাইট মোড) এর কালার থিম ও ভ্যালু সেট করে */
     :root {
@@ -928,12 +932,74 @@
       border-radius: 6px;
     }
 
+    /* ৩ডি সৌরজগত (3D Solar System) সেকশন স্টাইল */
+    .solar-system-wrapper {
+      width: 100%;
+      min-width: 1200px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    .solar-system-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding-left: var(--page-padding);
+      padding-right: var(--page-padding);
+      box-sizing: border-box;
+    }
+
+    .solar-canvas-box {
+      position: relative;
+      width: 100%;
+      height: 4in; /* ৪ ইঞ্চি হাইট */
+      border-radius: 20px;
+      overflow: hidden;
+      background: #020208;
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .solar-ui-panel {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 12px 18px;
+      border-radius: 14px;
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      max-width: 300px;
+      z-index: 10;
+    }
+
+    .solar-ui-panel h2 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    .solar-ui-panel p {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
     /* ওয়েবসাইট ফুটার সেকশন স্টাইল */
     footer {
       background: rgba(15, 23, 42, 0.98);
       color: #94a3b8;
       padding: 25px 20px 15px 20px;
-      margin-top: 30px;
+      margin-top: 25px;
       width: 100%;
       min-width: 1200px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -1292,7 +1358,7 @@
             <div class="hero-content">
               <h1>لَا إِلٰهَ إِلَّا اللّٰهُ مُحَمَّدٌ رَّسُولُ اللّٰهِ</h1>
               <p>“দুনিয়ার সৌন্দর্য ক্ষণিকের, কিন্তু আখিরাতের শান্তি চিরদিনের। তাই আল্লাহর পথে চলাই সবচেয়ে বড় সফলতা। 🌙✨”</p>
-              <a href="#footer-section" class="slider-btn" onclick="scrollToFooter(); return false;">See More</a>
+              <a href="#footer-section" class="slider-btn" onclick="scrollToFooter(); return false;">সৌরজগত (Solar System)</a>
             </div>
           </section>
           <!-- HERO END -->
@@ -1536,6 +1602,24 @@
   </div> 
   <!-- PAGE WRAPPER END -->
 
+  <!-- 3D SOLAR SYSTEM SECTION START (Placing above Footer with 4-inch height & full width) -->
+  <div class="solar-system-wrapper">
+    <div class="solar-system-container">
+      <div class="solar-canvas-box">
+        
+        <!-- UI Overlay -->
+        <div class="solar-ui-panel">
+          <h2>🪐 সৌরজগত (Solar System)</h2>
+          <p>মাউসের লেফট বাটন ড্র্যাগ করে চারপাশ ঘুরে দেখুন, স্ক্রোল করে জুম-ইন/আউট করুন এবং রাইট বাটন ড্র্যাগ করে প্যান করুন।</p>
+        </div>
+
+        <!-- Canvas Container -->
+        <div id="canvas-container"></div>
+      </div>
+    </div>
+  </div>
+  <!-- 3D SOLAR SYSTEM SECTION END -->
+
   <!-- FOOTER START -->
   <footer id="footer-section">
     <div class="footer-container">
@@ -1747,10 +1831,157 @@
       if (el) el.textContent = val;
     }
 
+    // ৩ডি সৌরজগত (3D Solar System Simulation)
+    function initSolarSystem() {
+      const container = document.getElementById('canvas-container');
+      if (!container) return;
+
+      const getWidth = () => container.clientWidth || 1200;
+      const getHeight = () => container.clientHeight || 384;
+
+      // ১. সিন, ক্যামেরা ও রেন্ডারার তৈরি
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, getWidth() / getHeight(), 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(getWidth(), getHeight());
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      container.appendChild(renderer.domElement);
+
+      // ২. অরবিট কন্ট্রোলস (ক্যামেরার পজিশন জুম ইন করে নির্ধারণ করা হয়েছে)
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      camera.position.set(0, 18, 40); /* জুম ইন অবস্থায় সৌরজগত দেখানোর জন্য পজিশন পরিবর্তন */
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+
+      // ৩. লাইটিং (সূর্কের থেকে উৎপন্ন আলো)
+      const sunLight = new THREE.PointLight(0xffffff, 2, 300);
+      scene.add(sunLight);
+      const ambientLight = new THREE.AmbientLight(0x333344);
+      scene.add(ambientLight);
+
+      // ৪. তারা (Background Stars)
+      const starsGeometry = new THREE.BufferGeometry();
+      const starsCount = 3000;
+      const starPositions = new Float32Array(starsCount * 3);
+      for(let i=0; i<starsCount*3; i++) {
+        starPositions[i] = (Math.random() - 0.5) * 400;
+      }
+      starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+      const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.6, transparent: true, opacity: 0.8 });
+      const starField = new THREE.Points(starsGeometry, starsMaterial);
+      scene.add(starField);
+
+      // ৫. সূর্য (Sun)
+      const sunGeo = new THREE.SphereGeometry(4.5, 32, 32);
+      const sunMat = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+      const sun = new THREE.Mesh(sunGeo, sunMat);
+      scene.add(sun);
+
+      // গ্লো ইফেক্ট (Sun Glow)
+      const glowMat = new THREE.MeshBasicMaterial({
+        color: 0xff4500,
+        transparent: true,
+        opacity: 0.25,
+        side: THREE.BackSide
+      });
+      const glowMesh = new THREE.Mesh(new THREE.SphereGeometry(5.2, 32, 32), glowMat);
+      sun.add(glowMesh);
+
+      // ৬. গ্রহসমূহের ডেটা (Planets Data)
+      const planetsData = [
+        { name: 'Mercury', color: 0xa6a6a6, size: 0.6, distance: 8, speed: 0.03 },
+        { name: 'Venus', color: 0xe3bb76, size: 0.9, distance: 12, speed: 0.02 },
+        { name: 'Earth', color: 0x2b82c5, size: 1.0, distance: 17, speed: 0.015, hasMoon: true },
+        { name: 'Mars', color: 0xc1440e, size: 0.7, distance: 22, speed: 0.012 },
+        { name: 'Jupiter', color: 0xb07f35, size: 2.2, distance: 30, speed: 0.007 },
+        { name: 'Saturn', color: 0xe2bf7d, size: 1.8, distance: 39, speed: 0.005, hasRings: true },
+        { name: 'Uranus', color: 0x4b70dd, size: 1.3, distance: 47, speed: 0.003 },
+        { name: 'Neptune', color: 0x274687, size: 1.2, distance: 54, speed: 0.002 }
+      ];
+
+      const planets = [];
+
+      // ৭. গ্রহ ও অরবিট ট্র্যাক তৈরি
+      planetsData.forEach(data => {
+        // অরবিট রিং (পথ)
+        const orbitGeo = new THREE.RingGeometry(data.distance - 0.05, data.distance + 0.05, 64);
+        const orbitMat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.08 });
+        const orbitTrack = new THREE.Mesh(orbitGeo, orbitMat);
+        orbitTrack.rotation.x = Math.PI / 2;
+        scene.add(orbitTrack);
+
+        // গ্রহ
+        const geo = new THREE.SphereGeometry(data.size, 32, 32);
+        const mat = new THREE.MeshStandardMaterial({ color: data.color, roughness: 0.8, metalness: 0.1 });
+        const mesh = new THREE.Mesh(geo, mat);
+
+        // শনির আংটি (Saturn Rings)
+        if (data.hasRings) {
+          const ringGeo = new THREE.RingGeometry(data.size + 0.6, data.size + 1.8, 32);
+          const ringMat = new THREE.MeshStandardMaterial({ color: 0xa68c6d, side: THREE.DoubleSide, transparent: true, opacity: 0.7 });
+          const ring = new THREE.Mesh(ringGeo, ringMat);
+          ring.rotation.x = Math.PI / 2.3;
+          mesh.add(ring);
+        }
+
+        // চাঁদ (Moon for Earth)
+        let moonMesh = null;
+        if (data.hasMoon) {
+          const moonGeo = new THREE.SphereGeometry(0.25, 16, 16);
+          const moonMat = new THREE.MeshStandardMaterial({ color: 0xcccccc });
+          moonMesh = new THREE.Mesh(moonGeo, moonMat);
+          mesh.add(moonMesh);
+        }
+
+        scene.add(mesh);
+        planets.push({ mesh, data, angle: Math.random() * Math.PI * 2, moon: moonMesh, moonAngle: 0 });
+      });
+
+      // ৮. অ্যানিমেশন লুপ
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // সূর্যের নিজ অক্ষীয় আবর্তন
+        sun.rotation.y += 0.002;
+
+        // গ্রহসমূহের আবর্তন ও পরিক্রমণ
+        planets.forEach(p => {
+          p.angle += p.data.speed;
+          p.mesh.position.x = Math.cos(p.angle) * p.data.distance;
+          p.mesh.position.z = Math.sin(p.angle) * p.data.distance;
+          p.mesh.rotation.y += 0.02;
+
+          // চাঁদের ঘোরাঘুরি
+          if (p.moon) {
+            p.moonAngle += 0.05;
+            p.moon.position.x = Math.cos(p.moonAngle) * 1.8;
+            p.moon.position.z = Math.sin(p.moonAngle) * 1.8;
+          }
+        });
+
+        controls.update();
+        renderer.render(scene, camera);
+      }
+
+      animate();
+
+      // ৯. রেসপন্সিভ হ্যান্ডলার
+      window.addEventListener('resize', () => {
+        const width = getWidth();
+        const height = getHeight();
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        renderer.setSize(width, height);
+      });
+    }
+
+    // INITIALIZATION ON DOM LOAD
     window.addEventListener('DOMContentLoaded', () => {
       initHeroSlider();
       updateClock();
       setInterval(updateClock, 1000);
+      initSolarSystem();
     });
   </script>
 </body>
