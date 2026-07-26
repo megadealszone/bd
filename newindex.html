@@ -2,7 +2,9 @@
 <html lang="bn"> 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
+  <!-- Fixed viewport for Desktop View on Mobile Devices -->
+  <meta name="viewport" content="width=1280, initial-scale=0.3, maximum-scale=3.0, user-scalable=yes" />
+  
   <!-- Website Favicon start-->
   <link rel="icon" type="image/png" sizes="32x32" href="Images/logo.png">
   <link rel="shortcut icon" href="Images/logo.png">
@@ -33,7 +35,7 @@
       --header-text: #f8fafc;
       --news-bg: #030712;
       --news-text: #f3f4f6;
-      --page-padding: 50px;
+      --page-padding: 30px;
     }
 
     /* DARK MODE VARIABLES */
@@ -63,25 +65,25 @@
 
     html {
       scroll-behavior: smooth !important;
-      width: 100%;
-      overflow-x: hidden;
+      min-width: 1200px;
     }
 
     body {
       background-color: var(--bg-body);
       color: var(--text-main);
-      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
       align-items: center;
-      width: 100%;
+      min-width: 1200px;
+      overflow-x: auto;
     }
 
     /* PAGE WRAPPER */
     .page-wrapper {
       width: 100%;
       max-width: 1440px;
+      min-width: 1200px;
       margin: 10px auto 20px auto;
       padding-left: var(--page-padding);
       padding-right: var(--page-padding);
@@ -113,6 +115,7 @@
       right: 0;
       z-index: 999;
       width: 100%;
+      min-width: 1200px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
@@ -127,24 +130,18 @@
       position: relative;
     }
 
-    .menu-toggle {
-      display: none;
-      font-size: 22px;
-      color: #fff;
-      cursor: pointer;
-      user-select: none;
-      padding: 12px 0;
-    }
-
-    /* EQUAL DISTRIBUTED MENU ITEMS */
+    /* EQUAL DISTRIBUTED MENU ITEMS (Desktop Always) */
     .menu {
       list-style: none;
-      display: flex;
+      display: flex !important;
+      flex-direction: row !important;
       justify-content: space-between;
       align-items: center;
       width: 100%;
       margin: 0;
       padding: 0;
+      max-height: none !important;
+      overflow: visible !important;
     }
 
     .menu li {
@@ -162,7 +159,7 @@
       color: var(--header-text);
       text-decoration: none;
       transition: all 0.3s ease;
-      font-size: 15.5px;
+      font-size: 15px;
       font-weight: 600;
       white-space: nowrap;
       width: 100%;
@@ -204,54 +201,52 @@
       box-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
     }
 
-    /* SUB MENU DESKTOP */
-    @media (min-width: 769px) {
-      .submenu {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: var(--header-bg);
-        backdrop-filter: blur(12px);
-        min-width: 220px;
-        list-style: none;
-        z-index: 1000;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        animation: fadeIn 0.3s ease;
-        text-align: left;
-      }
+    /* SUB MENU ALWAYS DESKTOP HOVER */
+    .submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--header-bg);
+      backdrop-filter: blur(12px);
+      min-width: 220px;
+      list-style: none;
+      z-index: 1000;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      animation: fadeIn 0.3s ease;
+      text-align: left;
+    }
 
-      .submenu li {
-        width: 100%;
-        text-align: left;
-      }
+    .submenu li {
+      width: 100%;
+      text-align: left;
+    }
 
-      .submenu li a {
-        padding: 10px 16px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        width: 100%;
-        justify-content: flex-start !important;
-        text-align: left !important;
-        font-weight: 500;
-        font-size: 13.5px;
-      }
+    .submenu li a {
+      padding: 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      width: 100%;
+      justify-content: flex-start !important;
+      text-align: left !important;
+      font-weight: 500;
+      font-size: 13.5px;
+    }
 
-      .submenu li a:hover {
-        background: rgba(255, 255, 255, 0.08);
-        color: #38bdf8;
-      }
+    .submenu li a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #38bdf8;
+    }
 
-      .menu li:hover > .submenu {
-        display: block;
-      }
+    .menu li:hover > .submenu {
+      display: block;
+    }
 
-      .submenu .submenu {
-        top: 0;
-        left: 100%;
-        border-radius: 0 12px 12px 12px;
-      }
+    .submenu .submenu {
+      top: 0;
+      left: 100%;
+      border-radius: 0 12px 12px 12px;
     }
 
     /* PREMIUM HEADLINE NEWS TICKER DESIGN */
@@ -266,6 +261,7 @@
       height: 40px;
       position: relative;
       width: 100%;
+      min-width: 1200px;
       margin-top: 5px;
       margin-bottom: 2px;
     }
@@ -359,10 +355,10 @@
       50% { opacity: 0.7; transform: scale(1.1); }
     }
 
-    /* DASHBOARD LAYOUT */
+    /* ALWAYS DESKTOP GRID LAYOUT (Left Content + Right Sidebar) */
     .dashboard-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 1fr);
+      display: grid !important;
+      grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr) !important;
       gap: 16px;
       width: 100%;
       align-items: start;
@@ -461,16 +457,15 @@
     }
 
     .hero-content h1 {
-      font-size: clamp(22px, 4vw, 38px);
+      font-size: 36px;
       margin-bottom: 12px;
       line-height: 1.3;
       font-weight: 700;
       text-shadow: 0 4px 12px rgba(0,0,0,0.4);
-      word-break: break-word;
     }
 
     .hero-content p {
-      font-size: clamp(13px, 2.5vw, 17px);
+      font-size: 16px;
       margin-bottom: 20px;
       line-height: 1.5;
       font-weight: 400;
@@ -576,10 +571,10 @@
       color: #38bdf8;
     }
 
-    /* CARD GRID */
+    /* CARD GRID (2 Columns Always) */
     .main-content {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
       gap: 14px;
       width: 100%;
     }
@@ -865,13 +860,14 @@
       padding: 25px 20px 15px 20px;
       margin-top: 30px;
       width: 100%;
+      min-width: 1200px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     }
 
     .footer-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr 1fr !important;
       gap: 20px;
       max-width: 1440px;
       margin: 0 auto;
@@ -1006,161 +1002,6 @@
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
-
-    /* ULTRA FULL-DEVICE RESPONSIVE MEDIA QUERIES */
-    @media (max-width: 1200px) {
-      :root {
-        --page-padding: 20px;
-      }
-      .menu li a {
-        padding: 10px 4px;
-        font-size: 13px;
-      }
-      .dashboard-grid {
-        gap: 12px;
-      }
-    }
-
-    @media (max-width: 992px) {
-      :root {
-        --page-padding: 15px;
-      }
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-      .hero {
-        height: 380px;
-      }
-      .footer-container {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: 15px;
-      }
-      .footer-left, .footer-right {
-        text-align: center;
-      }
-      .footer-left h4, .footer-right h4 {
-        justify-content: center;
-      }
-    }
-
-    @media (max-width: 768px) {
-      :root {
-        --page-padding: 10px;
-      }
-
-      .glass-canvas {
-        padding: 10px;
-        border-radius: 12px;
-      }
-      
-      .menu-toggle {
-        display: block;
-      }
-
-      .navbar {
-        padding: 5px 15px;
-      }
-
-      .menu {
-        flex-direction: column;
-        width: 100%;
-        max-height: 0;
-        overflow: hidden;
-        background: #0f172a;
-        transition: max-height 0.4s ease-in-out;
-      }
-
-      .menu.active {
-        max-height: 1000px;
-        padding-bottom: 10px;
-        overflow-y: auto;
-      }
-
-      .menu li {
-        width: 100%;
-        text-align: left;
-      }
-
-      .menu li a {
-        justify-content: space-between;
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        text-align: left;
-        font-size: 15px;
-      }
-
-      /* MOBILE SUBMENU ACCORDION */
-      .has-submenu > a::after {
-        content: '\f107';
-        font-family: 'Font Awesome 6 Free';
-        font-weight: 900;
-        transition: transform 0.3s ease;
-      }
-      
-      .has-submenu.open > a::after {
-        transform: rotate(180deg);
-      }
-
-      .submenu {
-        display: none;
-        position: static;
-        width: 100%;
-        box-shadow: none;
-        border-radius: 0;
-        background: rgba(2, 6, 23, 0.95);
-        padding-left: 15px;
-      }
-
-      .menu li.open > .submenu {
-        display: block;
-      }
-
-      .main-content {
-        grid-template-columns: 1fr;
-      }
-
-      .hero {
-        height: 320px;
-        padding: 10px;
-      }
-
-      .slider-btn {
-        padding: 8px 20px;
-        font-size: 13px;
-      }
-
-      .news-label {
-        padding: 0 10px;
-        font-size: 12px;
-      }
-
-      .news-item {
-        font-size: 13px;
-        padding: 0 15px;
-      }
-
-      .profile-box img {
-        height: 250px;
-        max-width: 200px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero {
-        height: 270px;
-      }
-      .hotline-box {
-        grid-template-columns: 1fr;
-      }
-      .hotline-item[style*="grid-column"] {
-        grid-column: span 1 !important;
-      }
-      .news-label {
-        font-size: 11px;
-        padding: 0 8px;
-      }
-    }
   </style>
 
   <meta name="google-site-verification" content="gJTIuSaJpH2jwKGQ4kLtdwj8B61OyxUun5I5-5sAMww" />
@@ -1171,17 +1012,14 @@
   <!-- HEADER START -->
   <header id="top-header">
     <nav class="navbar">
-      <div class="menu-toggle" onclick="toggleMenu()">
-        <i class="fa-solid fa-bars"></i>
-      </div>
 
       <!-- EQUALLY DISTRIBUTED MENU -->
       <ul class="menu" id="mobileMenu">
         <li><a href="index.html"><i class="fa-solid fa-house" style="margin-right: 6px;"></i>Home</a></li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Online Service</a> 
+        <li class="has-submenu"><a href="#">Online Service</a> 
           <ul class="submenu">
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Micro-Jobs</a> 
+            <li class="has-submenu"><a href="#">Micro-Jobs</a> 
               <ul class="submenu">
                 <li><a href="https://www.microworkers.com/login.php">Microworkers</a></li>
                 <li><a href="https://upwork.com">Upwork</a></li>
@@ -1198,7 +1036,7 @@
                 <li><a href="https://beta.publishers.adsterra.com/websites">Beta publishers adsterra</a></li>
               </ul> 
             </li>
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Govt Service</a> 
+            <li class="has-submenu"><a href="#">Govt Service</a> 
               <ul class="submenu">
                 <li><a href="https://land.gov.bd/">Land Service</a></li>
                 <li><a href="https://dss.bhata.gov.bd/online-application">Bhata</a></li>
@@ -1209,7 +1047,7 @@
                 <li><a href="https://everify.bdris.gov.bd/">Birth Reg verify</a></li>
               </ul> 
             </li>
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Banking Service</a> 
+            <li class="has-submenu"><a href="#">Banking Service</a> 
               <ul class="submenu">
                 <li><a href="https://ib.tblbd.com/">Trust Bank iBanking</a></li>
                 <li><a href="https://www.bracbank.com/en">Brac Bank</a></li>
@@ -1218,9 +1056,9 @@
                 <li><a href="https://ib.krishibank.org.bd/">Krishi-Bank</a></li>
               </ul> 
             </li>
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Social Media</a> 
+            <li class="has-submenu"><a href="#">Social Media</a> 
               <ul class="submenu">
-                <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Live Sports</a> 
+                <li class="has-submenu"><a href="#">Live Sports</a> 
                   <ul class="submenu">
                     <li><a href="https://www.soccertvhd.com/sportsurge-sport-surge-live/">LiveSports-1</a></li>
                   </ul> 
@@ -1235,11 +1073,11 @@
           </ul> 
         </li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Online Ai Store</a> 
+        <li class="has-submenu"><a href="#">Online Ai Store</a> 
           <ul class="submenu">
             <li><a href="https://chatgpt.com/">ChatGPT Ai</a></li>
             <li><a href="https://gemini.google.com/">Gemini Ai</a></li>
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Video & Audio Ai</a> 
+            <li class="has-submenu"><a href="#">Video & Audio Ai</a> 
               <ul class="submenu">
                 <li><a href="https://labs.google/fx/tools/flow">video-Google Flow ai</a></li>
                 <li><a href="https://suno.com/discover">Audio-Suno ai</a></li>
@@ -1250,14 +1088,14 @@
           </ul> 
         </li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Download</a> 
+        <li class="has-submenu"><a href="#">Download</a> 
           <ul class="submenu">
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Software</a> 
+            <li class="has-submenu"><a href="#">Software</a> 
               <ul class="submenu">
                 <li><a href="sof.html">Software List</a></li>
               </ul> 
             </li>
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">HTML CSS Script</a> 
+            <li class="has-submenu"><a href="#">HTML CSS Script</a> 
               <ul class="submenu">
                 <li><a href="download.html">File Download</a></li>
               </ul> 
@@ -1265,7 +1103,7 @@
           </ul> 
         </li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Digital Marketing</a> 
+        <li class="has-submenu"><a href="#">Digital Marketing</a> 
           <ul class="submenu">
             <li><a href="https://www.aliexpress.com/item/1005008856903228.html">Aliexpress Affiliate</a></li>
             <li><a href="https://www.amazon.com/ref=nav_logo">Amazon Affiliate</a></li>
@@ -1273,7 +1111,7 @@
             <li><a href="https://portals.aliexpress.com/affiportals/web/home.htm">Aliexpress Deshboard</a></li>
             <li><a href="https://affiliate-program.amazon.com/home">Amazon Deshboard</a></li>
             <li><a href="https://adsense.daraz.com.bd/index.htm#!/">Daraz Deshboard</a></li>
-            <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Marketing</a> 
+            <li class="has-submenu"><a href="#">Marketing</a> 
               <ul class="submenu">
                 <li><a href="https://ads.google.com?subid=xs-ip-gemini-adlc" target="_blank">Google Ads</a></li>
                 <li><a href="https://www.facebook.com/megadealszone">Facebook Page</a></li>
@@ -1282,14 +1120,14 @@
           </ul> 
         </li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Kids</a> 
+        <li class="has-submenu"><a href="#">Kids</a> 
           <ul class="submenu"> 
             <li><a href="abcd.html">ABCD...</a></li>
             <li><a href="#">Upcomming..</a></li>
           </ul> 
         </li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Software</a>
+        <li class="has-submenu"><a href="#">Software</a>
           <ul class="submenu"> 
             <li><a href="https://www.github.com/">Github</a></li>
             <li><a href="https://console.firebase.google.com/">Firebase</a></li>
@@ -1297,7 +1135,7 @@
           </ul> 
         </li>
 
-        <li class="has-submenu" onclick="toggleSubmenu(event, this)"><a href="#">Share Market</a>
+        <li class="has-submenu"><a href="#">Share Market</a>
           <ul class="submenu">
             <li><a href="https://www.dsebd.org/">Dhaka Stock Exchange</a></li>
             <li><a href="https://www.cse.com.bd/">Chittagong Stock Exchange</a></li>
@@ -1544,7 +1382,7 @@
         </div>
         <!-- LEFT COLUMN END -->
 
-        <!-- RIGHT SIDEBAR (৩য় কলাম) -->
+        <!-- RIGHT SIDEBAR -->
         <aside class="sidebar">
           <div class="sidebar-widget">
             <div class="widget-title">কৃতজ্ঞতা প্রকাশ করা মহৎ গুণ</div>
@@ -1663,17 +1501,6 @@
 
   <!-- JAVASCRIPT CODE -->
   <script>
-    function toggleMenu() {
-      document.getElementById("mobileMenu").classList.toggle("active");
-    }
-
-    function toggleSubmenu(event, element) {
-      if (window.innerWidth <= 768) {
-        event.stopPropagation();
-        element.classList.toggle("open");
-      }
-    }
-
     // SCROLL TO TOP HOME Smoothly
     function scrollToTopHome() {
       window.scrollTo({
