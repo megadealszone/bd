@@ -115,6 +115,27 @@
       transition: opacity 0.3s;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
+     /* স্লাইডার বাটন ডিজাইন */
+    .slider-btn {
+      display: inline-block;
+      padding: 10px 28px;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white !important;
+      text-decoration: none !important;
+      font-size: 14.5px;
+      font-weight: 700;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* স্লাইডার বাটন হভার */
+    .slider-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    }
   </style>
   <!-- Three.js & OrbitControls -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -124,7 +145,7 @@
 
   <!-- Header -->
   <div class="glass-card header-panel">
-    <h1>🪐 আল্ট্রা প্রিমিয়াম সৌরজগত</h1>
+    <a href="index.html" class="slider-btn">সৌরজগত (Solar System)</a>
     <p>গ্রহগুলোর উজ্জ্বলতা, ভাইব্র্যান্ট কালার এবং নিজস্ব আলো বাড়ানো হয়েছে যাতে প্রতিটি স্থান স্পষ্টভাবে দৃশ্যমান হয়। মাউস দিয়ে জুম এবং জুম-আউট করে ৩ডি রূপ উপভোগ করুন।</p>
   </div>
 
