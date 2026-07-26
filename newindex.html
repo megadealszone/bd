@@ -19,110 +19,115 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style> 
+    /* রুট ভ্যারিয়েবল: ডিফল্ট (লাইট মোড) এর কালার থিম ও ভ্যালু সেট করে */
     :root {
-      --bg-body: #D6D2D2;
-      --primary-color: #0f172a;
-      --accent-color: #2563eb;
-      --accent-hover: #1d4ed8;
-      --glass-bg: rgba(255, 255, 255, 0.92);
-      --glass-border: rgba(255, 255, 255, 0.8);
-      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
-      --card-bg: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --header-bg: rgba(15, 23, 42, 0.95);
-      --header-text: #f8fafc;
-      --news-bg: #030712;
-      --news-text: #f3f4f6;
-      --page-padding: 30px;
+      --bg-body: #D6D2D2; /* মূল ব্যাকগ্রাউন্ড কালার */
+      --primary-color: #0f172a; /* প্রাইমারি কালার */
+      --accent-color: #2563eb; /* হাইলাইট বা প্রাইমারি বাটন কালার */
+      --accent-hover: #1d4ed8; /* বাটন বা লিংকে হভার কালার */
+      --glass-bg: rgba(255, 255, 255, 0.92); /* গ্লাস ইফেক্টের ব্যাকগ্রাউন্ড */
+      --glass-border: rgba(255, 255, 255, 0.8); /* গ্লাস কন্টেইনারের বর্ডার */
+      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.12); /* গ্লাস কন্টেইনারের শ্যাডো */
+      --card-bg: #ffffff; /* কার্ড সমূহের ব্যাকগ্রাউন্ড */
+      --text-main: #1e293b; /* মূল টেক্সট কালার */
+      --text-muted: #64748b; /* হালকা/সহযোগী টেক্সট কালার */
+      --border-color: #e2e8f0; /* সাধারণ বর্ডার কালার */
+      --header-bg: rgba(15, 23, 42, 0.95); /* নেভিগেশন বারের ব্যাকগ্রাউন্ড */
+      --header-text: #f8fafc; /* নেভিগেশন টেক্সট কালার */
+      --news-bg: #f1f3f8; /* নিউজ স্ক্রোলারের ব্যাকগ্রাউন্ড */
+      --news-text: #000000; /* নিউজ টেক্সট কালার */
+      --page-padding: 40px; /* পেজের অভ্যন্তরীণ প্যাডিং */
     }
 
-    /* DARK MODE VARIABLES */
+    /* ডার্ক মোড ভ্যারিয়েবল: থিম পরিবর্তন হয়ে ডার্ক হলে এই কালারগুলো সক্রিয় হবে */
     [data-theme="dark"] {
-      --bg-body: #090d16;
-      --primary-color: #1e293b;
-      --glass-bg: rgba(15, 23, 42, 0.88);
-      --glass-border: rgba(255, 255, 255, 0.08);
-      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-      --card-bg: #1e293b;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
-      --header-bg: rgba(2, 6, 23, 0.98);
-      --header-text: #f8fafc;
-      --news-bg: #000000;
-      --news-text: #e0f2fe;
+      --bg-body: #090d16; /* ডার্ক মোডে বডি ব্যাকগ্রাউন্ড */
+      --primary-color: #1e293b; /* ডার্ক মোডে প্রাইমারি কালার */
+      --glass-bg: rgba(15, 23, 42, 0.88); /* ডার্ক মোডে গ্লাস ব্যাকগ্রাউন্ড */
+      --glass-border: rgba(255, 255, 255, 0.08); /* ডার্ক মোডে গ্লাস বর্ডার */
+      --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); /* ডার্ক মোডে গ্লাস শ্যাডো */
+      --card-bg: #1e293b; /* ডার্ক মোডে কার্ড ব্যাকগ্রাউন্ড */
+      --text-main: #f1f5f9; /* ডার্ক মোডে মূল টেক্সট কালার */
+      --text-muted: #94a3b8; /* ডার্ক মোডে সেকেন্ডারি টেক্সট */
+      --border-color: #334155; /* ডার্ক মোডে বর্ডার কালার */
+      --header-bg: rgba(2, 6, 23, 0.98); /* ডার্ক মোডে হেডার ব্যাকগ্রাউন্ড */
+      --header-text: #f8fafc; /* ডার্ক মোডে হেডার টেক্সট */
+      --news-bg: #000000; /* ডার্ক মোডে নিউজ বার ব্যাকগ্রাউন্ড */
+      --news-text: #e0f2fe; /* ডার্ক মোডে নিউজ টেক্সট */
     }
 
+    /* ইউনিভার্সাল সিলেক্টর: সকল এলিমেন্টের ডিফল্ট মার্জিন-প্যাডিং জিরো করে এবং ফন্ট সেট করে */
     * {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      box-sizing: border-box; /* সাইজিং রুলস ঠিক রাখে */
+      font-family: 'Noto Sans Bengali', 'Plus Jakarta Sans', sans-serif; /* ডিফল্ট ফন্ট ফ্যামিলি */
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* স্মুথ ট্রানজিশন */
     }
 
+    /* HTML ট্যাগ: স্মুথ স্ক্রোলিং নিশ্চিত করে এবং মিনিমাম উইডথ সেট করে */
     html {
-      scroll-behavior: smooth !important;
-      min-width: 1200px;
+      scroll-behavior: smooth !important; /* স্মুথ স্ক্রোল ইফেক্ট */
+      min-width: 1200px; /* ডেস্কটপ ভিউ বজায় রাখতে ন্যূনতম চওড়া */
     }
 
+    /* BODY ট্যাগ: পুরো পেজের লেআউট এবং এলাইনমেন্ট কন্ট্রোল করে */
     body {
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      align-items: center;
-      min-width: 1200px;
-      overflow-x: auto;
+      background-color: var(--bg-body); /* ব্যাকগ্রাউন্ড কালার প্রয়োগ */
+      color: var(--text-main); /* ফন্ট কালার প্রয়োগ */
+      display: flex; /* ফ্ল্যাক্স লেআউট */
+      flex-direction: column; /* এলিমেন্টগুলো উপর থেকে নিচে সাজায় */
+      min-height: 100vh; /* স্ক্রিনের পুরো উচ্চতা ধরে রাখে */
+      align-items: center; /* মাঝখানে এলাইন করে */
+      min-width: 1200px; /* ডেস্কটপ মোডের জন্য নির্ধারিত মিনিমাম উইডথ */
+      overflow-x: auto; /* স্ক্রিন ছোট হলে স্ক্রোলবার নিশ্চিত করে */
     }
 
-    /* PAGE WRAPPER */
+    /* পেজ র্যাপার: পুরো ওয়েবসাইটের কন্টেন্ট নির্দিষ্ট চওড়ায় সীমাবদ্ধ রাখে */
     .page-wrapper {
       width: 100%;
-      max-width: 1440px;
-      min-width: 1200px;
-      margin: 10px auto 20px auto;
-      padding-left: var(--page-padding);
-      padding-right: var(--page-padding);
+      max-width: 1440px; /* সর্বোচ্চ চওড়া */
+      min-width: 1200px; /* সর্বনিম্ন চওড়া */
+      margin: 10px auto 20px auto; /* উপরে-নিচে ও মাঝে এলাইন করার জন্য মার্জিন */
+      padding-left: var(--page-padding); /* বামের প্যাডিং */
+      padding-right: var(--page-padding); /* ডানের প্যাডিং */
       box-sizing: border-box;
-      flex: 1;
+      flex: 1; /* খালি জায়গা নিজে পূরণ করে */
     }
 
-    /* GLASS CANVAS */
+    /* গ্লাস ক্যানভাস: আধুনিক গ্লাস কার্ভ ইফেক্ট সহ ব্যাকগ্রাউন্ড বক্স */
     .glass-canvas {
-      background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 20px;
-      box-shadow: var(--glass-shadow);
-      border: 1px solid var(--glass-border);
-      padding: 16px;
+      background: var(--glass-bg); /* গ্লাসি ব্যাকগ্রাউন্ড */
+      backdrop-filter: blur(20px); /* ঝাপসা ইফেক্ট (Blur Effect) */
+      -webkit-backdrop-filter: blur(20px); /* সাফারি ব্রাউজারের ব্লার ইফেক্ট */
+      border-radius: 20px; /* গোল কোণা (Rounded Corners) */
+      box-shadow: var(--glass-shadow); /* ছায়া ইফেক্ট */
+      border: 1px solid var(--glass-border); /* গ্লাস বর্ডার */
+      padding: 16px; /* ভেতরের প্যাডিং */
       width: 100%;
     }
 
-    /* HEADER */
+    /* হেডার: স্টিকি নেভিগেশন বার যা স্ক্রোল করলেও উপরে আটকে থাকে */
     header {
-      background: var(--header-bg);
-      backdrop-filter: blur(12px);
+      background: var(--header-bg); /* হেডারের ব্যাকগ্রাউন্ড */
+      backdrop-filter: blur(12px); /* ব্লার ইফেক্ট */
       -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      position: sticky;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* নিচের ছায়া */
+      position: sticky; /* স্ক্রোলের সময় উপরে আটকে থাকার জন্য */
       top: 0;
       left: 0;
       right: 0;
-      z-index: 999;
+      z-index: 999; /* অন্যান্য উপাদানের উপরে রাখার জন্য */
       width: 100%;
       min-width: 1200px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    /* নেভিগেশন বার কন্টেইনার */
     .navbar {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: space-between; /* মেনু এবং থিম বাটন দুই প্রান্তে বিভাজন */
+      align-items: center; /* মাঝখানে সাজায় */
       width: 100%;
       max-width: 1440px;
       margin: 0 auto;
@@ -130,12 +135,12 @@
       position: relative;
     }
 
-    /* EQUAL DISTRIBUTED MENU ITEMS (Desktop Always) */
+    /* মেনুবার: ডেস্কটপের সমানভাবে বিস্তৃত মেনু আইটেম */
     .menu {
-      list-style: none;
-      display: flex !important;
-      flex-direction: row !important;
-      justify-content: space-between;
+      list-style: none; /* ডট তুলে ফেলা */
+      display: flex !important; /* ফ্ল্যাক্স বিন্যাস বজায় রাখে */
+      flex-direction: row !important; /* আনুভূমিক সারি */
+      justify-content: space-between; /* সমান ব্যবধানে ফাঁকা রাখা */
       align-items: center;
       width: 100%;
       margin: 0;
@@ -144,12 +149,14 @@
       overflow: visible !important;
     }
 
+    /* মেনু লিস্ট আইটেম */
     .menu li {
       position: relative;
-      flex: 1;
+      flex: 1; /* প্রতিটি সাব-মেনুকে সমান জায়গা দেওয়া */
       text-align: center;
     }
 
+    /* মেনু বাটন/লিংক */
     .menu li a {
       display: flex;
       align-items: center;
@@ -157,21 +164,22 @@
       padding: 12px 10px;
       min-height: 46px;
       color: var(--header-text);
-      text-decoration: none;
+      text-decoration: none; /* আন্ডারলাইন তুলে ফেলা */
       transition: all 0.3s ease;
       font-size: 15px;
       font-weight: 600;
-      white-space: nowrap;
+      white-space: nowrap; /* টেক্সট যাতে ভেঙে নিচে না যায় */
       width: 100%;
     }
 
+    /* মেনু লিংক হভার ইফেক্ট */
     .menu li a:hover,
     .menu li a:focus {
-      background: rgba(255, 255, 255, 0.12);
-      color: #38bdf8;
+      background: rgba(255, 255, 255, 0.12); /* মাউস নিলে হালকা ব্যাকগ্রাউন্ড */
+      color: #38bdf8; /* মাউস নিলে টেক্সটের কালার পরিবর্তন */
     }
 
-    /* DARK / LIGHT MODE SWITCH BUTTON */
+    /* ডার্ক/লাইট মোড বাটন মোড়ানো বক্স */
     .theme-toggle-wrapper {
       display: flex;
       align-items: center;
@@ -179,13 +187,14 @@
       flex-shrink: 0;
     }
 
+    /* ডার্ক/লাইট মোড বাটন ডিজাইন */
     .theme-toggle-btn {
       background: rgba(255, 255, 255, 0.1);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #f8fafc;
       width: 36px;
       height: 36px;
-      border-radius: 50%;
+      border-radius: 50%; /* গোল বাটন */
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -194,17 +203,18 @@
       transition: all 0.3s ease;
     }
 
+    /* থিম বাটন হভার ইফেক্ট */
     .theme-toggle-btn:hover {
       background: #2563eb;
       color: #ffffff;
-      transform: rotate(20deg) scale(1.05);
+      transform: rotate(20deg) scale(1.05); /* একটু ঘোরানো ও বড় করা */
       box-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
     }
 
-    /* SUB MENU ALWAYS DESKTOP HOVER */
+    /* সাব-মেনু (ড্যাশবোর্ড ড্রপডাউন) */
     .submenu {
-      display: none;
-      position: absolute;
+      display: none; /* ডিফল্টভাবে লুকানো থাকে */
+      position: absolute; /* পজিশনিং ড্রপডাউন */
       top: 100%;
       left: 0;
       background: var(--header-bg);
@@ -215,15 +225,17 @@
       border-radius: 0 0 12px 12px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.3s ease; /* এনিমেশন ইফেক্ট */
       text-align: left;
     }
 
+    /* সাব-মেনুর আইটেম */
     .submenu li {
       width: 100%;
       text-align: left;
     }
 
+    /* সাব-মেনুর লিংক স্টাইল */
     .submenu li a {
       padding: 10px 16px;
       border-bottom: 1px solid rgba(255,255,255,0.05);
@@ -234,22 +246,25 @@
       font-size: 13.5px;
     }
 
+    /* সাব-মেনু লিংক হভার */
     .submenu li a:hover {
       background: rgba(255, 255, 255, 0.08);
       color: #38bdf8;
     }
 
+    /* মাউস হোভার করলে সাব-মেনু প্রদর্শন */
     .menu li:hover > .submenu {
       display: block;
     }
 
+    /* নেস্টেড (সাব-মেনুর ভেতরে সাব-মেনু) সাব-মেনুর পজিশনিং */
     .submenu .submenu {
       top: 0;
       left: 100%;
       border-radius: 0 12px 12px 12px;
     }
 
-    /* PREMIUM HEADLINE NEWS TICKER DESIGN */
+    /* নিউজ টিঙ্কার বার: চলমান খবরের বার */
     .news-ticker-bar {
       background: var(--news-bg);
       display: flex;
@@ -257,17 +272,18 @@
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
-      overflow: hidden;
+      overflow: hidden; /* বাইরের টেক্সট লুকাতে সাহায্য করে */
       height: 40px;
       position: relative;
       width: 100%;
       min-width: 1200px;
-      margin-top: 5px;
-      margin-bottom: 2px;
+      margin-top: 8px;
+      margin-bottom: 1px;
     }
 
+    /* আপডেট নিউজ লেবেল বা হেডিং বক্স */
     .news-label {
-      background: linear-gradient(135deg, #080708 0%, #b91c1c 100%);
+      background: linear-gradient(135deg, #080708 0%, #b91c1c 100%); /* গ্রেডিয়েন্ট ব্যাকগ্রাউন্ড */
       color: #ffffff;
       font-weight: 700;
       font-size: 15px;
@@ -283,11 +299,13 @@
       flex-shrink: 0;
     }
 
+    /* সংবাদের আইকন এনিমেশন */
     .news-label i {
-      font-size: 13px;
+      font-size: 18px;
       animation: pulseGlow 1.8s infinite;
     }
 
+    /* নিউজ স্ক্রোল এরিয়া কন্টেইনার */
     .news-scroll-container {
       flex: 1;
       overflow: hidden;
@@ -297,36 +315,41 @@
       height: 100%;
     }
 
+    /* চলমান নিউজ এনিমেশন ট্রাক */
     .news-track {
       display: flex;
       white-space: nowrap;
-      animation: smoothNewsScroll 45s linear infinite;
+      animation: smoothNewsScroll 45s linear infinite; /* খবরের এনিমেশন স্পিড */
       will-change: transform;
       align-items: center;
     }
 
+    /* মাউস নিউজ বারে নিলে স্ক্রোল থামা */
     .news-track:hover {
       animation-play-state: paused;
     }
 
+    /* প্রতিটি নিউজের লিংক/আটেম */
     .news-item {
       display: inline-flex;
       align-items: center;
       gap: 10px;
       padding: 0 28px;
-      font-size: 15px;
+      font-size: 18px; /* প্রতিটি নিউজের আটেম font size */
       color: var(--news-text);
       font-weight: 500;
       text-decoration: none !important;
       transition: color 0.25s ease, transform 0.25s ease;
     }
 
+    /* নিউজ লিংকের হভার ইফেক্ট */
     .news-item:hover {
       text-decoration: none !important;
-      color: #38bdf8;
+      color: #fc0202; /* নিউজ লিংকের Font colour change */
       transform: translateY(-1px);
     }
 
+    /* নিউজের পত্রিকার ব্যাজ/ট্যাগ স্টাইল */
     .news-badge {
       background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -339,31 +362,35 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
+    /* ব্যাজে মাউস ওভার করলে কালার পরিবর্তন */
     .news-item:hover .news-badge {
       background: #2563eb;
       color: #ffffff;
       border-color: #3b82f6;
     }
 
+    /* নিউজের মসৃণ এনিমেশন কি-ফ্রেমস */
     @keyframes smoothNewsScroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
+    /* লাইভ আইকনের পালস এনিমেশন */
     @keyframes pulseGlow {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.7; transform: scale(1.1); }
     }
 
-    /* ALWAYS DESKTOP GRID LAYOUT (Left Content + Right Sidebar) */
+    /* ড্যাশবোর্ড গ্রিড: বামপাশের কন্টেন্ট এবং ডানপাশের সাইডবারের গ্রিড লেআউট */
     .dashboard-grid {
       display: grid !important;
-      grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr) !important;
+      grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr) !important; /* কলামের অনুপাত ৩:১ */
       gap: 16px;
       width: 100%;
       align-items: start;
     }
 
+    /* বাম পাশের মূল কন্টেইনার */
     .left-container {
       display: flex;
       flex-direction: column;
@@ -371,7 +398,7 @@
       width: 100%;
     }
 
-    /* HERO SECTION */
+    /* হিরো স্লাইডার সেকশন */
     .hero {
       height: 476px;
       position: relative;
@@ -386,6 +413,7 @@
       box-shadow: 0 6px 20px rgba(0,0,0,0.12);
     }
 
+    /* স্লাইডারের ছবি কন্টেইনার */
     .hero-slide {
       position: absolute;
       top: 0;
@@ -402,15 +430,18 @@
       pointer-events: none;
     }
 
+    /* সক্রিয় স্লাইডার স্টেট */
     .hero-slide.active {
       opacity: 1;
       transform: scale(1);
     }
 
+    /* পূর্ববর্তী স্লাইডার স্টেট */
     .hero-slide.previous {
       opacity: 0;
     }
 
+    /* স্লাইডারের উপরের কালো বা ডার্ক প্রলেপ (Overlay) */
     .hero-overlay {
       position: absolute;
       top: 0;
@@ -421,6 +452,7 @@
       z-index: -2;
     }
 
+    /* হিরো কন্টেন্ট বক্স (লেখা ও বাটন) */
     .hero-content {
       position: relative;
       z-index: 2;
@@ -430,6 +462,7 @@
       animation: fadeIn 1s ease;
     }
 
+    /* স্লাইডার ডট সুচক কন্টেইনার */
     .hero-dots {
       position: absolute;
       bottom: 15px;
@@ -440,6 +473,7 @@
       z-index: 3;
     }
 
+    /* প্রতিটি স্লাইডার ডট */
     .hero-dot {
       width: 10px;
       height: 10px;
@@ -450,12 +484,14 @@
       transition: all 0.3s ease;
     }
 
+    /* একটিভ স্লাইডার ডট */
     .hero-dot.active {
       background: #38bdf8;
       transform: scale(1.2);
       border-color: #38bdf8;
     }
 
+    /* হিরো সেকশনের মূল শিরোনাম (আরবি ক্যালিগ্রাফি) */
     .hero-content h1 {
       font-size: 36px;
       margin-bottom: 12px;
@@ -464,6 +500,7 @@
       text-shadow: 0 4px 12px rgba(0,0,0,0.4);
     }
 
+    /* হিরো সেকশনের বিবরণী টেক্সট */
     .hero-content p {
       font-size: 16px;
       margin-bottom: 20px;
@@ -472,6 +509,7 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.4);
     }
 
+    /* স্লাইডার বাটন ডিজাইন */
     .slider-btn {
       display: inline-block;
       padding: 10px 28px;
@@ -486,18 +524,19 @@
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
+    /* স্লাইডার বাটন হভার */
     .slider-btn:hover {
       transform: translateY(-2px) scale(1.02);
       box-shadow: 0 8px 20px rgba(37, 99, 235, 0.6);
       background: linear-gradient(135deg, #1d4ed8, #2563eb);
     }
 
-    /* DIGITAL CLOCK WIDGET */
+    /* ডিজিটাল ঘড়ি উইজেট কন্টেইনার */
     #clock-widget {
       margin: 0;
       background: rgba(15, 23, 42, 0.95);
       backdrop-filter: blur(12px);
-      font-family: 'Orbitron', monospace;
+      font-family: 'Orbitron', monospace; /* ডিজিটাল ফন্ট */
       color: #38bdf8;
       border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 12px;
@@ -506,11 +545,13 @@
       width: 100%;
     }
 
+    /* রো বিন্যাস */
     .row {
       display: flex;
       align-items: center;
     }
 
+    /* লাইভ লেখা টেক্সট বক্স */
     .live {
       display: flex;
       align-items: center;
@@ -524,6 +565,7 @@
       border-right: 1px solid rgba(255, 255, 255, 0.1);
     }
 
+    /* লাল জ্বলনেওয়ালা লাইভ ডট */
     .dot {
       width: 8px;
       height: 8px;
@@ -532,6 +574,7 @@
       animation: blink 0.8s infinite;
     }
 
+    /* ঘড়ি স্ক্রোলিং অংশ */
     .scroll {
       flex: 1;
       overflow: hidden;
@@ -540,11 +583,13 @@
       padding: 8px 0;
     }
 
+    /* ডার্ক মোডে ঘড়ির স্ক্রোলিং অংশের কালার */
     [data-theme="dark"] .scroll {
       background: #0f172a;
       color: #f8fafc;
     }
 
+    /* ঘড়ির এনিমেশন ট্রাক */
     .track {
       display: flex;
       width: auto;
@@ -552,6 +597,7 @@
       will-change: transform;
     }
 
+    /* ঘড়ির আইটেম (সময় ও তারিখ) */
     .item {
       display: flex;
       gap: 20px;
@@ -562,23 +608,26 @@
       font-weight: 600;
     }
 
+    /* বাণী / ওয়েলকাম টেক্সট */
     .welcome {
       color: #1d4ed8;
       font-family: 'Noto Sans Bengali', sans-serif;
     }
 
+    /* ডার্ক মোডে বাণী টেক্সটের কালার */
     [data-theme="dark"] .welcome {
       color: #38bdf8;
     }
 
-    /* CARD GRID (2 Columns Always) */
+    /* কার্ড গ্রিড: বামপাশের ২ কলাম লেআউট */
     .main-content {
       display: grid !important;
-      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* ২টি সমান কলাম */
       gap: 14px;
       width: 100%;
     }
 
+    /* প্রতিটি কার্ড/বক্স ডিজাইন */
     .card {
       background: var(--card-bg);
       border-radius: 14px;
@@ -592,6 +641,7 @@
       flex-direction: column;
     }
 
+    /* কার্ডের উপরের সুন্দর কালারফুল লাইন */
     .card::before {
       content: '';
       position: absolute;
@@ -604,8 +654,9 @@
       transition: all 0.3s ease;
     }
 
+    /* কার্ড হভার ইফেক্ট */
     .card:hover {
-      transform: translateY(-4px);
+      transform: translateY(-4px); /* উপরে সামান্য ভেসে উঠা */
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       border-color: rgba(37, 99, 235, 0.4);
     }
@@ -615,12 +666,14 @@
       opacity: 1;
     }
 
+    /* কার্ডের হেডার বা শিরোনাম অংশ */
     .card-header {
       margin-bottom: 10px;
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border-color);
     }
 
+    /* কার্ডের শিরোনাম টেক্সট ও আইকন */
     .card-header h3 {
       color: var(--text-main);
       font-size: 16px;
@@ -637,12 +690,14 @@
       border-radius: 8px;
     }
 
+    /* কার্ডের ভেতরের লিস্ট */
     .card-list {
       list-style: none;
       margin: 0;
       padding: 0;
     }
 
+    /* কার্ড লিস্ট আইটেম */
     .card-list li {
       position: relative;
       margin-bottom: 2px;
@@ -652,6 +707,7 @@
       margin-bottom: 0;
     }
 
+    /* কার্ড লিস্টের লিংক */
     .card-list li a {
       color: var(--text-muted);
       text-decoration: none;
@@ -666,6 +722,7 @@
       word-break: break-word;
     }
 
+    /* কার্ড লিংকের ডানপাশের ছোট তীর আইকন (➔) */
     .card-list li a::after {
       content: '➔';
       font-size: 11px;
@@ -677,6 +734,7 @@
       margin-left: 5px;
     }
 
+    /* কার্ডের লিংকে মাউস নিলে অ্যাকশন ইফেক্ট */
     .card-list li a:hover {
       background: rgba(37, 99, 235, 0.08);
       color: #2563eb;
@@ -684,16 +742,18 @@
       font-weight: 600;
     }
 
+    /* ডার্ক মোডে কার্ড লিংকের হভার কালার */
     [data-theme="dark"] .card-list li a:hover {
       color: #38bdf8;
     }
 
+    /* লিংকে মাউস নিলে তীর আইকন দৃশ্যমান হওয়া */
     .card-list li a:hover::after {
       opacity: 1;
       transform: translateX(0);
     }
 
-    /* SIDEBAR STYLING */
+    /* ডানপাশের সাইডবার লেআউট */
     .sidebar {
       display: flex;
       flex-direction: column;
@@ -701,6 +761,7 @@
       width: 100%;
     }
 
+    /* সাইডবারের একেকটি কন্টেন্ট ব্লক */
     .sidebar-widget {
       background: var(--card-bg);
       border-radius: 14px;
@@ -710,10 +771,12 @@
       transition: all 0.3s ease;
     }
 
+    /* সাইডবার উইজেট হভার */
     .sidebar-widget:hover {
       box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     }
 
+    /* সাইডবার শিরোনামের ব্যাকগ্রাউন্ড ও টেক্সট */
     .widget-title {
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
       color: #ffffff;
@@ -723,11 +786,13 @@
       text-align: center;
     }
 
+    /* প্রোফাইল ছবি ও টেক্সট বক্স */
     .profile-box {
       text-align: center;
       padding: 12px 10px;
     }
 
+    /* সাইডবারের প্রোফাইল ছবি স্টাইল */
     .profile-box img {
       width: 100%;
       max-width: 240px;
@@ -743,24 +808,27 @@
       transition: transform 0.3s ease, border-color 0.3s ease;
     }
 
+    /* প্রোফাইল ছবিতে মাউস হভার */
     .profile-box img:hover {
       transform: scale(1.02);
       border-color: #38bdf8;
     }
 
+    /* প্রোফাইল নাম টেক্সট */
     .profile-box p {
       font-size: 15px;
       font-weight: 700;
       color: var(--text-main);
     }
 
-    /* অভ্যন্তরীণ ই-সেবাসমূহ */
+    /* অভ্যন্তরীণ ই-সেবাসমূহের স্ক্রোলিং তালিকা কন্টেইনার */
     .scrollable-link-container {
       max-height: 310px;
       overflow-y: auto;
       padding-right: 4px;
     }
 
+    /* কাস্টম স্ক্রোলবার ডিজাইন */
     .scrollable-link-container::-webkit-scrollbar {
       width: 6px;
     }
@@ -773,6 +841,7 @@
       border-radius: 10px;
     }
 
+    /* ই-সেবার লিংক লিস্ট */
     .link-list {
       list-style: none;
       padding: 8px 12px;
@@ -786,6 +855,7 @@
       border-bottom: none;
     }
 
+    /* ই-সেবা লিংক স্টাইল */
     .link-list li a {
       color: var(--text-muted);
       text-decoration: none;
@@ -798,13 +868,14 @@
       transition: all 0.2s ease;
     }
 
+    /* ই-সেবা লিংকে হভার ইফেক্ট */
     .link-list li a:hover {
       color: #ef4444;
       transform: translateX(3px);
       font-weight: 600;
     }
 
-    /* HOTLINE BOX */
+    /* জরুরি হটলাইন বক্স (২ কলাম) */
     .hotline-box {
       padding: 12px;
       display: grid;
@@ -812,6 +883,7 @@
       gap: 10px;
     }
 
+    /* হটলাইনের প্রতিটি আইটেম বক্স */
     .hotline-item {
       background: var(--card-bg);
       border: 1px solid rgba(239, 68, 68, 0.2);
@@ -822,6 +894,7 @@
       box-shadow: 0 2px 6px rgba(239, 68, 68, 0.05);
     }
 
+    /* হটলাইন বক্স হভার */
     .hotline-item:hover {
       transform: translateY(-2px);
       border-color: #ef4444;
@@ -836,6 +909,7 @@
       margin-bottom: 2px;
     }
 
+    /* হটলাইন নম্বর টেক্সট */
     .hotline-number {
       font-size: 17px;
       color: #ef4444;
@@ -843,6 +917,7 @@
       font-family: 'Orbitron', sans-serif;
     }
 
+    /* অডিও প্লেয়ার কন্টেইনার */
     .audio-player {
       padding: 12px;
       text-align: center;
@@ -853,7 +928,7 @@
       border-radius: 6px;
     }
 
-    /* FULL WIDTH FOOTER DESIGN */
+    /* ওয়েবসাইট ফুটার সেকশন স্টাইল */
     footer {
       background: rgba(15, 23, 42, 0.98);
       color: #94a3b8;
@@ -865,6 +940,7 @@
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
     }
 
+    /* ফুটারে ৩ কলামের গ্রিড লেআউট */
     .footer-container {
       display: grid !important;
       grid-template-columns: 1fr 1fr 1fr !important;
@@ -880,6 +956,7 @@
       flex-direction: column;
     }
 
+    /* ফুটার বাম পাশের কলাম (ঠিকানা) */
     .footer-left { text-align: left; }
     .footer-left h4 {
       color: #38bdf8;
@@ -897,11 +974,13 @@
       margin-bottom: 8px;
     }
 
+    /* ফুটার মাঝের কলাম (হোম বাটন ও সোশ্যাল আইকন) */
     .footer-center {
       text-align: center;
       align-items: center;
     }
 
+    /* ফুটারে হোমে যাওয়ার গোল বাটন */
     .home-logo-btn {
       display: inline-flex;
       align-items: center;
@@ -925,6 +1004,7 @@
       box-shadow: 0 6px 20px rgba(38, 189, 248, 0.5);
     }
 
+    /* সোশ্যাল মিডিয়া বাটন গ্রুপ */
     .footer-socials {
       display: flex;
       justify-content: center;
@@ -933,6 +1013,7 @@
       margin-bottom: 10px;
     }
 
+    /* প্রতিটি সোশ্যাল আইকন বাটন */
     .social-btn {
       display: inline-flex;
       align-items: center;
@@ -946,6 +1027,7 @@
       transition: all 0.3s ease;
     }
 
+    /* ব্র্যান্ড কালারসমূহ */
     .social-btn.google { background: #ea4335; }
     .social-btn.facebook { background: #1877f2; }
     .social-btn.youtube { background: #ff0000; }
@@ -955,6 +1037,7 @@
       transform: translateY(-2px) scale(1.1);
     }
 
+    /* ফুটার ডান পাশের কলাম (যোগাযোগ) */
     .footer-right { text-align: right; }
     .footer-right h4 {
       color: #38bdf8;
@@ -973,6 +1056,7 @@
       margin-bottom: 4px;
     }
 
+    /* ফুটারের একেবারে নিচের কপিরাইট অংশ */
     .footer-bottom {
       border-top: 1px solid rgba(255, 255, 255, 0.08);
       margin-top: 15px;
@@ -987,17 +1071,19 @@
       font-weight: 600;
     }
 
-    /* KEYFRAMES */
+    /* কী-ফ্রেমস: উপাদানগুলো স্মুথলি ভেসে উঠার এনিমেশন */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* কী-ফ্রেমস: লাইভ ডটের জলোচ্ছ্বাস/ব্লিংক এনিমেশন */
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
 
+    /* কী-ফ্রেমস: ঘড়ির লেখা স্ক্রোলিং এনিমেশন */
     @keyframes scroll {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
