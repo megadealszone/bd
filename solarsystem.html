@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>৩ডি সৌরজগত - Ultra Premium Vibrant Edition</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background-color: #010206; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #fff; }
+    #canvas-container { width: 100vw; height: 100vh; }
+    
+    /* Premium Glassmorphism UI */
+    .glass-card {
+      position: absolute;
+      background: rgba(10, 15, 30, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 20px;
+      color: #fff;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      z-index: 10;
+    }
+
+    /* Top Left Header Panel */
+    .header-panel {
+      top: 24px;
+      left: 24px;
+      max-width: 340px;
+    }
+    .header-panel h1 {
+      font-size: 1.3rem;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .header-panel p { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
+
+    /* Controls Panel Right */
+    .control-panel {
+      top: 24px;
+      right: 24px;
+      width: 280px;
+    }
+    .control-panel h2 {
+      font-size: 1rem;
+      color: #f8fafc;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .control-row { margin-bottom: 16px; }
+    .control-row label { display: flex; justify-content: space-between; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 8px; font-weight: 500; }
+    .control-row label span { color: #38bdf8; font-weight: 700; }
+    
+    /* Range Slider Styling */
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      background: #1e293b;
+      border-radius: 4px;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      cursor: pointer;
+      box-shadow: 0 0 12px #38bdf8;
+      border: 2px solid #fff;
+    }
+
+    /* Buttons */
+    .btn-group { display: flex; gap: 8px; }
+    .btn {
+      flex: 1;
+      padding: 10px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #38bdf8;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    .btn:hover { background: rgba(56, 189, 248, 0.3); border-color: #38bdf8; color: #fff; transform: translateY(-1px); }
+    .btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+
+    /* HTML 2D Planet Labels Overlay */
+    .planet-label {
+      position: absolute;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      pointer-events: none;
+      transform: translate(-50%, -100%);
+      white-space: nowrap;
+      transition: opacity 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+  </style>
+  <!-- Three.js & OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="glass-card header-panel">
+    <h1>🪐 আল্ট্রা প্রিমিয়াম সৌরজগত</h1>
+    <p>গ্রহগুলোর উজ্জ্বলতা, ভাইব্র্যান্ট কালার এবং নিজস্ব আলো বাড়ানো হয়েছে যাতে প্রতিটি স্থান স্পষ্টভাবে দৃশ্যমান হয়। মাউস দিয়ে জুম এবং জুম-আউট করে ৩ডি রূপ উপভোগ করুন।</p>
+  </div>
+
+  <!-- Control Panel -->
+  <div class="glass-card control-panel">
+    <h2>কন্ট্রোল প্যানেল ⚡</h2>
+    <div class="control-row">
+      <label for="speedSlider">ঘূর্ণন গতি (Speed): <span id="speedValue">1.0x</span></label>
+      <input type="range" id="speedSlider" min="0" max="5" step="0.1" value="1">
+    </div>
+    <div class="control-row">
+      <label for="glowSlider">গ্রহের উজ্জ্বলতা (Glow Intensity): <span id="glowValue">1.2x</span></label>
+      <input type="range" id="glowSlider" min="0.5" max="3" step="0.1" value="1.2">
+    </div>
+    <div class="btn-group">
+      <button class="btn" id="toggleOrbitsBtn">কক্ষপথ লুকান</button>
+      <button class="btn" id="toggleLabelsBtn">নাম লুকান</button>
+    </div>
+  </div>
+
+  <!-- HTML Labels Container -->
+  <div id="labels-container"></div>
+
+  <!-- Main Canvas -->
+  <div id="canvas-container"></div>
+
+  <script>
+    // ১. সিন, ক্যামেরা ও রেন্ডারার সেটআপ
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x010206, 0.0015);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 2000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.3;
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // ২. অরবিট কন্ট্রোলস
+    camera.position.set(0, 75, 130);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.maxDistance = 500;
+    controls.minDistance = 12;
+
+    // ৩. লাইটিং - ভাইব্র্যান্ট আলোর ব্যবস্থা
+    const ambientLight = new THREE.AmbientLight(0xdde6ff, 0.9);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.PointLight(0xfffaed, 3.5, 600, 0.3);
+    scene.add(sunLight);
+
+    // ৪. টেক্সচার লোডার
+    const textureLoader = new THREE.TextureLoader();
+    const loadTexture = (url) => textureLoader.load(url);
+
+    // ৫. ব্যাকগ্রাউন্ড স্টারস
+    const starsGeo = new THREE.BufferGeometry();
+    const starsCount = 6000;
+    const starPos = new Float32Array(starsCount * 3);
+    const starColors = new Float32Array(starsCount * 3);
+
+    for(let i = 0; i < starsCount; i++) {
+      starPos[i*3] = (Math.random() - 0.5) * 900;
+      starPos[i*3+1] = (Math.random() - 0.5) * 900;
+      starPos[i*3+2] = (Math.random() - 0.5) * 900;
+
+      const r = 0.8 + Math.random() * 0.2;
+      const g = 0.8 + Math.random() * 0.2;
+      const b = 0.9 + Math.random() * 0.1;
+      starColors[i*3] = r;
+      starColors[i*3+1] = g;
+      starColors[i*3+2] = b;
+    }
+    starsGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+    starsGeo.setAttribute('color', new THREE.BufferAttribute(starColors, 3));
+    const starsMat = new THREE.PointsMaterial({ size: 1.2, vertexColors: true, transparent: true, opacity: 0.9 });
+    scene.add(new THREE.Points(starsGeo, starsMat));
+
+    // ৬. সূর্য (Sun)
+    const sunGeo = new THREE.SphereGeometry(7, 64, 64);
+    const sunMat = new THREE.MeshBasicMaterial({
+      map: loadTexture('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/lava/lavatile.jpg'),
+      color: 0xffbb33
+    });
+    const sun = new THREE.Mesh(sunGeo, sunMat);
+    scene.add(sun);
+
+    const sunGlowMat1 = new THREE.MeshBasicMaterial({
+      color: 0xff6600,
+      transparent: true,
+      opacity: 0.3,
+      side: THREE.BackSide
+    });
+    sun.add(new THREE.Mesh(new THREE.SphereGeometry(7.8, 32, 32), sunGlowMat1));
+
+    // ৭. গ্রহসমূহের ভাইব্র্যান্ট ডাটা সেটআপ
+    const planetsData = [
+      {
+        name: 'বুধ (Mercury)', size: 0.8, distance: 13, speed: 0.022,
+        color: 0xd4a373, emissive: 0x442c1d, orbitColor: 0x88bbff,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/mercurymap.jpg'
+      },
+      {
+        name: 'শুক্র (Venus)', size: 1.3, distance: 19, speed: 0.016,
+        color: 0xffb703, emissive: 0x553b00, orbitColor: 0xffcb77,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/venusmap.jpg'
+      },
+      {
+        name: 'পৃথিবী (Earth)', size: 1.4, distance: 27, speed: 0.012,
+        color: 0x00b4d8, emissive: 0x002b49, orbitColor: 0x38bdf8,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/earthmap1k.jpg',
+        hasMoon: true
+      },
+      {
+        name: 'মঙ্গল (Mars)', size: 0.9, distance: 35, speed: 0.009,
+        color: 0xe63946, emissive: 0x4a0e17, orbitColor: 0xff6b6b,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/marsmap1k.jpg'
+      },
+      {
+        name: 'বৃহস্পতি (Jupiter)', size: 3.2, distance: 48, speed: 0.005,
+        color: 0xf4a261, emissive: 0x4a2810, orbitColor: 0xfab1a0,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/jupitermap.jpg'
+      },
+      {
+        name: 'শনি (Saturn)', size: 2.6, distance: 63, speed: 0.0035,
+        color: 0xe9c46a, emissive: 0x473917, orbitColor: 0xffeaa7,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/saturnmap.jpg',
+        hasRings: true
+      },
+      {
+        name: 'ইউরেনাস (Uranus)', size: 1.8, distance: 77, speed: 0.002,
+        color: 0x4ea8de, emissive: 0x0f3854, orbitColor: 0x74b9ff,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/uranusmap.jpg'
+      },
+      {
+        name: 'নেপচুন (Neptune)', size: 1.7, distance: 89, speed: 0.0015,
+        color: 0x4361ee, emissive: 0x0c1b63, orbitColor: 0x0984e3,
+        texture: 'https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/neptunemap.jpg'
+      }
+    ];
+
+    const planets = [];
+    const orbitLines = [];
+    const labelsContainer = document.getElementById('labels-container');
+
+    // ৮. গ্রহ ও উজ্জ্বল কক্ষপথ তৈরি
+    planetsData.forEach((data, index) => {
+      const orbitGeo = new THREE.BufferGeometry();
+      const points = [];
+      const segments = 128;
+      for (let i = 0; i <= segments; i++) {
+        const theta = (i / segments) * Math.PI * 2;
+        points.push(new THREE.Vector3(Math.cos(theta) * data.distance, 0, Math.sin(theta) * data.distance));
+      }
+      orbitGeo.setFromPoints(points);
+      const orbitMat = new THREE.LineBasicMaterial({
+        color: data.orbitColor,
+        transparent: true,
+        opacity: 0.35
+      });
+      const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+      scene.add(orbitLine);
+      orbitLines.push(orbitLine);
+
+      const planetGeo = new THREE.SphereGeometry(data.size, 32, 32);
+      const planetMat = new THREE.MeshStandardMaterial({
+        map: loadTexture(data.texture),
+        color: data.color,
+        emissive: data.emissive,
+        emissiveIntensity: 0.5,
+        roughness: 0.5,
+        metalness: 0.2
+      });
+      const planetMesh = new THREE.Mesh(planetGeo, planetMat);
+
+      if (data.hasRings) {
+        const ringGeo = new THREE.RingGeometry(data.size + 1.0, data.size + 3.0, 64);
+        const ringMat = new THREE.MeshStandardMaterial({
+          map: loadTexture('https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/saturnringcolor.jpg'),
+          color: 0xffebad,
+          emissive: 0x3d3011,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.9
+        });
+        const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+        ringMesh.rotation.x = Math.PI / 2.2;
+        planetMesh.add(ringMesh);
+      }
+
+      if (data.hasMoon) {
+        const moonGeo = new THREE.SphereGeometry(0.35, 16, 16);
+        const moonMat = new THREE.MeshStandardMaterial({
+          map: loadTexture('https://raw.githubusercontent.com/stemkoski/stemkoski.github.io/master/Three.js/images/moonmap1k.jpg'),
+          color: 0xffffff,
+          emissive: 0x333333,
+          emissiveIntensity: 0.6
+        });
+        const moonMesh = new THREE.Mesh(moonGeo, moonMat);
+        planetMesh.add(moonMesh);
+      }
+
+      const labelDiv = document.createElement('div');
+      labelDiv.className = 'planet-label';
+      labelDiv.innerText = data.name.split(' ')[0];
+      labelDiv.style.borderColor = '#' + data.color.toString(16).padStart(6, '0');
+      labelsContainer.appendChild(labelDiv);
+
+      scene.add(planetMesh);
+      planets.push({
+        mesh: planetMesh,
+        mat: planetMat,
+        data: data,
+        angle: (index * Math.PI / 4),
+        labelEl: labelDiv
+      });
+    });
+
+    // ৯. কন্ট্রোল হ্যান্ডলিং
+    let speedMultiplier = 1.0;
+    let glowMultiplier = 1.2;
+    let showOrbits = true;
+    let showLabels = true;
+
+    document.getElementById('speedSlider').addEventListener('input', (e) => {
+      speedMultiplier = parseFloat(e.target.value);
+      document.getElementById('speedValue').innerText = speedMultiplier.toFixed(1) + 'x';
+    });
+
+    document.getElementById('glowSlider').addEventListener('input', (e) => {
+      glowMultiplier = parseFloat(e.target.value);
+      document.getElementById('glowValue').innerText = glowMultiplier.toFixed(1) + 'x';
+      planets.forEach(p => { p.mat.emissiveIntensity = 0.4 * glowMultiplier; });
+    });
+
+    document.getElementById('toggleOrbitsBtn').addEventListener('click', (e) => {
+      showOrbits = !showOrbits;
+      orbitLines.forEach(line => line.visible = showOrbits);
+      e.target.innerText = showOrbits ? 'কক্ষপথ লুকান' : 'কক্ষপথ দেখান';
+    });
+
+    document.getElementById('toggleLabelsBtn').addEventListener('click', (e) => {
+      showLabels = !showLabels;
+      labelsContainer.style.display = showLabels ? 'block' : 'none';
+      e.target.innerText = showLabels ? 'নাম লুকান' : 'নাম দেখান';
+    });
+
+    // ১০. লেবেল পজিশনিং
+    const tempV = new THREE.Vector3();
+    function updateLabels() {
+      if (!showLabels) return;
+      planets.forEach(p => {
+        p.mesh.getWorldPosition(tempV);
+        tempV.y += p.data.size + 1.2;
+        tempV.project(camera);
+
+        const x = (tempV.x * .5 + .5) * window.innerWidth;
+        const y = (tempV.y * -.5 + .5) * window.innerHeight;
+
+        if (tempV.z < 1) {
+          p.labelEl.style.transform = `translate(-50%, -100%) translate(${x}px,${y}px)`;
+          p.labelEl.style.opacity = '1';
+        } else {
+          p.labelEl.style.opacity = '0';
+        }
+      });
+    }
+
+    // ১১. প্রধান অ্যানিমেশন লুপ
+    function animate() {
+      requestAnimationFrame(animate);
+
+      sun.rotation.y += 0.002;
+
+      planets.forEach(p => {
+        p.angle += p.data.speed * speedMultiplier * 0.8;
+        p.mesh.position.x = Math.cos(p.angle) * p.data.distance;
+        p.mesh.position.z = Math.sin(p.angle) * p.data.distance;
+        p.mesh.rotation.y += 0.015;
+      });
+
+      controls.update();
+      updateLabels();
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
