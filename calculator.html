@@ -15,7 +15,7 @@
             --border-gold-glow: rgba(212, 175, 55, 0.6);
             --text-gold-primary: #D4AF37;
             --text-gold-light: #F3E5AB;
-            --text-gold-dark: #85581A;
+            --text-gold-dark: #7C2D12;
             --card-light-bg: linear-gradient(135deg, #FFFDF9 0%, #F4E8D3 100%);
             --btn-blue: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
             --btn-blue-hover: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
@@ -52,7 +52,7 @@
             border-radius: 24px;
             width: 100%;
             max-width: 650px;
-            padding: 30px 25px;
+            padding: 25px 20px;
             box-shadow: 
                 0 30px 60px -12px rgba(0, 0, 0, 0.7),
                 0 0 35px rgba(212, 175, 55, 0.12),
@@ -78,7 +78,7 @@
             border: 1px solid var(--border-gold);
             border-radius: 16px;
             padding: 5px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             gap: 6px;
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.4);
         }
@@ -127,37 +127,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Header Title */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .header-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
-            border: 1px solid var(--border-gold);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-gold-primary);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .header-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F3E5AB 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 0.5px;
-        }
-
         /* Section Labels */
         .section-label {
             display: flex;
@@ -166,16 +135,286 @@
             font-size: 1.05rem;
             font-weight: 600;
             color: #CBD5E1;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             gap: 10px;
+        }
+
+        /* Input Container Layout */
+        .input-section {
+            margin-bottom: 16px;
+        }
+
+        /* 2 Column Row Layout */
+        .field-row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .field-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-gold-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .item-badge {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #F3E5AB;
+            padding: 1px 8px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .hisab-textarea {
+            width: 100%;
+            height: 75px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--border-gold);
+            border-radius: 12px;
+            padding: 10px 12px;
+            color: #FF0000;
+            font-size: 20px;
+            font-family: 'Noto Sans Bengali', sans-serif;
+            font-weight: 600;
+            line-height: 1.3;
+            resize: vertical;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .hisab-textarea::placeholder {
+            color: #FF8888;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .hisab-textarea:focus {
+            border-color: var(--border-gold-glow);
+            box-shadow: 
+                inset 0 2px 6px rgba(0, 0, 0, 0.1),
+                0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .multi-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Results Container Layout */
+        .output-section {
+            margin-bottom: 16px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: minmax(110px, auto) 1fr;
+            gap: 14px;
+        }
+
+        /* 2-column Results Grid for Tab 1 */
+        .results-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .result-card {
+            background: var(--card-light-bg);
+            border-radius: 18px;
+            padding: 12px 14px;
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 95px;
+            transition: transform 0.2s ease;
+            overflow: hidden;
+        }
+
+        .result-card.item-card {
+            padding: 14px 12px;
+            white-space: nowrap;
+        }
+
+        .result-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* কার্ডের উপরের হেডার: টাইটেল, আইটেম নং এবং কপি বাটন একই সারিতে */
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+            width: 100%;
+        }
+
+        .card-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #332B21;
+            white-space: nowrap;
+        }
+
+        .card-item-subtext {
+            font-size: 0.76rem;
+            color: #52422B;
+            font-weight: 700;
+            background: rgba(212, 175, 55, 0.3);
+            padding: 2px 7px;
+            border-radius: 8px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, #EAD5A8 0%, #D4AF37 100%);
+            border: 1px solid rgba(133, 88, 26, 0.3);
+            color: #2D200E;
+            border-radius: 20px;
+            padding: 3px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+        }
+
+        /* কার্ডের নিচের সারি: সম্পূর্ণ মোট টাকার জন্য ডেডিকেটেড */
+        .card-value {
+            font-weight: 800;
+            color: var(--text-gold-dark);
+            margin-top: 6px;
+        }
+
+        .item-count-val {
+            font-size: 1.7rem;
+            font-family: 'Noto Sans Bengali', 'Outfit', sans-serif;
+        }
+
+        .total-amount-val {
+            font-size: clamp(18px, 4.8vw, 26px);
+            font-family: 'Noto Sans Bengali', 'Arial Narrow', sans-serif;
+            font-weight: 800;
+            letter-spacing: -0.2px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-align: right;
+            color: #7C2D12;
+            width: 100%;
+            display: block;
+        }
+
+        /* হিসাব ক্যালকুলেটর (Tab 2) সেকশনের নাম্বার ভ্যালুগুলোর ফন্ট সাইজ */
+        #calcView_2 .item-count-val {
+            font-size: calc(1.7rem + 30px);
+        }
+
+        #calcView_2 .total-amount-val {
+            font-size: clamp(48px, 4.8vw + 30px, 56px);
+        }
+
+        /* Status Message Box - ফন্ট সাইজ ২০ পিক্সেল বাড়ানো হয়েছে */
+        .status-msg-box {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: calc(1rem + 20px);
+            font-weight: 700;
+            text-align: center;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Bottom Action Buttons Container */
+        .action-buttons-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px auto 0 auto;
+        }
+
+        /* Action Buttons */
+        .refresh-btn {
+            background: var(--btn-blue);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 10px 18px;
+            color: #FFFFFF;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--btn-blue-hover);
+            transform: translateY(-2px);
+        }
+
+        .refresh-icon-badge {
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #FFF5D6 0%, #D4AF37 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2D200E;
+            transition: transform 0.4s ease;
+        }
+
+        .refresh-btn:hover .refresh-icon-badge {
+            transform: rotate(180deg);
         }
 
         /* Control Buttons Group */
         .controls-group {
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+            margin-bottom: 20px;
         }
 
         .action-btn {
@@ -183,8 +422,8 @@
             border: 1px solid var(--border-gold);
             color: var(--text-gold-light);
             border-radius: 20px;
-            padding: 5px 12px;
-            font-size: 0.82rem;
+            padding: 6px 14px;
+            font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
             display: flex;
@@ -205,244 +444,10 @@
             transform: translateY(1px);
         }
 
-        /* Single Input Textarea */
-        .input-box {
-            position: relative;
-            margin-bottom: 24px;
-        }
-
-        textarea.single-textarea {
-            width: 100%;
-            height: 150px;
-            background: #FFFFFF;
-            border: 1.5px solid var(--border-gold);
-            border-radius: 16px;
-            padding: 16px;
-            color: #FF0000;
-            font-size: 30px;
-            font-family: 'Noto Sans Bengali', sans-serif;
-            font-weight: 600;
-            line-height: 1.4;
-            resize: none;
-            outline: none;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        textarea.single-textarea::placeholder {
-            color: #FF7777;
-            font-size: 18px;
-            font-weight: 400;
-        }
-
-        textarea:focus {
-            border-color: var(--border-gold-glow);
-            box-shadow: 
-                inset 0 2px 6px rgba(0, 0, 0, 0.1),
-                0 0 15px rgba(212, 175, 55, 0.3);
-        }
-
-        /* Multi Input Container (For Menu 2) */
-        .multi-input-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .field-label {
-            font-size: 0.92rem;
-            font-weight: 600;
-            color: var(--text-gold-light);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .hisab-textarea {
-            width: 100%;
-            height: 60px;
-            background: #FFFFFF;
-            border: 1.5px solid var(--border-gold);
-            border-radius: 12px;
-            padding: 10px 14px;
-            color: #FF0000;
-            font-size: 22px;
-            font-family: 'Noto Sans Bengali', sans-serif;
-            font-weight: 600;
-            line-height: 1.3;
-            resize: vertical;
-            outline: none;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .hisab-textarea::placeholder {
-            color: #FF8888;
-            font-size: 15px;
-            font-weight: 400;
-        }
-
-        /* Results Container Layout */
-        .results-grid {
-            display: grid;
-            grid-template-columns: minmax(110px, auto) 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
-        }
-
-        .result-card {
-            background: var(--card-light-bg);
-            border-radius: 18px;
-            padding: 18px 20px;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            box-shadow: 
-                0 10px 25px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 110px;
-            transition: transform 0.2s ease;
-        }
-
-        .result-card.item-card {
-            padding: 18px 14px;
-            white-space: nowrap;
-        }
-
-        .result-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-        }
-
-        .card-title {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #332B21;
-        }
-
-        .card-value {
-            font-weight: 800;
-            color: var(--text-gold-dark);
-            margin-top: 8px;
-            word-break: break-all;
-        }
-
-        .item-count-val {
-            font-size: 1.8rem;
-            font-family: 'Noto Sans Bengali', 'Outfit', sans-serif;
-        }
-
-        .total-amount-val {
-            font-size: 40px;
-            font-family: 'Noto Sans Bengali', 'Arial Narrow', sans-serif;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            line-height: 1.1;
-        }
-
-        /* Status Message Box for Menu 2 */
-        .status-msg-box {
-            margin-top: 10px;
-            margin-bottom: 24px;
-            padding: 12px 16px;
-            border-radius: 14px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            text-align: center;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        /* Copy Button */
-        .copy-btn {
-            background: linear-gradient(135deg, #EAD5A8 0%, #D4AF37 100%);
-            border: 1px solid rgba(133, 88, 26, 0.3);
-            color: #2D200E;
-            border-radius: 20px;
-            padding: 5px 14px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .copy-btn.copied {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            color: white;
-        }
-
-        /* Bottom Action Buttons Container */
-        .action-buttons-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 0 auto;
-        }
-
-        /* Refresh & Voucher Action Buttons */
-        .refresh-btn {
-            background: var(--btn-blue);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
-            padding: 10px 24px;
-            color: #FFFFFF;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .refresh-btn:hover {
-            background: var(--btn-blue-hover);
-            transform: translateY(-2px);
-        }
-
-        .refresh-icon-badge {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #FFF5D6 0%, #D4AF37 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2D200E;
-            transition: transform 0.4s ease;
-        }
-
-        .refresh-btn:hover .refresh-icon-badge {
-            transform: rotate(180deg);
-        }
-
         /* History Section */
         .history-section {
-            margin-top: 26px;
-            padding-top: 18px;
+            margin-top: 16px;
+            padding-top: 16px;
             border-top: 1px dashed rgba(212, 175, 55, 0.3);
         }
 
@@ -456,7 +461,7 @@
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(212, 175, 55, 0.2);
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -480,7 +485,7 @@
         }
 
         .history-meta {
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             font-weight: 600;
             color: var(--text-gold-light);
             font-family: 'Noto Sans Bengali', sans-serif;
@@ -502,7 +507,6 @@
             transform: scale(1.05);
         }
 
-        /* More Button Style */
         .more-btn {
             width: 100%;
             background: rgba(212, 175, 55, 0.15);
@@ -529,12 +533,11 @@
             padding: 15px 0;
         }
 
-        /* Clear History Button */
         .clear-hist-btn {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.35) 100%);
             border: 1px solid rgba(239, 68, 68, 0.5);
             color: #FCA5A5;
-            padding: 5px 14px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.82rem;
             font-weight: 600;
@@ -558,15 +561,13 @@
 
         /* Responsive */
         @media (max-width: 520px) {
-            .calculator-card { padding: 20px 15px; }
-            .results-grid { grid-template-columns: 1fr; }
-            .header-title { font-size: 1.5rem; }
-            .total-amount-val { font-size: 32px; }
-            textarea.single-textarea { font-size: 24px; }
-            .controls-group { flex-wrap: wrap; }
-            .nav-tab { font-size: 0.9rem; padding: 8px 10px; }
-            .refresh-btn { font-size: 16px; padding: 8px 18px; width: 100%; }
+            .calculator-card { padding: 18px 12px; }
+            .results-grid, .results-grid-2col { grid-template-columns: 1fr; }
+            .hisab-textarea { font-size: 18px; }
+            .nav-tab { font-size: 0.88rem; padding: 8px 10px; }
+            .refresh-btn { font-size: 14px; padding: 8px 14px; width: 100%; }
             .action-buttons-wrapper { flex-direction: column; width: 100%; }
+            .field-row-2col { gap: 8px; }
         }
     </style>
 </head>
@@ -585,57 +586,65 @@
 
         <!-- TAB 1: VALUE CALCULATOR -->
         <div class="tab-content active" id="calcView_1">
-            <div class="header">
-                <div class="header-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-                        <line x1="8" y1="6" x2="16" y2="6"></line>
-                        <line x1="16" y1="14" x2="16" y2="18"></line>
-                        <path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path>
-                        <path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path>
-                    </svg>
-                </div>
-                <h1 class="header-title">ভ্যালু ক্যালকুলেটর</h1>
-            </div>
-
+            
+            <!-- Input Box Section: 2 Columns Row -->
             <div class="input-section" id="inputSection_1">
-                <div class="section-label">
-                    <span>ডেটা ইনপুট</span>
-                    <div class="controls-group">
-                        <button class="action-btn" id="langToggleBtn_1" onclick="toggleLanguage('1')" title="ভাষা নির্বাচন" style="border-color: #3B82F6; color: #93C5FD;">🌐 অটো</button>
-                        <button class="action-btn" onclick="prevHistory('1')" title="পূর্ববর্তী সেভ ডেটা">◀ প্রিভিয়াস</button>
-                        <button class="action-btn" onclick="nextHistory('1')" title="পরবর্তী সেভ ডেটা">নেক্সট ▶</button>
-                        <button class="action-btn" onclick="pasteData('1')" title="ক্লিপবোর্ড থেকে নিচে পেস্ট করুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📋 পেস্ট</button>
+                <div class="field-row-2col">
+                    <div class="field-group">
+                        <label class="field-label" style="color: #FCA5A5;">
+                            <span>📄 ভাউচার / ব্যয়</span>
+                            <span class="item-badge">আইটেম: <span id="inputCountVoucher_1">০</span></span>
+                        </label>
+                        <textarea id="dataInput_voucher_tab1" class="hisab-textarea" placeholder="ভাউচারের টাকা..." enterkeyhint="enter" inputmode="decimal"></textarea>
                     </div>
-                </div>
-                <div class="input-box">
-                    <textarea id="dataInput_1" class="single-textarea" placeholder="এক্সেল বা ওয়ার্ড থেকে ডেটা কপি করে এখানে পেস্ট করুন..." inputmode="decimal"></textarea>
+                    <div class="field-group">
+                        <label class="field-label" style="color: #86EFAC;">
+                            <span>💰 ইনকাম</span>
+                            <span class="item-badge">আইটেম: <span id="inputCountIncome_1">০</span></span>
+                        </label>
+                        <textarea id="dataInput_income_tab1" class="hisab-textarea" placeholder="ইনকামের টাকা..." enterkeyhint="enter" inputmode="decimal"></textarea>
+                    </div>
                 </div>
             </div>
 
+            <!-- Item / Output Section: Title, Item Count & Copy Button on Top line, Amount on Bottom line -->
             <div class="output-section">
-                <div class="section-label" style="margin-bottom: 14px;"><span>ফলাফল</span></div>
-                <div class="results-grid">
-                    <div class="result-card item-card">
-                        <div class="card-header"><span class="card-title">মোট আইটেম</span></div>
-                        <div class="card-value item-count-val" id="itemCount_1">০</div>
-                    </div>
+                <div class="section-label" style="margin-bottom: 10px;"><span>ফলাফল (মোট টাকা)</span></div>
+                <div class="results-grid-2col">
+                    
+                    <!-- Voucher Total Card -->
                     <div class="result-card amount-card">
                         <div class="card-header">
-                            <span class="card-title">মোট টাকা (৳)</span>
-                            <button class="copy-btn" id="copyBtn_1" onclick="copyTotalAmount('1')" title="কপি করুন"><span id="copyText_1">কপি</span></button>
+                            <span class="card-title">📄 মোট ভাউচার/ব্যয়</span>
+                            <span class="card-item-subtext" id="cardItemVoucher_1">আইটেম: ০টি</span>
+                            <button class="copy-btn" id="copyVoucherBtn_1" onclick="copyAmount('totalVoucher_1', 'copyVoucherBtn_1', 'copyVoucherText_1')" title="কপি করুন">
+                                <span id="copyVoucherText_1">কপি</span>
+                            </button>
                         </div>
-                        <div class="card-value total-amount-val" id="totalAmount_1">০.০০</div>
+                        <div class="card-value total-amount-val" id="totalVoucher_1">০.০০</div>
                     </div>
+
+                    <!-- Income Total Card -->
+                    <div class="result-card amount-card">
+                        <div class="card-header">
+                            <span class="card-title">💰 মোট ইনকাম</span>
+                            <span class="card-item-subtext" id="cardItemIncome_1">আইটেম: ০টি</span>
+                            <button class="copy-btn" id="copyIncomeBtn_1" onclick="copyAmount('totalIncome_1', 'copyIncomeBtn_1', 'copyIncomeText_1')" title="কপি করুন">
+                                <span id="copyIncomeText_1">কপি</span>
+                            </button>
+                        </div>
+                        <div class="card-value total-amount-val" id="totalIncome_1">০.০০</div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Action Buttons Group: Refresh + Voucher Calculator -->
+            <!-- Action Buttons Group -->
             <div class="action-buttons-wrapper">
                 <button class="refresh-btn" onclick="resetAndSaveCalculator('1')">
                     <span>রিফ্রেশ করুন</span>
                     <div class="refresh-icon-badge">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21.5 2v6h-6"></path><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
                         </svg>
                     </div>
@@ -644,16 +653,32 @@
                 <button class="refresh-btn" onclick="openVoucherCalculator()">
                     <span>ভাউচার ক্যালকুলেটর</span>
                     <div class="refresh-icon-badge">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                        </svg>
+                    </div>
+                </button>
+
+                <button class="refresh-btn" onclick="openBothCalculator()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
+                    <span>উভয় হিসাব</span>
+                    <div class="refresh-icon-badge">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 3h5v5"></path><path d="M8 3H3v5"></path><path d="M21 3l-7 7"></path><path d="M3 3l7 7"></path>
                         </svg>
                     </div>
                 </button>
             </div>
 
+            <!-- Controls Group Below Refresh Buttons -->
+            <div class="controls-group">
+                <button class="action-btn" id="langToggleBtn_1" onclick="toggleLanguage('1')" title="ভাষা নির্বাচন" style="border-color: #3B82F6; color: #93C5FD;">🌐 অটো</button>
+                <button class="action-btn" onclick="prevHistory('1')" title="পূর্ববর্তী সেভ ডেটা">◀ প্রিভিয়াস</button>
+                <button class="action-btn" onclick="nextHistory('1')" title="পরবর্তী সেভ ডেটা">নেক্সট ▶</button>
+                <button class="action-btn" onclick="pasteData('1')" title="ক্লিপবোর্ড থেকে পেস্ট করুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📋 পেস্ট</button>
+            </div>
+
+            <!-- History Section -->
             <div class="history-section" id="historySection_1">
                 <div class="section-label">
                     <span>হিস্টোরি (সর্বশেষ ৪ ঘন্টা)</span>
@@ -666,49 +691,38 @@
 
         <!-- TAB 2: HISAB CALCULATOR -->
         <div class="tab-content" id="calcView_2">
-            <div class="header">
-                <div class="header-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-                        <line x1="8" y1="6" x2="16" y2="6"></line>
-                        <line x1="16" y1="14" x2="16" y2="18"></line>
-                        <path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path>
-                        <path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path>
-                    </svg>
-                </div>
-                <h1 class="header-title">হিসাব ক্যালকুলেটর</h1>
-            </div>
 
+            <!-- Input Box Section -->
             <div class="input-section" id="inputSection_2">
                 <div class="section-label">
                     <span>ডেটা ইনপুট</span>
-                    <div class="controls-group">
-                        <button class="action-btn" id="langToggleBtn_2" onclick="toggleLanguage('2')" title="ভাষা নির্বাচন" style="border-color: #3B82F6; color: #93C5FD;">🌐 অটো</button>
-                        <button class="action-btn" onclick="prevHistory('2')" title="পূর্ববর্তী সেভ ডেটা">◀ প্রিভিয়াস</button>
-                        <button class="action-btn" onclick="nextHistory('2')" title="পরবর্তী সেভ ডেটা">নেক্সট ▶</button>
-                        <button class="action-btn" onclick="pasteData('2')" title="ক্লিপবোর্ড থেকে ইনপুট বক্সে পেস্ট করুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📋 পেস্ট</button>
-                    </div>
                 </div>
 
-                <!-- Three Input Boxes for Menu 2 with Mobile Numeric Keypad & Enter-Key-Hint support -->
+                <!-- Input Boxes Container -->
                 <div class="multi-input-container">
-                    <div class="field-group">
-                        <label class="field-label" style="color: #FCA5A5;">💸 অর্থ প্রদান (+)</label>
-                        <textarea id="dataInput_payment" class="hisab-textarea" placeholder="প্রদানকৃত টাকা লিখুন..." enterkeyhint="next" inputmode="decimal"></textarea>
+                    <!-- Row 1: Side-by-side 2 Columns for Payment and Other Money -->
+                    <div class="field-row-2col">
+                        <div class="field-group">
+                            <label class="field-label" style="color: #86EFAC;">💸 অর্থ প্রদান (+)</label>
+                            <textarea id="dataInput_payment" class="hisab-textarea" placeholder="প্রদানকৃত টাকা..." enterkeyhint="next" inputmode="decimal"></textarea>
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" style="color: #6EE7B7;">➕ অন্যান্য অর্থ (+)</label>
+                            <textarea id="dataInput_other" class="hisab-textarea" placeholder="অন্যান্য টাকা..." enterkeyhint="next" inputmode="decimal"></textarea>
+                        </div>
                     </div>
+
+                    <!-- Row 2: Voucher Amount -->
                     <div class="field-group">
-                        <label class="field-label" style="color: #86EFAC;">➕ অন্যান্য অর্থ (+)</label>
-                        <textarea id="dataInput_other" class="hisab-textarea" placeholder="অন্যান্য টাকা লিখুন..." enterkeyhint="next" inputmode="decimal"></textarea>
-                    </div>
-                    <div class="field-group">
-                        <label class="field-label">📄 ভাউচার অ্যামাউন্ট (-)</label>
+                        <label class="field-label" style="color: #FCA5A5;">📄 ভাউচার অ্যামাউন্ট (-)</label>
                         <textarea id="dataInput_voucher" class="hisab-textarea" placeholder="ভাউচার এর টাকা (বিয়োগ হবে)..." enterkeyhint="next" inputmode="decimal"></textarea>
                     </div>
                 </div>
             </div>
 
+            <!-- Item / Output Section -->
             <div class="output-section">
-                <div class="section-label" style="margin-bottom: 14px;"><span>ফলাফল</span></div>
+                <div class="section-label" style="margin-bottom: 10px;"><span>ফলাফল</span></div>
                 <div class="results-grid">
                     <div class="result-card item-card">
                         <div class="card-header"><span class="card-title">মোট আইটেম</span></div>
@@ -717,25 +731,35 @@
                     <div class="result-card amount-card">
                         <div class="card-header">
                             <span class="card-title">ফলাফল (৳)</span>
-                            <button class="copy-btn" id="copyBtn_2" onclick="copyTotalAmount('2')" title="কপি করুন"><span id="copyText_2">কপি</span></button>
+                            <button class="copy-btn" id="copyBtn_2" onclick="copyAmount('totalAmount_2', 'copyBtn_2', 'copyText_2')" title="কপি করুন"><span id="copyText_2">কপি</span></button>
                         </div>
                         <div class="card-value total-amount-val" id="totalAmount_2">০.০০</div>
                     </div>
                 </div>
 
-                <!-- Status Message Container for Menu 2 -->
+                <!-- Status Message Container -->
                 <div id="statusMsg_2" class="status-msg-box"></div>
             </div>
 
+            <!-- Refresh Button -->
             <button class="refresh-btn" style="margin: 0 auto;" onclick="resetAndSaveCalculator('2')">
                 <span>রিফ্রেশ করুন</span>
                 <div class="refresh-icon-badge">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21.5 2v6h-6"></path><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
                     </svg>
                 </div>
             </button>
 
+            <!-- Controls Group Below Refresh Button -->
+            <div class="controls-group">
+                <button class="action-btn" id="langToggleBtn_2" onclick="toggleLanguage('2')" title="ভাষা নির্বাচন" style="border-color: #3B82F6; color: #93C5FD;">🌐 অটো</button>
+                <button class="action-btn" onclick="prevHistory('2')" title="পূর্ববর্তী সেভ ডেটা">◀ প্রিভিয়াস</button>
+                <button class="action-btn" onclick="nextHistory('2')" title="পরবর্তী সেভ ডেটা">নেক্সট ▶</button>
+                <button class="action-btn" onclick="pasteData('2')" title="ক্লিপবোর্ড থেকে ইনপুট বক্সে পেস্ট করুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📋 পেস্ট</button>
+            </div>
+
+            <!-- History Section -->
             <div class="history-section" id="historySection_2">
                 <div class="section-label">
                     <span>হিস্টোরি (সর্বশেষ ৪ ঘন্টা)</span>
@@ -750,7 +774,7 @@
     <script>
         const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
 
-        // স্টেট অবজেক্ট - দুটি ক্যালকুলেটরের জন্য স্বাধীন ডাটা
+        // স্টেট অবজেক্ট
         const calcStates = {
             '1': { navIndex: -1, showAllHistory: false, manualLang: 'auto' },
             '2': { navIndex: -1, showAllHistory: false, manualLang: 'auto' }
@@ -808,18 +832,19 @@
 
         function formatCount(num) { return num.toLocaleString('en-IN'); }
 
-        // টেক্সট ফিল্ড থেকে সংখ্যা ও যোগফল নির্ণয়ের হেল্পার
+        // টেক্সট ফিল্ড থেকে সংখ্যা ও যোগফল নির্ণয়
         function parseInputNumbers(text) {
             if (!text || !text.trim()) return { count: 0, sum: 0, hasBn: false };
             const isBn = /[০-৯]/.test(text);
             const englishText = convertBnToEn(text);
-            const items = englishText.split(/[\s\t\n]+/);
+
+            const items = englishText.split(/[\s\t\n\r;]+/);
             let count = 0;
             let sum = 0;
 
             items.forEach(item => {
-                const cleanString = item.replace(/,/g, '').trim();
-                if (cleanString !== '') {
+                const cleanString = item.replace(/[^0-9.-]/g, '').trim();
+                if (cleanString !== '' && cleanString !== '-' && cleanString !== '.') {
                     const numberValue = parseFloat(cleanString);
                     if (!isNaN(numberValue)) {
                         count++;
@@ -833,33 +858,52 @@
 
         // মূল ক্যালকুলেশন লজিক
         function calculateValues(id) {
-            const countEl = document.getElementById(`itemCount_${id}`);
-            const totalEl = document.getElementById(`totalAmount_${id}`);
             const st = calcStates[id];
 
             if (id === '1') {
-                // মেনু ১: ভ্যালু ক্যালকুলেটর
-                const rawText = document.getElementById('dataInput_1').value;
-                const parsed = parseInputNumbers(rawText);
+                // মেনু ১: ভ্যালু ক্যালকুলেটর (ভাউচার ও ইনকাম)
+                const vText = document.getElementById('dataInput_voucher_tab1').value;
+                const iText = document.getElementById('dataInput_income_tab1').value;
+
+                const vData = parseInputNumbers(vText);
+                const iData = parseInputNumbers(iText);
+
+                const hasBn = vData.hasBn || iData.hasBn;
 
                 let isBanglaOutput;
                 if (st.manualLang === 'bn') isBanglaOutput = true;
                 else if (st.manualLang === 'en') isBanglaOutput = false;
-                else isBanglaOutput = parsed.hasBn;
+                else isBanglaOutput = hasBn;
 
-                let formattedCount = formatCount(parsed.count);
-                let formattedTotal = formatTotalAmount(parsed.sum);
+                let formattedVoucherTotal = formatTotalAmount(vData.sum);
+                let formattedIncomeTotal = formatTotalAmount(iData.sum);
+
+                let formattedVoucherCount = formatCount(vData.count);
+                let formattedIncomeCount = formatCount(iData.count);
 
                 if (isBanglaOutput) {
-                    formattedCount = convertEnToBn(formattedCount);
-                    formattedTotal = convertEnToBn(formattedTotal);
+                    formattedVoucherTotal = convertEnToBn(formattedVoucherTotal);
+                    formattedIncomeTotal = convertEnToBn(formattedIncomeTotal);
+                    formattedVoucherCount = convertEnToBn(formattedVoucherCount);
+                    formattedIncomeCount = convertEnToBn(formattedIncomeCount);
                 }
 
-                countEl.textContent = formattedCount;
-                totalEl.textContent = formattedTotal;
+                // মোট টাকা আপডেট
+                document.getElementById('totalVoucher_1').textContent = formattedVoucherTotal;
+                document.getElementById('totalIncome_1').textContent = formattedIncomeTotal;
+
+                // আইটেম অটো কাউন্ট আপডেট
+                document.getElementById('inputCountVoucher_1').textContent = formattedVoucherCount;
+                document.getElementById('inputCountIncome_1').textContent = formattedIncomeCount;
+                
+                document.getElementById('cardItemVoucher_1').textContent = `আইটেম: ${formattedVoucherCount}টি`;
+                document.getElementById('cardItemIncome_1').textContent = `আইটেম: ${formattedIncomeCount}টি`;
 
             } else if (id === '2') {
-                // মেনু ২: হিসাব ক্যালকুলেটর (৩টি ইনপুট)
+                // মেনু ২: হিসাব ক্যালকুলেটর
+                const countEl = document.getElementById('itemCount_2');
+                const totalEl = document.getElementById('totalAmount_2');
+
                 const vText = document.getElementById('dataInput_voucher').value;
                 const pText = document.getElementById('dataInput_payment').value;
                 const oText = document.getElementById('dataInput_other').value;
@@ -869,8 +913,6 @@
                 const oData = parseInputNumbers(oText);
 
                 const totalItemsCount = vData.count + pData.count + oData.count;
-
-                // সূত্র: (অর্থ প্রদান) + (অন্যান্য অর্থ) - (ভাউচার অ্যামাউন্ট)
                 const finalResult = pData.sum + oData.sum - vData.sum;
 
                 let isBanglaOutput;
@@ -889,7 +931,7 @@
                 countEl.textContent = formattedCount;
                 totalEl.textContent = formattedTotal;
 
-                // অর্থ প্রদান এবং ভাউচারের পরিমাণের তুলনা
+                // স্ট্যাটাস বার্তা
                 const statusMsgEl = document.getElementById('statusMsg_2');
                 
                 if (pData.sum > 0 || vData.sum > 0) {
@@ -917,27 +959,69 @@
         // ভাউচার ক্যালকুলেটর বাটন একশন
         function openVoucherCalculator() {
             calculateValues('1');
-            const inputVal1 = document.getElementById('dataInput_1').value;
-            const countVal1 = document.getElementById('itemCount_1').textContent;
-            const totalVal1 = document.getElementById('totalAmount_1').textContent;
+            const vVal = document.getElementById('dataInput_voucher_tab1').value;
+            const iVal = document.getElementById('dataInput_income_tab1').value;
+            const vTotal = document.getElementById('totalVoucher_1').textContent;
+            const iTotal = document.getElementById('totalIncome_1').textContent;
 
-            if (inputVal1.trim()) {
-                saveToHistory('1', inputVal1, countVal1, totalVal1);
+            if (vVal.trim() || iVal.trim()) {
+                saveToHistory('1', { v: vVal, i: iVal }, vTotal, iTotal);
                 clearInputs('1');
                 calcStates['1'].navIndex = -1;
             }
 
-            document.getElementById('dataInput_voucher').value = totalVal1;
+            if (vTotal && vTotal !== '০.০০' && vTotal !== '0.00') {
+                document.getElementById('dataInput_voucher').value = vTotal;
+            } else {
+                document.getElementById('dataInput_voucher').value = '';
+            }
+
             switchTab('2');
             calculateValues('2');
             document.getElementById('dataInput_payment').focus();
+        }
+
+        // উভয় হিসাব বাটন একশন
+        function openBothCalculator() {
+            calculateValues('1');
+            const vVal = document.getElementById('dataInput_voucher_tab1').value;
+            const iVal = document.getElementById('dataInput_income_tab1').value;
+            const vTotal = document.getElementById('totalVoucher_1').textContent;
+            const iTotal = document.getElementById('totalIncome_1').textContent;
+
+            if (vVal.trim() || iVal.trim()) {
+                saveToHistory('1', { v: vVal, i: iVal }, vTotal, iTotal);
+                clearInputs('1');
+                calcStates['1'].navIndex = -1;
+            }
+
+            if (vTotal && vTotal !== '০.০০' && vTotal !== '0.00') {
+                document.getElementById('dataInput_voucher').value = vTotal;
+            } else {
+                document.getElementById('dataInput_voucher').value = '';
+            }
+
+            if (iTotal && iTotal !== '০.০০' && iTotal !== '0.00') {
+                document.getElementById('dataInput_payment').value = iTotal;
+            } else {
+                document.getElementById('dataInput_payment').value = '';
+            }
+
+            switchTab('2');
+            calculateValues('2');
+            document.getElementById('dataInput_voucher').focus();
         }
 
         // পেস্ট ডাটা
         async function pasteData(id) {
             let targetEl;
             if (id === '1') {
-                targetEl = document.getElementById('dataInput_1');
+                const active = document.activeElement;
+                if (active && (active.id === 'dataInput_voucher_tab1' || active.id === 'dataInput_income_tab1')) {
+                    targetEl = active;
+                } else {
+                    targetEl = document.getElementById('dataInput_voucher_tab1');
+                }
             } else {
                 const active = document.activeElement;
                 if (active && (active.id === 'dataInput_voucher' || active.id === 'dataInput_payment' || active.id === 'dataInput_other')) {
@@ -963,18 +1047,18 @@
             }
         }
 
-        // কপি মোট টাকা
-        function copyTotalAmount(id) {
-            const totalEl = document.getElementById(`totalAmount_${id}`);
-            const copyBtn = document.getElementById(`copyBtn_${id}`);
-            const copyText = document.getElementById(`copyText_${id}`);
+        // নির্দিষ্ট উপাদানের টাকা কপি করার ফাংশন
+        function copyAmount(elId, btnId, textId) {
+            const el = document.getElementById(elId);
+            const btn = document.getElementById(btnId);
+            const text = document.getElementById(textId);
 
-            navigator.clipboard.writeText(totalEl.textContent).then(() => {
-                copyBtn.classList.add('copied');
-                copyText.textContent = 'কপি হয়েছে!';
+            navigator.clipboard.writeText(el.textContent).then(() => {
+                btn.classList.add('copied');
+                text.textContent = 'কপি হয়েছে!';
                 setTimeout(() => {
-                    copyBtn.classList.remove('copied');
-                    copyText.textContent = 'কপি';
+                    btn.classList.remove('copied');
+                    text.textContent = 'কপি';
                 }, 2000);
             });
         }
@@ -995,9 +1079,15 @@
             }
         }
 
-        function saveToHistory(id, dataPayload, count, total) {
+        function saveToHistory(id, dataPayload, vTotalOrCount, iTotalOrResult) {
             let list = getCleanHistory(id);
-            const newItem = { id: Date.now(), data: dataPayload, count, total, timestamp: Date.now() };
+            const newItem = { 
+                id: Date.now(), 
+                data: dataPayload, 
+                val1: vTotalOrCount, 
+                val2: iTotalOrResult, 
+                timestamp: Date.now() 
+            };
             list.unshift(newItem);
             localStorage.setItem(`calc_history_${id}`, JSON.stringify(list));
             renderHistory(id);
@@ -1018,11 +1108,18 @@
             let html = displayList.map(item => {
                 const date = new Date(item.timestamp);
                 const timeStr = date.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit', hour12: true });
+                let metaText = '';
+                if (id === '1') {
+                    metaText = `ভাউচার: ৳${item.val1} | ইনকাম: ৳${item.val2}`;
+                } else {
+                    metaText = `আইটেম: ${item.val1} | ফলাফল: ৳${item.val2}`;
+                }
+
                 return `
                     <div class="history-item">
                         <div class="history-info">
                             <span class="history-time">⏱️ ${timeStr}</span>
-                            <span class="history-meta">আইটেম: ${item.count} | ফলাফল: ৳${item.total}</span>
+                            <span class="history-meta">${metaText}</span>
                         </div>
                         <button class="view-btn" onclick="viewHistoryItem('${id}', ${item.id})">ভিউ</button>
                     </div>
@@ -1051,11 +1148,15 @@
             if (!item) return;
 
             if (id === '1') {
-                const inputEl = document.getElementById('dataInput_1');
-                inputEl.value = typeof item.data === 'string' ? item.data : (item.data.v || '');
+                if (typeof item.data === 'object') {
+                    document.getElementById('dataInput_voucher_tab1').value = item.data.v || '';
+                    document.getElementById('dataInput_income_tab1').value = item.data.i || '';
+                } else {
+                    document.getElementById('dataInput_voucher_tab1').value = item.data || '';
+                    document.getElementById('dataInput_income_tab1').value = '';
+                }
                 calculateValues('1');
                 document.getElementById('inputSection_1').scrollIntoView({ behavior: 'smooth' });
-                inputEl.focus();
             } else if (id === '2') {
                 if (typeof item.data === 'object') {
                     document.getElementById('dataInput_voucher').value = item.data.v || '';
@@ -1102,7 +1203,13 @@
 
         function applyHistoryItemData(id, item) {
             if (id === '1') {
-                document.getElementById('dataInput_1').value = typeof item.data === 'string' ? item.data : (item.data.v || '');
+                if (typeof item.data === 'object') {
+                    document.getElementById('dataInput_voucher_tab1').value = item.data.v || '';
+                    document.getElementById('dataInput_income_tab1').value = item.data.i || '';
+                } else {
+                    document.getElementById('dataInput_voucher_tab1').value = item.data || '';
+                    document.getElementById('dataInput_income_tab1').value = '';
+                }
             } else {
                 if (typeof item.data === 'object') {
                     document.getElementById('dataInput_voucher').value = item.data.v || '';
@@ -1115,7 +1222,8 @@
 
         function clearInputs(id) {
             if (id === '1') {
-                document.getElementById('dataInput_1').value = '';
+                document.getElementById('dataInput_voucher_tab1').value = '';
+                document.getElementById('dataInput_income_tab1').value = '';
             } else {
                 document.getElementById('dataInput_voucher').value = '';
                 document.getElementById('dataInput_payment').value = '';
@@ -1126,21 +1234,24 @@
 
         // রিফ্রেশ বাটন
         function resetAndSaveCalculator(id) {
-            const countEl = document.getElementById(`itemCount_${id}`);
-            const totalEl = document.getElementById(`totalAmount_${id}`);
-
             if (id === '1') {
-                const inputVal = document.getElementById('dataInput_1').value;
-                if (inputVal.trim()) {
-                    saveToHistory('1', inputVal, countEl.textContent, totalEl.textContent);
+                const vVal = document.getElementById('dataInput_voucher_tab1').value;
+                const iVal = document.getElementById('dataInput_income_tab1').value;
+                const vTotal = document.getElementById('totalVoucher_1').textContent;
+                const iTotal = document.getElementById('totalIncome_1').textContent;
+
+                if (vVal.trim() || iVal.trim()) {
+                    saveToHistory('1', { v: vVal, i: iVal }, vTotal, iTotal);
                 }
             } else {
                 const vVal = document.getElementById('dataInput_voucher').value;
                 const pVal = document.getElementById('dataInput_payment').value;
                 const oVal = document.getElementById('dataInput_other').value;
+                const countEl = document.getElementById('itemCount_2').textContent;
+                const totalEl = document.getElementById('totalAmount_2').textContent;
 
                 if (vVal.trim() || pVal.trim() || oVal.trim()) {
-                    saveToHistory('2', { v: vVal, p: pVal, o: oVal }, countEl.textContent, totalEl.textContent);
+                    saveToHistory('2', { v: vVal, p: pVal, o: oVal }, countEl, totalEl);
                 }
             }
 
@@ -1150,27 +1261,30 @@
         }
 
         // ইভেন্ট লিসেনার সেটআপ (মেনু ১)
-        document.getElementById('dataInput_1').addEventListener('input', () => calculateValues('1'));
+        const tab1Fields = ['dataInput_voucher_tab1', 'dataInput_income_tab1'];
+        tab1Fields.forEach((fieldId) => {
+            const inputEl = document.getElementById(fieldId);
+            if (inputEl) {
+                inputEl.addEventListener('input', () => calculateValues('1'));
+            }
+        });
         
-        // ইভেন্ট লিসেনার সেটআপ (মেনু ২) + Enter কি-প্রেস এ পরবর্তী ইনপুট বক্সে নেভিগেশন লজিক
+        // ইভেন্ট লিসেনার সেটআপ (মেনু ২)
         const menu2Fields = ['dataInput_payment', 'dataInput_other', 'dataInput_voucher'];
-
         menu2Fields.forEach((fieldId, index) => {
             const inputEl = document.getElementById(fieldId);
-
-            // মান পরিবর্তনের সাথে সাথে হিসাব করা
-            inputEl.addEventListener('input', () => calculateValues('2'));
-
-            // Enter বাটন প্রেস করলে পরের ইনপুট বক্সে কার্সর স্থানান্তর করা
-            inputEl.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault(); // নতুন লাইন তৈরি হওয়া বন্ধ করবে
-                    const nextIndex = (index + 1) % menu2Fields.length;
-                    const nextInput = document.getElementById(menu2Fields[nextIndex]);
-                    nextInput.focus();
-                    nextInput.select(); // পরবর্তী টেক্সট সহজে রিপ্লেস করার জন্য সিলেক্ট রাখা
-                }
-            });
+            if (inputEl) {
+                inputEl.addEventListener('input', () => calculateValues('2'));
+                inputEl.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        const nextIndex = (index + 1) % menu2Fields.length;
+                        const nextInput = document.getElementById(menu2Fields[nextIndex]);
+                        nextInput.focus();
+                        nextInput.select();
+                    }
+                });
+            }
         });
 
         // ৪ ঘন্টা পর হিস্টোরি অটো-ডিলিট চেক
