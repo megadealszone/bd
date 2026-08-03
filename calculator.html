@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VIP Calculator</title>
+    <title>ভ্যালু ও হিসাব ক্যালকুলেটর - প্রিমিয়াম সংস্করণ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -220,12 +220,6 @@
             margin-bottom: 16px;
         }
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: minmax(110px, auto) 1fr;
-            gap: 14px;
-        }
-
         /* 2-column Results Grid for Tab 1 */
         .results-grid-2col {
             display: grid;
@@ -248,11 +242,6 @@
             min-height: 95px;
             transition: transform 0.2s ease;
             overflow: hidden;
-        }
-
-        .result-card.item-card {
-            padding: 14px 12px;
-            white-space: nowrap;
         }
 
         .result-card:hover {
@@ -315,11 +304,6 @@
             margin-top: 6px;
         }
 
-        .item-count-val {
-            font-size: 1.7rem;
-            font-family: 'Noto Sans Bengali', 'Outfit', sans-serif;
-        }
-
         .total-amount-val {
             font-size: clamp(18px, 4.8vw, 26px);
             font-family: 'Noto Sans Bengali', 'Arial Narrow', sans-serif;
@@ -335,16 +319,11 @@
             display: block;
         }
 
-        /* হিসাব ক্যালকুলেটর (Tab 2) সেকশনের নাম্বার ভ্যালুগুলোর ফন্ট সাইজ */
-        #calcView_2 .item-count-val {
-            font-size: calc(1.7rem + 30px);
-        }
-
         #calcView_2 .total-amount-val {
-            font-size: clamp(48px, 4.8vw + 30px, 56px);
+            font-size: clamp(22px, 5.5vw, 32px);
         }
 
-        /* Status Message Box - ফন্ট সাইজ ২০ পিক্সেল বাড়ানো হয়েছে */
+        /* Status Message Box - ২০ পিক্সেল বাড়ানো ফন্ট */
         .status-msg-box {
             margin-top: 10px;
             padding: 10px 14px;
@@ -562,7 +541,7 @@
         /* Responsive */
         @media (max-width: 520px) {
             .calculator-card { padding: 18px 12px; }
-            .results-grid, .results-grid-2col { grid-template-columns: 1fr; }
+            .results-grid-2col { grid-template-columns: 1fr; }
             .hisab-textarea { font-size: 18px; }
             .nav-tab { font-size: 0.88rem; padding: 8px 10px; }
             .refresh-btn { font-size: 14px; padding: 8px 14px; width: 100%; }
@@ -592,7 +571,7 @@
                 <div class="field-row-2col">
                     <div class="field-group">
                         <label class="field-label" style="color: #FCA5A5;">
-                            <span>📄 ভাউচার / ব্যয়</span>
+                            <span>📄 ব্যয়</span>
                             <span class="item-badge">আইটেম: <span id="inputCountVoucher_1">০</span></span>
                         </label>
                         <textarea id="dataInput_voucher_tab1" class="hisab-textarea" placeholder="ভাউচারের টাকা..." enterkeyhint="enter" inputmode="decimal"></textarea>
@@ -607,7 +586,7 @@
                 </div>
             </div>
 
-            <!-- Item / Output Section: Title, Item Count & Copy Button on Top line, Amount on Bottom line -->
+            <!-- Item / Output Section -->
             <div class="output-section">
                 <div class="section-label" style="margin-bottom: 10px;"><span>ফলাফল (মোট টাকা)</span></div>
                 <div class="results-grid-2col">
@@ -720,21 +699,18 @@
                 </div>
             </div>
 
-            <!-- Item / Output Section -->
+            <!-- Item / Output Section (ভ্যালু ক্যালকুলেটরের আদলে আপডেটকৃত) -->
             <div class="output-section">
                 <div class="section-label" style="margin-bottom: 10px;"><span>ফলাফল</span></div>
-                <div class="results-grid">
-                    <div class="result-card item-card">
-                        <div class="card-header"><span class="card-title">মোট আইটেম</span></div>
-                        <div class="card-value item-count-val" id="itemCount_2">০</div>
+                <div class="result-card amount-card">
+                    <div class="card-header">
+                        <span class="card-title">🧮 ফলাফল (৳)</span>
+                        <span class="card-item-subtext" id="cardItem_2">আইটেম: ০টি</span>
+                        <button class="copy-btn" id="copyBtn_2" onclick="copyAmount('totalAmount_2', 'copyBtn_2', 'copyText_2')" title="কপি করুন">
+                            <span id="copyText_2">কপি</span>
+                        </button>
                     </div>
-                    <div class="result-card amount-card">
-                        <div class="card-header">
-                            <span class="card-title">ফলাফল (৳)</span>
-                            <button class="copy-btn" id="copyBtn_2" onclick="copyAmount('totalAmount_2', 'copyBtn_2', 'copyText_2')" title="কপি করুন"><span id="copyText_2">কপি</span></button>
-                        </div>
-                        <div class="card-value total-amount-val" id="totalAmount_2">০.০০</div>
-                    </div>
+                    <div class="card-value total-amount-val" id="totalAmount_2">০.০০</div>
                 </div>
 
                 <!-- Status Message Container -->
@@ -901,7 +877,7 @@
 
             } else if (id === '2') {
                 // মেনু ২: হিসাব ক্যালকুলেটর
-                const countEl = document.getElementById('itemCount_2');
+                const cardItemEl = document.getElementById('cardItem_2');
                 const totalEl = document.getElementById('totalAmount_2');
 
                 const vText = document.getElementById('dataInput_voucher').value;
@@ -928,7 +904,7 @@
                     formattedTotal = convertEnToBn(formattedTotal);
                 }
 
-                countEl.textContent = formattedCount;
+                cardItemEl.textContent = `আইটেম: ${formattedCount}টি`;
                 totalEl.textContent = formattedTotal;
 
                 // স্ট্যাটাস বার্তা
@@ -1112,7 +1088,7 @@
                 if (id === '1') {
                     metaText = `ভাউচার: ৳${item.val1} | ইনকাম: ৳${item.val2}`;
                 } else {
-                    metaText = `আইটেম: ${item.val1} | ফলাফল: ৳${item.val2}`;
+                    metaText = `${item.val1} | ফলাফল: ৳${item.val2}`;
                 }
 
                 return `
@@ -1247,11 +1223,11 @@
                 const vVal = document.getElementById('dataInput_voucher').value;
                 const pVal = document.getElementById('dataInput_payment').value;
                 const oVal = document.getElementById('dataInput_other').value;
-                const countEl = document.getElementById('itemCount_2').textContent;
+                const cardItemText = document.getElementById('cardItem_2').textContent;
                 const totalEl = document.getElementById('totalAmount_2').textContent;
 
                 if (vVal.trim() || pVal.trim() || oVal.trim()) {
-                    saveToHistory('2', { v: vVal, p: pVal, o: oVal }, countEl, totalEl);
+                    saveToHistory('2', { v: vVal, p: pVal, o: oVal }, cardItemText, totalEl);
                 }
             }
 
