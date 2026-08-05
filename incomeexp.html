@@ -282,7 +282,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">পরিমাণ</label>
-                            <input type="number" id="amount" required placeholder="0.00" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
+                            <input type="number" step="any" id="amount" required placeholder="0.00" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">উৎস / বিবরণ</label>
@@ -371,7 +371,7 @@
                                 <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
                                     <th class="py-3 px-3 font-bold border-b rounded-tl-xl text-center align-middle" style="height: 25px;">ক্রমিক</th>
                                     <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">তারিখ</th>
-                                    <th class="py-3 px-3 font-bold border-b text-left align-middle" style="height: 25px;">বিবরণ</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">বিবরণ</th>
                                     <th class="py-3 px-3 font-bold border-b text-center text-emerald-600 align-middle" style="height: 25px;">আয়</th>
                                     <th class="py-3 px-3 font-bold border-b text-center text-rose-500 align-middle" style="height: 25px;">ব্যয়</th>
                                     <th class="py-3 px-3 font-bold border-b text-center text-blue-600 align-middle" style="height: 25px;">ব্যালেন্স</th>
@@ -405,7 +405,7 @@
                     <thead class="sticky top-0 bg-white z-10 shadow-sm">
                         <tr class="bg-slate-50 text-slate-600 text-xs uppercase">
                             <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">তারিখ</th>
-                            <th class="py-3 px-3 font-bold border-b text-left align-middle" style="height: 25px;">বিবরণ</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">বিবরণ</th>
                             <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">ধরন</th>
                             <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">পরিমাণ</th>
                             <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">অ্যাকশন</th>
@@ -455,6 +455,11 @@
         let monthlyInstance = null;
 
         let isSidebarOpen = false;
+
+        function formatCurrency(num) {
+            if (isNaN(num)) return "0.00";
+            return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+        }
 
         function parseDateInput(inputStr) {
             if (!inputStr) return '';
@@ -558,17 +563,17 @@
                 }
             });
 
-            document.getElementById('dash-total-income').innerText = sum.totalIncome.toFixed(2);
-            document.getElementById('dash-total-expense').innerText = sum.totalExpense.toFixed(2);
-            document.getElementById('dash-total-balance').innerText = (sum.totalIncome - sum.totalExpense).toFixed(2);
+            document.getElementById('dash-total-income').innerText = formatCurrency(sum.totalIncome);
+            document.getElementById('dash-total-expense').innerText = formatCurrency(sum.totalExpense);
+            document.getElementById('dash-total-balance').innerText = formatCurrency(sum.totalIncome - sum.totalExpense);
 
-            document.getElementById('dash-weekly-income').innerText = sum.weeklyIncome.toFixed(2);
-            document.getElementById('dash-weekly-expense').innerText = sum.weeklyExpense.toFixed(2);
-            document.getElementById('dash-weekly-balance').innerText = (sum.weeklyIncome - sum.weeklyExpense).toFixed(2);
+            document.getElementById('dash-weekly-income').innerText = formatCurrency(sum.weeklyIncome);
+            document.getElementById('dash-weekly-expense').innerText = formatCurrency(sum.weeklyExpense);
+            document.getElementById('dash-weekly-balance').innerText = formatCurrency(sum.weeklyIncome - sum.weeklyExpense);
 
-            document.getElementById('dash-monthly-income').innerText = sum.monthlyIncome.toFixed(2);
-            document.getElementById('dash-monthly-expense').innerText = sum.monthlyExpense.toFixed(2);
-            document.getElementById('dash-monthly-balance').innerText = (sum.monthlyIncome - sum.monthlyExpense).toFixed(2);
+            document.getElementById('dash-monthly-income').innerText = formatCurrency(sum.monthlyIncome);
+            document.getElementById('dash-monthly-expense').innerText = formatCurrency(sum.monthlyExpense);
+            document.getElementById('dash-monthly-balance').innerText = formatCurrency(sum.monthlyIncome - sum.monthlyExpense);
 
             renderCharts(sum);
             renderMiniCharts(sum);
@@ -717,9 +722,9 @@
                 return matchesDate && matchesType;
             });
 
-            document.getElementById('filtered-income').innerText = fIncome.toFixed(2);
-            document.getElementById('filtered-expense').innerText = fExpense.toFixed(2);
-            document.getElementById('filtered-balance').innerText = (fIncome - fExpense).toFixed(2);
+            document.getElementById('filtered-income').innerText = formatCurrency(fIncome);
+            document.getElementById('filtered-expense').innerText = formatCurrency(fExpense);
+            document.getElementById('filtered-balance').innerText = formatCurrency(fIncome - fExpense);
 
             renderTable(filteredData);
         }
@@ -752,8 +757,8 @@
             displayData.forEach((t, index) => {
                 const origIndex = transactions.indexOf(t);
                 const isInc = t.type === 'income';
-                const incomeVal = isInc ? `${t.amount.toFixed(2)}` : '-';
-                const expenseVal = !isInc ? `${t.amount.toFixed(2)}` : '-';
+                const incomeVal = isInc ? formatCurrency(t.amount) : '-';
+                const expenseVal = !isInc ? formatCurrency(t.amount) : '-';
                 const balanceColor = t.runningBalance >= 0 ? 'text-blue-600' : 'text-rose-600';
                 
                 const row = document.createElement('tr');
@@ -763,9 +768,9 @@
                     <td class="py-1 px-3 text-center text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${index + 1}</td>
                     <td class="py-1 px-3 text-center whitespace-nowrap text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${formatDate(t.date)}</td>
                     <td class="py-1 px-3 text-left text-xs font-semibold text-slate-800 align-middle" style="height: 25px;">${t.source}</td>
-                    <td class="py-1 px-3 text-center font-bold whitespace-nowrap text-emerald-600 align-middle" style="height: 25px;">${incomeVal}</td>
-                    <td class="py-1 px-3 text-center font-bold whitespace-nowrap text-rose-500 align-middle" style="height: 25px;">${expenseVal}</td>
-                    <td class="py-1 px-3 text-center font-bold whitespace-nowrap ${balanceColor} align-middle" style="height: 25px;">${t.runningBalance.toFixed(2)}</td>
+                    <td class="py-1 px-3 text-right font-bold whitespace-nowrap text-emerald-600 align-middle pr-6" style="height: 25px;">${incomeVal}</td>
+                    <td class="py-1 px-3 text-right font-bold whitespace-nowrap text-rose-500 align-middle pr-6" style="height: 25px;">${expenseVal}</td>
+                    <td class="py-1 px-3 text-right font-bold whitespace-nowrap ${balanceColor} align-middle pr-6" style="height: 25px;">${formatCurrency(t.runningBalance)}</td>
                     <td class="py-1 px-3 text-center text-xs text-slate-600 align-middle" style="height: 25px;">${t.remarks || '-'}</td>
                     <td class="py-1 px-3 text-center align-middle" style="height: 25px;">
                         <button onclick="moveToRecycleBin(${origIndex})" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-xs"></i></button>
@@ -828,7 +833,7 @@
                         <td class="py-1 px-3 text-center whitespace-nowrap text-slate-600 align-middle" style="height: 25px;">${formatDate(t.date)}</td>
                         <td class="py-1 px-3 text-left font-medium text-slate-800 align-middle" style="height: 25px;">${t.source}</td>
                         <td class="py-1 px-3 text-center align-middle" style="height: 25px;">${badge}</td>
-                        <td class="py-1 px-3 text-center font-bold text-slate-700 align-middle" style="height: 25px;">${t.amount.toFixed(2)}</td>
+                        <td class="py-1 px-3 text-right font-bold text-slate-700 align-middle pr-6" style="height: 25px;">${formatCurrency(t.amount)}</td>
                         <td class="py-1 px-3 text-center whitespace-nowrap align-middle" style="height: 25px;">
                             <button onclick="restoreRecord(${index})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="পুনরুদ্ধার"><i class="fas fa-undo"></i></button>
                             <button onclick="permanentDelete(${index})" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="স্থায়ী ডিলিট"><i class="fas fa-times-circle"></i></button>
@@ -882,7 +887,7 @@
             if (e.target == modal) modal.style.display = "none";
         }
 
-        // A4 Multi-page PDF Download with Auto Headers and Continuous Serial Numbers
+        // A4 Multi-page PDF Download with Auto Headers and Continuous Serial Numbers (Filled full page before next page)
         window.downloadPDF = function() {
             const isReportActive = !document.getElementById('view-report').classList.contains('hidden');
             
@@ -903,7 +908,7 @@
                     return;
                 }
 
-                const rowsPerPage = 18;
+                const rowsPerPage = 34;
                 const pageChunks = [];
                 for (let i = 0; i < displayData.length; i += rowsPerPage) {
                     pageChunks.push(displayData.slice(i, i + rowsPerPage));
@@ -945,7 +950,7 @@
                     table.style.borderCollapse = 'collapse';
                     table.style.fontSize = '12px';
 
-                    // Repeating Header with centered title headers
+                    // Repeating Header with centered headers
                     const thead = document.createElement('thead');
                     thead.innerHTML = `
                         <tr style="background-color: #f1f5f9; color: #475569;">
@@ -964,8 +969,8 @@
                     chunk.forEach((t, idx) => {
                         const globalIdx = (pageIndex * rowsPerPage) + idx + 1;
                         const isInc = t.type === 'income';
-                        const incomeVal = isInc ? t.amount.toFixed(2) : '-';
-                        const expenseVal = !isInc ? t.amount.toFixed(2) : '-';
+                        const incomeVal = isInc ? formatCurrency(t.amount) : '-';
+                        const expenseVal = !isInc ? formatCurrency(t.amount) : '-';
                         const balanceColor = t.runningBalance >= 0 ? '#2563eb' : '#e11d48';
 
                         const tr = document.createElement('tr');
@@ -976,9 +981,9 @@
                             <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: 500; color: #475569;">${globalIdx}</td>
                             <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; color: #475569; white-space: nowrap;">${formatDate(t.date)}</td>
                             <td style="border: 1px solid #e2e8f0; padding: 0 8px; text-align: left; vertical-align: middle; height: 25px; font-weight: 600; color: #1e293b;">${t.source}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: bold; color: #059669; white-space: nowrap;">${incomeVal}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: bold; color: #e11d48; white-space: nowrap;">${expenseVal}</td>
-                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: bold; color: ${balanceColor}; white-space: nowrap;">${t.runningBalance.toFixed(2)}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 12px 0 6px; text-align: right; vertical-align: middle; height: 25px; font-weight: bold; color: #059669; white-space: nowrap;">${incomeVal}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 12px 0 6px; text-align: right; vertical-align: middle; height: 25px; font-weight: bold; color: #e11d48; white-space: nowrap;">${expenseVal}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 12px 0 6px; text-align: right; vertical-align: middle; height: 25px; font-weight: bold; color: ${balanceColor}; white-space: nowrap;">${formatCurrency(t.runningBalance)}</td>
                             <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; color: #475569;">${t.remarks || '-'}</td>
                         `;
                         tbody.appendChild(tr);
@@ -1038,34 +1043,33 @@
         }
 
         window.downloadExcel = function() {
-            const originalTable = document.querySelector('#view-report table');
-            const clonedTable = originalTable.cloneNode(true);
-            
-            const rows = clonedTable.querySelectorAll('tr');
-            rows.forEach(tr => {
-                const lastCell = tr.lastElementChild;
-                if (lastCell) lastCell.remove();
-                
-                const cells = tr.querySelectorAll('th, td');
-                cells.forEach(cell => {
-                    cell.style.verticalAlign = 'middle';
-                    cell.style.textAlign = 'center';
-                    cell.style.paddingTop = '10px';
-                    cell.style.paddingBottom = '10px';
-                    
-                    let text = cell.innerText.trim();
-                    if (text.includes('৳')) {
-                        text = text.replace('৳', '').trim();
-                    }
-                    let num = parseFloat(text.replace(/,/g, ''));
-                    if (!isNaN(num)) {
-                        cell.innerText = num.toFixed(2);
-                    }
-                });
+            if (transactions.length === 0) {
+                alert('এক্সেল ডাউনলোডের জন্য কোনো তথ্য নেই।');
+                return;
+            }
+
+            const sortedAsc = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+            let runningBal = 0;
+            const excelData = sortedAsc.map((t, idx) => {
+                const amt = t.amount;
+                const isInc = t.type === 'income';
+                if (isInc) runningBal += amt;
+                else runningBal -= amt;
+                return {
+                    "ক্রমিক": idx + 1,
+                    "তারিখ": formatDate(t.date),
+                    "বিবরণ": t.source,
+                    "আয়": isInc ? formatCurrency(amt) : "-",
+                    "ব্যয়": !isInc ? formatCurrency(amt) : "-",
+                    "ব্যালেন্স": formatCurrency(runningBal),
+                    "মন্তব্য": t.remarks || "-"
+                };
             });
 
-            const wb = XLSX.utils.table_to_book(clonedTable, { sheet: "আয়-ব্যয় রিপোর্ট" });
-            XLSX.writeFile(wb, "Income_Expense_Report.xlsx");
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "আয়-ব্যয় রিপোর্ট");
+            XLSX.writeFile(workbook, "Income_Expense_Report.xlsx");
         }
 
         switchMenu('dashboard');
