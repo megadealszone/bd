@@ -73,6 +73,59 @@
 </head>
 <body class="text-slate-800 flex flex-col md:flex-row h-screen overflow-hidden">
 
+    <!-- Auth Modal Overlay -->
+    <div id="authModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/80 backdrop-blur-md p-4">
+        <div class="bg-white w-full max-w-md p-6 md:p-8 rounded-3xl shadow-2xl border border-slate-100 relative">
+            
+            <!-- Auth Tabs -->
+            <div class="flex border-b border-slate-200 mb-6">
+                <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="w-1/2 py-3 font-bold text-center text-blue-600 border-b-2 border-blue-600 transition">
+                    সাইন আপ (Sign Up)
+                </button>
+                <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 py-3 font-bold text-center text-slate-400 border-b-2 border-transparent transition">
+                    লগইন (Login)
+                </button>
+            </div>
+
+            <!-- Global Message Notification -->
+            <div id="auth-msg" class="hidden mb-4 p-3.5 rounded-2xl text-xs md:text-sm font-semibold text-center"></div>
+
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">ইমেইল ঠিকানা</label>
+                    <input type="email" id="signup-email" required placeholder="example@mail.com" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">পাসওয়ার্ড</label>
+                    <input type="password" id="signup-password" required placeholder="••••••••" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">কনফার্ম পাসওয়ার্ড</label>
+                    <input type="password" id="signup-confirm-password" required placeholder="••••••••" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition duration-300 mt-2">
+                    সাইন আপ করুন
+                </button>
+            </form>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">ইমেইল ঠিকানা</label>
+                    <input type="email" id="login-email" required placeholder="example@mail.com" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">পাসওয়ার্ড</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-emerald-500/25 hover:shadow-xl transition duration-300 mt-2">
+                    লগইন করুন
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Sidebar Backdrop Overlay -->
     <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 hidden transition-opacity"></div>
 
@@ -107,8 +160,11 @@
                 <span class="font-medium">রিসাইকেল বিন</span>
             </button>
         </nav>
-        <div class="p-4 border-t border-white/10 text-center text-xs text-slate-400">
-            Pro Financial Suite v4.9
+        <div class="p-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+            <span id="user-display-email" class="truncate max-w-[140px] font-medium"></span>
+            <button onclick="handleLogout()" class="bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-rose-500/30 transition flex items-center gap-1">
+                <i class="fas fa-sign-out-alt"></i> লগআউট
+            </button>
         </div>
     </aside>
 
@@ -425,9 +481,10 @@
         </div>
     </div>
 
-    <!-- Firebase Realtime Database Integration & App Logic -->
+    <!-- Firebase Realtime Database & Authentication Integration -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // Firebase Configuration
@@ -442,49 +499,164 @@
             measurementId: "G-CZ0MHCKK8Q"
         };
 
-        // Initialize Firebase & Realtime Database
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // Database References
-        const txRef = ref(db, 'transactions');
-        const deletedTxRef = ref(db, 'deleted_transactions');
+        let currentUser = null;
+        let txRef = null;
+        let deletedTxRef = null;
+        let txUnsubscribe = null;
+        let deletedUnsubscribe = null;
 
         window.transactions = [];
         window.deletedTransactions = [];
 
         let currentView = 'dashboard';
 
-        // Realtime Listener for Active Transactions
-        onValue(txRef, (snapshot) => {
-            const data = snapshot.val();
-            window.transactions = [];
-            if (data) {
-                Object.keys(data).forEach(id => {
-                    window.transactions.push({ id, ...data[id] });
-                });
-            }
-            if (currentView === 'dashboard') {
+        // Listen for Authentication State
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('authModal').style.display = 'none';
+                document.getElementById('user-display-email').innerText = user.email;
+
+                // Setup User-specific References
+                txRef = ref(db, `users/${user.uid}/transactions`);
+                deletedTxRef = ref(db, `users/${user.uid}/deleted_transactions`);
+
+                attachDataListeners();
+            } else {
+                currentUser = null;
+                document.getElementById('authModal').style.display = 'flex';
+                document.getElementById('user-display-email').innerText = '';
+                
+                if (txUnsubscribe) txUnsubscribe();
+                if (deletedUnsubscribe) deletedUnsubscribe();
+                
+                window.transactions = [];
+                window.deletedTransactions = [];
                 updateDashboard();
-            } else if (currentView === 'report') {
-                filterReportTable();
             }
         });
 
-        // Realtime Listener for Deleted Transactions (Recycle Bin)
-        onValue(deletedTxRef, (snapshot) => {
-            const data = snapshot.val();
-            window.deletedTransactions = [];
-            if (data) {
-                Object.keys(data).forEach(id => {
-                    window.deletedTransactions.push({ id, ...data[id] });
+        // Attach Realtime Database Listeners for Logged-In User
+        function attachDataListeners() {
+            if (txUnsubscribe) txUnsubscribe();
+            if (deletedUnsubscribe) deletedUnsubscribe();
+
+            txUnsubscribe = onValue(txRef, (snapshot) => {
+                const data = snapshot.val();
+                window.transactions = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        window.transactions.push({ id, ...data[id] });
+                    });
+                }
+                if (currentView === 'dashboard') {
+                    updateDashboard();
+                } else if (currentView === 'report') {
+                    filterReportTable();
+                }
+            });
+
+            deletedUnsubscribe = onValue(deletedTxRef, (snapshot) => {
+                const data = snapshot.val();
+                window.deletedTransactions = [];
+                if (data) {
+                    Object.keys(data).forEach(id => {
+                        window.deletedTransactions.push({ id, ...data[id] });
+                    });
+                }
+                const modal = document.getElementById('recycleBinModal');
+                if (modal && modal.style.display === 'block') {
+                    renderRecycleBin();
+                }
+            });
+        }
+
+        // Auth Tab Switch Functionality
+        window.switchAuthTab = function(tab) {
+            const signupBtn = document.getElementById('tab-signup-btn');
+            const loginBtn = document.getElementById('tab-login-btn');
+            const signupForm = document.getElementById('signup-form');
+            const loginForm = document.getElementById('login-form');
+            const msgBox = document.getElementById('auth-msg');
+
+            msgBox.classList.add('hidden');
+
+            if (tab === 'signup') {
+                signupBtn.className = "w-1/2 py-3 font-bold text-center text-blue-600 border-b-2 border-blue-600 transition";
+                loginBtn.className = "w-1/2 py-3 font-bold text-center text-slate-400 border-b-2 border-transparent transition";
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            } else {
+                loginBtn.className = "w-1/2 py-3 font-bold text-center text-emerald-600 border-b-2 border-emerald-600 transition";
+                signupBtn.className = "w-1/2 py-3 font-bold text-center text-slate-400 border-b-2 border-transparent transition";
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            }
+        };
+
+        function showAuthMsg(msg, isSuccess = false) {
+            const msgBox = document.getElementById('auth-msg');
+            msgBox.innerText = msg;
+            msgBox.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-700', 'bg-rose-100', 'text-rose-700');
+            if (isSuccess) {
+                msgBox.classList.add('bg-emerald-100', 'text-emerald-700');
+            } else {
+                msgBox.classList.add('bg-rose-100', 'text-rose-700');
+            }
+        }
+
+        // Signup Handler
+        document.getElementById('signup-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+
+            if (password !== confirmPassword) {
+                showAuthMsg("পাসওয়ার্ড দুটি মেলেনি! সঠিক পাসওয়ার্ড লিখুন।");
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    showAuthMsg("সাইন আপ সফল হয়েছে! এখন লগইন করুন।", true);
+                    document.getElementById('signup-form').reset();
+                    setTimeout(() => {
+                        switchAuthTab('login');
+                        document.getElementById('login-email').value = email;
+                    }, 1200);
+                })
+                .catch((error) => {
+                    showAuthMsg(error.message || "সাইন আপ ব্যর্থ হয়েছে। আবার চেষ্টা করুন।");
                 });
-            }
-            const modal = document.getElementById('recycleBinModal');
-            if (modal && modal.style.display === 'block') {
-                renderRecycleBin();
-            }
         });
+
+        // Login Handler
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then(() => {
+                    document.getElementById('login-form').reset();
+                })
+                .catch((error) => {
+                    showAuthMsg("ইমেইল বা পাসওয়ার্ড ভুল হয়েছে। সঠিক তথ্য দিয়ে চেষ্টা করুন।");
+                });
+        });
+
+        // Logout Handler
+        window.handleLogout = function() {
+            if (confirm("আপনি কি লগআউট করতে চান?")) {
+                signOut(auth);
+            }
+        };
 
         // Date Setups
         const today = new Date();
@@ -836,9 +1008,11 @@
             });
         }
 
-        // Add New Transaction to Firebase
+        // Add New Transaction to User's Firebase Account
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            if (!txRef) return;
+
             const type = document.getElementById('type').value;
             const rawDate = document.getElementById('date').value;
             const date = parseDateInput(rawDate);
@@ -862,13 +1036,14 @@
             }
         });
 
-        // Move item to Recycle Bin in Firebase
+        // Move item to Recycle Bin
         window.moveToRecycleBin = function(id) {
+            if (!currentUser) return;
             const item = window.transactions.find(t => t.id === id);
             if (item) {
                 const { id: itemId, ...itemData } = item;
                 push(deletedTxRef, itemData).then(() => {
-                    remove(ref(db, `transactions/${id}`));
+                    remove(ref(db, `users/${currentUser.uid}/transactions/${id}`));
                 });
             }
         };
@@ -904,22 +1079,25 @@
         }
 
         window.restoreRecord = function(id) {
+            if (!currentUser) return;
             const item = window.deletedTransactions.find(t => t.id === id);
             if (item) {
                 const { id: itemId, ...itemData } = item;
                 push(txRef, itemData).then(() => {
-                    remove(ref(db, `deleted_transactions/${id}`));
+                    remove(ref(db, `users/${currentUser.uid}/deleted_transactions/${id}`));
                 });
             }
         };
 
         window.permanentDelete = function(id) {
+            if(!currentUser) return;
             if(confirm('স্থায়ীভাবে মুছে যাবে। আপনি কি নিশ্চিত?')) {
-                remove(ref(db, `deleted_transactions/${id}`));
+                remove(ref(db, `users/${currentUser.uid}/deleted_transactions/${id}`));
             }
         };
 
         window.emptyRecycleBin = function() {
+            if(!currentUser) return;
             if(window.deletedTransactions.length > 0 && confirm('রিসাইকেল বিনের সব ডাটা মুছে যাবে। আপনি কি নিশ্চিত?')) {
                 set(deletedTxRef, null);
             }
