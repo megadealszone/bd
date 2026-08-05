@@ -10,6 +10,8 @@
     <!-- HTML2Canvas & jsPDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- SheetJS (Excel Export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Chart.js -->
@@ -106,7 +108,7 @@
             </button>
         </nav>
         <div class="p-4 border-t border-white/10 text-center text-xs text-slate-400">
-            Pro Financial Suite v4.7
+            Pro Financial Suite v4.9
         </div>
     </aside>
 
@@ -129,7 +131,7 @@
                     </button>
                 </div>
                 <button onclick="downloadPDF()" id="pdf-btn" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3.5 md:px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition duration-300 text-xs md:text-sm font-semibold flex items-center shrink-0">
-                    <i class="fas fa-download mr-1.5 md:mr-2"></i> রিপোর্ট ডাউনলোড
+                    <i class="fas fa-download mr-1.5 md:mr-2"></i> রিপোর্ট পিডিএফ
                 </button>
             </div>
         </header>
@@ -139,7 +141,6 @@
             
             <!-- ================= VIEW: DASHBOARD ================= -->
             <div id="view-dashboard" class="space-y-6 md:space-y-8 animate-fade-in pb-10">
-                
                 <div id="dashboard-content-box" class="space-y-6 md:space-y-8 transition-all duration-300">
                     
                     <!-- Summary Cards Row -->
@@ -150,7 +151,7 @@
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-2">
                                 <div>
                                     <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-emerald-100 mb-1">সর্বমোট আয়</p>
-                                    <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md">৳ <span id="dash-total-income">0</span></h3>
+                                    <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md"><span id="dash-total-income">0</span></h3>
                                 </div>
                                 <div class="bg-white/20 backdrop-blur-md p-2 sm:p-3 md:p-4 rounded-2xl shadow-inner shrink-0 hidden sm:flex">
                                     <i class="fas fa-arrow-down text-base sm:text-xl md:text-2xl text-white"></i>
@@ -164,7 +165,7 @@
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-2">
                                 <div>
                                     <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-rose-100 mb-1">সর্বমোট ব্যয়</p>
-                                    <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md">৳ <span id="dash-total-expense">0</span></h3>
+                                    <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md"><span id="dash-total-expense">0</span></h3>
                                 </div>
                                 <div class="bg-white/20 backdrop-blur-md p-2 sm:p-3 md:p-4 rounded-2xl shadow-inner shrink-0 hidden sm:flex">
                                     <i class="fas fa-arrow-up text-base sm:text-xl md:text-2xl text-white"></i>
@@ -178,7 +179,7 @@
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-2">
                                 <div>
                                     <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-indigo-100 mb-1">বর্তমান ব্যালেন্স (নিট)</p>
-                                    <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md">৳ <span id="dash-total-balance">0</span></h3>
+                                    <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md"><span id="dash-total-balance">0</span></h3>
                                 </div>
                                 <div class="bg-white/20 backdrop-blur-md p-2 sm:p-3 md:p-4 rounded-2xl shadow-inner shrink-0 hidden sm:flex">
                                     <i class="fas fa-wallet text-base sm:text-xl md:text-2xl text-white"></i>
@@ -195,14 +196,13 @@
                         </div>
                     </div>
 
-                    <!-- ================= MORE MINI GRAPHS SECTION ================= -->
+                    <!-- Mini Graphs Section -->
                     <div class="space-y-4 pt-2">
                         <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center">
-                            <i class="fas fa-chart-area text-indigo-600 mr-2"></i> বিশেষ বিশ্লেষণাত্মক মিনি গ্রাফসমূহ (স্বতন্ত্র রঙসহ)
+                            <i class="fas fa-chart-area text-indigo-600 mr-2"></i> বিশেষ বিশ্লেষণাত্মক মিনি গ্রাফসমূহ
                         </h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            <!-- 1. Income Expense Ratio Chart -->
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 flex flex-col items-center justify-between">
                                 <h4 class="font-bold text-blue-600 text-sm mb-2 w-full text-left flex items-center"><i class="fas fa-chart-pie mr-2"></i> ১. আয় ও ব্যয়ের অনুপাত</h4>
                                 <div class="relative w-full h-44 flex justify-center items-center">
@@ -210,31 +210,26 @@
                                 </div>
                             </div>
 
-                            <!-- 2. Transaction Up-Down Chart -->
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
                                 <h4 class="font-bold text-amber-600 text-sm mb-2 flex items-center"><i class="fas fa-exchange-alt mr-2"></i> ২. ট্রানজেকশন আপ-ডাউন গ্রাফ</h4>
                                 <div class="relative w-full flex-1"><canvas id="txUpDownChart"></canvas></div>
                             </div>
                             
-                            <!-- 3. Combined Income & Expense Chart -->
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
                                 <h4 class="font-bold text-indigo-600 text-sm mb-2 flex items-center"><i class="fas fa-balance-scale mr-2"></i> ৩. যৌথ আয় ও ব্যয়ের গ্রাফ</h4>
                                 <div class="relative w-full flex-1"><canvas id="incomeExpenseMiniChart"></canvas></div>
                             </div>
 
-                            <!-- 4. Daily Chart -->
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
                                 <h4 class="font-bold text-blue-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-day mr-2"></i> ৪. প্রতিদিনের হিসাব গ্রাফ</h4>
                                 <div class="relative w-full flex-1"><canvas id="dailyChart"></canvas></div>
                             </div>
 
-                            <!-- 5. Weekly Chart -->
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
                                 <h4 class="font-bold text-indigo-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-week mr-2"></i> ৫. প্রতি সপ্তাহের হিসাব গ্রাফ</h4>
                                 <div class="relative w-full flex-1"><canvas id="weeklyChart"></canvas></div>
                             </div>
 
-                            <!-- 6. Monthly Chart -->
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
                                 <h4 class="font-bold text-purple-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-alt mr-2"></i> ৬. প্রতি মাসের হিসাব গ্রাফ</h4>
                                 <div class="relative w-full flex-1"><canvas id="monthlyChart"></canvas></div>
@@ -242,41 +237,35 @@
                         </div>
                     </div>
 
-                    <!-- Description Box Below Graphs -->
-                    <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-5 md:p-6 rounded-3xl border border-indigo-100 shadow-sm space-y-2">
-                        <h4 class="font-bold text-indigo-900 flex items-center text-sm md:text-base">
-                            <i class="fas fa-info-circle text-indigo-600 mr-2"></i> গ্রাফ বিশ্লেষণ ও নির্দেশিকা বক্স
-                        </h4>
-                        <p class="text-xs md:text-sm text-slate-700 leading-relaxed">
-                            উপরের গ্রাফগুলোতে আপনার আর্থিক লেনদেনের সামগ্রিক চিত্র ফুটিয়ে তোলা হয়েছে। যৌথ আয়-ব্যয় গ্রাফে একই সাথে আয়ের (সবুজ) ও ব্যয়ের (গোলাপী) তুলনা দেখানো হয়েছে। এছাড়া প্রতিটি মিনি গ্রাফের আলাদা রঙ ব্যবহার করে নির্দিষ্ট ক্যাটাগরির ওঠানামা নিখুঁতভাবে ফুটিয়ে তোলা হয়েছে।
-                        </p>
-                    </div>
-
                     <!-- Weekly & Monthly Summaries -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gradient-to-br from-indigo-50/80 to-blue-50/80 p-5 md:p-6 rounded-3xl shadow-lg border border-indigo-100">
                             <h3 class="font-bold text-indigo-900 border-b border-indigo-200/60 pb-3 mb-4 flex items-center text-sm md:text-base"><i class="fas fa-calendar-week mr-2 text-indigo-600"></i>গত ৭ দিনের হিসাব</h3>
                             <div class="space-y-3 text-sm">
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">সাপ্তাহিক আয়:</span> <span class="font-bold text-emerald-600">৳ <span id="dash-weekly-income">0</span></span></div>
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">সাপ্তাহিক ব্যয়:</span> <span class="font-bold text-rose-500">৳ <span id="dash-weekly-expense">0</span></span></div>
-                                <div class="flex justify-between pt-2 border-t border-indigo-200/60"><span class="font-bold text-slate-800">সাপ্তাহিক ব্যালেন্স:</span> <span class="font-bold text-indigo-700">৳ <span id="dash-weekly-balance">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium">সাপ্তাহিক আয়:</span> <span class="font-bold text-emerald-600"><span id="dash-weekly-income">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium">সাপ্তাহিক ব্যয়:</span> <span class="font-bold text-rose-500"><span id="dash-weekly-expense">0</span></span></div>
+                                <div class="flex justify-between pt-2 border-t border-indigo-200/60"><span class="font-bold text-slate-800">সাপ্তাহিক ব্যালেন্স:</span> <span class="font-bold text-indigo-700"><span id="dash-weekly-balance">0</span></span></div>
                             </div>
                         </div>
                         <div class="bg-gradient-to-br from-purple-50/80 to-pink-50/80 p-5 md:p-6 rounded-3xl shadow-lg border border-purple-100">
                             <h3 class="font-bold text-purple-900 border-b border-purple-200/60 pb-3 mb-4 flex items-center text-sm md:text-base"><i class="fas fa-calendar-alt mr-2 text-purple-600"></i>চলতি মাসের হিসাব</h3>
                             <div class="space-y-3 text-sm">
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">মাসিক আয়:</span> <span class="font-bold text-emerald-600">৳ <span id="dash-monthly-income">0</span></span></div>
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">মাসিক ব্যয়:</span> <span class="font-bold text-rose-500">৳ <span id="dash-monthly-expense">0</span></span></div>
-                                <div class="flex justify-between pt-2 border-t border-purple-200/60"><span class="font-bold text-slate-800">মাসিক ব্যালেন্স:</span> <span class="font-bold text-purple-700">৳ <span id="dash-monthly-balance">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium">মাসিক আয়:</span> <span class="font-bold text-emerald-600"><span id="dash-monthly-income">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium">মাসিক ব্যয়:</span> <span class="font-bold text-rose-500"><span id="dash-monthly-expense">0</span></span></div>
+                                <div class="flex justify-between pt-2 border-t border-purple-200/60"><span class="font-bold text-slate-800">মাসিক ব্যালেন্স:</span> <span class="font-bold text-purple-700"><span id="dash-monthly-balance">0</span></span></div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
             <!-- ================= VIEW: DATA ENTRY ================= -->
             <div id="view-data-entry" class="hidden space-y-8 animate-fade-in pb-10 max-w-xl mx-auto">
+                <div class="flex justify-start">
+                    <button onclick="switchMenu('dashboard')" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center transition">
+                        <i class="fas fa-home mr-2 text-blue-600"></i> হোম (ড্যাশবোর্ড)
+                    </button>
+                </div>
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
                     <h2 class="text-xl md:text-2xl font-bold mb-6 text-slate-800 border-b pb-3 text-center"><i class="fas fa-plus-circle text-blue-500 mr-2"></i>নতুন লেনদেন এন্ট্রি</h2>
                     <form id="transaction-form" class="space-y-5">
@@ -292,7 +281,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">পরিমাণ (৳)</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">পরিমাণ</label>
                             <input type="number" id="amount" required placeholder="0.00" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
                         <div>
@@ -313,6 +302,21 @@
             <!-- ================= VIEW: REPORT ================= -->
             <div id="view-report" class="hidden space-y-8 animate-fade-in pb-10">
                 <div class="bg-white p-4 md:p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 max-w-6xl mx-auto space-y-6">
+                    
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-3">
+                        <button onclick="switchMenu('dashboard')" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center transition">
+                            <i class="fas fa-home mr-2 text-blue-600"></i> হোম (ড্যাশবোর্ড)
+                        </button>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <button onclick="downloadPDF()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl shadow font-semibold text-xs md:text-sm flex items-center hover:shadow-md transition">
+                                <i class="fas fa-file-pdf mr-1.5"></i> পিডিএফ ডাউনলোড (A4)
+                            </button>
+                            <button onclick="downloadExcel()" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 rounded-xl shadow font-semibold text-xs md:text-sm flex items-center hover:shadow-md transition">
+                                <i class="fas fa-file-excel mr-1.5"></i> এক্সেল ডাউনলোড
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
                         <h2 class="text-lg md:text-xl font-bold text-slate-800"><i class="fas fa-file-alt text-indigo-500 mr-2"></i>সকল লেনদেনের রিপোর্ট ও ফিল্টার</h2>
                         <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3.5 py-1.5 rounded-full border border-indigo-100">বিস্তারিত তালিকা</span>
@@ -321,7 +325,6 @@
                     <div class="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200/80">
                         <h3 class="font-bold text-slate-800 mb-4 text-sm md:text-base"><i class="fas fa-search-dollar text-blue-500 mr-2"></i>তারিখ ও ধরন অনুযায়ী রিপোর্ট ফিল্টার করুন</h3>
                         
-                        <!-- Single Row Filter Section -->
                         <div class="grid grid-cols-4 gap-2 md:gap-4 items-end">
                             <div>
                                 <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">লেনদেনের ধরন</label>
@@ -348,32 +351,32 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                 <div class="p-2">
                                     <p class="text-xs text-slate-500 font-medium">নির্বাচিত সময়ে আয়</p>
-                                    <p class="text-xl font-black text-emerald-600">৳ <span id="filtered-income">0</span></p>
+                                    <p class="text-xl font-black text-emerald-600"><span id="filtered-income">0</span></p>
                                 </div>
                                 <div class="p-2 border-t md:border-t-0 md:border-l border-slate-200">
                                     <p class="text-xs text-slate-500 font-medium">নির্বাচিত সময়ে ব্যয়</p>
-                                    <p class="text-xl font-black text-rose-500">৳ <span id="filtered-expense">0</span></p>
+                                    <p class="text-xl font-black text-rose-500"><span id="filtered-expense">0</span></p>
                                 </div>
                                 <div class="p-2 border-t md:border-t-0 md:border-l border-slate-200 bg-blue-50/50 rounded-xl">
                                     <p class="text-xs text-blue-700 font-semibold">এই সময়ের নিট ব্যালেন্স</p>
-                                    <p class="text-xl font-black text-blue-600">৳ <span id="filtered-balance">0</span></p>
+                                    <p class="text-xl font-black text-blue-600"><span id="filtered-balance">0</span></p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="overflow-x-auto max-h-[500px] overflow-y-auto pr-2">
-                        <table class="min-w-full text-left border-collapse">
+                        <table class="min-w-full border-collapse">
                             <thead class="sticky top-0 bg-white shadow-sm z-10">
-                                <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider h-[30px]">
-                                    <th class="py-1 px-2 font-bold border-b rounded-tl-xl text-center">ক্রমিক</th>
-                                    <th class="py-1 px-2 font-bold border-b">তারিখ</th>
-                                    <th class="py-1 px-2 font-bold border-b">বিবরণ</th>
-                                    <th class="py-1 px-2 font-bold border-b text-right text-emerald-600">আয় (৳)</th>
-                                    <th class="py-1 px-2 font-bold border-b text-right text-rose-500">ব্যয় (৳)</th>
-                                    <th class="py-1 px-2 font-bold border-b text-right text-blue-600">ব্যালেন্স (৳)</th>
-                                    <th class="py-1 px-2 font-bold border-b">মন্তব্য</th>
-                                    <th class="py-1 px-2 font-bold border-b text-center rounded-tr-xl">অ্যাকশন</th>
+                                <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+                                    <th class="py-3 px-3 font-bold border-b rounded-tl-xl text-center align-middle" style="height: 25px;">ক্রমিক</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">তারিখ</th>
+                                    <th class="py-3 px-3 font-bold border-b text-left align-middle" style="height: 25px;">বিবরণ</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center text-emerald-600 align-middle" style="height: 25px;">আয়</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center text-rose-500 align-middle" style="height: 25px;">ব্যয়</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center text-blue-600 align-middle" style="height: 25px;">ব্যালেন্স</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">মন্তব্য</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center rounded-tr-xl align-middle" style="height: 25px;">অ্যাকশন</th>
                                 </tr>
                             </thead>
                             <tbody id="record-list" class="text-slate-700 text-sm"></tbody>
@@ -398,14 +401,14 @@
             </div>
             
             <div class="overflow-x-auto max-h-80 overflow-y-auto mb-4 pr-2">
-                <table class="min-w-full text-left border-collapse">
+                <table class="min-w-full border-collapse">
                     <thead class="sticky top-0 bg-white z-10 shadow-sm">
-                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase h-[30px]">
-                            <th class="py-2 px-3 font-bold border-b">তারিখ</th>
-                            <th class="py-2 px-3 font-bold border-b">বিবরণ</th>
-                            <th class="py-2 px-3 font-bold border-b">ধরন</th>
-                            <th class="py-2 px-3 font-bold border-b text-right">পরিমাণ</th>
-                            <th class="py-2 px-3 font-bold border-b text-center">অ্যাকশন</th>
+                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase">
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">তারিখ</th>
+                            <th class="py-3 px-3 font-bold border-b text-left align-middle" style="height: 25px;">বিবরণ</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">ধরন</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">পরিমাণ</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">অ্যাকশন</th>
                         </tr>
                     </thead>
                     <tbody id="recycle-list" class="text-slate-700 text-sm"></tbody>
@@ -424,7 +427,6 @@
 
     <!-- Application Logic -->
     <script>
-        // Initialize Date Input as DD-MM-YYYY
         const today = new Date();
         const initDay = String(today.getDate()).padStart(2, '0');
         const initMonth = String(today.getMonth() + 1).padStart(2, '0');
@@ -454,7 +456,6 @@
 
         let isSidebarOpen = false;
 
-        // Date parsing helper for DD-MM-YYYY or DD/MM/YYYY
         function parseDateInput(inputStr) {
             if (!inputStr) return '';
             const parts = inputStr.trim().split(/[-/.\s]+/);
@@ -466,7 +467,6 @@
             return inputStr;
         }
 
-        // Date formatting helper function for DD-MM-YYYY (দিন-মাস-বছর)
         function formatDate(dateStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr);
@@ -497,7 +497,8 @@
 
         function switchMenu(viewName) {
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('menu-' + viewName).classList.add('active');
+            const activeMenu = document.getElementById('menu-' + viewName);
+            if(activeMenu) activeMenu.classList.add('active');
 
             document.getElementById('view-dashboard').classList.add('hidden');
             document.getElementById('view-data-entry').classList.add('hidden');
@@ -520,7 +521,7 @@
                 dashToggle.style.display = "none";
             } else if(viewName === 'report') {
                 titleEl.innerText = "বিস্তারিত রিপোর্ট";
-                pdfBtn.style.display = "flex";
+                pdfBtn.style.display = "none";
                 dashToggle.style.display = "none";
                 filterReportTable();
             }
@@ -557,17 +558,17 @@
                 }
             });
 
-            document.getElementById('dash-total-income').innerText = sum.totalIncome.toLocaleString('en-IN');
-            document.getElementById('dash-total-expense').innerText = sum.totalExpense.toLocaleString('en-IN');
-            document.getElementById('dash-total-balance').innerText = (sum.totalIncome - sum.totalExpense).toLocaleString('en-IN');
+            document.getElementById('dash-total-income').innerText = sum.totalIncome.toFixed(2);
+            document.getElementById('dash-total-expense').innerText = sum.totalExpense.toFixed(2);
+            document.getElementById('dash-total-balance').innerText = (sum.totalIncome - sum.totalExpense).toFixed(2);
 
-            document.getElementById('dash-weekly-income').innerText = sum.weeklyIncome.toLocaleString('en-IN');
-            document.getElementById('dash-weekly-expense').innerText = sum.weeklyExpense.toLocaleString('en-IN');
-            document.getElementById('dash-weekly-balance').innerText = (sum.weeklyIncome - sum.weeklyExpense).toLocaleString('en-IN');
+            document.getElementById('dash-weekly-income').innerText = sum.weeklyIncome.toFixed(2);
+            document.getElementById('dash-weekly-expense').innerText = sum.weeklyExpense.toFixed(2);
+            document.getElementById('dash-weekly-balance').innerText = (sum.weeklyIncome - sum.weeklyExpense).toFixed(2);
 
-            document.getElementById('dash-monthly-income').innerText = sum.monthlyIncome.toLocaleString('en-IN');
-            document.getElementById('dash-monthly-expense').innerText = sum.monthlyExpense.toLocaleString('en-IN');
-            document.getElementById('dash-monthly-balance').innerText = (sum.monthlyIncome - sum.monthlyExpense).toLocaleString('en-IN');
+            document.getElementById('dash-monthly-income').innerText = sum.monthlyIncome.toFixed(2);
+            document.getElementById('dash-monthly-expense').innerText = sum.monthlyExpense.toFixed(2);
+            document.getElementById('dash-monthly-balance').innerText = (sum.monthlyIncome - sum.monthlyExpense).toFixed(2);
 
             renderCharts(sum);
             renderMiniCharts(sum);
@@ -716,9 +717,9 @@
                 return matchesDate && matchesType;
             });
 
-            document.getElementById('filtered-income').innerText = fIncome.toLocaleString('en-IN');
-            document.getElementById('filtered-expense').innerText = fExpense.toLocaleString('en-IN');
-            document.getElementById('filtered-balance').innerText = (fIncome - fExpense).toLocaleString('en-IN');
+            document.getElementById('filtered-income').innerText = fIncome.toFixed(2);
+            document.getElementById('filtered-expense').innerText = fExpense.toFixed(2);
+            document.getElementById('filtered-balance').innerText = (fIncome - fExpense).toFixed(2);
 
             renderTable(filteredData);
         }
@@ -735,7 +736,6 @@
                 emptyState.classList.add('hidden');
             }
             
-            // Sort chronologically to calculate running balance accurately
             const sortedAsc = [...dataToRender].sort((a, b) => new Date(a.date) - new Date(b.date));
             
             let runningBal = 0;
@@ -747,27 +747,27 @@
                 return { ...t, runningBalance: runningBal };
             });
 
-            // Display in reverse chronological order (newest first)
             const displayData = [...processedData].sort((a, b) => new Date(b.date) - new Date(a.date));
 
             displayData.forEach((t, index) => {
                 const origIndex = transactions.indexOf(t);
                 const isInc = t.type === 'income';
-                const incomeVal = isInc ? `৳ ${t.amount.toLocaleString('en-IN')}` : '-';
-                const expenseVal = !isInc ? `৳ ${t.amount.toLocaleString('en-IN')}` : '-';
+                const incomeVal = isInc ? `${t.amount.toFixed(2)}` : '-';
+                const expenseVal = !isInc ? `${t.amount.toFixed(2)}` : '-';
                 const balanceColor = t.runningBalance >= 0 ? 'text-blue-600' : 'text-rose-600';
                 
                 const row = document.createElement('tr');
-                row.className = "border-b hover:bg-slate-50 transition h-[30px]";
+                row.className = "border-b hover:bg-slate-50 transition";
+                row.style.height = "25px";
                 row.innerHTML = `
-                    <td class="py-1 px-2 text-center text-xs font-medium text-slate-600">${index + 1}</td>
-                    <td class="py-1 px-2 whitespace-nowrap text-xs font-medium text-slate-600">${formatDate(t.date)}</td>
-                    <td class="py-1 px-2 text-xs font-semibold text-slate-800">${t.source}</td>
-                    <td class="py-1 px-2 text-right font-bold whitespace-nowrap text-emerald-600">${incomeVal}</td>
-                    <td class="py-1 px-2 text-right font-bold whitespace-nowrap text-rose-500">${expenseVal}</td>
-                    <td class="py-1 px-2 text-right font-bold whitespace-nowrap ${balanceColor}">৳ ${t.runningBalance.toLocaleString('en-IN')}</td>
-                    <td class="py-1 px-2 text-xs text-slate-600">${t.remarks || '-'}</td>
-                    <td class="py-1 px-2 text-center">
+                    <td class="py-1 px-3 text-center text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${index + 1}</td>
+                    <td class="py-1 px-3 text-center whitespace-nowrap text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${formatDate(t.date)}</td>
+                    <td class="py-1 px-3 text-left text-xs font-semibold text-slate-800 align-middle" style="height: 25px;">${t.source}</td>
+                    <td class="py-1 px-3 text-center font-bold whitespace-nowrap text-emerald-600 align-middle" style="height: 25px;">${incomeVal}</td>
+                    <td class="py-1 px-3 text-center font-bold whitespace-nowrap text-rose-500 align-middle" style="height: 25px;">${expenseVal}</td>
+                    <td class="py-1 px-3 text-center font-bold whitespace-nowrap ${balanceColor} align-middle" style="height: 25px;">${t.runningBalance.toFixed(2)}</td>
+                    <td class="py-1 px-3 text-center text-xs text-slate-600 align-middle" style="height: 25px;">${t.remarks || '-'}</td>
+                    <td class="py-1 px-3 text-center align-middle" style="height: 25px;">
                         <button onclick="moveToRecycleBin(${origIndex})" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-xs"></i></button>
                     </td>
                 `;
@@ -822,13 +822,14 @@
                     const isInc = t.type === 'income';
                     const badge = isInc ? '<span class="text-emerald-600 text-xs font-bold border border-emerald-200 px-2.5 py-0.5 rounded-full bg-emerald-50">আয়</span>' : '<span class="text-rose-500 text-xs font-bold border border-rose-200 px-2.5 py-0.5 rounded-full bg-rose-50">ব্যয়</span>';
                     const row = document.createElement('tr');
-                    row.className = "border-b text-sm hover:bg-slate-50 h-[30px]";
+                    row.className = "border-b text-sm hover:bg-slate-50";
+                    row.style.height = "25px";
                     row.innerHTML = `
-                        <td class="py-2 px-3 whitespace-nowrap text-slate-600">${formatDate(t.date)}</td>
-                        <td class="py-2 px-3 font-medium text-slate-800">${t.source}</td>
-                        <td class="py-2 px-3">${badge}</td>
-                        <td class="py-2 px-3 text-right font-bold text-slate-700">৳ ${t.amount.toLocaleString('en-IN')}</td>
-                        <td class="py-2 px-3 text-center whitespace-nowrap">
+                        <td class="py-1 px-3 text-center whitespace-nowrap text-slate-600 align-middle" style="height: 25px;">${formatDate(t.date)}</td>
+                        <td class="py-1 px-3 text-left font-medium text-slate-800 align-middle" style="height: 25px;">${t.source}</td>
+                        <td class="py-1 px-3 text-center align-middle" style="height: 25px;">${badge}</td>
+                        <td class="py-1 px-3 text-center font-bold text-slate-700 align-middle" style="height: 25px;">${t.amount.toFixed(2)}</td>
+                        <td class="py-1 px-3 text-center whitespace-nowrap align-middle" style="height: 25px;">
                             <button onclick="restoreRecord(${index})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="পুনরুদ্ধার"><i class="fas fa-undo"></i></button>
                             <button onclick="permanentDelete(${index})" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="স্থায়ী ডিলিট"><i class="fas fa-times-circle"></i></button>
                         </td>
@@ -881,68 +882,190 @@
             if (e.target == modal) modal.style.display = "none";
         }
 
+        // A4 Multi-page PDF Download with Auto Headers and Continuous Serial Numbers
         window.downloadPDF = function() {
             const isReportActive = !document.getElementById('view-report').classList.contains('hidden');
             
             if (isReportActive) {
-                const container = document.createElement('div');
-                container.style.padding = '30px';
-                container.style.backgroundColor = '#ffffff';
-                container.style.fontFamily = "'Noto Sans Bengali', sans-serif";
-                container.style.width = '800px';
-                
-                const title = document.createElement('h2');
-                title.innerText = "আয় ব্যয়ের হিসাব রিপোর্ট";
-                title.style.textAlign = 'center';
-                title.style.fontSize = '24px';
-                title.style.fontWeight = 'bold';
-                title.style.marginBottom = '20px';
-                title.style.color = '#1e293b';
-                container.appendChild(title);
-                
-                const originalTable = document.querySelector('#view-report table');
-                const clonedTable = originalTable.cloneNode(true);
-                
-                const headers = clonedTable.querySelectorAll('tr');
-                headers.forEach(tr => {
-                    const lastCell = tr.lastElementChild;
-                    if (lastCell) lastCell.remove();
+                const sortedAsc = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+                let runningBal = 0;
+                const processedData = sortedAsc.map(t => {
+                    const amt = t.amount;
+                    const isInc = t.type === 'income';
+                    if (isInc) runningBal += amt;
+                    else runningBal -= amt;
+                    return { ...t, runningBalance: runningBal };
                 });
+                const displayData = [...processedData].sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-                container.appendChild(clonedTable);
-                document.body.appendChild(container);
+                if (displayData.length === 0) {
+                    alert('রিপোর্টে কোনো ডাটা নেই।');
+                    return;
+                }
 
-                html2canvas(container, { scale: 2, useCORS: true }).then(canvas => {
-                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                    const pdf = new jsPDF('p', 'mm', 'a4');
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    
-                    pdf.addImage(imgData, 'JPEG', 10, 15, pdfWidth - 20, pdfHeight);
+                const rowsPerPage = 18;
+                const pageChunks = [];
+                for (let i = 0; i < displayData.length; i += rowsPerPage) {
+                    pageChunks.push(displayData.slice(i, i + rowsPerPage));
+                }
+
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'absolute';
+                wrapper.style.left = '-9999px';
+                wrapper.style.top = '0';
+                wrapper.style.width = '794px';
+                wrapper.style.backgroundColor = '#ffffff';
+                wrapper.style.fontFamily = "'Noto Sans Bengali', sans-serif";
+
+                pageChunks.forEach((chunk, pageIndex) => {
+                    const pageDiv = document.createElement('div');
+                    pageDiv.style.width = '794px';
+                    pageDiv.style.minHeight = '1123px';
+                    pageDiv.style.padding = '40px';
+                    pageDiv.style.boxSizing = 'border-box';
+                    pageDiv.style.backgroundColor = '#ffffff';
+                    pageDiv.style.position = 'relative';
+                    pageDiv.style.display = 'flex';
+                    pageDiv.style.flexDirection = 'column';
+                    pageDiv.style.justifyContent = 'space-between';
+
+                    const contentArea = document.createElement('div');
+
+                    const title = document.createElement('h2');
+                    title.innerText = "আয় ব্যয়ের হিসাব রিপোর্ট";
+                    title.style.textAlign = 'center';
+                    title.style.fontSize = '22px';
+                    title.style.fontWeight = 'bold';
+                    title.style.marginBottom = '25px';
+                    title.style.color = '#1e293b';
+                    contentArea.appendChild(title);
+
+                    const table = document.createElement('table');
+                    table.style.width = '100%';
+                    table.style.borderCollapse = 'collapse';
+                    table.style.fontSize = '12px';
+
+                    // Repeating Header with centered title headers
+                    const thead = document.createElement('thead');
+                    thead.innerHTML = `
+                        <tr style="background-color: #f1f5f9; color: #475569;">
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 45px;">ক্রমিক</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 95px;">তারিখ</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px;">বিবরণ</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 100px; color: #059669;">আয়</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 100px; color: #e11d48;">ব্যয়</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 110px; color: #2563eb;">ব্যালেন্স</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 120px;">মন্তব্য</th>
+                        </tr>
+                    `;
+                    table.appendChild(thead);
+
+                    const tbody = document.createElement('tbody');
+                    chunk.forEach((t, idx) => {
+                        const globalIdx = (pageIndex * rowsPerPage) + idx + 1;
+                        const isInc = t.type === 'income';
+                        const incomeVal = isInc ? t.amount.toFixed(2) : '-';
+                        const expenseVal = !isInc ? t.amount.toFixed(2) : '-';
+                        const balanceColor = t.runningBalance >= 0 ? '#2563eb' : '#e11d48';
+
+                        const tr = document.createElement('tr');
+                        tr.style.borderBottom = '1px solid #e2e8f0';
+                        tr.style.height = '25px';
+
+                        tr.innerHTML = `
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: 500; color: #475569;">${globalIdx}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; color: #475569; white-space: nowrap;">${formatDate(t.date)}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 8px; text-align: left; vertical-align: middle; height: 25px; font-weight: 600; color: #1e293b;">${t.source}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: bold; color: #059669; white-space: nowrap;">${incomeVal}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: bold; color: #e11d48; white-space: nowrap;">${expenseVal}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: bold; color: ${balanceColor}; white-space: nowrap;">${t.runningBalance.toFixed(2)}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; color: #475569;">${t.remarks || '-'}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    table.appendChild(tbody);
+                    contentArea.appendChild(table);
+                    pageDiv.appendChild(contentArea);
+
+                    const footer = document.createElement('div');
+                    footer.style.textAlign = 'center';
+                    footer.style.fontSize = '11px';
+                    footer.style.color = '#64748b';
+                    footer.style.marginTop = '20px';
+                    footer.innerText = `পেজ ${pageIndex + 1} / ${pageChunks.length}`;
+                    pageDiv.appendChild(footer);
+
+                    wrapper.appendChild(pageDiv);
+                });
+
+                document.body.appendChild(wrapper);
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pageDivs = wrapper.querySelectorAll('div[style*="min-height: 1123px"]');
+
+                let promises = Array.from(pageDivs).map((pageDiv, index) => {
+                    return html2canvas(pageDiv, { scale: 2, useCORS: true }).then(canvas => {
+                        return { canvas, index };
+                    });
+                });
+
+                Promise.all(promises).then(results => {
+                    results.sort((a, b) => a.index - b.index);
+                    results.forEach((res, i) => {
+                        if (i > 0) pdf.addPage();
+                        const imgData = res.canvas.toDataURL('image/jpeg', 1.0);
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    });
+
                     pdf.save('Income_Expense_Report.pdf');
-
-                    document.body.removeChild(container);
+                    document.body.removeChild(wrapper);
                 });
             } else {
                 const element = document.getElementById('view-dashboard');
-                const origBg = element.style.backgroundColor;
-                element.style.backgroundColor = "#f8fafc";
-                element.style.padding = "20px";
-
                 html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
                     const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF('p', 'mm', 'a4');
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    
-                    pdf.text("Financial Dashboard Summary", 15, 15);
-                    pdf.addImage(imgData, 'JPEG', 0, 20, pdfWidth, pdfHeight);
+                    pdf.addImage(imgData, 'JPEG', 0, 10, pdfWidth, pdfHeight);
                     pdf.save('Dashboard_Report.pdf');
-
-                    element.style.backgroundColor = origBg;
-                    element.style.padding = "";
                 });
             }
+        }
+
+        window.downloadExcel = function() {
+            const originalTable = document.querySelector('#view-report table');
+            const clonedTable = originalTable.cloneNode(true);
+            
+            const rows = clonedTable.querySelectorAll('tr');
+            rows.forEach(tr => {
+                const lastCell = tr.lastElementChild;
+                if (lastCell) lastCell.remove();
+                
+                const cells = tr.querySelectorAll('th, td');
+                cells.forEach(cell => {
+                    cell.style.verticalAlign = 'middle';
+                    cell.style.textAlign = 'center';
+                    cell.style.paddingTop = '10px';
+                    cell.style.paddingBottom = '10px';
+                    
+                    let text = cell.innerText.trim();
+                    if (text.includes('৳')) {
+                        text = text.replace('৳', '').trim();
+                    }
+                    let num = parseFloat(text.replace(/,/g, ''));
+                    if (!isNaN(num)) {
+                        cell.innerText = num.toFixed(2);
+                    }
+                });
+            });
+
+            const wb = XLSX.utils.table_to_book(clonedTable, { sheet: "আয়-ব্যয় রিপোর্ট" });
+            XLSX.writeFile(wb, "Income_Expense_Report.xlsx");
         }
 
         switchMenu('dashboard');
