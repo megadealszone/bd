@@ -281,8 +281,8 @@
                     <h2 class="text-xl md:text-2xl font-bold mb-6 text-slate-800 border-b pb-3 text-center"><i class="fas fa-plus-circle text-blue-500 mr-2"></i>নতুন লেনদেন এন্ট্রি</h2>
                     <form id="transaction-form" class="space-y-5">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">তারিখ (DD MM YYYY)</label>
-                            <input type="date" id="date" required class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">তারিখ (DD-MM-YYYY)</label>
+                            <input type="text" id="date" required placeholder="DD-MM-YYYY" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-slate-700 mb-2">লেনদেনের ধরন</label>
@@ -299,6 +299,10 @@
                             <label class="block text-sm font-semibold text-slate-700 mb-2">উৎস / বিবরণ</label>
                             <input type="text" id="source" required placeholder="যেমন: ব্যবসা, বেতন, বাজার খরচ" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">মন্তব্য (ঐচ্ছিক)</label>
+                            <input type="text" id="remarks" placeholder="কোনো মন্তব্য থাকলে লিখুন" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
+                        </div>
                         <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition duration-300">
                             ডাটা সেভ করুন
                         </button>
@@ -308,7 +312,7 @@
 
             <!-- ================= VIEW: REPORT ================= -->
             <div id="view-report" class="hidden space-y-8 animate-fade-in pb-10">
-                <div class="bg-white p-4 md:p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 max-w-5xl mx-auto space-y-6">
+                <div class="bg-white p-4 md:p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 max-w-6xl mx-auto space-y-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
                         <h2 class="text-lg md:text-xl font-bold text-slate-800"><i class="fas fa-file-alt text-indigo-500 mr-2"></i>সকল লেনদেনের রিপোর্ট ও ফিল্টার</h2>
                         <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3.5 py-1.5 rounded-full border border-indigo-100">বিস্তারিত তালিকা</span>
@@ -317,25 +321,26 @@
                     <div class="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200/80">
                         <h3 class="font-bold text-slate-800 mb-4 text-sm md:text-base"><i class="fas fa-search-dollar text-blue-500 mr-2"></i>তারিখ ও ধরন অনুযায়ী রিপোর্ট ফিল্টার করুন</h3>
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                        <!-- Single Row Filter Section -->
+                        <div class="grid grid-cols-4 gap-2 md:gap-4 items-end">
                             <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">লেনদেনের ধরন</label>
-                                <select id="report-type-filter" class="w-full border-slate-200 rounded-xl shadow-sm px-4 py-2.5 border bg-white">
-                                    <option value="all">সকল (সব)</option>
-                                    <option value="income">আয় (Income)</option>
-                                    <option value="expense">ব্যয় (Expense)</option>
+                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">লেনদেনের ধরন</label>
+                                <select id="report-type-filter" class="w-full border-slate-200 rounded-xl shadow-sm px-2 md:px-4 py-2 md:py-2.5 border bg-white text-xs md:text-sm">
+                                    <option value="all">সকল</option>
+                                    <option value="income">আয়</option>
+                                    <option value="expense">ব্যয়</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">শুরুর তারিখ (From)</label>
-                                <input type="date" id="filter-start" class="w-full border-slate-200 rounded-xl shadow-sm px-4 py-2.5 border bg-white">
+                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">শুরুর তারিখ</label>
+                                <input type="text" id="filter-start" placeholder="DD-MM-YYYY" class="w-full border-slate-200 rounded-xl shadow-sm px-2 md:px-4 py-2 md:py-2.5 border bg-white text-xs md:text-sm">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-slate-600 mb-1">শেষের তারিখ (To)</label>
-                                <input type="date" id="filter-end" class="w-full border-slate-200 rounded-xl shadow-sm px-4 py-2.5 border bg-white">
+                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">শেষের তারিখ</label>
+                                <input type="text" id="filter-end" placeholder="DD-MM-YYYY" class="w-full border-slate-200 rounded-xl shadow-sm px-2 md:px-4 py-2 md:py-2.5 border bg-white text-xs md:text-sm">
                             </div>
-                            <button onclick="filterReportTable()" class="w-full bg-slate-900 text-white px-6 py-3 rounded-xl shadow hover:bg-slate-800 transition font-semibold">
-                                ফিল্টার করুন
+                            <button onclick="filterReportTable()" class="w-full bg-slate-900 text-white px-3 md:px-6 py-2 md:py-2.5 rounded-xl shadow hover:bg-slate-800 transition font-semibold text-xs md:text-sm whitespace-nowrap">
+                                ফিল্টার
                             </button>
                         </div>
 
@@ -357,15 +362,18 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto max-h-[400px] overflow-y-auto pr-2">
+                    <div class="overflow-x-auto max-h-[500px] overflow-y-auto pr-2">
                         <table class="min-w-full text-left border-collapse">
                             <thead class="sticky top-0 bg-white shadow-sm z-10">
-                                <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
-                                    <th class="py-3.5 px-4 font-bold border-b rounded-tl-xl">তারিখ (দিন-মাস-বছর)</th>
-                                    <th class="py-3.5 px-4 font-bold border-b">বিবরণ</th>
-                                    <th class="py-3.5 px-4 font-bold border-b">ধরন</th>
-                                    <th class="py-3.5 px-4 font-bold border-b text-right">পরিমাণ (৳)</th>
-                                    <th class="py-3.5 px-4 font-bold border-b text-center rounded-tr-xl">অ্যাকশন</th>
+                                <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider h-[30px]">
+                                    <th class="py-1 px-2 font-bold border-b rounded-tl-xl text-center">ক্রমিক</th>
+                                    <th class="py-1 px-2 font-bold border-b">তারিখ</th>
+                                    <th class="py-1 px-2 font-bold border-b">বিবরণ</th>
+                                    <th class="py-1 px-2 font-bold border-b text-right text-emerald-600">আয় (৳)</th>
+                                    <th class="py-1 px-2 font-bold border-b text-right text-rose-500">ব্যয় (৳)</th>
+                                    <th class="py-1 px-2 font-bold border-b text-right text-blue-600">ব্যালেন্স (৳)</th>
+                                    <th class="py-1 px-2 font-bold border-b">মন্তব্য</th>
+                                    <th class="py-1 px-2 font-bold border-b text-center rounded-tr-xl">অ্যাকশন</th>
                                 </tr>
                             </thead>
                             <tbody id="record-list" class="text-slate-700 text-sm"></tbody>
@@ -392,12 +400,12 @@
             <div class="overflow-x-auto max-h-80 overflow-y-auto mb-4 pr-2">
                 <table class="min-w-full text-left border-collapse">
                     <thead class="sticky top-0 bg-white z-10 shadow-sm">
-                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase">
-                            <th class="py-3 px-4 font-bold border-b">তারিখ (দিন-মাস-বছর)</th>
-                            <th class="py-3 px-4 font-bold border-b">বিবরণ</th>
-                            <th class="py-3 px-4 font-bold border-b">ধরন</th>
-                            <th class="py-3 px-4 font-bold border-b text-right">পরিমাণ</th>
-                            <th class="py-3 px-4 font-bold border-b text-center">অ্যাকশন</th>
+                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase h-[30px]">
+                            <th class="py-2 px-3 font-bold border-b">তারিখ</th>
+                            <th class="py-2 px-3 font-bold border-b">বিবরণ</th>
+                            <th class="py-2 px-3 font-bold border-b">ধরন</th>
+                            <th class="py-2 px-3 font-bold border-b text-right">পরিমাণ</th>
+                            <th class="py-2 px-3 font-bold border-b text-center">অ্যাকশন</th>
                         </tr>
                     </thead>
                     <tbody id="recycle-list" class="text-slate-700 text-sm"></tbody>
@@ -416,11 +424,21 @@
 
     <!-- Application Logic -->
     <script>
-        document.getElementById('date').valueAsDate = new Date();
+        // Initialize Date Input as DD-MM-YYYY
         const today = new Date();
+        const initDay = String(today.getDate()).padStart(2, '0');
+        const initMonth = String(today.getMonth() + 1).padStart(2, '0');
+        const initYear = today.getFullYear();
+        const formattedTodayStr = `${initDay}-${initMonth}-${initYear}`;
+        
+        document.getElementById('date').value = formattedTodayStr;
+
         const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        document.getElementById('filter-start').valueAsDate = firstDayOfMonth;
-        document.getElementById('filter-end').valueAsDate = today;
+        const fDay = String(firstDayOfMonth.getDate()).padStart(2, '0');
+        const fMon = String(firstDayOfMonth.getMonth() + 1).padStart(2, '0');
+        const fYear = firstDayOfMonth.getFullYear();
+        document.getElementById('filter-start').value = `${fDay}-${fMon}-${fYear}`;
+        document.getElementById('filter-end').value = formattedTodayStr;
 
         let transactions = JSON.parse(localStorage.getItem('premium_tracker_data')) || [];
         let deletedTransactions = JSON.parse(localStorage.getItem('premium_tracker_deleted')) || [];
@@ -435,6 +453,18 @@
         let monthlyInstance = null;
 
         let isSidebarOpen = false;
+
+        // Date parsing helper for DD-MM-YYYY or DD/MM/YYYY
+        function parseDateInput(inputStr) {
+            if (!inputStr) return '';
+            const parts = inputStr.trim().split(/[-/.\s]+/);
+            if (parts.length === 3) {
+                let [d, m, y] = parts;
+                if (y.length === 2) y = '20' + y;
+                return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+            }
+            return inputStr;
+        }
 
         // Date formatting helper function for DD-MM-YYYY (দিন-মাস-বছর)
         function formatDate(dateStr) {
@@ -656,12 +686,15 @@
         }
 
         function filterReportTable() {
-            const startVal = document.getElementById('filter-start').value;
-            const endVal = document.getElementById('filter-end').value;
+            const startRaw = document.getElementById('filter-start').value;
+            const endRaw = document.getElementById('filter-end').value;
             const typeVal = document.getElementById('report-type-filter').value;
             
+            const startVal = parseDateInput(startRaw);
+            const endVal = parseDateInput(endRaw);
+
             if(!startVal || !endVal) {
-                alert('দয়া করে সঠিক তারিখ নির্বাচন করুন।');
+                alert('দয়া করে সঠিক তারিখ (DD-MM-YYYY) নির্বাচন করুন।');
                 return;
             }
 
@@ -697,27 +730,45 @@
             
             if (dataToRender.length === 0) {
                 emptyState.classList.remove('hidden');
+                return;
             } else {
                 emptyState.classList.add('hidden');
             }
             
-            const sortedData = [...dataToRender].sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Sort chronologically to calculate running balance accurately
+            const sortedAsc = [...dataToRender].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            let runningBal = 0;
+            const processedData = sortedAsc.map(t => {
+                const amt = t.amount;
+                const isInc = t.type === 'income';
+                if (isInc) runningBal += amt;
+                else runningBal -= amt;
+                return { ...t, runningBalance: runningBal };
+            });
 
-            sortedData.forEach((t) => {
+            // Display in reverse chronological order (newest first)
+            const displayData = [...processedData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            displayData.forEach((t, index) => {
                 const origIndex = transactions.indexOf(t);
                 const isInc = t.type === 'income';
-                const badge = isInc ? '<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 rounded-full text-xs font-bold">আয়</span>' : '<span class="bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 rounded-full text-xs font-bold">ব্যয়</span>';
-                const color = isInc ? 'text-emerald-600' : 'text-rose-500';
+                const incomeVal = isInc ? `৳ ${t.amount.toLocaleString('en-IN')}` : '-';
+                const expenseVal = !isInc ? `৳ ${t.amount.toLocaleString('en-IN')}` : '-';
+                const balanceColor = t.runningBalance >= 0 ? 'text-blue-600' : 'text-rose-600';
                 
                 const row = document.createElement('tr');
-                row.className = "border-b hover:bg-slate-50 transition";
+                row.className = "border-b hover:bg-slate-50 transition h-[30px]";
                 row.innerHTML = `
-                    <td class="py-4 px-4 whitespace-nowrap text-sm font-medium text-slate-600">${formatDate(t.date)}</td>
-                    <td class="py-4 px-4 text-sm font-semibold text-slate-800">${t.source}</td>
-                    <td class="py-4 px-4">${badge}</td>
-                    <td class="py-4 px-4 text-right font-bold whitespace-nowrap ${color}">৳ ${t.amount.toLocaleString('en-IN')}</td>
-                    <td class="py-4 px-4 text-center">
-                        <button onclick="moveToRecycleBin(${origIndex})" class="text-slate-400 hover:text-rose-500 transition p-2" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-base"></i></button>
+                    <td class="py-1 px-2 text-center text-xs font-medium text-slate-600">${index + 1}</td>
+                    <td class="py-1 px-2 whitespace-nowrap text-xs font-medium text-slate-600">${formatDate(t.date)}</td>
+                    <td class="py-1 px-2 text-xs font-semibold text-slate-800">${t.source}</td>
+                    <td class="py-1 px-2 text-right font-bold whitespace-nowrap text-emerald-600">${incomeVal}</td>
+                    <td class="py-1 px-2 text-right font-bold whitespace-nowrap text-rose-500">${expenseVal}</td>
+                    <td class="py-1 px-2 text-right font-bold whitespace-nowrap ${balanceColor}">৳ ${t.runningBalance.toLocaleString('en-IN')}</td>
+                    <td class="py-1 px-2 text-xs text-slate-600">${t.remarks || '-'}</td>
+                    <td class="py-1 px-2 text-center">
+                        <button onclick="moveToRecycleBin(${origIndex})" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-xs"></i></button>
                     </td>
                 `;
                 list.appendChild(row);
@@ -727,16 +778,19 @@
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('type').value;
-            const date = document.getElementById('date').value;
+            const rawDate = document.getElementById('date').value;
+            const date = parseDateInput(rawDate);
             const amount = parseFloat(document.getElementById('amount').value);
             const source = document.getElementById('source').value;
+            const remarks = document.getElementById('remarks').value;
 
-            if (date && amount && source) {
-                transactions.push({ type, date, amount, source });
+            if (date && !isNaN(amount) && source) {
+                transactions.push({ type, date, amount, source, remarks });
                 saveData();
                 
                 document.getElementById('amount').value = '';
                 document.getElementById('source').value = '';
+                document.getElementById('remarks').value = '';
                 
                 const btn = e.target.querySelector('button');
                 const origText = btn.innerText;
@@ -768,13 +822,13 @@
                     const isInc = t.type === 'income';
                     const badge = isInc ? '<span class="text-emerald-600 text-xs font-bold border border-emerald-200 px-2.5 py-0.5 rounded-full bg-emerald-50">আয়</span>' : '<span class="text-rose-500 text-xs font-bold border border-rose-200 px-2.5 py-0.5 rounded-full bg-rose-50">ব্যয়</span>';
                     const row = document.createElement('tr');
-                    row.className = "border-b text-sm hover:bg-slate-50";
+                    row.className = "border-b text-sm hover:bg-slate-50 h-[30px]";
                     row.innerHTML = `
-                        <td class="py-3 px-4 whitespace-nowrap text-slate-600">${formatDate(t.date)}</td>
-                        <td class="py-3 px-4 font-medium text-slate-800">${t.source}</td>
-                        <td class="py-3 px-4">${badge}</td>
-                        <td class="py-3 px-4 text-right font-bold text-slate-700">৳ ${t.amount.toLocaleString('en-IN')}</td>
-                        <td class="py-3 px-4 text-center whitespace-nowrap">
+                        <td class="py-2 px-3 whitespace-nowrap text-slate-600">${formatDate(t.date)}</td>
+                        <td class="py-2 px-3 font-medium text-slate-800">${t.source}</td>
+                        <td class="py-2 px-3">${badge}</td>
+                        <td class="py-2 px-3 text-right font-bold text-slate-700">৳ ${t.amount.toLocaleString('en-IN')}</td>
+                        <td class="py-2 px-3 text-center whitespace-nowrap">
                             <button onclick="restoreRecord(${index})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="পুনরুদ্ধার"><i class="fas fa-undo"></i></button>
                             <button onclick="permanentDelete(${index})" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="স্থায়ী ডিলিট"><i class="fas fa-times-circle"></i></button>
                         </td>
@@ -828,26 +882,67 @@
         }
 
         window.downloadPDF = function() {
-            const activeViewId = !document.getElementById('view-dashboard').classList.contains('hidden') ? 'view-dashboard' : 'view-report';
-            const element = document.getElementById(activeViewId);
+            const isReportActive = !document.getElementById('view-report').classList.contains('hidden');
             
-            const origBg = element.style.backgroundColor;
-            element.style.backgroundColor = "#f8fafc";
-            element.style.padding = "20px";
-
-            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            if (isReportActive) {
+                const container = document.createElement('div');
+                container.style.padding = '30px';
+                container.style.backgroundColor = '#ffffff';
+                container.style.fontFamily = "'Noto Sans Bengali', sans-serif";
+                container.style.width = '800px';
                 
-                pdf.text("Financial Report Summary", 15, 15);
-                pdf.addImage(imgData, 'JPEG', 0, 20, pdfWidth, pdfHeight);
-                pdf.save('Income_Expense_Report.pdf');
+                const title = document.createElement('h2');
+                title.innerText = "আয় ব্যয়ের হিসাব রিপোর্ট";
+                title.style.textAlign = 'center';
+                title.style.fontSize = '24px';
+                title.style.fontWeight = 'bold';
+                title.style.marginBottom = '20px';
+                title.style.color = '#1e293b';
+                container.appendChild(title);
+                
+                const originalTable = document.querySelector('#view-report table');
+                const clonedTable = originalTable.cloneNode(true);
+                
+                const headers = clonedTable.querySelectorAll('tr');
+                headers.forEach(tr => {
+                    const lastCell = tr.lastElementChild;
+                    if (lastCell) lastCell.remove();
+                });
+                
+                container.appendChild(clonedTable);
+                document.body.appendChild(container);
 
-                element.style.backgroundColor = origBg;
-                element.style.padding = "";
-            });
+                html2canvas(container, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'JPEG', 10, 15, pdfWidth - 20, pdfHeight);
+                    pdf.save('Income_Expense_Report.pdf');
+
+                    document.body.removeChild(container);
+                });
+            } else {
+                const element = document.getElementById('view-dashboard');
+                const origBg = element.style.backgroundColor;
+                element.style.backgroundColor = "#f8fafc";
+                element.style.padding = "20px";
+
+                html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    
+                    pdf.text("Financial Dashboard Summary", 15, 15);
+                    pdf.addImage(imgData, 'JPEG', 0, 20, pdfWidth, pdfHeight);
+                    pdf.save('Dashboard_Report.pdf');
+
+                    element.style.backgroundColor = origBg;
+                    element.style.padding = "";
+                });
+            }
         }
 
         switchMenu('dashboard');
