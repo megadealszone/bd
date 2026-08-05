@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content">
     <title>ভ্যালু ও হিসাব ক্যালকুলেটর</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,11 +36,13 @@
                 radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, rgba(7, 11, 21, 1) 100%);
             background-attachment: fixed;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
             color: #E2E8F0;
+            transition: padding 0.3s ease;
         }
 
         /* Container Card */
@@ -59,6 +61,7 @@
                 inset 0 1px 1px rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease;
         }
 
         .calculator-card::before {
@@ -194,6 +197,8 @@
             outline: none;
             transition: all 0.3s ease;
             box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            scroll-margin-top: 20px;
+            scroll-margin-bottom: 20px;
         }
 
         .hisab-textarea::placeholder {
@@ -410,6 +415,7 @@
             gap: 4px;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
         }
 
         .action-btn:hover {
@@ -423,8 +429,9 @@
             transform: translateY(1px);
         }
 
-        /* History Section */
+        /* History Section - ডিফল্টভাবে হাইড রাখার জন্য display: none দেওয়া হয়েছে */
         .history-section {
+            display: none;
             margin-top: 16px;
             padding-top: 16px;
             border-top: 1px dashed rgba(212, 175, 55, 0.3);
@@ -538,8 +545,9 @@
             transform: translateY(1px);
         }
 
-        /* Responsive */
+        /* Mobile Keyboard Adjustments & Responsive */
         @media (max-width: 520px) {
+            body { padding: 10px; }
             .calculator-card { padding: 18px 12px; }
             .results-grid-2col { grid-template-columns: 1fr; }
             .hisab-textarea { font-size: 18px; }
@@ -552,7 +560,7 @@
 </head>
 <body>
 
-    <div class="calculator-card">
+    <div class="calculator-card" id="mainCard">
         <!-- Main Menu Navigation Tabs -->
         <div class="nav-menu">
             <button class="nav-tab active" id="tab1" onclick="switchTab('1')">
@@ -655,12 +663,16 @@
                 <button class="action-btn" onclick="prevHistory('1')" title="পূর্ববর্তী সেভ ডেটা">◀ প্রিভিয়াস</button>
                 <button class="action-btn" onclick="nextHistory('1')" title="পরবর্তী সেভ ডেটা">নেক্সট ▶</button>
                 <button class="action-btn" onclick="pasteData('1')" title="ক্লিপবোর্ড থেকে পেস্ট করুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📋 পেস্ট</button>
+                <!-- পেস্ট অপশনের ডান পাশে হিস্টোরি বাটন -->
+                <button class="action-btn" onclick="toggleHistorySection('1')" title="হিস্টোরি দেখুন/লুকান" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📜 হিস্টোরি</button>
+                <!-- হিস্টোরি বাটনের ডান পাশে হিসাব রাখুন বাটন -->
+                <button class="action-btn" onclick="window.location.href='incomeexp.html'" title="হিসাব রাখুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📒 হিসাব রাখুন</button>
             </div>
 
             <!-- History Section -->
             <div class="history-section" id="historySection_1">
                 <div class="section-label">
-                    <span>হিস্টোরি (সর্বশেষ ৪ ঘন্টা)</span>
+                    <span>হিস্টোরি (সর্বশেষ ১২ ঘন্টা)</span>
                     <button class="clear-hist-btn" onclick="clearAllHistory('1')">সব মুছুন</button>
                 </div>
                 <div class="history-list" id="historyList_1"></div>
@@ -699,7 +711,7 @@
                 </div>
             </div>
 
-            <!-- Item / Output Section (ভ্যালু ক্যালকুলেটরের আদলে আপডেটকৃত) -->
+            <!-- Item / Output Section -->
             <div class="output-section">
                 <div class="section-label" style="margin-bottom: 10px;"><span>ফলাফল</span></div>
                 <div class="result-card amount-card">
@@ -733,12 +745,16 @@
                 <button class="action-btn" onclick="prevHistory('2')" title="পূর্ববর্তী সেভ ডেটা">◀ প্রিভিয়াস</button>
                 <button class="action-btn" onclick="nextHistory('2')" title="পরবর্তী সেভ ডেটা">নেক্সট ▶</button>
                 <button class="action-btn" onclick="pasteData('2')" title="ক্লিপবোর্ড থেকে ইনপুট বক্সে পেস্ট করুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📋 পেস্ট</button>
+                <!-- পেস্ট অপশনের ডান পাশে হিস্টোরি বাটন -->
+                <button class="action-btn" onclick="toggleHistorySection('2')" title="হিস্টোরি দেখুন/লুকান" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📜 হিস্টোরি</button>
+                <!-- হিস্টোরি বাটনের ডান পাশে হিসাব রাখুন বাটন -->
+                <button class="action-btn" onclick="window.location.href='incomeexp.html'" title="হিসাব রাখুন" style="border-color: var(--border-gold-glow); background: rgba(212, 175, 55, 0.25);">📒 হিসাব রাখুন</button>
             </div>
 
             <!-- History Section -->
             <div class="history-section" id="historySection_2">
                 <div class="section-label">
-                    <span>হিস্টোরি (সর্বশেষ ৪ ঘন্টা)</span>
+                    <span>হিস্টোরি (সর্বশেষ ১২ ঘন্টা)</span>
                     <button class="clear-hist-btn" onclick="clearAllHistory('2')">সব মুছুন</button>
                 </div>
                 <div class="history-list" id="historyList_2"></div>
@@ -748,7 +764,8 @@
     </div>
 
     <script>
-        const FOUR_HOURS_MS = 4 * 60 * 60 * 1000;
+        // ১২ ঘন্টার সময়সীমা নির্ধারণ (মিলিসেকেন্ডে)
+        const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
 
         // স্টেট অবজেক্ট
         const calcStates = {
@@ -1039,7 +1056,20 @@
             });
         }
 
-        // --- হিস্টোরি ম্যানেজমেন্ট ---
+        // --- হিস্টোরি টগল (দেখা ও লুকানো) ---
+        function toggleHistorySection(id) {
+            const sec = document.getElementById(`historySection_${id}`);
+            if (sec.style.display === 'none' || sec.style.display === '') {
+                sec.style.display = 'block';
+                calcStates[id].showAllHistory = true; // সম্পূর্ণ হিস্টোরি প্রদর্শনের জন্য
+                renderHistory(id);
+                sec.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                sec.style.display = 'none';
+            }
+        }
+
+        // --- হিস্টোরি ম্যানেজমেন্ট (১২ ঘন্টা ফিল্টারসহ) ---
         function getCleanHistory(id) {
             const key = `calc_history_${id}`;
             const stored = localStorage.getItem(key);
@@ -1047,7 +1077,8 @@
             try {
                 let list = JSON.parse(stored);
                 const now = Date.now();
-                list = list.filter(item => (now - item.timestamp) < FOUR_HOURS_MS);
+                // ১২ ঘন্টার বেশি পুরনো হিস্টোরি ফিল্টার করে সরিয়ে দেয়া
+                list = list.filter(item => (now - item.timestamp) < TWELVE_HOURS_MS);
                 localStorage.setItem(key, JSON.stringify(list));
                 return list;
             } catch (e) {
@@ -1233,7 +1264,12 @@
 
             clearInputs(id);
             calcStates[id].navIndex = -1;
-            document.getElementById(`historySection_${id}`).scrollIntoView({ behavior: 'smooth' });
+            
+            // হিস্টোরি চালু থাকলে স্ক্রোল করবে
+            const sec = document.getElementById(`historySection_${id}`);
+            if (sec.style.display === 'block') {
+                sec.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         // ইভেন্ট লিসেনার সেটআপ (মেনু ১)
@@ -1263,7 +1299,26 @@
             }
         });
 
-        // ৪ ঘন্টা পর হিস্টোরি অটো-ডিলিট চেক
+        // মোবাইল কিবোর্ড ওপেন হলে অটোমেটিক স্ক্রোল ও পজিশন সামঞ্জস্য করার লজিক
+        const allInputs = document.querySelectorAll('.hisab-textarea');
+        allInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+        });
+
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                const activeEl = document.activeElement;
+                if (activeEl && activeEl.tagName === 'TEXTAREA') {
+                    activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }
+
+        // ১২ ঘন্টা পর হিস্টোরি অটো-ডিলিট চেক
         setInterval(() => {
             getCleanHistory('1');
             getCleanHistory('2');
