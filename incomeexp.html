@@ -425,8 +425,68 @@
         </div>
     </div>
 
-    <!-- Application Logic -->
-    <script>
+    <!-- Firebase Realtime Database Integration & App Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB6G-5KGBFe0s-u28JUUYHYPBd-FlE83sM",
+            authDomain: "datasave-18039.firebaseapp.com",
+            databaseURL: "https://datasave-18039-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "datasave-18039",
+            storageBucket: "datasave-18039.firebasestorage.app",
+            messagingSenderId: "91371754407",
+            appId: "1:91371754407:web:3b34944c34eb5cc61c1c82",
+            measurementId: "G-CZ0MHCKK8Q"
+        };
+
+        // Initialize Firebase & Realtime Database
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Database References
+        const txRef = ref(db, 'transactions');
+        const deletedTxRef = ref(db, 'deleted_transactions');
+
+        window.transactions = [];
+        window.deletedTransactions = [];
+
+        let currentView = 'dashboard';
+
+        // Realtime Listener for Active Transactions
+        onValue(txRef, (snapshot) => {
+            const data = snapshot.val();
+            window.transactions = [];
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    window.transactions.push({ id, ...data[id] });
+                });
+            }
+            if (currentView === 'dashboard') {
+                updateDashboard();
+            } else if (currentView === 'report') {
+                filterReportTable();
+            }
+        });
+
+        // Realtime Listener for Deleted Transactions (Recycle Bin)
+        onValue(deletedTxRef, (snapshot) => {
+            const data = snapshot.val();
+            window.deletedTransactions = [];
+            if (data) {
+                Object.keys(data).forEach(id => {
+                    window.deletedTransactions.push({ id, ...data[id] });
+                });
+            }
+            const modal = document.getElementById('recycleBinModal');
+            if (modal && modal.style.display === 'block') {
+                renderRecycleBin();
+            }
+        });
+
+        // Date Setups
         const today = new Date();
         const initDay = String(today.getDate()).padStart(2, '0');
         const initMonth = String(today.getMonth() + 1).padStart(2, '0');
@@ -442,12 +502,8 @@
         document.getElementById('filter-start').value = `${fDay}-${fMon}-${fYear}`;
         document.getElementById('filter-end').value = formattedTodayStr;
 
-        let transactions = JSON.parse(localStorage.getItem('premium_tracker_data')) || [];
-        let deletedTransactions = JSON.parse(localStorage.getItem('premium_tracker_deleted')) || [];
-        
         let chartInstance = null;
         let lineChartInstance = null;
-
         let txUpDownInstance = null;
         let incomeExpenseMiniInstance = null;
         let dailyInstance = null;
@@ -482,7 +538,7 @@
             return `${day}-${month}-${year}`;
         }
 
-        function toggleSidebar() {
+        window.toggleSidebar = function() {
             const sidebar = document.getElementById('sidebar');
             const backdrop = document.getElementById('sidebar-backdrop');
             isSidebarOpen = !isSidebarOpen;
@@ -493,14 +549,15 @@
                 sidebar.classList.add('-translate-x-full');
                 backdrop.classList.add('hidden');
             }
-        }
+        };
 
-        function toggleDashboardContent() {
+        window.toggleDashboardContent = function() {
             const contentBox = document.getElementById('dashboard-content-box');
             contentBox.style.display = contentBox.style.display === 'none' ? 'block' : 'none';
-        }
+        };
 
-        function switchMenu(viewName) {
+        window.switchMenu = function(viewName) {
+            currentView = viewName;
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             const activeMenu = document.getElementById('menu-' + viewName);
             if(activeMenu) activeMenu.classList.add('active');
@@ -530,7 +587,7 @@
                 dashToggle.style.display = "none";
                 filterReportTable();
             }
-        }
+        };
 
         function updateDashboard() {
             const now = new Date();
@@ -547,9 +604,9 @@
                 monthlyIncome: 0, monthlyExpense: 0
             };
 
-            transactions.forEach(t => {
+            window.transactions.forEach(t => {
                 const tDate = new Date(t.date);
-                const amt = t.amount;
+                const amt = Number(t.amount);
                 const isInc = t.type === 'income';
 
                 isInc ? sum.totalIncome += amt : sum.totalExpense += amt;
@@ -583,13 +640,13 @@
             const ctx3 = document.getElementById('trendLineChart').getContext('2d');
             if(lineChartInstance) lineChartInstance.destroy();
 
-            const sortedByDate = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
+            const sortedByDate = [...window.transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
             const lineLabels = sortedByDate.map(t => formatDate(t.date));
-            const lineIncomeData = sortedByDate.map(t => t.type === 'income' ? t.amount : 0);
-            const lineExpenseData = sortedByDate.map(t => t.type === 'expense' ? t.amount : 0);
+            const lineIncomeData = sortedByDate.map(t => t.type === 'income' ? Number(t.amount) : 0);
+            const lineExpenseData = sortedByDate.map(t => t.type === 'expense' ? Number(t.amount) : 0);
             const lineNetData = sortedByDate.map((t, i, arr) => {
-                let subInc = arr.slice(0, i+1).reduce((acc, cur) => cur.type === 'income' ? acc + cur.amount : acc, 0);
-                let subExp = arr.slice(0, i+1).reduce((acc, cur) => cur.type === 'expense' ? acc + cur.amount : acc, 0);
+                let subInc = arr.slice(0, i+1).reduce((acc, cur) => cur.type === 'income' ? acc + Number(cur.amount) : acc, 0);
+                let subExp = arr.slice(0, i+1).reduce((acc, cur) => cur.type === 'expense' ? acc + Number(cur.amount) : acc, 0);
                 return subInc - subExp;
             });
             const lineTargetData = lineIncomeData.map(val => Math.max(0, val - 100));
@@ -634,7 +691,7 @@
                 }
             });
 
-            const sorted = [...transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
+            const sorted = [...window.transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
             const labels = sorted.map(t => formatDate(t.date));
 
             if(txUpDownInstance) txUpDownInstance.destroy();
@@ -642,7 +699,7 @@
                 type: 'line',
                 data: {
                     labels: labels.length ? labels : ['তথ্য নেই'],
-                    datasets: [{ label: 'আপ-ডাউন ধারা', data: sorted.map(t => t.type === 'income' ? t.amount : -t.amount), borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3 }]
+                    datasets: [{ label: 'আপ-ডাউন ধারা', data: sorted.map(t => t.type === 'income' ? Number(t.amount) : -Number(t.amount)), borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
@@ -653,8 +710,8 @@
                 data: {
                     labels: labels.length ? labels : ['তথ্য নেই'],
                     datasets: [
-                        { label: 'আয়', data: sorted.map(t => t.type === 'income' ? t.amount : 0), backgroundColor: '#10b981', borderRadius: 4 },
-                        { label: 'ব্যয়', data: sorted.map(t => t.type === 'expense' ? t.amount : 0), backgroundColor: '#f43f5e', borderRadius: 4 }
+                        { label: 'আয়', data: sorted.map(t => t.type === 'income' ? Number(t.amount) : 0), backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'ব্যয়', data: sorted.map(t => t.type === 'expense' ? Number(t.amount) : 0), backgroundColor: '#f43f5e', borderRadius: 4 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
@@ -665,7 +722,7 @@
                 type: 'line',
                 data: {
                     labels: labels.length ? labels : ['তথ্য নেই'],
-                    datasets: [{ label: 'দৈনিক পরিমাণ', data: sorted.map(t => t.amount), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 }]
+                    datasets: [{ label: 'দৈনিক পরিমাণ', data: sorted.map(t => Number(t.amount)), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
@@ -691,7 +748,7 @@
             });
         }
 
-        function filterReportTable() {
+        window.filterReportTable = function() {
             const startRaw = document.getElementById('filter-start').value;
             const endRaw = document.getElementById('filter-end').value;
             const typeVal = document.getElementById('report-type-filter').value;
@@ -710,14 +767,14 @@
             let fIncome = 0;
             let fExpense = 0;
 
-            const filteredData = transactions.filter(t => {
+            const filteredData = window.transactions.filter(t => {
                 const tDate = new Date(t.date);
                 const matchesDate = (tDate >= startDate && tDate <= endDate);
                 const matchesType = (typeVal === 'all' || t.type === typeVal);
                 
                 if (matchesDate) {
-                    if (t.type === 'income') fIncome += t.amount;
-                    else fExpense += t.amount;
+                    if (t.type === 'income') fIncome += Number(t.amount);
+                    else fExpense += Number(t.amount);
                 }
                 return matchesDate && matchesType;
             });
@@ -727,9 +784,9 @@
             document.getElementById('filtered-balance').innerText = formatCurrency(fIncome - fExpense);
 
             renderTable(filteredData);
-        }
+        };
 
-        function renderTable(dataToRender = transactions) {
+        function renderTable(dataToRender = window.transactions) {
             const list = document.getElementById('record-list');
             const emptyState = document.getElementById('empty-state');
             list.innerHTML = '';
@@ -745,7 +802,7 @@
             
             let runningBal = 0;
             const processedData = sortedAsc.map(t => {
-                const amt = t.amount;
+                const amt = Number(t.amount);
                 const isInc = t.type === 'income';
                 if (isInc) runningBal += amt;
                 else runningBal -= amt;
@@ -755,7 +812,6 @@
             const displayData = [...processedData].sort((a, b) => new Date(b.date) - new Date(a.date));
 
             displayData.forEach((t, index) => {
-                const origIndex = transactions.indexOf(t);
                 const isInc = t.type === 'income';
                 const incomeVal = isInc ? formatCurrency(t.amount) : '-';
                 const expenseVal = !isInc ? formatCurrency(t.amount) : '-';
@@ -773,13 +829,14 @@
                     <td class="py-1 px-3 text-right font-bold whitespace-nowrap ${balanceColor} align-middle pr-6" style="height: 25px;">${formatCurrency(t.runningBalance)}</td>
                     <td class="py-1 px-3 text-center text-xs text-slate-600 align-middle" style="height: 25px;">${t.remarks || '-'}</td>
                     <td class="py-1 px-3 text-center align-middle" style="height: 25px;">
-                        <button onclick="moveToRecycleBin(${origIndex})" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-xs"></i></button>
+                        <button onclick="moveToRecycleBin('${t.id}')" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-xs"></i></button>
                     </td>
                 `;
                 list.appendChild(row);
             });
         }
 
+        // Add New Transaction to Firebase
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('type').value;
@@ -790,40 +847,42 @@
             const remarks = document.getElementById('remarks').value;
 
             if (date && !isNaN(amount) && source) {
-                transactions.push({ type, date, amount, source, remarks });
-                saveData();
-                
-                document.getElementById('amount').value = '';
-                document.getElementById('source').value = '';
-                document.getElementById('remarks').value = '';
-                
-                const btn = e.target.querySelector('button');
-                const origText = btn.innerText;
-                btn.innerText = "✓ সফলভাবে সেভ হয়েছে!";
-                btn.classList.add("bg-emerald-600");
-                setTimeout(() => { btn.innerText = origText; btn.classList.remove("bg-emerald-600"); }, 1500);
+                const newTx = { type, date, amount, source, remarks, createdAt: Date.now() };
+                push(txRef, newTx).then(() => {
+                    document.getElementById('amount').value = '';
+                    document.getElementById('source').value = '';
+                    document.getElementById('remarks').value = '';
+                    
+                    const btn = e.target.querySelector('button');
+                    const origText = btn.innerText;
+                    btn.innerText = "✓ সফলভাবে সেভ হয়েছে!";
+                    btn.classList.add("bg-emerald-600");
+                    setTimeout(() => { btn.innerText = origText; btn.classList.remove("bg-emerald-600"); }, 1500);
+                });
             }
         });
 
-        function moveToRecycleBin(index) {
-            deletedTransactions.push(transactions[index]);
-            transactions.splice(index, 1);
-            saveData();
-            if(!document.getElementById('view-report').classList.contains('hidden')) {
-                filterReportTable();
+        // Move item to Recycle Bin in Firebase
+        window.moveToRecycleBin = function(id) {
+            const item = window.transactions.find(t => t.id === id);
+            if (item) {
+                const { id: itemId, ...itemData } = item;
+                push(deletedTxRef, itemData).then(() => {
+                    remove(ref(db, `transactions/${id}`));
+                });
             }
-        }
+        };
 
         function renderRecycleBin() {
             const list = document.getElementById('recycle-list');
             const emptyState = document.getElementById('empty-recycle-state');
             list.innerHTML = '';
 
-            if (deletedTransactions.length === 0) {
+            if (window.deletedTransactions.length === 0) {
                 emptyState.style.display = 'block';
             } else {
                 emptyState.style.display = 'none';
-                deletedTransactions.forEach((t, index) => {
+                window.deletedTransactions.forEach((t) => {
                     const isInc = t.type === 'income';
                     const badge = isInc ? '<span class="text-emerald-600 text-xs font-bold border border-emerald-200 px-2.5 py-0.5 rounded-full bg-emerald-50">আয়</span>' : '<span class="text-rose-500 text-xs font-bold border border-rose-200 px-2.5 py-0.5 rounded-full bg-rose-50">ব্যয়</span>';
                     const row = document.createElement('tr');
@@ -835,8 +894,8 @@
                         <td class="py-1 px-3 text-center align-middle" style="height: 25px;">${badge}</td>
                         <td class="py-1 px-3 text-right font-bold text-slate-700 align-middle pr-6" style="height: 25px;">${formatCurrency(t.amount)}</td>
                         <td class="py-1 px-3 text-center whitespace-nowrap align-middle" style="height: 25px;">
-                            <button onclick="restoreRecord(${index})" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="পুনরুদ্ধার"><i class="fas fa-undo"></i></button>
-                            <button onclick="permanentDelete(${index})" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="স্থায়ী ডিলিট"><i class="fas fa-times-circle"></i></button>
+                            <button onclick="restoreRecord('${t.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="পুনরুদ্ধার"><i class="fas fa-undo"></i></button>
+                            <button onclick="permanentDelete('${t.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="স্থায়ী ডিলিট"><i class="fas fa-times-circle"></i></button>
                         </td>
                     `;
                     list.appendChild(row);
@@ -844,58 +903,51 @@
             }
         }
 
-        function restoreRecord(index) {
-            transactions.push(deletedTransactions[index]);
-            deletedTransactions.splice(index, 1);
-            saveData();
-            renderRecycleBin();
-            if(!document.getElementById('view-report').classList.contains('hidden')) {
-                filterReportTable();
+        window.restoreRecord = function(id) {
+            const item = window.deletedTransactions.find(t => t.id === id);
+            if (item) {
+                const { id: itemId, ...itemData } = item;
+                push(txRef, itemData).then(() => {
+                    remove(ref(db, `deleted_transactions/${id}`));
+                });
             }
-        }
+        };
 
-        function permanentDelete(index) {
+        window.permanentDelete = function(id) {
             if(confirm('স্থায়ীভাবে মুছে যাবে। আপনি কি নিশ্চিত?')) {
-                deletedTransactions.splice(index, 1);
-                saveData();
-                renderRecycleBin();
+                remove(ref(db, `deleted_transactions/${id}`));
             }
-        }
+        };
 
-        function emptyRecycleBin() {
-            if(deletedTransactions.length > 0 && confirm('রিসাইকেল বিনের সব ডাটা মুছে যাবে। আপনি কি নিশ্চিত?')) {
-                deletedTransactions = [];
-                saveData();
-                renderRecycleBin();
+        window.emptyRecycleBin = function() {
+            if(window.deletedTransactions.length > 0 && confirm('রিসাইকেল বিনের সব ডাটা মুছে যাবে। আপনি কি নিশ্চিত?')) {
+                set(deletedTxRef, null);
             }
-        }
+        };
 
-        function saveData() {
-            localStorage.setItem('premium_tracker_data', JSON.stringify(transactions));
-            localStorage.setItem('premium_tracker_deleted', JSON.stringify(deletedTransactions));
-        }
-
-        function openRecycleBin() {
+        window.openRecycleBin = function() {
             renderRecycleBin();
             document.getElementById('recycleBinModal').style.display = 'block';
-        }
-        function closeRecycleBin() {
+        };
+
+        window.closeRecycleBin = function() {
             document.getElementById('recycleBinModal').style.display = 'none';
-        }
+        };
+
         window.onclick = function(e) {
             const modal = document.getElementById('recycleBinModal');
             if (e.target == modal) modal.style.display = "none";
-        }
+        };
 
-        // A4 Multi-page PDF Download with Auto Headers and Continuous Serial Numbers (Filled full page before next page)
+        // PDF Generation
         window.downloadPDF = function() {
             const isReportActive = !document.getElementById('view-report').classList.contains('hidden');
             
             if (isReportActive) {
-                const sortedAsc = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const sortedAsc = [...window.transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
                 let runningBal = 0;
                 const processedData = sortedAsc.map(t => {
-                    const amt = t.amount;
+                    const amt = Number(t.amount);
                     const isInc = t.type === 'income';
                     if (isInc) runningBal += amt;
                     else runningBal -= amt;
@@ -950,7 +1002,6 @@
                     table.style.borderCollapse = 'collapse';
                     table.style.fontSize = '12px';
 
-                    // Repeating Header with centered headers
                     const thead = document.createElement('thead');
                     thead.innerHTML = `
                         <tr style="background-color: #f1f5f9; color: #475569;">
@@ -1040,18 +1091,19 @@
                     pdf.save('Dashboard_Report.pdf');
                 });
             }
-        }
+        };
 
+        // Excel Export
         window.downloadExcel = function() {
-            if (transactions.length === 0) {
+            if (window.transactions.length === 0) {
                 alert('এক্সেল ডাউনলোডের জন্য কোনো তথ্য নেই।');
                 return;
             }
 
-            const sortedAsc = [...transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const sortedAsc = [...window.transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
             let runningBal = 0;
             const excelData = sortedAsc.map((t, idx) => {
-                const amt = t.amount;
+                const amt = Number(t.amount);
                 const isInc = t.type === 'income';
                 if (isInc) runningBal += amt;
                 else runningBal -= amt;
@@ -1070,37 +1122,10 @@
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "আয়-ব্যয় রিপোর্ট");
             XLSX.writeFile(workbook, "Income_Expense_Report.xlsx");
-        }
+        };
 
+        // Initial View Activation
         switchMenu('dashboard');
-    </script>
-
-
-
-    
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyB6G-5KGBFe0s-u28JUUYHYPBd-FlE83sM",
-    authDomain: "datasave-18039.firebaseapp.com",
-    databaseURL: "https://datasave-18039-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "datasave-18039",
-    storageBucket: "datasave-18039.firebasestorage.app",
-    messagingSenderId: "91371754407",
-    appId: "1:91371754407:web:3b34944c34eb5cc61c1c82",
-    measurementId: "G-CZ0MHCKK8Q"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
     </script>
 </body>
 </html>
