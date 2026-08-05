@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>প্রিমিয়াম আয়-ব্যয় ট্র্যাকার</title>
+    <title>Income & Expense Tracker</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.5/lib/index.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,10 +18,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap');
         
         body { 
-            font-family: 'Noto Sans Bengali', sans-serif; 
+            font-family: 'Inter', 'Noto Sans Bengali', sans-serif; 
             background-color: #f8fafc; 
         }
         
@@ -80,10 +80,10 @@
             <!-- Auth Tabs (Login Active by Default) -->
             <div class="flex border-b border-slate-200 mb-6">
                 <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 py-3 font-bold text-center text-emerald-600 border-b-2 border-emerald-600 transition">
-                    লগইন (Login)
+                    <span data-i18n="login_tab">Sign In</span>
                 </button>
                 <button id="tab-signup-btn" onclick="switchAuthTab('signup')" class="w-1/2 py-3 font-bold text-center text-slate-400 border-b-2 border-transparent transition">
-                    সাইন আপ (Sign Up)
+                    <span data-i18n="signup_tab">Sign Up</span>
                 </button>
             </div>
 
@@ -93,34 +93,34 @@
             <!-- Login Form (Active by Default) -->
             <form id="login-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">ইমেইল ঠিকানা</label>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1" data-i18n="email_label">Email Address</label>
                     <input type="email" id="login-email" required placeholder="example@mail.com" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">পাসওয়ার্ড</label>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1" data-i18n="password_label">Password</label>
                     <input type="password" id="login-password" required placeholder="••••••••" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-emerald-500/25 hover:shadow-xl transition duration-300 mt-2">
-                    লগইন করুন
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-emerald-500/25 hover:shadow-xl transition duration-300 mt-2" data-i18n="login_btn">
+                    Sign In
                 </button>
             </form>
 
             <!-- Sign Up Form (Hidden by Default) -->
             <form id="signup-form" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">ইমেইল ঠিকানা</label>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1" data-i18n="email_label">Email Address</label>
                     <input type="email" id="signup-email" required placeholder="example@mail.com" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">পাসওয়ার্ড</label>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1" data-i18n="password_label">Password</label>
                     <input type="password" id="signup-password" required placeholder="••••••••" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
                 </div>
                 <div>
-                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1">কনফার্ম পাসওয়ার্ড</label>
+                    <label class="block text-xs md:text-sm font-semibold text-slate-700 mb-1" data-i18n="confirm_password_label">Confirm Password</label>
                     <input type="password" id="signup-confirm-password" required placeholder="••••••••" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50 text-sm">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition duration-300 mt-2">
-                    সাইন আপ করুন
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3.5 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition duration-300 mt-2" data-i18n="signup_btn">
+                    Sign Up
                 </button>
             </form>
         </div>
@@ -136,7 +136,7 @@
                 <div class="bg-blue-600/30 p-2.5 rounded-xl border border-blue-400/20 mr-3">
                     <i class="fas fa-chart-pie text-2xl text-blue-400"></i>
                 </div>
-                <h1 class="text-xl font-bold tracking-wide bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">হিসাব-নিকাশ</h1>
+                <h1 class="text-xl font-bold tracking-wide bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent" data-i18n="app_title">Expense Tracker</h1>
             </div>
             <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white transition p-2">
                 <i class="fas fa-times text-xl"></i>
@@ -145,25 +145,25 @@
         <nav class="flex-1 mt-6 space-y-2 px-4">
             <button onclick="switchMenu('dashboard'); toggleSidebar();" id="menu-dashboard" class="menu-item active w-full flex items-center p-3.5 rounded-xl hover:bg-white/10 transition duration-200">
                 <i class="fas fa-home text-lg mr-3 text-center w-6 text-blue-400"></i>
-                <span class="font-medium">ড্যাশবোর্ড</span>
+                <span class="font-medium" data-i18n="menu_dashboard">Dashboard</span>
             </button>
             <button onclick="switchMenu('data-entry'); toggleSidebar();" id="menu-data-entry" class="menu-item w-full flex items-center p-3.5 rounded-xl hover:bg-white/10 transition duration-200">
                 <i class="fas fa-edit text-lg mr-3 text-center w-6 text-indigo-400"></i>
-                <span class="font-medium">ডাটা এন্ট্রি</span>
+                <span class="font-medium" data-i18n="menu_data_entry">Data Entry</span>
             </button>
             <button onclick="switchMenu('report'); toggleSidebar();" id="menu-report" class="menu-item w-full flex items-center p-3.5 rounded-xl hover:bg-white/10 transition duration-200">
                 <i class="fas fa-file-alt text-lg mr-3 text-center w-6 text-purple-400"></i>
-                <span class="font-medium">রিপোর্ট</span>
+                <span class="font-medium" data-i18n="menu_report">Report</span>
             </button>
             <button onclick="openRecycleBin(); toggleSidebar();" class="w-full flex items-center p-3.5 rounded-xl hover:bg-red-500/10 transition duration-200 mt-8 text-red-300 hover:text-red-200 border border-red-500/20">
                 <i class="fas fa-trash-restore text-lg mr-3 text-center w-6"></i>
-                <span class="font-medium">রিসাইকেল বিন</span>
+                <span class="font-medium" data-i18n="menu_recycle_bin">Recycle Bin</span>
             </button>
         </nav>
         <div class="p-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
             <span id="user-display-email" class="truncate max-w-[140px] font-medium"></span>
             <button onclick="handleLogout()" class="bg-rose-500/20 hover:bg-rose-500 text-rose-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-rose-500/30 transition flex items-center gap-1">
-                <i class="fas fa-sign-out-alt"></i> লগআউট
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="logout">Logout</span>
             </button>
         </div>
     </aside>
@@ -174,25 +174,30 @@
         <!-- Header Top Bar -->
         <header class="h-20 glassmorphism flex justify-between items-center px-4 md:px-8 shadow-sm z-10 border-b border-slate-200/85 shrink-0">
             <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="bg-white p-2.5 rounded-2xl shadow-sm hover:bg-slate-50 text-slate-700 transition border border-slate-200 flex items-center justify-center w-11 h-11 shrink-0" title="মেনু ওপেন করুন">
+                <button onclick="toggleSidebar()" class="bg-white p-2.5 rounded-2xl shadow-sm hover:bg-slate-50 text-slate-700 transition border border-slate-200 flex items-center justify-center w-11 h-11 shrink-0" title="Open Menu">
                     <i class="fas fa-bars text-lg text-blue-600"></i>
                 </button>
-                <h2 id="page-title" class="text-lg md:text-2xl font-extrabold gradient-text truncate">ড্যাশবোর্ড ওভারভিউ</h2>
+                <h2 id="page-title" class="text-lg md:text-2xl font-extrabold gradient-text truncate" data-i18n="title_dashboard">Dashboard Overview</h2>
             </div>
             
             <div class="flex items-center gap-2 md:gap-3">
+                <!-- Language Toggle Button -->
+                <button onclick="toggleLanguage()" id="lang-btn" class="bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 md:px-4 py-2.5 rounded-2xl shadow-md transition text-xs md:text-sm flex items-center shrink-0">
+                    <i class="fas fa-globe mr-1.5"></i> <span id="lang-btn-text">বাংলা</span>
+                </button>
+
                 <!-- Home Button linking to index.html -->
-                <a href="index.html" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3 md:px-4 py-2.5 rounded-2xl font-semibold text-xs md:text-sm shadow-sm flex items-center justify-center transition shrink-0" title="হোম পেজে যান">
-                    <i class="fas fa-home text-blue-600 mr-1.5 md:mr-2"></i> হোম
+                <a href="index.html" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-3 md:px-4 py-2.5 rounded-2xl font-semibold text-xs md:text-sm shadow-sm flex items-center justify-center transition shrink-0" title="Go to Home">
+                    <i class="fas fa-home text-blue-600 mr-1.5 md:mr-2"></i> <span data-i18n="home">Home</span>
                 </a>
 
                 <div id="dashboard-toggle-wrapper" class="relative">
-                    <button onclick="toggleDashboardContent()" class="bg-white p-2.5 rounded-2xl shadow-sm hover:bg-slate-50 text-slate-700 transition border border-slate-200 flex items-center justify-center w-11 h-11 shrink-0" title="ড্যাশবোর্ড হাইড/আনহাইড করুন">
+                    <button onclick="toggleDashboardContent()" class="bg-white p-2.5 rounded-2xl shadow-sm hover:bg-slate-50 text-slate-700 transition border border-slate-200 flex items-center justify-center w-11 h-11 shrink-0" title="Hide/Unhide Dashboard">
                         <i class="fas fa-sliders-h text-lg text-indigo-600"></i>
                     </button>
                 </div>
                 <button onclick="downloadPDF()" id="pdf-btn" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-3.5 md:px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition duration-300 text-xs md:text-sm font-semibold flex items-center shrink-0">
-                    <i class="fas fa-download mr-1.5 md:mr-2"></i> রিপোর্ট পিডিএফ
+                    <i class="fas fa-download mr-1.5 md:mr-2"></i> <span data-i18n="pdf_report">PDF Report</span>
                 </button>
             </div>
         </header>
@@ -211,7 +216,7 @@
                             <div class="absolute -right-6 -bottom-6 opacity-10 text-7xl md:text-8xl"><i class="fas fa-arrow-down"></i></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-2">
                                 <div>
-                                    <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-emerald-100 mb-1">সর্বমোট আয়</p>
+                                    <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-emerald-100 mb-1" data-i18n="total_income">Total Income</p>
                                     <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md"><span id="dash-total-income">0</span></h3>
                                 </div>
                                 <div class="bg-white/20 backdrop-blur-md p-2 sm:p-3 md:p-4 rounded-2xl shadow-inner shrink-0 hidden sm:flex">
@@ -225,7 +230,7 @@
                             <div class="absolute -right-6 -bottom-6 opacity-10 text-7xl md:text-8xl"><i class="fas fa-arrow-up"></i></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-2">
                                 <div>
-                                    <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-rose-100 mb-1">সর্বমোট ব্যয়</p>
+                                    <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-rose-100 mb-1" data-i18n="total_expense">Total Expense</p>
                                     <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md"><span id="dash-total-expense">0</span></h3>
                                 </div>
                                 <div class="bg-white/20 backdrop-blur-md p-2 sm:p-3 md:p-4 rounded-2xl shadow-inner shrink-0 hidden sm:flex">
@@ -239,7 +244,7 @@
                             <div class="absolute -right-6 -bottom-6 opacity-10 text-7xl md:text-8xl"><i class="fas fa-wallet"></i></div>
                             <div class="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10 gap-2">
                                 <div>
-                                    <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-indigo-100 mb-1">বর্তমান ব্যালেন্স (নিট)</p>
+                                    <p class="text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-wider text-indigo-100 mb-1" data-i18n="net_balance">Net Balance</p>
                                     <h3 class="text-sm sm:text-xl md:text-3xl lg:text-4xl font-black tracking-tight text-white drop-shadow-md"><span id="dash-total-balance">0</span></h3>
                                 </div>
                                 <div class="bg-white/20 backdrop-blur-md p-2 sm:p-3 md:p-4 rounded-2xl shadow-inner shrink-0 hidden sm:flex">
@@ -252,7 +257,7 @@
                     <!-- Main Charts Section -->
                     <div class="grid grid-cols-1 gap-6">
                         <div class="bg-white p-5 md:p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col justify-center items-center h-72 md:h-80">
-                            <h3 class="font-bold text-slate-700 mb-2 w-full text-left text-sm flex items-center"><i class="fas fa-chart-line text-emerald-500 mr-2"></i> বহুরেখা ধারা (মাল্টি-লাইন ট্রেন্ড)</h3>
+                            <h3 class="font-bold text-slate-700 mb-2 w-full text-left text-sm flex items-center"><i class="fas fa-chart-line text-emerald-500 mr-2"></i> <span data-i18n="multi_line_chart">Multi-Line Trend Chart</span></h3>
                             <div class="relative w-full h-full flex justify-center"><canvas id="trendLineChart"></canvas></div>
                         </div>
                     </div>
@@ -260,39 +265,39 @@
                     <!-- Mini Graphs Section -->
                     <div class="space-y-4 pt-2">
                         <h3 class="text-base md:text-lg font-bold text-slate-800 flex items-center">
-                            <i class="fas fa-chart-area text-indigo-600 mr-2"></i> বিশেষ বিশ্লেষণাত্মক মিনি গ্রাফসমূহ
+                            <i class="fas fa-chart-area text-indigo-600 mr-2"></i> <span data-i18n="analytical_mini_graphs">Analytical Mini Graphs</span>
                         </h3>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 flex flex-col items-center justify-between">
-                                <h4 class="font-bold text-blue-600 text-sm mb-2 w-full text-left flex items-center"><i class="fas fa-chart-pie mr-2"></i> ১. আয় ও ব্যয়ের অনুপাত</h4>
+                                <h4 class="font-bold text-blue-600 text-sm mb-2 w-full text-left flex items-center"><i class="fas fa-chart-pie mr-2"></i> <span data-i18n="chart_1_title">1. Income vs Expense Ratio</span></h4>
                                 <div class="relative w-full h-44 flex justify-center items-center">
                                     <canvas id="incomeExpenseChart"></canvas>
                                 </div>
                             </div>
 
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
-                                <h4 class="font-bold text-amber-600 text-sm mb-2 flex items-center"><i class="fas fa-exchange-alt mr-2"></i> ২. ট্রানজেকশন আপ-ডাউন গ্রাফ</h4>
+                                <h4 class="font-bold text-amber-600 text-sm mb-2 flex items-center"><i class="fas fa-exchange-alt mr-2"></i> <span data-i18n="chart_2_title">2. Transaction Up-Down Chart</span></h4>
                                 <div class="relative w-full flex-1"><canvas id="txUpDownChart"></canvas></div>
                             </div>
                             
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
-                                <h4 class="font-bold text-indigo-600 text-sm mb-2 flex items-center"><i class="fas fa-balance-scale mr-2"></i> ৩. যৌথ আয় ও ব্যয়ের গ্রাফ</h4>
+                                <h4 class="font-bold text-indigo-600 text-sm mb-2 flex items-center"><i class="fas fa-balance-scale mr-2"></i> <span data-i18n="chart_3_title">3. Joint Income & Expense</span></h4>
                                 <div class="relative w-full flex-1"><canvas id="incomeExpenseMiniChart"></canvas></div>
                             </div>
 
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
-                                <h4 class="font-bold text-blue-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-day mr-2"></i> ৪. প্রতিদিনের হিসাব গ্রাফ</h4>
+                                <h4 class="font-bold text-blue-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-day mr-2"></i> <span data-i18n="chart_4_title">4. Daily Statement</span></h4>
                                 <div class="relative w-full flex-1"><canvas id="dailyChart"></canvas></div>
                             </div>
 
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
-                                <h4 class="font-bold text-indigo-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-week mr-2"></i> ৫. প্রতি সপ্তাহের হিসাব গ্রাফ</h4>
+                                <h4 class="font-bold text-indigo-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-week mr-2"></i> <span data-i18n="chart_5_title">5. Weekly Statement</span></h4>
                                 <div class="relative w-full flex-1"><canvas id="weeklyChart"></canvas></div>
                             </div>
 
                             <div class="bg-white p-5 rounded-3xl shadow-md border border-slate-100 h-64 flex flex-col">
-                                <h4 class="font-bold text-purple-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-alt mr-2"></i> ৬. প্রতি মাসের হিসাব গ্রাফ</h4>
+                                <h4 class="font-bold text-purple-600 text-sm mb-2 flex items-center"><i class="fas fa-calendar-alt mr-2"></i> <span data-i18n="chart_6_title">6. Monthly Statement</span></h4>
                                 <div class="relative w-full flex-1"><canvas id="monthlyChart"></canvas></div>
                             </div>
                         </div>
@@ -301,19 +306,19 @@
                     <!-- Weekly & Monthly Summaries -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="bg-gradient-to-br from-indigo-50/80 to-blue-50/80 p-5 md:p-6 rounded-3xl shadow-lg border border-indigo-100">
-                            <h3 class="font-bold text-indigo-900 border-b border-indigo-200/60 pb-3 mb-4 flex items-center text-sm md:text-base"><i class="fas fa-calendar-week mr-2 text-indigo-600"></i>গত ৭ দিনের হিসাব</h3>
+                            <h3 class="font-bold text-indigo-900 border-b border-indigo-200/60 pb-3 mb-4 flex items-center text-sm md:text-base"><i class="fas fa-calendar-week mr-2 text-indigo-600"></i><span data-i18n="last_7_days">Last 7 Days Statement</span></h3>
                             <div class="space-y-3 text-sm">
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">সাপ্তাহিক আয়:</span> <span class="font-bold text-emerald-600"><span id="dash-weekly-income">0</span></span></div>
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">সাপ্তাহিক ব্যয়:</span> <span class="font-bold text-rose-500"><span id="dash-weekly-expense">0</span></span></div>
-                                <div class="flex justify-between pt-2 border-t border-indigo-200/60"><span class="font-bold text-slate-800">সাপ্তাহিক ব্যালেন্স:</span> <span class="font-bold text-indigo-700"><span id="dash-weekly-balance">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium" data-i18n="weekly_income">Weekly Income:</span> <span class="font-bold text-emerald-600"><span id="dash-weekly-income">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium" data-i18n="weekly_expense">Weekly Expense:</span> <span class="font-bold text-rose-500"><span id="dash-weekly-expense">0</span></span></div>
+                                <div class="flex justify-between pt-2 border-t border-indigo-200/60"><span class="font-bold text-slate-800" data-i18n="weekly_balance">Weekly Balance:</span> <span class="font-bold text-indigo-700"><span id="dash-weekly-balance">0</span></span></div>
                             </div>
                         </div>
                         <div class="bg-gradient-to-br from-purple-50/80 to-pink-50/80 p-5 md:p-6 rounded-3xl shadow-lg border border-purple-100">
-                            <h3 class="font-bold text-purple-900 border-b border-purple-200/60 pb-3 mb-4 flex items-center text-sm md:text-base"><i class="fas fa-calendar-alt mr-2 text-purple-600"></i>চলতি মাসের হিসাব</h3>
+                            <h3 class="font-bold text-purple-900 border-b border-purple-200/60 pb-3 mb-4 flex items-center text-sm md:text-base"><i class="fas fa-calendar-alt mr-2 text-purple-600"></i><span data-i18n="current_month">Current Month Statement</span></h3>
                             <div class="space-y-3 text-sm">
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">মাসিক আয়:</span> <span class="font-bold text-emerald-600"><span id="dash-monthly-income">0</span></span></div>
-                                <div class="flex justify-between"><span class="text-slate-600 font-medium">মাসিক ব্যয়:</span> <span class="font-bold text-rose-500"><span id="dash-monthly-expense">0</span></span></div>
-                                <div class="flex justify-between pt-2 border-t border-purple-200/60"><span class="font-bold text-slate-800">মাসিক ব্যালেন্স:</span> <span class="font-bold text-purple-700"><span id="dash-monthly-balance">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium" data-i18n="monthly_income">Monthly Income:</span> <span class="font-bold text-emerald-600"><span id="dash-monthly-income">0</span></span></div>
+                                <div class="flex justify-between"><span class="text-slate-600 font-medium" data-i18n="monthly_expense">Monthly Expense:</span> <span class="font-bold text-rose-500"><span id="dash-monthly-expense">0</span></span></div>
+                                <div class="flex justify-between pt-2 border-t border-purple-200/60"><span class="font-bold text-slate-800" data-i18n="monthly_balance">Monthly Balance:</span> <span class="font-bold text-purple-700"><span id="dash-monthly-balance">0</span></span></div>
                             </div>
                         </div>
                     </div>
@@ -324,37 +329,37 @@
             <div id="view-data-entry" class="hidden space-y-8 animate-fade-in pb-10 max-w-xl mx-auto">
                 <div class="flex justify-start">
                     <button onclick="switchMenu('dashboard')" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center transition">
-                        <i class="fas fa-home mr-2 text-blue-600"></i> হোম (ড্যাশবোর্ড)
+                        <i class="fas fa-home mr-2 text-blue-600"></i> <span data-i18n="home_dashboard">Home (Dashboard)</span>
                     </button>
                 </div>
                 <div class="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
-                    <h2 class="text-xl md:text-2xl font-bold mb-6 text-slate-800 border-b pb-3 text-center"><i class="fas fa-plus-circle text-blue-500 mr-2"></i>নতুন লেনদেন এন্ট্রি</h2>
+                    <h2 class="text-xl md:text-2xl font-bold mb-6 text-slate-800 border-b pb-3 text-center"><i class="fas fa-plus-circle text-blue-500 mr-2"></i><span data-i18n="new_entry_title">New Transaction Entry</span></h2>
                     <form id="transaction-form" class="space-y-5">
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">তারিখ (DD-MM-YYYY)</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="date_label">Date (DD-MM-YYYY)</label>
                             <input type="text" id="date" required placeholder="DD-MM-YYYY" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">লেনদেনের ধরন</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="type_label">Transaction Type</label>
                             <select id="type" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 font-bold bg-slate-50/50">
-                                <option value="income" class="text-emerald-600">আয় (Income)</option>
-                                <option value="expense" class="text-rose-500">ব্যয় (Expense)</option>
+                                <option value="income" class="text-emerald-600" data-i18n="opt_income">Income</option>
+                                <option value="expense" class="text-rose-500" data-i18n="opt_expense">Expense</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">পরিমাণ</label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="amount_label">Amount</label>
                             <input type="number" step="any" id="amount" required placeholder="0.00" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">উৎস / বিবরণ</label>
-                            <input type="text" id="source" required placeholder="যেমন: ব্যবসা, বেতন, বাজার খরচ" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="source_label">Source / Description</label>
+                            <input type="text" id="source" required placeholder="e.g. Business, Salary, Market" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
                         <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">মন্তব্য (ঐচ্ছিক)</label>
-                            <input type="text" id="remarks" placeholder="কোনো মন্তব্য থাকলে লিখুন" class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="remarks_label">Remarks (Optional)</label>
+                            <input type="text" id="remarks" placeholder="Write any notes..." class="w-full border-slate-200 rounded-2xl shadow-sm px-4 py-3.5 border focus:ring-2 focus:ring-blue-500 bg-slate-50/50">
                         </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition duration-300">
-                            ডাটা সেভ করুন
+                        <button type="submit" id="save-data-btn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 px-4 rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl transition duration-300" data-i18n="save_data_btn">
+                            Save Data
                         </button>
                     </form>
                 </div>
@@ -366,60 +371,60 @@
                     
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-4 gap-3">
                         <button onclick="switchMenu('dashboard')" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 px-4 py-2 rounded-xl font-semibold text-sm shadow-sm flex items-center transition">
-                            <i class="fas fa-home mr-2 text-blue-600"></i> হোম (ড্যাশবোর্ড)
+                            <i class="fas fa-home mr-2 text-blue-600"></i> <span data-i18n="home_dashboard">Home (Dashboard)</span>
                         </button>
                         <div class="flex items-center gap-2 flex-wrap">
                             <button onclick="downloadPDF()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-xl shadow font-semibold text-xs md:text-sm flex items-center hover:shadow-md transition">
-                                <i class="fas fa-file-pdf mr-1.5"></i> পিডিএফ ডাউনলোড (A4)
+                                <i class="fas fa-file-pdf mr-1.5"></i> <span data-i18n="download_pdf_a4">Download PDF (A4)</span>
                             </button>
                             <button onclick="downloadExcel()" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2 rounded-xl shadow font-semibold text-xs md:text-sm flex items-center hover:shadow-md transition">
-                                <i class="fas fa-file-excel mr-1.5"></i> এক্সেল ডাউনলোড
+                                <i class="fas fa-file-excel mr-1.5"></i> <span data-i18n="download_excel">Download Excel</span>
                             </button>
                         </div>
                     </div>
 
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 gap-2">
-                        <h2 class="text-lg md:text-xl font-bold text-slate-800"><i class="fas fa-file-alt text-indigo-500 mr-2"></i>সকল লেনদেনের রিপোর্ট ও ফিল্টার</h2>
-                        <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3.5 py-1.5 rounded-full border border-indigo-100">বিস্তারিত তালিকা</span>
+                        <h2 class="text-lg md:text-xl font-bold text-slate-800"><i class="fas fa-file-alt text-indigo-500 mr-2"></i><span data-i18n="report_title">All Transactions & Filter</span></h2>
+                        <span class="bg-indigo-50 text-indigo-700 text-xs font-bold px-3.5 py-1.5 rounded-full border border-indigo-100" data-i18n="detailed_list">Detailed List</span>
                     </div>
                     
                     <div class="bg-slate-50 p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200/80">
-                        <h3 class="font-bold text-slate-800 mb-4 text-sm md:text-base"><i class="fas fa-search-dollar text-blue-500 mr-2"></i>তারিখ ও ধরন অনুযায়ী রিপোর্ট ফিল্টার করুন</h3>
+                        <h3 class="font-bold text-slate-800 mb-4 text-sm md:text-base"><i class="fas fa-search-dollar text-blue-500 mr-2"></i><span data-i18n="filter_heading">Filter Report by Date & Type</span></h3>
                         
                         <div class="grid grid-cols-4 gap-2 md:gap-4 items-end">
                             <div>
-                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">লেনদেনের ধরন</label>
+                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1" data-i18n="type_label">Transaction Type</label>
                                 <select id="report-type-filter" class="w-full border-slate-200 rounded-xl shadow-sm px-2 md:px-4 py-2 md:py-2.5 border bg-white text-xs md:text-sm">
-                                    <option value="all">সকল</option>
-                                    <option value="income">আয়</option>
-                                    <option value="expense">ব্যয়</option>
+                                    <option value="all" data-i18n="filter_all">All</option>
+                                    <option value="income" data-i18n="opt_income">Income</option>
+                                    <option value="expense" data-i18n="opt_expense">Expense</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">শুরুর তারিখ</label>
+                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1" data-i18n="start_date">Start Date</label>
                                 <input type="text" id="filter-start" placeholder="DD-MM-YYYY" class="w-full border-slate-200 rounded-xl shadow-sm px-2 md:px-4 py-2 md:py-2.5 border bg-white text-xs md:text-sm">
                             </div>
                             <div>
-                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1">শেষের তারিখ</label>
+                                <label class="block text-xs md:text-sm font-medium text-slate-600 mb-1" data-i18n="end_date">End Date</label>
                                 <input type="text" id="filter-end" placeholder="DD-MM-YYYY" class="w-full border-slate-200 rounded-xl shadow-sm px-2 md:px-4 py-2 md:py-2.5 border bg-white text-xs md:text-sm">
                             </div>
-                            <button onclick="filterReportTable()" class="w-full bg-slate-900 text-white px-3 md:px-6 py-2 md:py-2.5 rounded-xl shadow hover:bg-slate-800 transition font-semibold text-xs md:text-sm whitespace-nowrap">
-                                ফিল্টার
+                            <button onclick="filterReportTable()" class="w-full bg-slate-900 text-white px-3 md:px-6 py-2 md:py-2.5 rounded-xl shadow hover:bg-slate-800 transition font-semibold text-xs md:text-sm whitespace-nowrap" data-i18n="filter_btn">
+                                Filter
                             </button>
                         </div>
 
                         <div id="filter-result" class="mt-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                 <div class="p-2">
-                                    <p class="text-xs text-slate-500 font-medium">নির্বাচিত সময়ে আয়</p>
+                                    <p class="text-xs text-slate-500 font-medium" data-i18n="selected_income">Income in Selected Period</p>
                                     <p class="text-xl font-black text-emerald-600"><span id="filtered-income">0</span></p>
                                 </div>
                                 <div class="p-2 border-t md:border-t-0 md:border-l border-slate-200">
-                                    <p class="text-xs text-slate-500 font-medium">নির্বাচিত সময়ে ব্যয়</p>
+                                    <p class="text-xs text-slate-500 font-medium" data-i18n="selected_expense">Expense in Selected Period</p>
                                     <p class="text-xl font-black text-rose-500"><span id="filtered-expense">0</span></p>
                                 </div>
                                 <div class="p-2 border-t md:border-t-0 md:border-l border-slate-200 bg-blue-50/50 rounded-xl">
-                                    <p class="text-xs text-blue-700 font-semibold">এই সময়ের নিট ব্যালেন্স</p>
+                                    <p class="text-xs text-blue-700 font-semibold" data-i18n="selected_balance">Net Balance in Period</p>
                                     <p class="text-xl font-black text-blue-600"><span id="filtered-balance">0</span></p>
                                 </div>
                             </div>
@@ -430,21 +435,21 @@
                         <table class="min-w-full border-collapse">
                             <thead class="sticky top-0 bg-white shadow-sm z-10">
                                 <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
-                                    <th class="py-3 px-3 font-bold border-b rounded-tl-xl text-center align-middle" style="height: 25px;">ক্রমিক</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">তারিখ</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">বিবরণ</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center text-emerald-600 align-middle" style="height: 25px;">আয়</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center text-rose-500 align-middle" style="height: 25px;">ব্যয়</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center text-blue-600 align-middle" style="height: 25px;">ব্যালেন্স</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">মন্তব্য</th>
-                                    <th class="py-3 px-3 font-bold border-b text-center rounded-tr-xl align-middle" style="height: 25px;">অ্যাকশন</th>
+                                    <th class="py-3 px-3 font-bold border-b rounded-tl-xl text-center align-middle" style="height: 25px;" data-i18n="th_sl">SL</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="th_date">Date</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="th_description">Description</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center text-emerald-600 align-middle" style="height: 25px;" data-i18n="th_income">Income</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center text-rose-500 align-middle" style="height: 25px;" data-i18n="th_expense">Expense</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center text-blue-600 align-middle" style="height: 25px;" data-i18n="th_balance">Balance</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="th_remarks">Remarks</th>
+                                    <th class="py-3 px-3 font-bold border-b text-center rounded-tr-xl align-middle" style="height: 25px;" data-i18n="th_action">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="record-list" class="text-slate-700 text-sm"></tbody>
                         </table>
                         <div id="empty-state" class="text-center py-12 text-slate-400 hidden flex flex-col items-center">
                             <i class="fas fa-folder-open text-4xl mb-3"></i>
-                            <p>কোনো রেকর্ড পাওয়া যায়নি।</p>
+                            <p data-i18n="no_record">No records found.</p>
                         </div>
                     </div>
                 </div>
@@ -457,7 +462,7 @@
     <div id="recycleBinModal" class="modal">
         <div class="modal-content relative">
             <div class="flex justify-between items-center mb-5 border-b pb-3">
-                <h2 class="text-lg md:text-xl font-bold text-slate-800"><i class="fas fa-trash-alt text-rose-500 mr-2"></i> রিসাইকেল বিন</h2>
+                <h2 class="text-lg md:text-xl font-bold text-slate-800"><i class="fas fa-trash-alt text-rose-500 mr-2"></i> <span data-i18n="recycle_title">Recycle Bin</span></h2>
                 <button onclick="closeRecycleBin()" class="text-slate-400 hover:text-slate-800 transition bg-slate-100 rounded-full w-9 h-9 flex items-center justify-center"><i class="fas fa-times"></i></button>
             </div>
             
@@ -465,23 +470,23 @@
                 <table class="min-w-full border-collapse">
                     <thead class="sticky top-0 bg-white z-10 shadow-sm">
                         <tr class="bg-slate-50 text-slate-600 text-xs uppercase">
-                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">তারিখ</th>
-                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">বিবরণ</th>
-                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">ধরন</th>
-                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">পরিমাণ</th>
-                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;">অ্যাকশন</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="th_date">Date</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="th_description">Description</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="type_label">Type</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="amount_label">Amount</th>
+                            <th class="py-3 px-3 font-bold border-b text-center align-middle" style="height: 25px;" data-i18n="th_action">Action</th>
                         </tr>
                     </thead>
                     <tbody id="recycle-list" class="text-slate-700 text-sm"></tbody>
                 </table>
                 <div id="empty-recycle-state" class="text-center py-8 text-slate-400">
                     <i class="fas fa-check-circle text-3xl mb-2 text-emerald-300"></i><br>
-                    রিসাইকেল বিন ফাঁকা আছে।
+                    <span data-i18n="recycle_empty">Recycle Bin is empty.</span>
                 </div>
             </div>
             <div class="flex flex-col sm:flex-row justify-end gap-3 border-t pt-4 mt-2">
-                <button onclick="emptyRecycleBin()" class="bg-rose-500 text-white px-6 py-2.5 rounded-xl hover:bg-rose-600 transition font-bold shadow">সব মুছে ফেলুন</button>
-                <button onclick="closeRecycleBin()" class="bg-slate-200 text-slate-800 px-6 py-2.5 rounded-xl hover:bg-slate-300 transition font-bold">বন্ধ করুন</button>
+                <button onclick="emptyRecycleBin()" class="bg-rose-500 text-white px-6 py-2.5 rounded-xl hover:bg-rose-600 transition font-bold shadow" data-i18n="empty_all_btn">Delete All</button>
+                <button onclick="closeRecycleBin()" class="bg-slate-200 text-slate-800 px-6 py-2.5 rounded-xl hover:bg-slate-300 transition font-bold" data-i18n="close_btn">Close</button>
             </div>
         </div>
     </div>
@@ -491,6 +496,217 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, push, onValue, remove, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Language Translation Dictionary
+        const i18n = {
+            en: {
+                app_title: "Expense Tracker",
+                menu_dashboard: "Dashboard",
+                menu_data_entry: "Data Entry",
+                menu_report: "Report",
+                menu_recycle_bin: "Recycle Bin",
+                logout: "Logout",
+                title_dashboard: "Dashboard Overview",
+                title_data_entry: "Data Entry Panel",
+                title_report: "Detailed Report",
+                home: "Home",
+                pdf_report: "PDF Report",
+                total_income: "Total Income",
+                total_expense: "Total Expense",
+                net_balance: "Net Balance",
+                multi_line_chart: "Multi-Line Trend Chart",
+                analytical_mini_graphs: "Analytical Mini Graphs",
+                chart_1_title: "1. Income vs Expense Ratio",
+                chart_2_title: "2. Transaction Up-Down Chart",
+                chart_3_title: "3. Joint Income & Expense",
+                chart_4_title: "4. Daily Statement",
+                chart_5_title: "5. Weekly Statement",
+                chart_6_title: "6. Monthly Statement",
+                last_7_days: "Last 7 Days Statement",
+                weekly_income: "Weekly Income:",
+                weekly_expense: "Weekly Expense:",
+                weekly_balance: "Weekly Balance:",
+                current_month: "Current Month Statement",
+                monthly_income: "Monthly Income:",
+                monthly_expense: "Monthly Expense:",
+                monthly_balance: "Monthly Balance:",
+                home_dashboard: "Home (Dashboard)",
+                new_entry_title: "New Transaction Entry",
+                date_label: "Date (DD-MM-YYYY)",
+                type_label: "Transaction Type",
+                opt_income: "Income",
+                opt_expense: "Expense",
+                amount_label: "Amount",
+                source_label: "Source / Description",
+                remarks_label: "Remarks (Optional)",
+                save_data_btn: "Save Data",
+                download_pdf_a4: "Download PDF (A4)",
+                download_excel: "Download Excel",
+                report_title: "All Transactions & Filter",
+                detailed_list: "Detailed List",
+                filter_heading: "Filter Report by Date & Type",
+                filter_all: "All",
+                start_date: "Start Date",
+                end_date: "End Date",
+                filter_btn: "Filter",
+                selected_income: "Income in Selected Period",
+                selected_expense: "Expense in Selected Period",
+                selected_balance: "Net Balance in Period",
+                th_sl: "SL",
+                th_date: "Date",
+                th_description: "Description",
+                th_income: "Income",
+                th_expense: "Expense",
+                th_balance: "Balance",
+                th_remarks: "Remarks",
+                th_action: "Action",
+                no_record: "No records found.",
+                recycle_title: "Recycle Bin",
+                recycle_empty: "Recycle Bin is empty.",
+                empty_all_btn: "Delete All",
+                close_btn: "Close",
+                login_tab: "Sign In",
+                signup_tab: "Sign Up",
+                email_label: "Email Address",
+                password_label: "Password",
+                confirm_password_label: "Confirm Password",
+                login_btn: "Sign In",
+                signup_btn: "Sign Up",
+                no_data_chart: "No Data",
+                trend_inc: "Income Line",
+                trend_exp: "Expense Line",
+                trend_bal: "Net Balance Line",
+                trend_target: "Target Line",
+                daily_label: "Daily Amount",
+                weekly_label: "Weekly Avg",
+                monthly_label: "Monthly Overview"
+            },
+            bn: {
+                app_title: "হিসাব-নিকাশ",
+                menu_dashboard: "ড্যাশবোর্ড",
+                menu_data_entry: "ডাটা এন্ট্রি",
+                menu_report: "রিপোর্ট",
+                menu_recycle_bin: "রিসাইকেল বিন",
+                logout: "লগআউট",
+                title_dashboard: "ড্যাশবোর্ড ওভারভিউ",
+                title_data_entry: "ডাটা এন্ট্রি প্যানেল",
+                title_report: "বিস্তারিত রিপোর্ট",
+                home: "হোম",
+                pdf_report: "রিপোর্ট পিডিএফ",
+                total_income: "সর্বমোট আয়",
+                total_expense: "সর্বমোট ব্যয়",
+                net_balance: "বর্তমান ব্যালেন্স (নিট)",
+                multi_line_chart: "বহুরেখা ধারা (মাল্টি-লাইন ট্রেন্ড)",
+                analytical_mini_graphs: "বিশেষ বিশ্লেষণাত্মক মিনি গ্রাফসমূহ",
+                chart_1_title: "১. আয় ও ব্যয়ের অনুপাত",
+                chart_2_title: "২. ট্রানজেকশন আপ-ডাউন গ্রাফ",
+                chart_3_title: "৩. যৌথ আয় ও ব্যয়ের গ্রাফ",
+                chart_4_title: "৪. প্রতিদিনের হিসাব গ্রাফ",
+                chart_5_title: "৫. প্রতি সপ্তাহের হিসাব গ্রাফ",
+                chart_6_title: "৬. প্রতি মাসের হিসাব গ্রাফ",
+                last_7_days: "গত ৭ দিনের হিসাব",
+                weekly_income: "সাপ্তাহিক আয়:",
+                weekly_expense: "সাপ্তাহিক ব্যয়:",
+                weekly_balance: "সাপ্তাহিক ব্যালেন্স:",
+                current_month: "চলতি মাসের হিসাব",
+                monthly_income: "মাসিক আয়:",
+                monthly_expense: "মাসিক ব্যয়:",
+                monthly_balance: "মাসিক ব্যালেন্স:",
+                home_dashboard: "হোম (ড্যাশবোর্ড)",
+                new_entry_title: "নতুন লেনদেন এন্ট্রি",
+                date_label: "তারিখ (DD-MM-YYYY)",
+                type_label: "লেনদেনের ধরন",
+                opt_income: "আয় (Income)",
+                opt_expense: "ব্যয় (Expense)",
+                amount_label: "পরিমাণ",
+                source_label: "উৎস / বিবরণ",
+                remarks_label: "মন্তব্য (ঐচ্ছিক)",
+                save_data_btn: "ডাটা সেভ করুন",
+                download_pdf_a4: "পিডিএফ ডাউনলোড (A4)",
+                download_excel: "এক্সেল ডাউনলোড",
+                report_title: "সকল লেনদেনের রিপোর্ট ও ফিল্টার",
+                detailed_list: "বিস্তারিত তালিকা",
+                filter_heading: "তারিখ ও ধরন অনুযায়ী রিপোর্ট ফিল্টার করুন",
+                filter_all: "সকল",
+                start_date: "শুরুর তারিখ",
+                end_date: "শেষের তারিখ",
+                filter_btn: "ফিল্টার",
+                selected_income: "নির্বাচিত সময়ে আয়",
+                selected_expense: "নির্বাচিত সময়ে ব্যয়",
+                selected_balance: "এই সময়ের নিট ব্যালেন্স",
+                th_sl: "ক্রমিক",
+                th_date: "তারিখ",
+                th_description: "বিবরণ",
+                th_income: "আয়",
+                th_expense: "ব্যয়",
+                th_balance: "ব্যালেন্স",
+                th_remarks: "মন্তব্য",
+                th_action: "অ্যাকশন",
+                no_record: "কোনো রেকর্ড পাওয়া যায়নি।",
+                recycle_title: "রিসাইকেল বিন",
+                recycle_empty: "রিসাইকেল বিন ফাঁকা আছে।",
+                empty_all_btn: "সব মুছে ফেলুন",
+                close_btn: "বন্ধ করুন",
+                login_tab: "লগইন (Login)",
+                signup_tab: "সাইন আপ (Sign Up)",
+                email_label: "ইমেইল ঠিকানা",
+                password_label: "পাসওয়ার্ড",
+                confirm_password_label: "কনফার্ম পাসওয়ার্ড",
+                login_btn: "লগইন করুন",
+                signup_btn: "সাইন আপ করুন",
+                no_data_chart: "তথ্য নেই",
+                trend_inc: "আয় রেখা",
+                trend_exp: "ব্যয় রেখা",
+                trend_bal: "নিট ব্যালেন্স রেখা",
+                trend_target: "টার্গেট রেখা",
+                daily_label: "দৈনিক পরিমাণ",
+                weekly_label: "সাপ্তাহিক গড়",
+                monthly_label: "মাসিক সারসংক্ষেপ"
+            }
+        };
+
+        window.currentLang = 'en'; // Default set to English
+
+        // Convert English numbers to Bangla digits when Bengali is active
+        function toBengaliNumerals(str) {
+            if (str === null || str === undefined) return '';
+            const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return str.toString().replace(/\d/g, x => bnDigits[x]);
+        }
+
+        window.toggleLanguage = function() {
+            window.currentLang = window.currentLang === 'en' ? 'bn' : 'en';
+            applyLanguage();
+        };
+
+        function applyLanguage() {
+            const lang = window.currentLang;
+            document.getElementById('lang-btn-text').innerText = lang === 'en' ? 'বাংলা' : 'English';
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) {
+                    el.innerText = i18n[lang][key];
+                }
+            });
+
+            // Re-render UI views for numeral/language update
+            const titleEl = document.getElementById('page-title');
+            if(currentView === 'dashboard') {
+                titleEl.innerText = i18n[lang].title_dashboard;
+                updateDashboard();
+            } else if(currentView === 'data-entry') {
+                titleEl.innerText = i18n[lang].title_data_entry;
+            } else if(currentView === 'report') {
+                titleEl.innerText = i18n[lang].title_report;
+                filterReportTable();
+            }
+
+            const modal = document.getElementById('recycleBinModal');
+            if (modal && modal.style.display === 'block') {
+                renderRecycleBin();
+            }
+        }
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -626,13 +842,13 @@
             const confirmPassword = document.getElementById('signup-confirm-password').value;
 
             if (password !== confirmPassword) {
-                showAuthMsg("পাসওয়ার্ড দুটি মেলেনি! সঠিক পাসওয়ার্ড লিখুন।");
+                showAuthMsg(window.currentLang === 'bn' ? "পাসওয়ার্ড দুটি মেলেনি! সঠিক পাসওয়ার্ড লিখুন।" : "Passwords do not match! Please verify.");
                 return;
             }
 
             createUserWithEmailAndPassword(auth, email, password)
                 .then(() => {
-                    showAuthMsg("সাইন আপ সফল হয়েছে! এখন লগইন করুন।", true);
+                    showAuthMsg(window.currentLang === 'bn' ? "সাইন আপ সফল হয়েছে! এখন লগইন করুন।" : "Sign up successful! Please log in now.", true);
                     document.getElementById('signup-form').reset();
                     setTimeout(() => {
                         switchAuthTab('login');
@@ -640,7 +856,7 @@
                     }, 1200);
                 })
                 .catch((error) => {
-                    showAuthMsg(error.message || "সাইন আপ ব্যর্থ হয়েছে। আবার চেষ্টা করুন।");
+                    showAuthMsg(error.message || (window.currentLang === 'bn' ? "সাইন আপ ব্যর্থ হয়েছে। আবার চেষ্টা করুন।" : "Sign up failed. Please try again."));
                 });
         });
 
@@ -655,13 +871,14 @@
                     document.getElementById('login-form').reset();
                 })
                 .catch((error) => {
-                    showAuthMsg("ইমেইল বা পাসওয়ার্ড ভুল হয়েছে। সঠিক তথ্য দিয়ে চেষ্টা করুন।");
+                    showAuthMsg(window.currentLang === 'bn' ? "ইমেইল বা পাসওয়ার্ড ভুল হয়েছে। সঠিক তথ্য দিয়ে চেষ্টা করুন।" : "Invalid email or password. Please try again.");
                 });
         });
 
         // Logout Handler
         window.handleLogout = function() {
-            if (confirm("আপনি কি লগআউট করতে চান?")) {
+            const confirmMsg = window.currentLang === 'bn' ? "আপনি কি লগআউট করতে চান?" : "Are you sure you want to log out?";
+            if (confirm(confirmMsg)) {
                 signOut(auth);
             }
         };
@@ -693,8 +910,9 @@
         let isSidebarOpen = false;
 
         function formatCurrency(num) {
-            if (isNaN(num)) return "0.00";
-            return new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+            if (isNaN(num)) return window.currentLang === 'bn' ? toBengaliNumerals("0.00") : "0.00";
+            const formatted = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
+            return window.currentLang === 'bn' ? toBengaliNumerals(formatted) : formatted;
         }
 
         function parseDateInput(inputStr) {
@@ -711,11 +929,12 @@
         function formatDate(dateStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr);
-            if (isNaN(d.getTime())) return dateStr;
+            if (isNaN(d.getTime())) return window.currentLang === 'bn' ? toBengaliNumerals(dateStr) : dateStr;
             const day = String(d.getDate()).padStart(2, '0');
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const year = d.getFullYear();
-            return `${day}-${month}-${year}`;
+            const res = `${day}-${month}-${year}`;
+            return window.currentLang === 'bn' ? toBengaliNumerals(res) : res;
         }
 
         window.toggleSidebar = function() {
@@ -751,18 +970,19 @@
             const titleEl = document.getElementById('page-title');
             const pdfBtn = document.getElementById('pdf-btn');
             const dashToggle = document.getElementById('dashboard-toggle-wrapper');
+            const lang = window.currentLang;
             
             if(viewName === 'dashboard') {
-                titleEl.innerText = "ড্যাশবোর্ড ওভারভিউ";
+                titleEl.innerText = i18n[lang].title_dashboard;
                 pdfBtn.style.display = "flex";
                 dashToggle.style.display = "block";
                 updateDashboard();
             } else if(viewName === 'data-entry') {
-                titleEl.innerText = "ডাটা এন্ট্রি প্যানেল";
+                titleEl.innerText = i18n[lang].title_data_entry;
                 pdfBtn.style.display = "none";
                 dashToggle.style.display = "none";
             } else if(viewName === 'report') {
-                titleEl.innerText = "বিস্তারিত রিপোর্ট";
+                titleEl.innerText = i18n[lang].title_report;
                 pdfBtn.style.display = "none";
                 dashToggle.style.display = "none";
                 filterReportTable();
@@ -820,6 +1040,7 @@
             const ctx3 = document.getElementById('trendLineChart').getContext('2d');
             if(lineChartInstance) lineChartInstance.destroy();
 
+            const lang = window.currentLang;
             const sortedByDate = [...window.transactions].sort((a,b) => new Date(a.date) - new Date(b.date));
             const lineLabels = sortedByDate.map(t => formatDate(t.date));
             const lineIncomeData = sortedByDate.map(t => t.type === 'income' ? Number(t.amount) : 0);
@@ -834,12 +1055,12 @@
             lineChartInstance = new Chart(ctx3, {
                 type: 'line',
                 data: {
-                    labels: lineLabels.length > 0 ? lineLabels : ['ডেটা নেই'],
+                    labels: lineLabels.length > 0 ? lineLabels : [i18n[lang].no_data_chart],
                     datasets: [
-                        { label: 'আয় রেখা', data: lineIncomeData.length ? lineIncomeData : [0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.05)', fill: true, tension: 0.35, borderWidth: 2.5 },
-                        { label: 'ব্যয় রেখা', data: lineExpenseData.length ? lineExpenseData : [0], borderColor: '#f43f5e', fill: false, tension: 0.35, borderWidth: 2.5 },
-                        { label: 'নিট ব্যালেন্স রেখা', data: lineNetData.length ? lineNetData : [0], borderColor: '#10b981', fill: false, tension: 0.35, borderWidth: 2.5 },
-                        { label: 'টার্গেট রেখা', data: lineTargetData.length ? lineTargetData : [0], borderColor: '#8b5cf6', borderDash: [4, 4], fill: false, tension: 0.35, borderWidth: 2 }
+                        { label: i18n[lang].trend_inc, data: lineIncomeData.length ? lineIncomeData : [0], borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.05)', fill: true, tension: 0.35, borderWidth: 2.5 },
+                        { label: i18n[lang].trend_exp, data: lineExpenseData.length ? lineExpenseData : [0], borderColor: '#f43f5e', fill: false, tension: 0.35, borderWidth: 2.5 },
+                        { label: i18n[lang].trend_bal, data: lineNetData.length ? lineNetData : [0], borderColor: '#10b981', fill: false, tension: 0.35, borderWidth: 2.5 },
+                        { label: i18n[lang].trend_target, data: lineTargetData.length ? lineTargetData : [0], borderColor: '#8b5cf6', borderDash: [4, 4], fill: false, tension: 0.35, borderWidth: 2 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
@@ -847,6 +1068,7 @@
         }
 
         function renderMiniCharts(sum) {
+            const lang = window.currentLang;
             const ctx1 = document.getElementById('incomeExpenseChart').getContext('2d');
             let dataArr1 = (sum.totalIncome === 0 && sum.totalExpense === 0) ? [1, 1] : [sum.totalIncome, sum.totalExpense];
             let colors1 = (sum.totalIncome === 0 && sum.totalExpense === 0) ? ['#e2e8f0', '#e2e8f0'] : ['#3b82f6', '#f43f5e'];
@@ -855,7 +1077,7 @@
             chartInstance = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['মোট আয়', 'মোট ব্যয়'],
+                    labels: [i18n[lang].total_income, i18n[lang].total_expense],
                     datasets: [{ data: dataArr1, backgroundColor: colors1, borderWidth: 0, hoverOffset: 4 }]
                 },
                 options: { 
@@ -878,8 +1100,8 @@
             txUpDownInstance = new Chart(document.getElementById('txUpDownChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: labels.length ? labels : ['তথ্য নেই'],
-                    datasets: [{ label: 'আপ-ডাউন ধারা', data: sorted.map(t => t.type === 'income' ? Number(t.amount) : -Number(t.amount)), borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3 }]
+                    labels: labels.length ? labels : [i18n[lang].no_data_chart],
+                    datasets: [{ label: 'Trend', data: sorted.map(t => t.type === 'income' ? Number(t.amount) : -Number(t.amount)), borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
@@ -888,10 +1110,10 @@
             incomeExpenseMiniInstance = new Chart(document.getElementById('incomeExpenseMiniChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: labels.length ? labels : ['তথ্য নেই'],
+                    labels: labels.length ? labels : [i18n[lang].no_data_chart],
                     datasets: [
-                        { label: 'আয়', data: sorted.map(t => t.type === 'income' ? Number(t.amount) : 0), backgroundColor: '#10b981', borderRadius: 4 },
-                        { label: 'ব্যয়', data: sorted.map(t => t.type === 'expense' ? Number(t.amount) : 0), backgroundColor: '#f43f5e', borderRadius: 4 }
+                        { label: i18n[lang].opt_income, data: sorted.map(t => t.type === 'income' ? Number(t.amount) : 0), backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: i18n[lang].opt_expense, data: sorted.map(t => t.type === 'expense' ? Number(t.amount) : 0), backgroundColor: '#f43f5e', borderRadius: 4 }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
@@ -901,28 +1123,30 @@
             dailyInstance = new Chart(document.getElementById('dailyChart').getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: labels.length ? labels : ['তথ্য নেই'],
-                    datasets: [{ label: 'দৈনিক পরিমাণ', data: sorted.map(t => Number(t.amount)), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 }]
+                    labels: labels.length ? labels : [i18n[lang].no_data_chart],
+                    datasets: [{ label: i18n[lang].daily_label, data: sorted.map(t => Number(t.amount)), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)', fill: true, tension: 0.3 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
+            const weekLabels = lang === 'bn' ? ['সপ্তাহ ১', 'সপ্তাহ ২', 'সপ্তাহ ৩', 'সপ্তাহ ৪'] : ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
             if(weeklyInstance) weeklyInstance.destroy();
             weeklyInstance = new Chart(document.getElementById('weeklyChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['সপ্তাহ ১', 'সপ্তাহ ২', 'সপ্তাহ ৩', 'সপ্তাহ ৪'],
-                    datasets: [{ label: 'সাপ্তাহিক গড়', data: [1200, 2100, 1800, 2500], backgroundColor: '#6366f1', borderRadius: 6 }]
+                    labels: weekLabels,
+                    datasets: [{ label: i18n[lang].weekly_label, data: [1200, 2100, 1800, 2500], backgroundColor: '#6366f1', borderRadius: 6 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
 
+            const monthLabels = lang === 'bn' ? ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন'] : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
             if(monthlyInstance) monthlyInstance.destroy();
             monthlyInstance = new Chart(document.getElementById('monthlyChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন'],
-                    datasets: [{ label: 'মাসিক সারসংক্ষেপ', data: [5000, 7000, 6500, 8000, 9500, 11000], backgroundColor: '#8b5cf6', borderRadius: 6 }]
+                    labels: monthLabels,
+                    datasets: [{ label: i18n[lang].monthly_label, data: [5000, 7000, 6500, 8000, 9500, 11000], backgroundColor: '#8b5cf6', borderRadius: 6 }]
                 },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
             });
@@ -937,7 +1161,7 @@
             const endVal = parseDateInput(endRaw);
 
             if(!startVal || !endVal) {
-                alert('দয়া করে সঠিক তারিখ (DD-MM-YYYY) নির্বাচন করুন।');
+                alert(window.currentLang === 'bn' ? 'দয়া করে সঠিক তারিখ (DD-MM-YYYY) নির্বাচন করুন।' : 'Please enter valid dates in DD-MM-YYYY format.');
                 return;
             }
 
@@ -996,12 +1220,13 @@
                 const incomeVal = isInc ? formatCurrency(t.amount) : '-';
                 const expenseVal = !isInc ? formatCurrency(t.amount) : '-';
                 const balanceColor = t.runningBalance >= 0 ? 'text-blue-600' : 'text-rose-600';
+                const slVal = window.currentLang === 'bn' ? toBengaliNumerals(index + 1) : (index + 1);
                 
                 const row = document.createElement('tr');
                 row.className = "border-b hover:bg-slate-50 transition";
                 row.style.height = "25px";
                 row.innerHTML = `
-                    <td class="py-1 px-3 text-center text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${index + 1}</td>
+                    <td class="py-1 px-3 text-center text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${slVal}</td>
                     <td class="py-1 px-3 text-center whitespace-nowrap text-xs font-medium text-slate-600 align-middle" style="height: 25px;">${formatDate(t.date)}</td>
                     <td class="py-1 px-3 text-left text-xs font-semibold text-slate-800 align-middle" style="height: 25px;">${t.source}</td>
                     <td class="py-1 px-3 text-right font-bold whitespace-nowrap text-emerald-600 align-middle pr-6" style="height: 25px;">${incomeVal}</td>
@@ -1009,7 +1234,7 @@
                     <td class="py-1 px-3 text-right font-bold whitespace-nowrap ${balanceColor} align-middle pr-6" style="height: 25px;">${formatCurrency(t.runningBalance)}</td>
                     <td class="py-1 px-3 text-center text-xs text-slate-600 align-middle" style="height: 25px;">${t.remarks || '-'}</td>
                     <td class="py-1 px-3 text-center align-middle" style="height: 25px;">
-                        <button onclick="moveToRecycleBin('${t.id}')" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="মুছে ফেলুন"><i class="fas fa-trash-alt text-xs"></i></button>
+                        <button onclick="moveToRecycleBin('${t.id}')" class="text-slate-400 hover:text-rose-500 transition p-0.5" title="Delete"><i class="fas fa-trash-alt text-xs"></i></button>
                     </td>
                 `;
                 list.appendChild(row);
@@ -1035,9 +1260,9 @@
                     document.getElementById('source').value = '';
                     document.getElementById('remarks').value = '';
                     
-                    const btn = e.target.querySelector('button');
+                    const btn = document.getElementById('save-data-btn');
                     const origText = btn.innerText;
-                    btn.innerText = "✓ সফলভাবে সেভ হয়েছে!";
+                    btn.innerText = window.currentLang === 'bn' ? "✓ সফলভাবে সেভ হয়েছে!" : "✓ Saved Successfully!";
                     btn.classList.add("bg-emerald-600");
                     setTimeout(() => { btn.innerText = origText; btn.classList.remove("bg-emerald-600"); }, 1500);
                 });
@@ -1067,7 +1292,9 @@
                 emptyState.style.display = 'none';
                 window.deletedTransactions.forEach((t) => {
                     const isInc = t.type === 'income';
-                    const badge = isInc ? '<span class="text-emerald-600 text-xs font-bold border border-emerald-200 px-2.5 py-0.5 rounded-full bg-emerald-50">আয়</span>' : '<span class="text-rose-500 text-xs font-bold border border-rose-200 px-2.5 py-0.5 rounded-full bg-rose-50">ব্যয়</span>';
+                    const incLabel = window.currentLang === 'bn' ? 'আয়' : 'Income';
+                    const expLabel = window.currentLang === 'bn' ? 'ব্যয়' : 'Expense';
+                    const badge = isInc ? `<span class="text-emerald-600 text-xs font-bold border border-emerald-200 px-2.5 py-0.5 rounded-full bg-emerald-50">${incLabel}</span>` : `<span class="text-rose-500 text-xs font-bold border border-rose-200 px-2.5 py-0.5 rounded-full bg-rose-50">${expLabel}</span>`;
                     const row = document.createElement('tr');
                     row.className = "border-b text-sm hover:bg-slate-50";
                     row.style.height = "25px";
@@ -1077,8 +1304,8 @@
                         <td class="py-1 px-3 text-center align-middle" style="height: 25px;">${badge}</td>
                         <td class="py-1 px-3 text-right font-bold text-slate-700 align-middle pr-6" style="height: 25px;">${formatCurrency(t.amount)}</td>
                         <td class="py-1 px-3 text-center whitespace-nowrap align-middle" style="height: 25px;">
-                            <button onclick="restoreRecord('${t.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="পুনরুদ্ধার"><i class="fas fa-undo"></i></button>
-                            <button onclick="permanentDelete('${t.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="স্থায়ী ডিলিট"><i class="fas fa-times-circle"></i></button>
+                            <button onclick="restoreRecord('${t.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-xl transition mr-1" title="Restore"><i class="fas fa-undo"></i></button>
+                            <button onclick="permanentDelete('${t.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-xl transition" title="Permanent Delete"><i class="fas fa-times-circle"></i></button>
                         </td>
                     `;
                     list.appendChild(row);
@@ -1099,14 +1326,16 @@
 
         window.permanentDelete = function(id) {
             if(!currentUser) return;
-            if(confirm('স্থায়ীভাবে মুছে যাবে। আপনি কি নিশ্চিত?')) {
+            const msg = window.currentLang === 'bn' ? 'স্থায়ীভাবে মুছে যাবে। আপনি কি নিশ্চিত?' : 'It will be permanently deleted. Are you sure?';
+            if(confirm(msg)) {
                 remove(ref(db, `users/${currentUser.uid}/deleted_transactions/${id}`));
             }
         };
 
         window.emptyRecycleBin = function() {
             if(!currentUser) return;
-            if(window.deletedTransactions.length > 0 && confirm('রিসাইকেল বিনের সব ডাটা মুছে যাবে। আপনি কি নিশ্চিত?')) {
+            const msg = window.currentLang === 'bn' ? 'রিসাইকেল বিনের সব ডাটা মুছে যাবে। আপনি কি নিশ্চিত?' : 'All data in recycle bin will be deleted. Are you sure?';
+            if(window.deletedTransactions.length > 0 && confirm(msg)) {
                 set(deletedTxRef, null);
             }
         };
@@ -1128,6 +1357,7 @@
         // PDF Generation (Dashboard in Legal Size PDF)
         window.downloadPDF = function() {
             const isReportActive = !document.getElementById('view-report').classList.contains('hidden');
+            const lang = window.currentLang;
             
             if (isReportActive) {
                 const sortedAsc = [...window.transactions].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -1142,7 +1372,7 @@
                 const displayData = [...processedData].sort((a, b) => new Date(b.date) - new Date(a.date));
                 
                 if (displayData.length === 0) {
-                    alert('রিপোর্টে কোনো ডাটা নেই।');
+                    alert(lang === 'bn' ? 'রিপোর্টে কোনো ডাটা নেই।' : 'No data in report.');
                     return;
                 }
 
@@ -1158,7 +1388,7 @@
                 wrapper.style.top = '0';
                 wrapper.style.width = '794px';
                 wrapper.style.backgroundColor = '#ffffff';
-                wrapper.style.fontFamily = "'Noto Sans Bengali', sans-serif";
+                wrapper.style.fontFamily = lang === 'bn' ? "'Noto Sans Bengali', sans-serif" : "'Inter', sans-serif";
 
                 pageChunks.forEach((chunk, pageIndex) => {
                     const pageDiv = document.createElement('div');
@@ -1175,7 +1405,7 @@
                     const contentArea = document.createElement('div');
 
                     const title = document.createElement('h2');
-                    title.innerText = "আয় ব্যয়ের হিসাব রিপোর্ট";
+                    title.innerText = lang === 'bn' ? "আয় ব্যয়ের হিসাব রিপোর্ট" : "Income & Expense Statement Report";
                     title.style.textAlign = 'center';
                     title.style.fontSize = '22px';
                     title.style.fontWeight = 'bold';
@@ -1191,13 +1421,13 @@
                     const thead = document.createElement('thead');
                     thead.innerHTML = `
                         <tr style="background-color: #f1f5f9; color: #475569;">
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 45px;">ক্রমিক</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 95px;">তারিখ</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px;">বিবরণ</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 100px; color: #059669;">আয়</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 100px; color: #e11d48;">ব্যয়</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 110px; color: #2563eb;">ব্যালেন্স</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 120px;">মন্তব্য</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 45px;">${i18n[lang].th_sl}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 95px;">${i18n[lang].th_date}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px;">${i18n[lang].th_description}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 100px; color: #059669;">${i18n[lang].th_income}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 100px; color: #e11d48;">${i18n[lang].th_expense}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 110px; color: #2563eb;">${i18n[lang].th_balance}</th>
+                            <th style="border: 1px solid #cbd5e1; padding: 6px; text-align: center; vertical-align: middle; height: 25px; width: 120px;">${i18n[lang].th_remarks}</th>
                         </tr>
                     `;
                     table.appendChild(thead);
@@ -1209,13 +1439,14 @@
                         const incomeVal = isInc ? formatCurrency(t.amount) : '-';
                         const expenseVal = !isInc ? formatCurrency(t.amount) : '-';
                         const balanceColor = t.runningBalance >= 0 ? '#2563eb' : '#e11d48';
+                        const slVal = lang === 'bn' ? toBengaliNumerals(globalIdx) : globalIdx;
 
                         const tr = document.createElement('tr');
                         tr.style.borderBottom = '1px solid #e2e8f0';
                         tr.style.height = '25px';
 
                         tr.innerHTML = `
-                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: 500; color: #475569;">${globalIdx}</td>
+                            <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; font-weight: 500; color: #475569;">${slVal}</td>
                             <td style="border: 1px solid #e2e8f0; padding: 0 6px; text-align: center; vertical-align: middle; height: 25px; color: #475569; white-space: nowrap;">${formatDate(t.date)}</td>
                             <td style="border: 1px solid #e2e8f0; padding: 0 8px; text-align: left; vertical-align: middle; height: 25px; font-weight: 600; color: #1e293b;">${t.source}</td>
                             <td style="border: 1px solid #e2e8f0; padding: 0 12px 0 6px; text-align: right; vertical-align: middle; height: 25px; font-weight: bold; color: #059669; white-space: nowrap;">${incomeVal}</td>
@@ -1234,7 +1465,8 @@
                     footer.style.fontSize = '11px';
                     footer.style.color = '#64748b';
                     footer.style.marginTop = '20px';
-                    footer.innerText = `পেজ ${pageIndex + 1} / ${pageChunks.length}`;
+                    const pageText = lang === 'bn' ? `পেজ ${toBengaliNumerals(pageIndex + 1)} / ${toBengaliNumerals(pageChunks.length)}` : `Page ${pageIndex + 1} of ${pageChunks.length}`;
+                    footer.innerText = pageText;
                     pageDiv.appendChild(footer);
 
                     wrapper.appendChild(pageDiv);
@@ -1290,8 +1522,9 @@
 
         // Excel Export
         window.downloadExcel = function() {
+            const lang = window.currentLang;
             if (window.transactions.length === 0) {
-                alert('এক্সেল ডাউনলোডের জন্য কোনো তথ্য নেই।');
+                alert(lang === 'bn' ? 'এক্সেল ডাউনলোডের জন্য কোনো তথ্য নেই।' : 'No data available to export to Excel.');
                 return;
             }
 
@@ -1302,24 +1535,38 @@
                 const isInc = t.type === 'income';
                 if (isInc) runningBal += amt;
                 else runningBal -= amt;
-                return {
-                    "ক্রমিক": idx + 1,
-                    "তারিখ": formatDate(t.date),
-                    "বিবরণ": t.source,
-                    "আয়": isInc ? formatCurrency(amt) : "-",
-                    "ব্যয়": !isInc ? formatCurrency(amt) : "-",
-                    "ব্যালেন্স": formatCurrency(runningBal),
-                    "মন্তব্য": t.remarks || "-"
-                };
+                
+                if (lang === 'bn') {
+                    return {
+                        "ক্রমিক": toBengaliNumerals(idx + 1),
+                        "তারিখ": formatDate(t.date),
+                        "বিবরণ": t.source,
+                        "আয়": isInc ? formatCurrency(amt) : "-",
+                        "ব্যয়": !isInc ? formatCurrency(amt) : "-",
+                        "ব্যালেন্স": formatCurrency(runningBal),
+                        "মন্তব্য": t.remarks || "-"
+                    };
+                } else {
+                    return {
+                        "SL": idx + 1,
+                        "Date": formatDate(t.date),
+                        "Description": t.source,
+                        "Income": isInc ? formatCurrency(amt) : "-",
+                        "Expense": !isInc ? formatCurrency(amt) : "-",
+                        "Balance": formatCurrency(runningBal),
+                        "Remarks": t.remarks || "-"
+                    };
+                }
             });
 
             const worksheet = XLSX.utils.json_to_sheet(excelData);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "আয়-ব্যয় রিপোর্ট");
+            XLSX.utils.book_append_sheet(workbook, worksheet, lang === 'bn' ? "আয়-ব্যয় রিপোর্ট" : "Report");
             XLSX.writeFile(workbook, "Income_Expense_Report.xlsx");
         };
 
-        // Initial View Activation
+        // Initial View Activation & Language Application
+        applyLanguage();
         switchMenu('dashboard');
     </script>
 </body>
