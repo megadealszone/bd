@@ -563,6 +563,30 @@
             });
         }
 
+        // এক্সেল/ওয়ার্ড টেক্সটকে যোগফল প্রকাশের জন্য ফরমেট করার হেলপার ফাংশন
+        function formatMultiLineInput(str) {
+            if (!str) return '';
+            let enStr = toEn(str).trim();
+
+            let lines = enStr.split(/[\r\n\t]+/);
+            let items = [];
+
+            for (let line of lines) {
+                let cleanLine = line.trim();
+                if (!cleanLine) continue;
+
+                let parts = cleanLine.split(/\s+/);
+                for (let part of parts) {
+                    let p = part.replace(/,/g, '').trim();
+                    if (p) items.push(p);
+                }
+            }
+
+            let joined = items.join('+');
+            joined = joined.replace(/\++/g, '+').replace(/^\+|\+$/g, '');
+            return joined;
+        }
+
         function calculate() {
             let rawInput = inputField.value.trim();
             saveData();
@@ -648,9 +672,10 @@
                 .replace(/×/g, '*')
                 .replace(/÷/g, '/')
                 .replace(/[\t\r\n]+/g, '+')       
-                .replace(/,/g, '')               
-                .replace(/\++/g, '+')             
-                .replace(/^\+|\+$/g, '');         
+                .replace(/,/g, '');
+
+            expr = expr.replace(/(\d)\s+(\d)/g, '$1+$2');
+            expr = expr.replace(/\++/g, '+').replace(/^\+|\+$/g, '');
 
             const validExpression = /^[0-9+\-*/().\s]+$/;
 
@@ -701,15 +726,39 @@
             });
         }
 
+        // সরাসরি ইনপুট বক্সে Paste (Ctrl+V বা Long Press Paste) হ্যান্ডেল করা
+        inputField.addEventListener('paste', (e) => {
+            e.preventDefault();
+            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            if (pastedText) {
+                let formatted = formatMultiLineInput(pastedText);
+                
+                const start = inputField.selectionStart || 0;
+                const end = inputField.selectionEnd || 0;
+                const val = inputField.value;
+                
+                inputField.value = val.substring(0, start) + formatted + val.substring(end);
+                inputField.selectionStart = inputField.selectionEnd = start + formatted.length;
+                
+                calculate();
+            }
+        });
+
+        // ডানপাশের পেস্ট আইকন বাটনে ক্লিক করে পেস্ট ও ক্যালকুলেশন
         pasteBtn.addEventListener('click', async () => {
             try {
                 const text = await navigator.clipboard.readText();
                 if (text) {
-                    inputField.value = text;
+                    inputField.value = formatMultiLineInput(text);
                     calculate();
                 }
             } catch (err) {
                 console.error('Clipboard paste error:', err);
+                let fallbackText = prompt(currentLang === 'bn' ? 'এখানে ডেটা পেস্ট করুন:' : 'Paste data here:');
+                if (fallbackText) {
+                    inputField.value = formatMultiLineInput(fallbackText);
+                    calculate();
+                }
             }
         });
 
@@ -740,3 +789,4 @@
     </script>
 </body>
 </html>
+
