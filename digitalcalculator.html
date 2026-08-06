@@ -78,6 +78,9 @@
             gap: 4px;
             margin-bottom: 15px;
         }
+        .header-controls.mobile-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
         button, .nav-link-btn {
             cursor: pointer;
             border: none;
@@ -105,7 +108,7 @@
         .nav-link-btn { background-color: #17a2b8; }
         .nav-link-btn:hover { background-color: #138496; }
 
-        .view-btn { background-color: #6f42c1; }
+        .view-btn { background-color: #6f42c1; display: none; }
         .view-btn:hover { background-color: #5a32a3; }
 
         /* Input Container with Paste Icon Outside */
@@ -358,6 +361,20 @@
         const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
         const enDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
+        // কম্পিউটার ডিভাইস চেক করে View বাটন নিয়ন্ত্রণ করার ফাংশন
+        function checkDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768);
+            const headerControls = document.querySelector('.header-controls');
+            
+            if (isMobile) {
+                viewBtn.style.display = 'none';
+                if (headerControls) headerControls.classList.add('mobile-grid');
+            } else {
+                viewBtn.style.display = 'flex';
+                if (headerControls) headerControls.classList.remove('mobile-grid');
+            }
+        }
+
         function toBn(numStr) {
             return String(numStr).replace(/[0-9]/g, w => bnDigits[enDigits.indexOf(w)]);
         }
@@ -447,16 +464,22 @@
             }
         });
 
-        // View Button Action (Picture-In-Picture / Always On Top Popout)
+        // View Button Action (Desktop Floating Pop-out Window)
         viewBtn.addEventListener('click', async () => {
             if ('documentPictureInPicture' in window) {
                 try {
                     const pipWindow = await window.documentPictureInPicture.requestWindow({
                         width: 420,
-                        height: 500
+                        height: 520
                     });
 
-                    // Copy styles to PIP window
+                    // Copy FontAwesome Icons to PIP Window
+                    const fontAwesomeLink = document.createElement('link');
+                    fontAwesomeLink.rel = 'stylesheet';
+                    fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                    pipWindow.document.head.appendChild(fontAwesomeLink);
+
+                    // Copy Styles to PIP Window
                     [...document.styleSheets].forEach((styleSheet) => {
                         try {
                             const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
@@ -466,7 +489,6 @@
                         } catch (e) {
                             const link = document.createElement('link');
                             link.rel = 'stylesheet';
-                            link.type = styleSheet.type;
                             link.href = styleSheet.href;
                             pipWindow.document.head.appendChild(link);
                         }
@@ -477,11 +499,14 @@
                     pipWindow.document.body.style.justifyContent = 'center';
                     pipWindow.document.body.style.alignItems = 'center';
                     pipWindow.document.body.style.margin = '0';
+                    pipWindow.document.body.style.minHeight = '100vh';
 
                     pipWindow.document.body.appendChild(calcBox);
 
-                    pipWindow.addEventListener('unload', () => {
-                        document.body.appendChild(calcBox);
+                    pipWindow.addEventListener('pagehide', () => {
+                        if (!document.body.contains(calcBox)) {
+                            document.body.appendChild(calcBox);
+                        }
                     });
                 } catch (err) {
                     openPopupWindow();
@@ -708,6 +733,9 @@
             saveData();
         });
 
+        window.addEventListener('resize', checkDevice);
+
+        checkDevice();
         loadSavedData();
     </script>
 </body>
