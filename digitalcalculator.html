@@ -30,6 +30,7 @@
             width: 400px;
             max-width: 100%;
             margin: auto;
+            overflow: hidden;
         }
 
         /* Top Right Window Control Buttons */
@@ -107,17 +108,20 @@
         .view-btn { background-color: #6f42c1; }
         .view-btn:hover { background-color: #5a32a3; }
 
-        /* Input Container with Paste Icon */
+        /* Input Container with Paste Icon Outside */
         .input-group {
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
             width: 100%;
             margin-bottom: 15px;
         }
 
         textarea, input[type="text"] {
-            width: 100%;
-            padding: 12px 42px 12px 12px;
-            font-size: 20px;
+            flex: 1;
+            min-width: 0;
+            padding: 10px 12px;
+            font-size: 18px;
             border: 2px solid #ccc;
             border-radius: 6px;
             text-align: center;
@@ -130,21 +134,23 @@
         }
 
         .paste-btn {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #e9ecef;
-            border: 1px solid #ced4da;
-            color: #007bff;
+            position: static;
+            background: #007bff;
+            border: none;
+            color: white;
             font-size: 16px;
             cursor: pointer;
-            padding: 6px 8px;
-            border-radius: 4px;
+            padding: 10px 14px;
+            border-radius: 6px;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            white-space: nowrap;
         }
         .paste-btn:hover {
-            background: #007bff;
+            background: #0056b3;
             color: white;
         }
         
@@ -153,27 +159,53 @@
             flex-direction: column;
             gap: 10px;
             min-height: 40px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
         }
         
         .single-result-box {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
+            width: 100%;
+            max-width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .result-text-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 100%;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+
+        .result-symbol {
+            font-size: 22px;
+            font-weight: bold;
+            color: #28a745;
+            line-height: 1;
         }
 
         .result {
-            font-size: 25px;
+            font-size: 22px;
             font-weight: bold;
             color: #28a745;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            line-height: 1.2;
         }
 
         .copy-btn {
             background-color: #28a745;
             color: white;
-            padding: 5px 10px;
+            padding: 6px 10px;
             font-size: 12px;
             border-radius: 4px;
+            white-space: nowrap;
         }
         .copy-btn:hover { background-color: #218838; }
 
@@ -252,6 +284,7 @@
             border-bottom: 1px dashed #ccc;
             font-size: 13px;
             color: #333;
+            word-break: break-all;
         }
         .history-container li:last-child {
             border-bottom: none;
@@ -510,7 +543,13 @@
             saveData();
 
             if(rawInput === '') {
-                resultContainer.innerHTML = `<div class="single-result-box"><div class="result">${currentLang === 'bn' ? '০.০০' : '0.00'}</div></div>`;
+                resultContainer.innerHTML = `
+                    <div class="single-result-box">
+                        <div class="result-text-group">
+                            <span class="result-symbol">=</span>
+                            <span class="result">${currentLang === 'bn' ? '০.০০' : '0.00'}</span>
+                        </div>
+                    </div>`;
                 errorOutput.innerText = '';
                 return;
             }
@@ -580,11 +619,11 @@
 
             // 2. Standard Arithmetic & Excel/Word Clipboard Processing
             let expr = normalizedInput
+                .replace(/"/g, '')               
                 .replace(/×/g, '*')
                 .replace(/÷/g, '/')
-                .replace(/,/g, '')               
                 .replace(/[\t\r\n]+/g, '+')       
-                .replace(/\s+/g, '+')             
+                .replace(/,/g, '')               
                 .replace(/\++/g, '+')             
                 .replace(/^\+|\+$/g, '');         
 
@@ -601,7 +640,10 @@
 
                         resultContainer.innerHTML = `
                             <div class="single-result-box">
-                                <div class="result">= ${formattedResult}</div>
+                                <div class="result-text-group">
+                                    <span class="result-symbol">=</span>
+                                    <span class="result">${formattedResult}</span>
+                                </div>
                                 <button class="copy-btn" onclick="executeCopy('${formattedResult}', '${historyText}', this)"><i class="fa-regular fa-copy"></i> ${currentLang === 'bn' ? 'কপি' : 'Copy'}</button>
                             </div>
                         `;
