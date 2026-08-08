@@ -14,11 +14,11 @@
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             min-height: 100vh;
             background-color: #e9ecef;
             margin: 0;
-            padding: 15px;
+            padding: 20px 15px 15px 15px;
         }
         .calculator-box {
             position: relative;
@@ -76,6 +76,7 @@
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 4px;
+            margin-top: 15px;
             margin-bottom: 15px;
         }
         .header-controls.mobile-grid {
@@ -304,14 +305,6 @@
         </div>
 
         <div id="calcContent">
-            <div class="header-controls">
-                <button id="langToggleBtn" class="lang-btn"><i class="fa-solid fa-language"></i> <span id="langTxt">বাংলা</span></button>
-                <button id="historyToggleBtn" class="history-btn"><i class="fa-solid fa-clock-rotate-left"></i> <span id="histTxt">History</span></button>
-                <button id="refreshBtn" class="refresh-btn"><i class="fa-solid fa-rotate-right"></i> <span id="refTxt">Refresh</span></button>
-                <a href="incomeexp.html" id="incomeLink" class="nav-link-btn"><i class="fa-solid fa-file-invoice-dollar"></i> <span id="linkTxt">হিসাব</span></a>
-                <button id="viewBtn" class="view-btn"><i class="fa-solid fa-window-restore"></i> <span id="viewTxt">View</span></button>
-            </div>
-            
             <h2 id="mainTitle">Automatic Calculator</h2>
             
             <div class="input-group">
@@ -322,6 +315,15 @@
             <div id="resultContainer" class="result-container"></div>
             
             <div id="errorOutput" class="error"></div>
+
+            <!-- কন্ট্রোল বাটনসমূহ -->
+            <div class="header-controls">
+                <button id="langToggleBtn" class="lang-btn"><i class="fa-solid fa-language"></i> <span id="langTxt">বাংলা</span></button>
+                <button id="historyToggleBtn" class="history-btn"><i class="fa-solid fa-clock-rotate-left"></i> <span id="histTxt">History</span></button>
+                <button id="refreshBtn" class="refresh-btn"><i class="fa-solid fa-rotate-right"></i> <span id="refTxt">Refresh</span></button>
+                <a href="incomeexp.html" id="incomeLink" class="nav-link-btn"><i class="fa-solid fa-file-invoice-dollar"></i> <span id="linkTxt">হিসাব</span></a>
+                <button id="viewBtn" class="view-btn"><i class="fa-solid fa-window-restore"></i> <span id="viewTxt">View</span></button>
+            </div>
 
             <div id="historyContainer" class="history-container">
                 <div class="history-header">
@@ -364,7 +366,7 @@
         // কম্পিউটার ডিভাইস চেক করে View বাটন নিয়ন্ত্রণ করার ফাংশন
         function checkDevice() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768);
-            const headerControls = document.querySelector('.header-controls');
+            const headerControls = calcBox.querySelector('.header-controls');
             
             if (isMobile) {
                 viewBtn.style.display = 'none';
@@ -422,26 +424,27 @@
         }
 
         function updateLangUI() {
+            const doc = calcBox.ownerDocument;
             if (currentLang === 'bn') {
-                document.getElementById('langTxt').innerText = 'English';
-                document.getElementById('refTxt').innerText = 'রিফ্রেশ';
+                doc.getElementById('langTxt').innerText = 'English';
+                doc.getElementById('refTxt').innerText = 'রিফ্রেশ';
                 mainTitle.innerText = 'অটোমেটিক হিসাব';
                 inputField.placeholder = 'যেমন: 100+200, 5%,20%=5000 বা Excel থেকে পেস্ট করুন';
                 historyTitle.innerText = 'সর্বশেষ হিসাব';
-                document.getElementById('clearTxt').innerText = 'সব মুছুন';
-                document.getElementById('linkTxt').innerText = 'হিসাব';
-                document.getElementById('viewTxt').innerText = 'ভিউ';
-                document.getElementById('histTxt').innerText = (historyContainer.style.display === 'block') ? 'লুকান' : 'হিস্ট্রি';
+                doc.getElementById('clearTxt').innerText = 'সব মুছুন';
+                doc.getElementById('linkTxt').innerText = 'হিসাব';
+                doc.getElementById('viewTxt').innerText = 'ভিউ';
+                doc.getElementById('histTxt').innerText = (historyContainer.style.display === 'block') ? 'লুকান' : 'হিস্ট্রি';
             } else {
-                document.getElementById('langTxt').innerText = 'বাংলা';
-                document.getElementById('refTxt').innerText = 'Refresh';
+                doc.getElementById('langTxt').innerText = 'বাংলা';
+                doc.getElementById('refTxt').innerText = 'Refresh';
                 mainTitle.innerText = 'Automatic Calculator';
                 inputField.placeholder = 'Example: 100+200, 5%,20%=5000 or Paste Excel Table';
                 historyTitle.innerText = 'Recent History';
-                document.getElementById('clearTxt').innerText = 'Clear All';
-                document.getElementById('linkTxt').innerText = 'Income/Exp';
-                document.getElementById('viewTxt').innerText = 'View';
-                document.getElementById('histTxt').innerText = (historyContainer.style.display === 'block') ? 'Hide' : 'History';
+                doc.getElementById('clearTxt').innerText = 'Clear All';
+                doc.getElementById('linkTxt').innerText = 'Income/Exp';
+                doc.getElementById('viewTxt').innerText = 'View';
+                doc.getElementById('histTxt').innerText = (historyContainer.style.display === 'block') ? 'Hide' : 'History';
             }
             renderHistory();
         }
@@ -464,14 +467,19 @@
             }
         });
 
-        // View Button Action (Desktop Floating Pop-out Window)
+        // View Button Action (Desktop Floating Pop-out Window / Always-On-Top PIP to top screen)
         viewBtn.addEventListener('click', async () => {
             if ('documentPictureInPicture' in window) {
                 try {
                     const pipWindow = await window.documentPictureInPicture.requestWindow({
                         width: 420,
-                        height: 520
+                        height: 560,
+                        // ব্রাউজারের ডিসপ্লে টপ স্ক্রিনে পজিশন সেট করা
+                        left: 0,
+                        top: 0
                     });
+
+                    pipWindow.executeCopy = window.executeCopy;
 
                     // Copy FontAwesome Icons to PIP Window
                     const fontAwesomeLink = document.createElement('link');
@@ -494,18 +502,34 @@
                         }
                     });
 
+                    // Top Screen Aligning Style for PIP Window
                     pipWindow.document.body.style.backgroundColor = '#e9ecef';
                     pipWindow.document.body.style.display = 'flex';
                     pipWindow.document.body.style.justifyContent = 'center';
-                    pipWindow.document.body.style.alignItems = 'center';
+                    pipWindow.document.body.style.alignItems = 'flex-start';
+                    pipWindow.document.body.style.paddingTop = '10px';
                     pipWindow.document.body.style.margin = '0';
                     pipWindow.document.body.style.minHeight = '100vh';
 
                     pipWindow.document.body.appendChild(calcBox);
+                    pipWindow.focus();
+
+                    // PIP Window বন্ধ হলে স্বয়ংক্রিয়ভাবে মূল পেজে ফিরিয়ে আনা
+                    const checkPipClosed = setInterval(() => {
+                        if (pipWindow.closed) {
+                            clearInterval(checkPipClosed);
+                            if (!document.body.contains(calcBox)) {
+                                document.body.appendChild(calcBox);
+                                checkDevice();
+                            }
+                        }
+                    }, 300);
 
                     pipWindow.addEventListener('pagehide', () => {
+                        clearInterval(checkPipClosed);
                         if (!document.body.contains(calcBox)) {
                             document.body.appendChild(calcBox);
+                            checkDevice();
                         }
                     });
                 } catch (err) {
@@ -517,10 +541,32 @@
         });
 
         function openPopupWindow() {
-            const popupWindow = window.open('', 'CalcWindow', 'width=430,height=530,resizable=yes,scrollbars=yes');
+            // স্ক্রিনের টপ লেফটে (top=0, left=0) ওপেন করার ব্যবস্থা
+            const popupWindow = window.open('', 'CalcWindow', 'width=430,height=560,top=0,left=0,resizable=yes,scrollbars=yes');
             if (popupWindow) {
-                popupWindow.document.write('<html><head><title>Automatic Calculator</title>' + document.head.innerHTML + '</head><body style="background:#e9ecef; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0;"></body></html>');
-                popupWindow.document.body.appendChild(calcBox.cloneNode(true));
+                popupWindow.executeCopy = window.executeCopy;
+                popupWindow.document.write('<html><head><title>Automatic Calculator</title>' + document.head.innerHTML + '</head><body style="background:#e9ecef; display:flex; justify-content:center; align-items:flex-start; padding-top:10px; min-height:100vh; margin:0;"></body></html>');
+                
+                popupWindow.document.body.appendChild(calcBox);
+                popupWindow.focus();
+
+                const checkPopupClosed = setInterval(() => {
+                    if (popupWindow.closed) {
+                        clearInterval(checkPopupClosed);
+                        if (!document.body.contains(calcBox)) {
+                            document.body.appendChild(calcBox);
+                            checkDevice();
+                        }
+                    }
+                }, 300);
+
+                popupWindow.addEventListener('beforeunload', () => {
+                    clearInterval(checkPopupClosed);
+                    if (!document.body.contains(calcBox)) {
+                        document.body.appendChild(calcBox);
+                        checkDevice();
+                    }
+                });
             }
         }
 
@@ -711,8 +757,10 @@
             }
         }
 
-        function executeCopy(resultOnlyText, textToHistory, btnElem) {
-            navigator.clipboard.writeText(resultOnlyText).then(() => {
+        // Global scope এ executeCopy ডিফাইন 
+        window.executeCopy = function(resultOnlyText, textToHistory, btnElem) {
+            const currentWin = calcBox.ownerDocument.defaultView || window;
+            const handleSuccess = () => {
                 const originalHTML = btnElem.innerHTML;
                 btnElem.innerHTML = `<i class="fa-solid fa-check"></i> ${currentLang === 'bn' ? 'কপি হয়েছে' : 'Copied'}`;
                 btnElem.style.backgroundColor = '#17a2b8';
@@ -723,13 +771,40 @@
                     btnElem.innerHTML = originalHTML;
                     btnElem.style.backgroundColor = '#28a745';
                 }, 1500);
-            });
+            };
+
+            if (currentWin.navigator.clipboard && currentWin.navigator.clipboard.writeText) {
+                currentWin.navigator.clipboard.writeText(resultOnlyText).then(handleSuccess).catch(() => {
+                    fallbackCopyText(resultOnlyText, handleSuccess);
+                });
+            } else {
+                fallbackCopyText(resultOnlyText, handleSuccess);
+            }
+        };
+
+        function fallbackCopyText(text, callback) {
+            const doc = calcBox.ownerDocument;
+            const textArea = doc.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            doc.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                doc.execCommand('copy');
+                if (callback) callback();
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            doc.body.removeChild(textArea);
         }
 
-        // সরাসরি ইনপুট বক্সে Paste (Ctrl+V বা Long Press Paste) হ্যান্ডেল করা
+        // সরাসরি ইনপুট বক্সে Paste হ্যান্ডেল করা
         inputField.addEventListener('paste', (e) => {
             e.preventDefault();
-            let pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const currentWin = calcBox.ownerDocument.defaultView || window;
+            let pastedText = (e.clipboardData || currentWin.clipboardData).getData('text');
             if (pastedText) {
                 let formatted = formatMultiLineInput(pastedText);
                 
@@ -746,15 +821,16 @@
 
         // ডানপাশের পেস্ট আইকন বাটনে ক্লিক করে পেস্ট ও ক্যালকুলেশন
         pasteBtn.addEventListener('click', async () => {
+            const currentWin = calcBox.ownerDocument.defaultView || window;
             try {
-                const text = await navigator.clipboard.readText();
+                const text = await currentWin.navigator.clipboard.readText();
                 if (text) {
                     inputField.value = formatMultiLineInput(text);
                     calculate();
                 }
             } catch (err) {
                 console.error('Clipboard paste error:', err);
-                let fallbackText = prompt(currentLang === 'bn' ? 'এখানে ডেটা পেস্ট করুন:' : 'Paste data here:');
+                let fallbackText = currentWin.prompt(currentLang === 'bn' ? 'এখানে ডেটা পেস্ট করুন:' : 'Paste data here:');
                 if (fallbackText) {
                     inputField.value = formatMultiLineInput(fallbackText);
                     calculate();
@@ -789,4 +865,3 @@
     </script>
 </body>
 </html>
-
