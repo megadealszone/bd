@@ -1056,6 +1056,10 @@
                     currentUser = user.email;
                     localStorage.setItem('shop_app_current_user', currentUser);
 
+                    // সর্বশেষ লোকাল ডাটা থাকলে অ্যাপ খুলতেই তা প্রস্তুত রাখা।
+                    const localData = loadLocalUserData(currentUser);
+                    if (localData) shopData = localData;
+
                     shopData = normalizeShopData(shopData);
                     showMainApp();
                     loadUserData();
@@ -1252,6 +1256,8 @@
                     currentUser = userCredential.user.email;
                     localStorage.setItem('shop_app_current_user', currentUser);
 
+                    const localData = loadLocalUserData(currentUser);
+                    if (localData) shopData = localData;
                     shopData = normalizeShopData(shopData);
 
                     // Correct login: no success alert, go directly to POS.
@@ -1291,39 +1297,81 @@
                 });
         }
 
+        // =========================================================
+        // DATA PERSISTENCE: AUTO SAVE + LOCAL BACKUP + FIRESTORE
+        // =========================================================
+        function getLocalDataKey(user = currentUser) {
+            return user ? `shop_app_data_${String(user).toLowerCase()}` : 'shop_app_data_guest';
+        }
+
+        function loadLocalUserData(user = currentUser) {
+            try {
+                const raw = localStorage.getItem(getLocalDataKey(user));
+                return raw ? normalizeShopData(JSON.parse(raw)) : null;
+            } catch (error) {
+                console.warn("LocalStorage ডাটা পড়া যায়নি:", error);
+                return null;
+            }
+        }
+
+        function saveLocalUserData() {
+            try {
+                if (!currentUser) return;
+                localStorage.setItem(
+                    getLocalDataKey(),
+                    JSON.stringify(normalizeShopData(shopData))
+                );
+            } catch (error) {
+                console.warn("LocalStorage-এ ডাটা সেভ করা যায়নি:", error);
+            }
+        }
+
+        function renderAllDataUI() {
+            shopData = normalizeShopData(shopData);
+            updateUI();
+            renderStockTable();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDailyReport();
+            populateCategorySelects();
+            renderCart();
+
+            if (typeof renderDues === 'function') renderDues();
+            if (typeof renderManageReport === 'function' && document.getElementById('manage-report-table-body')) renderManageReport();
+            if (typeof renderRecycleBin === 'function' && document.getElementById('recycle-bin-table-body')) renderRecycleBin();
+        }
+
         function loadUserData() {
             if (!currentUser) return Promise.resolve();
 
+            // প্রথমে LocalStorage থেকে সর্বশেষ লোকাল কপি দেখানো হয়।
+            const localData = loadLocalUserData();
+            if (localData) {
+                shopData = localData;
+                renderAllDataUI();
+            }
+
             return db.collection("shopData").doc(currentUser).get()
                 .then((doc) => {
-                    shopData = normalizeShopData(doc.exists ? doc.data() : shopData);
-
-                    if (!doc.exists) {
-                        return db.collection("shopData").doc(currentUser).set(shopData)
-                            .catch((error) => {
-                                console.error("নতুন দোকানের Firestore ডাটা তৈরি হয়নি:", error);
-                            });
+                    if (doc.exists) {
+                        const cloudData = normalizeShopData(doc.data());
+                        shopData = cloudData;
+                        saveLocalUserData();
+                    } else {
+                        // Cloud-এ ডাটা না থাকলে লোকাল ডাটা থাকলে সেটিই Cloud-এ প্রথমবার সেভ হবে।
+                        shopData = localData ? normalizeShopData(localData) : normalizeShopData(shopData);
+                        return db.collection("shopData").doc(currentUser).set(shopData);
                     }
                 })
                 .then(() => {
-                    shopData = normalizeShopData(shopData);
-                    updateUI();
-                    renderStockTable();
-                    renderCategoryTable();
-                    renderExpenseTable();
-                    renderDailyReport();
-                    populateCategorySelects();
-                    renderCart();
+                    renderAllDataUI();
                 })
                 .catch((error) => {
-                    console.error("ডাটা লোড করতে সমস্যা হয়েছে:", error);
-                    shopData = normalizeShopData(shopData);
-                    updateUI();
-                    renderStockTable();
-                    renderCategoryTable();
-                    renderExpenseTable();
-                    renderDailyReport();
-                    populateCategorySelects();
+                    console.error("Firestore থেকে ডাটা লোড করতে সমস্যা হয়েছে:", error);
+                    // Internet/Firebase সাময়িকভাবে unavailable হলেও লোকাল ডাটা হারাবে না।
+                    const fallbackData = loadLocalUserData();
+                    if (fallbackData) shopData = fallbackData;
+                    renderAllDataUI();
                 });
         }
 
@@ -1469,27 +1517,28 @@
         function saveData() {
             shopData = normalizeShopData(shopData);
 
-            // UI updates immediately; Firebase save happens in parallel.
-            updateUI();
-            renderStockTable();
-            renderCategoryTable();
-            renderExpenseTable();
-            renderDailyReport();
-            populateCategorySelects();
+            // ১) এন্ট্রি/এডিট/ডিলিট হওয়ার সাথে সাথে UI এবং LocalStorage-এ সেভ।
+            // তাই ব্রাউজার রিফ্রেশ/সাময়িক ইন্টারনেট সমস্যায় ডাটা হারাবে না।
+            renderAllDataUI();
+            saveLocalUserData();
 
             if (!currentUser) {
-                console.warn("Firebase save skipped: no authenticated user.");
+                console.warn("Firebase save skipped: no authenticated user. Local auto-save completed.");
                 return Promise.resolve();
             }
 
+            // ২) একই ডাটা Firestore-এ Cloud Auto Save।
             const dataToSave = JSON.parse(JSON.stringify(shopData));
 
             return db.collection("shopData").doc(currentUser).set(dataToSave)
                 .then(() => {
-                    console.log("Cloud Firestore-এ ডাটা সফলভাবে সেভ হয়েছে!");
+                    // Cloud save সফল হলে LocalStorage কপিও সর্বশেষ অবস্থায় রাখা।
+                    saveLocalUserData();
+                    console.log("ডাটা Auto Save হয়েছে: LocalStorage + Cloud Firestore");
                 })
                 .catch((error) => {
-                    console.error("Firebase/Firestore-এ ডাটা সেভ করতে সমস্যা হয়েছে:", error);
+                    // Cloud ব্যর্থ হলেও LocalStorage-এ ডাটা ইতোমধ্যে নিরাপদে আছে।
+                    console.error("Firebase/Firestore Auto Save-এ সমস্যা হয়েছে; Local backup রাখা হয়েছে:", error);
                 });
         }
 
