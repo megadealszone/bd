@@ -375,7 +375,7 @@
                                 </div>
                             </div>
 
-                            <button onclick="checkout()" class="w-full btn-premium-dark text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center text-base mt-3">
+                            <button onclick="checkout()" title="কিবোর্ড: F8" class="w-full btn-premium-dark text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center text-base mt-3">
                                 <i class="fa-solid fa-check-circle me-2 text-lg"></i> বিক্রি সম্পন্ন করুন
                             </button>
                         </div>
@@ -802,6 +802,10 @@
                         <span>নগদ গ্রহণ:</span>
                         <span id="receipt-cash-paid">৳ 0.00</span>
                     </div>
+                    <div class="flex justify-between font-bold text-slate-700">
+                        <span>স্ট্যাটাস:</span>
+                        <span id="receipt-status-text">PAID</span>
+                    </div>
                     <div class="flex justify-between text-emerald-600 font-medium hidden" id="receipt-change-row">
                         <span>ফেরত প্রদান:</span>
                         <span id="receipt-change">৳ 0.00</span>
@@ -1049,16 +1053,101 @@
         let currentCustomerPreviousDue = 0;
         let datePickers = {};
         let currentReceiptDetails = {};
+        let keyboardSupportInitialized = false;
+
+        function getLocalDataKey() {
+            return `shop_app_data_${currentUser || 'guest'}`;
+        }
+
+        function saveLocalData() {
+            try {
+                localStorage.setItem(getLocalDataKey(), JSON.stringify(normalizeShopData(shopData)));
+                return true;
+            } catch (error) {
+                console.error("LocalStorage-এ ডাটা সেভ করতে সমস্যা হয়েছে:", error);
+                return false;
+            }
+        }
+
+        function loadLocalData() {
+            try {
+                const raw = localStorage.getItem(getLocalDataKey());
+                if (!raw) return false;
+                shopData = normalizeShopData(JSON.parse(raw));
+                return true;
+            } catch (error) {
+                console.error("LocalStorage থেকে ডাটা লোড করতে সমস্যা হয়েছে:", error);
+                return false;
+            }
+        }
+
+        function closeAnyOpenModal() {
+            const openModalElement = document.querySelector('.fixed.inset-0:not(.hidden)');
+            if (openModalElement && openModalElement.id) {
+                closeModal(openModalElement.id);
+                return true;
+            }
+            return false;
+        }
+
+        function setupKeyboardSupport() {
+            if (keyboardSupportInitialized) return;
+            keyboardSupportInitialized = true;
+
+            document.addEventListener('keydown', (e) => {
+                const active = document.activeElement;
+
+                if (e.key === 'Escape') {
+                    if (closeAnyOpenModal()) e.preventDefault();
+                    return;
+                }
+
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                    e.preventDefault();
+                    saveData();
+                    return;
+                }
+
+                if (e.key === 'F2') {
+                    e.preventDefault();
+                    document.getElementById('pos-category-select')?.focus();
+                    return;
+                }
+                if (e.key === 'F4') {
+                    e.preventDefault();
+                    document.getElementById('customer-phone')?.focus();
+                    return;
+                }
+                if (e.key === 'F6') {
+                    e.preventDefault();
+                    document.getElementById('cash-given')?.focus();
+                    return;
+                }
+                if (e.key === 'F8') {
+                    e.preventDefault();
+                    checkout();
+                    return;
+                }
+
+                if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                    if (active?.id === 'pos-qty-input') {
+                        e.preventDefault();
+                        addToCart();
+                    } else if (active?.id === 'cash-given') {
+                        e.preventDefault();
+                        checkout();
+                    }
+                }
+            });
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
+            setupKeyboardSupport();
+
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     currentUser = user.email;
                     localStorage.setItem('shop_app_current_user', currentUser);
-
-                    // সর্বশেষ লোকাল ডাটা থাকলে অ্যাপ খুলতেই তা প্রস্তুত রাখা।
-                    const localData = loadLocalUserData(currentUser);
-                    if (localData) shopData = localData;
 
                     shopData = normalizeShopData(shopData);
                     showMainApp();
@@ -1256,8 +1345,6 @@
                     currentUser = userCredential.user.email;
                     localStorage.setItem('shop_app_current_user', currentUser);
 
-                    const localData = loadLocalUserData(currentUser);
-                    if (localData) shopData = localData;
                     shopData = normalizeShopData(shopData);
 
                     // Correct login: no success alert, go directly to POS.
@@ -1297,81 +1384,49 @@
                 });
         }
 
-        // =========================================================
-        // DATA PERSISTENCE: AUTO SAVE + LOCAL BACKUP + FIRESTORE
-        // =========================================================
-        function getLocalDataKey(user = currentUser) {
-            return user ? `shop_app_data_${String(user).toLowerCase()}` : 'shop_app_data_guest';
-        }
-
-        function loadLocalUserData(user = currentUser) {
-            try {
-                const raw = localStorage.getItem(getLocalDataKey(user));
-                return raw ? normalizeShopData(JSON.parse(raw)) : null;
-            } catch (error) {
-                console.warn("LocalStorage ডাটা পড়া যায়নি:", error);
-                return null;
-            }
-        }
-
-        function saveLocalUserData() {
-            try {
-                if (!currentUser) return;
-                localStorage.setItem(
-                    getLocalDataKey(),
-                    JSON.stringify(normalizeShopData(shopData))
-                );
-            } catch (error) {
-                console.warn("LocalStorage-এ ডাটা সেভ করা যায়নি:", error);
-            }
-        }
-
-        function renderAllDataUI() {
-            shopData = normalizeShopData(shopData);
-            updateUI();
-            renderStockTable();
-            renderCategoryTable();
-            renderExpenseTable();
-            renderDailyReport();
-            populateCategorySelects();
-            renderCart();
-
-            if (typeof renderDues === 'function') renderDues();
-            if (typeof renderManageReport === 'function' && document.getElementById('manage-report-table-body')) renderManageReport();
-            if (typeof renderRecycleBin === 'function' && document.getElementById('recycle-bin-table-body')) renderRecycleBin();
-        }
-
         function loadUserData() {
             if (!currentUser) return Promise.resolve();
-
-            // প্রথমে LocalStorage থেকে সর্বশেষ লোকাল কপি দেখানো হয়।
-            const localData = loadLocalUserData();
-            if (localData) {
-                shopData = localData;
-                renderAllDataUI();
-            }
 
             return db.collection("shopData").doc(currentUser).get()
                 .then((doc) => {
                     if (doc.exists) {
-                        const cloudData = normalizeShopData(doc.data());
-                        shopData = cloudData;
-                        saveLocalUserData();
+                        shopData = normalizeShopData(doc.data());
+                        saveLocalData();
                     } else {
-                        // Cloud-এ ডাটা না থাকলে লোকাল ডাটা থাকলে সেটিই Cloud-এ প্রথমবার সেভ হবে।
-                        shopData = localData ? normalizeShopData(localData) : normalizeShopData(shopData);
-                        return db.collection("shopData").doc(currentUser).set(shopData);
+                        const hadLocal = loadLocalData();
+                        shopData = normalizeShopData(shopData);
+
+                        if (!hadLocal) {
+                            return db.collection("shopData").doc(currentUser).set(shopData)
+                                .then(() => saveLocalData())
+                                .catch((error) => {
+                                    console.error("নতুন দোকানের Firestore ডাটা তৈরি হয়নি:", error);
+                                    saveLocalData();
+                                });
+                        }
                     }
                 })
                 .then(() => {
-                    renderAllDataUI();
+                    shopData = normalizeShopData(shopData);
+                    updateUI();
+                    renderStockTable();
+                    renderCategoryTable();
+                    renderExpenseTable();
+                    renderDailyReport();
+                    populateCategorySelects();
+                    renderCart();
                 })
                 .catch((error) => {
-                    console.error("Firestore থেকে ডাটা লোড করতে সমস্যা হয়েছে:", error);
-                    // Internet/Firebase সাময়িকভাবে unavailable হলেও লোকাল ডাটা হারাবে না।
-                    const fallbackData = loadLocalUserData();
-                    if (fallbackData) shopData = fallbackData;
-                    renderAllDataUI();
+                    console.error("ডাটা লোড করতে সমস্যা হয়েছে:", error);
+                    loadLocalData();
+                    shopData = normalizeShopData(shopData);
+                    updateUI();
+                    renderStockTable();
+                    renderCategoryTable();
+                    renderExpenseTable();
+                    renderDailyReport();
+                    populateCategorySelects();
+                    renderCart();
                 });
         }
 
@@ -1517,28 +1572,30 @@
         function saveData() {
             shopData = normalizeShopData(shopData);
 
-            // ১) এন্ট্রি/এডিট/ডিলিট হওয়ার সাথে সাথে UI এবং LocalStorage-এ সেভ।
-            // তাই ব্রাউজার রিফ্রেশ/সাময়িক ইন্টারনেট সমস্যায় ডাটা হারাবে না।
-            renderAllDataUI();
-            saveLocalUserData();
+            // LocalStorage-এ সঙ্গে সঙ্গে সেভ — Refresh/offline হলেও সর্বশেষ ডাটা থাকবে।
+            saveLocalData();
+
+            updateUI();
+            renderStockTable();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDailyReport();
+            populateCategorySelects();
 
             if (!currentUser) {
-                console.warn("Firebase save skipped: no authenticated user. Local auto-save completed.");
+                console.warn("Firebase save skipped: no authenticated user.");
                 return Promise.resolve();
             }
 
-            // ২) একই ডাটা Firestore-এ Cloud Auto Save।
             const dataToSave = JSON.parse(JSON.stringify(shopData));
 
             return db.collection("shopData").doc(currentUser).set(dataToSave)
                 .then(() => {
-                    // Cloud save সফল হলে LocalStorage কপিও সর্বশেষ অবস্থায় রাখা।
-                    saveLocalUserData();
-                    console.log("ডাটা Auto Save হয়েছে: LocalStorage + Cloud Firestore");
+                    saveLocalData();
+                    console.log("Cloud Firestore-এ ডাটা সফলভাবে সেভ হয়েছে!");
                 })
                 .catch((error) => {
-                    // Cloud ব্যর্থ হলেও LocalStorage-এ ডাটা ইতোমধ্যে নিরাপদে আছে।
-                    console.error("Firebase/Firestore Auto Save-এ সমস্যা হয়েছে; Local backup রাখা হয়েছে:", error);
+                    console.error("Firebase/Firestore-এ ডাটা সেভ করতে সমস্যা হয়েছে; LocalStorage backup রাখা হয়েছে:", error);
                 });
         }
 
@@ -1684,19 +1741,40 @@
         }
 
         function sendWhatsAppMessage() {
-            let formattedPhone = currentReceiptDetails.customerPhone.replace(/[^0-9]/g, '');
-            if (formattedPhone.startsWith('0')) {
-                formattedPhone = '88' + formattedPhone;
+            if (!currentReceiptDetails || !currentReceiptDetails.customerPhone) {
+                alert("এই ক্যাশ মেমোর কাস্টমারের মোবাইল নাম্বার পাওয়া যায়নি।");
+                return;
             }
 
-            const msg = `আসসালামু আলাইকুম ${currentReceiptDetails.customerName} সাহেব,\n` +
-                        `আপনার ক্যাশ মেমো তৈরি হয়েছে।\n` +
-                        `ইনভয়েস: ${currentReceiptDetails.invoiceNo}\n` +
-                        `সর্বমোট টাকা: ৳${currentReceiptDetails.total}\n` +
-                        `পরিশোধিত: ৳${currentReceiptDetails.cashPaid}\n` +
-                        `স্ট্যাটাস: ${currentReceiptDetails.status}\n` +
-                        (currentReceiptDetails.due > 0 ? `বাকি টাকা: ৳${currentReceiptDetails.due}\n` : '') +
-                        `ধন্যবাদ!`;
+            let formattedPhone = String(currentReceiptDetails.customerPhone).replace(/[^0-9]/g, '');
+
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '88' + formattedPhone;
+            } else if (formattedPhone.length === 10 && formattedPhone.startsWith('1')) {
+                formattedPhone = '880' + formattedPhone;
+            }
+
+            const total = Number(currentReceiptDetails.total || 0);
+            const cashPaid = Number(currentReceiptDetails.cashPaid || 0);
+            const due = Number(currentReceiptDetails.due || 0);
+            const change = Number(currentReceiptDetails.change || 0);
+            const status = currentReceiptDetails.status || (due > 0 ? 'DUE' : 'PAID');
+
+            let msg =
+                `আসসালামু আলাইকুম ${currentReceiptDetails.customerName || 'গ্রাহক'} সাহেব,\n` +
+                `আপনার ক্যাশ মেমো তৈরি হয়েছে।\n` +
+                `ইনভয়েস: ${currentReceiptDetails.invoiceNo || ''}\n` +
+                `সর্বমোট টাকা: ৳${total.toFixed(2)}\n` +
+                `পরিশোধিত: ৳${cashPaid.toFixed(2)}\n` +
+                `স্ট্যাটাস: ${status}\n`;
+
+            if (due > 0) {
+                msg += `বাকি টাকা: ৳${due.toFixed(2)}\n`;
+            } else if (change > 0) {
+                msg += `ফেরত প্রদান: ৳${change.toFixed(2)}\n`;
+            }
+
+            msg += `ধন্যবাদ!`;
 
             const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(msg)}`;
             window.open(whatsappUrl, '_blank');
@@ -2874,17 +2952,61 @@
             }
 
             saveData();
-            
-            // Show receipt
-            currentReceiptDetails = { invoiceNo, customerName, customerPhone, subtotal, discountAmount, grandTotal, cashReceived, dueAmount };
+
+            // Show receipt with complete payment information.
+            const changeAmount = Math.max(0, cashReceived - grandTotal);
+            const status = dueAmount > 0 ? 'DUE' : 'PAID';
+
+            currentReceiptDetails = {
+                invoiceNo,
+                customerName,
+                customerPhone,
+                subtotal,
+                discountAmount,
+                total: grandTotal,
+                grandTotal,
+                cashPaid: cashReceived,
+                cashReceived,
+                due: dueAmount,
+                dueAmount,
+                change: changeAmount,
+                status
+            };
+
             document.getElementById('receipt-date').innerText = `তারিখ: ${today} (${time})`;
             document.getElementById('receipt-customer-info').innerHTML = `নাম: ${customerName} <br> মোবাইল: ${customerPhone}`;
             document.getElementById('receipt-customer-info').classList.remove('hidden');
             document.getElementById('receipt-items').innerHTML = receiptItemsHtml;
             document.getElementById('receipt-subtotal').innerText = `৳ ${subtotal.toFixed(2)}`;
+            document.getElementById('receipt-discount').innerText = `- ৳ ${discountAmount.toFixed(2)}`;
             document.getElementById('receipt-grand-total').innerText = `৳ ${grandTotal.toFixed(2)}`;
             document.getElementById('receipt-cash-paid').innerText = `৳ ${cashReceived.toFixed(2)}`;
-            
+            document.getElementById('receipt-status-text').innerText = status;
+
+            const receiptChangeRow = document.getElementById('receipt-change-row');
+            const receiptDueRow = document.getElementById('receipt-due-row');
+
+            document.getElementById('receipt-change').innerText = `৳ ${changeAmount.toFixed(2)}`;
+            document.getElementById('receipt-due').innerText = `৳ ${dueAmount.toFixed(2)}`;
+
+            if (receiptChangeRow) receiptChangeRow.classList.toggle('hidden', changeAmount <= 0);
+            if (receiptDueRow) receiptDueRow.classList.toggle('hidden', dueAmount <= 0);
+
+            const statusStamp = document.getElementById('receipt-status-stamp');
+            if (statusStamp) {
+                statusStamp.textContent = status;
+                statusStamp.classList.remove(
+                    'hidden',
+                    'text-emerald-600', 'border-emerald-600',
+                    'text-amber-600', 'border-amber-600'
+                );
+                if (dueAmount > 0) {
+                    statusStamp.classList.add('text-amber-600', 'border-amber-600');
+                } else {
+                    statusStamp.classList.add('text-emerald-600', 'border-emerald-600');
+                }
+            }
+
             openModal('receipt-modal');
 
             cart = [];
