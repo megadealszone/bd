@@ -19,6 +19,13 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/bn.js"></script>
 
+    <!-- ========================================== -->
+    <!-- FIREBASE CDN (ফায়ারবেস লাইব্রেরি) -->
+    <!-- ========================================== -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; }
         @media print {
@@ -1008,17 +1015,22 @@
 
     <!-- Application JavaScript -->
     <script>
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        // ==========================================
+        // ফায়ারবেস কনফিগারেশন (আপনার তথ্য এখানে বসান)
+        // ==========================================
         const firebaseConfig = {
-          apiKey: "AIzaSyB6G-5KGBFe0s-u28JUUYHYPBd-FlE83sM",
-          authDomain: "datasave-18039.firebaseapp.com",
-          databaseURL: "https://datasave-18039-default-rtdb.asia-southeast1.firebasedatabase.app",
-          projectId: "datasave-18039",
-          storageBucket: "datasave-18039.firebasestorage.app",
-          messagingSenderId: "91371754407",
-          appId: "1:91371754407:web:3b34944c34eb5cc61c1c82",
-          measurementId: "G-CZ0MHCKK8Q"
+            apiKey: "YOUR_API_KEY",                // আপনার Firebase API Key এখানে বসান
+            authDomain: "YOUR_AUTH_DOMAIN",          // আপনার Auth Domain এখানে বসান
+            projectId: "YOUR_PROJECT_ID",            // আপনার Firebase Project ID এখানে বসান
+            storageBucket: "YOUR_STORAGE_BUCKET",    // আপনার Storage Bucket এখানে বসান
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID", // আপনার Sender ID এখানে বসান
+            appId: "YOUR_APP_ID"                     // আপনার Firebase App ID এখানে বসান
         };
+
+        // ফায়ারবেস ইনিশিয়ালাইজেশন
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
         let currentUser = localStorage.getItem('shop_app_current_user') || null;
         let shopData = {
@@ -1089,28 +1101,26 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('shop_app_users')) || [];
-            if (users.find(u => u.email === email)) {
-                alert("এই ইমেইল দিয়ে ইতিমধ্যেই অ্যাকাউন্ট তৈরি করা হয়েছে! দয়া করে লগইন করুন।");
-                return;
-            }
-
-            users.push({ email, pass });
-            localStorage.setItem('shop_app_users', JSON.stringify(users));
-
-            const defaultData = {
-                categories: ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'],
-                products: [],
-                sales: [],
-                expenses: [],
-                dues: [],
-                recycleBin: []
-            };
-            localStorage.setItem('shop_app_data_' + email, JSON.stringify(defaultData));
-
-            alert("সাইন আপ সফল হয়েছে! এখন আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।");
-            document.getElementById('signup-form').reset();
-            switchAuthView('login');
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    const defaultData = {
+                        categories: ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'],
+                        products: [],
+                        sales: [],
+                        expenses: [],
+                        dues: [],
+                        recycleBin: []
+                    };
+                    return db.collection("shopData").doc(email).set(defaultData);
+                })
+                .then(() => {
+                    alert("সাইন আপ সফল হয়েছে! এখন আপনার ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করুন।");
+                    document.getElementById('signup-form').reset();
+                    switchAuthView('login');
+                })
+                .catch((error) => {
+                    alert("সাইন আপ ব্যর্থ হয়েছে: " + error.message);
+                });
         }
 
         function handleLogin(e) {
@@ -1118,37 +1128,46 @@
             const email = document.getElementById('login-email').value.trim();
             const pass = document.getElementById('login-pass').value;
 
-            let users = JSON.parse(localStorage.getItem('shop_app_users')) || [];
-            const user = users.find(u => u.email === email && u.pass === pass);
-
-            if (!user) {
-                alert("ভুল ইমেইল অথবা পাসওয়ার্ড! অথবা আগে সাইন আপ করুন।");
-                return;
-            }
-
-            localStorage.setItem('shop_app_current_user', email);
-            currentUser = email;
-            loadUserData();
-            showMainApp();
+            auth.signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    localStorage.setItem('shop_app_current_user', email);
+                    currentUser = email;
+                    loadUserData();
+                    showMainApp();
+                })
+                .catch((error) => {
+                    alert("ভুল ইমেইল অথবা পাসওয়ার্ড! অথবা আগে সাইন আপ করুন।");
+                });
         }
 
         function logout() {
-            localStorage.removeItem('shop_app_current_user');
-            currentUser = null;
-            showAuthApp();
+            auth.signOut().then(() => {
+                localStorage.removeItem('shop_app_current_user');
+                currentUser = null;
+                showAuthApp();
+            });
         }
 
         function loadUserData() {
             if (currentUser) {
-                const data = localStorage.getItem('shop_app_data_' + currentUser);
-                if (data) {
-                    shopData = JSON.parse(data);
-                }
-                if (!shopData.categories || shopData.categories.length === 0) {
-                    shopData.categories = ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'];
-                }
-                if (!shopData.recycleBin) shopData.recycleBin = [];
-                if (!shopData.dues) shopData.dues = [];
+                db.collection("shopData").doc(currentUser).get().then((doc) => {
+                    if (doc.exists) {
+                        shopData = doc.data();
+                    }
+                    if (!shopData.categories || shopData.categories.length === 0) {
+                        shopData.categories = ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'];
+                    }
+                    if (!shopData.recycleBin) shopData.recycleBin = [];
+                    if (!shopData.dues) shopData.dues = [];
+                    updateUI();
+                    renderStockTable();
+                    renderCategoryTable();
+                    renderExpenseTable();
+                    renderDailyReport();
+                    populateCategorySelects();
+                }).catch((error) => {
+                    console.error("ডাটা লোড করতে সমস্যা হয়েছে: ", error);
+                });
             }
         }
 
@@ -1249,7 +1268,13 @@
 
         function saveData() {
             if (currentUser) {
-                localStorage.setItem('shop_app_data_' + currentUser, JSON.stringify(shopData));
+                db.collection("shopData").doc(currentUser).set(shopData)
+                    .then(() => {
+                        console.log("Cloud Firestore-এ ডাটা সফলভাবে সেভ হয়েছে!");
+                    })
+                    .catch((error) => {
+                        console.error("ডাটা সেভ করতে সমস্যা হয়েছে: ", error);
+                    });
             }
             updateUI();
             renderStockTable();
@@ -2027,6 +2052,61 @@
                     profit: item.isPreviousDue ? 0 : netItemTotal - (item.cost * item.qty)
                 });
             });
+
+            if (currentCustomerPreviousDue > 0) {
+                if (cashReceived >= grandTotal) {
+                    shopData.dues = shopData.dues.filter(d => !(d.phone === customerPhone && d.type === 'receivable'));
+                } else {
+                    const existingDue = shopData.dues.find(d => d.phone === customerPhone && d.type === 'receivable');
+                    if (existingDue) {
+                        existingDue.amount = dueAmount;
+                        existingDue.date = today;
+                        existingDue.person = customerName;
+                    } else if (dueAmount > 0) {
+                        shopData.dues.push({
+                            id: Date.now(),
+                            type: 'receivable',
+                            date: today,
+                            person: customerName,
+                            phone: customerPhone,
+                            details: 'বিক্রয়ের বকেয়া',
+                            amount: dueAmount
+                        });
+                    }
+                }
+            } else if (dueAmount > 0) {
+                shopData.dues.push({
+                    id: Date.now(),
+                    type: 'receivable',
+                    date: today,
+                    person: customerName,
+                    phone: customerPhone,
+                    details: 'ইনভয়েস: ' + invoiceNo,
+                    amount: dueAmount
+                });
+            }
+
+            saveData();
+            
+            // Show receipt
+            currentReceiptDetails = { invoiceNo, customerName, customerPhone, subtotal, discountAmount, grandTotal, cashReceived, dueAmount };
+            document.getElementById('receipt-date').innerText = `তারিখ: ${today} (${time})`;
+            document.getElementById('receipt-customer-info').innerHTML = `নাম: ${customerName} <br> মোবাইল: ${customerPhone}`;
+            document.getElementById('receipt-customer-info').classList.remove('hidden');
+            document.getElementById('receipt-items').innerHTML = receiptItemsHtml;
+            document.getElementById('receipt-subtotal').innerText = `৳ ${subtotal.toFixed(2)}`;
+            document.getElementById('receipt-grand-total').innerText = `৳ ${grandTotal.toFixed(2)}`;
+            document.getElementById('receipt-cash-paid').innerText = `৳ ${cashReceived.toFixed(2)}`;
+            
+            openModal('receipt-modal');
+
+            cart = [];
+            renderCart();
+            resetProductSelectionOnly();
+            document.getElementById('customer-name').value = '';
+            document.getElementById('customer-phone').value = '';
+            document.getElementById('cash-given').value = '';
+        }
     </script>
 </body>
 </html>
