@@ -1024,7 +1024,8 @@
             projectId: "datasave-18039",            // আপনার Firebase Project ID এখানে বসান
             storageBucket: "datasave-18039.firebasestorage.app",    // আপনার Storage Bucket এখানে বসান
             messagingSenderId: "91371754407", // আপনার Sender আইডি এখানে বসান
-            appId: "1:91371754407:web:3b34944c34eb5cc61c1c82"                     // আপনার Firebase App ID এখানে বসান
+            appId: "1:91371754407:web:3b34944c34eb5cc61c1c82",                    // আপনার Firebase App ID এখানে বসান
+            measurementId: "G-CZ0MHCKK8Q"
         };
 
         // ফায়ারবেস ইনিশিয়ালাইজেশন
@@ -1050,13 +1051,36 @@
         let currentReceiptDetails = {};
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (currentUser) {
-                loadUserData();
-                showMainApp();
-            } else {
-                showAuthApp();
-            }
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user.email;
+                    localStorage.setItem('shop_app_current_user', currentUser);
+
+                    shopData = normalizeShopData(shopData);
+                    showMainApp();
+                    loadUserData();
+                } else {
+                    currentUser = null;
+                    localStorage.removeItem('shop_app_current_user');
+                    showAuthApp();
+                }
+            });
         });
+
+        function normalizeShopData(data) {
+            const safe = (data && typeof data === 'object') ? data : {};
+
+            return {
+                categories: Array.isArray(safe.categories) && safe.categories.length
+                    ? safe.categories
+                    : ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'],
+                products: Array.isArray(safe.products) ? safe.products : [],
+                sales: Array.isArray(safe.sales) ? safe.sales : [],
+                expenses: Array.isArray(safe.expenses) ? safe.expenses : [],
+                dues: Array.isArray(safe.dues) ? safe.dues : [],
+                recycleBin: Array.isArray(safe.recycleBin) ? safe.recycleBin : []
+            };
+        }
 
         function switchAuthView(view) {
             const loginForm = document.getElementById('login-form');
@@ -1223,77 +1247,30 @@
 
             setAuthButtonLoading(button, true, "লগইন করুন", "fa-solid fa-arrow-right");
 
-            /*
-             * গুরুত্বপূর্ণ:
-             * Firebase authentication-এর error এবং Login সফল হওয়ার পরের
-             * UI/data-loading error আলাদা রাখা হয়েছে।
-             *
-             * আগের কোডে .catch() পুরো promise chain-এর শেষে থাকায় Login
-             * সফল হওয়ার পর loadUserData()/UI-তে কোনো JavaScript error হলেও
-             * সেটি "ভুল ইমেইল অথবা পাসওয়ার্ড" হিসেবে দেখাচ্ছিল।
-             *
-             * এখন Firebase-এর signIn ব্যর্থ হলেই শুধু ভুল Login message আসবে।
-             * সফল Login হলে কোনো alert দেখানো হবে না।
-             */
-            auth.signInWithEmailAndPassword(email, pass).then(
-                (userCredential) => {
-                    try {
-                        const firebaseUser = userCredential.user;
+            auth.signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    currentUser = userCredential.user.email;
+                    localStorage.setItem('shop_app_current_user', currentUser);
 
-                        currentUser = firebaseUser.email;
-                        localStorage.setItem('shop_app_current_user', currentUser);
+                    shopData = normalizeShopData(shopData);
 
-                        shopData = {
-                            categories: ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'],
-                            products: [],
-                            sales: [],
-                            expenses: [],
-                            dues: [],
-                            recycleBin: []
-                        };
+                    // Correct login: no success alert, go directly to POS.
+                    showMainApp();
+                    form.reset();
 
-                        // Authentication সফল — কোনো Success message নয়।
-                        // সরাসরি বিক্রি/POS পোর্টাল।
-                        showMainApp();
-
-                        form.reset();
-
-                        // Firestore/data loading যেন Login-এর ফলাফলকে প্রভাবিত না করে,
-                        // তাই এটি আলাদা করে background-এ চালানো হচ্ছে।
-                        setTimeout(() => {
-                            try {
-                                loadUserData();
-                            } catch (dataError) {
-                                console.error("Login-এর পর ডাটা লোড করতে সমস্যা:", dataError);
-                            }
-                        }, 0);
-
-                    } catch (uiError) {
-                        // Login সফল হয়েছে। UI-তে কোনো সমস্যা হলেও
-                        // ভুল Password message দেখানো যাবে না।
-                        console.error("Login successful, but UI initialization error:", uiError);
-
-                        // জরুরি fallback: সরাসরি POS container দেখানো।
-                        try {
-                            document.getElementById('auth-container').classList.add('hidden');
-                            document.getElementById('app-container').classList.remove('hidden');
-                        } catch (fallbackError) {
-                            console.error("POS fallback error:", fallbackError);
-                        }
-                    }
-                },
-                (error) => {
-                    // এই callback শুধুমাত্র Firebase sign-in ব্যর্থ হলে চলবে।
+                    return loadUserData();
+                })
+                .catch((error) => {
                     console.error("Firebase Login authentication error:", error);
 
                     localStorage.removeItem('shop_app_current_user');
                     currentUser = null;
 
                     alert(getAuthErrorMessage(error, "login"));
-                }
-            ).finally(() => {
-                setAuthButtonLoading(button, false, "লগইন করুন", "fa-solid fa-arrow-right");
-            });
+                })
+                .finally(() => {
+                    setAuthButtonLoading(button, false, "লগইন করুন", "fa-solid fa-arrow-right");
+                });
         }
 
         function logout() {
@@ -1315,35 +1292,59 @@
         }
 
         function loadUserData() {
-            if (currentUser) {
-                db.collection("shopData").doc(currentUser).get().then((doc) => {
-                    if (doc.exists) {
-                        shopData = doc.data();
+            if (!currentUser) return Promise.resolve();
+
+            return db.collection("shopData").doc(currentUser).get()
+                .then((doc) => {
+                    shopData = normalizeShopData(doc.exists ? doc.data() : shopData);
+
+                    if (!doc.exists) {
+                        return db.collection("shopData").doc(currentUser).set(shopData)
+                            .catch((error) => {
+                                console.error("নতুন দোকানের Firestore ডাটা তৈরি হয়নি:", error);
+                            });
                     }
-                    if (!shopData.categories || shopData.categories.length === 0) {
-                        shopData.categories = ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'];
-                    }
-                    if (!shopData.recycleBin) shopData.recycleBin = [];
-                    if (!shopData.dues) shopData.dues = [];
+                })
+                .then(() => {
+                    shopData = normalizeShopData(shopData);
                     updateUI();
                     renderStockTable();
                     renderCategoryTable();
                     renderExpenseTable();
                     renderDailyReport();
                     populateCategorySelects();
-                }).catch((error) => {
-                    console.error("ডাটা লোড করতে সমস্যা হয়েছে: ", error);
+                    renderCart();
+                })
+                .catch((error) => {
+                    console.error("ডাটা লোড করতে সমস্যা হয়েছে:", error);
+                    shopData = normalizeShopData(shopData);
+                    updateUI();
+                    renderStockTable();
+                    renderCategoryTable();
+                    renderExpenseTable();
+                    renderDailyReport();
+                    populateCategorySelects();
                 });
-            }
         }
 
         function showMainApp() {
-            document.getElementById('auth-container').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
+            const authContainer = document.getElementById('auth-container');
+            const appContainer = document.getElementById('app-container');
+
+            if (authContainer) authContainer.classList.add('hidden');
+            if (appContainer) appContainer.classList.remove('hidden');
+
+            shopData = normalizeShopData(shopData);
+
             initDatePickers();
             populateCategorySelects();
             switchTab('pos');
             updateUI();
+            renderStockTable();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDailyReport();
+            renderCart();
         }
 
         function showAuthApp() {
@@ -1372,22 +1373,55 @@
         }
 
         function initDatePickers() {
+            if (datePickers.reportStart && datePickers.reportEnd &&
+                datePickers.bsStart && datePickers.bsEnd &&
+                datePickers.dueDate && datePickers.expDate) {
+                return;
+            }
+
             const config = {
                 locale: "bn",
                 dateFormat: "Y-m-d",
-                disableMobile: "true"
+                disableMobile: true
             };
 
-            datePickers.reportStart = flatpickr("#report-start-date", { ...config, onChange: () => renderDailyReport() });
-            datePickers.reportEnd = flatpickr("#report-end-date", { ...config, onChange: () => renderDailyReport() });
-            datePickers.bsStart = flatpickr("#bs-start-date", { ...config, onChange: () => updateUI() });
-            datePickers.bsEnd = flatpickr("#bs-end-date", { ...config, onChange: () => updateUI() });
-            datePickers.dueDate = flatpickr("#due-date", config);
-            datePickers.expDate = flatpickr("#exp-date", config);
+            const reportStart = document.getElementById("report-start-date");
+            const reportEnd = document.getElementById("report-end-date");
+            const bsStart = document.getElementById("bs-start-date");
+            const bsEnd = document.getElementById("bs-end-date");
+            const dueDate = document.getElementById("due-date");
+            const expDate = document.getElementById("exp-date");
+
+            if (reportStart) {
+                datePickers.reportStart = flatpickr(reportStart, {
+                    ...config,
+                    onChange: () => renderDailyReport()
+                });
+            }
+            if (reportEnd) {
+                datePickers.reportEnd = flatpickr(reportEnd, {
+                    ...config,
+                    onChange: () => renderDailyReport()
+                });
+            }
+            if (bsStart) {
+                datePickers.bsStart = flatpickr(bsStart, {
+                    ...config,
+                    onChange: () => updateUI()
+                });
+            }
+            if (bsEnd) {
+                datePickers.bsEnd = flatpickr(bsEnd, {
+                    ...config,
+                    onChange: () => updateUI()
+                });
+            }
+            if (dueDate) datePickers.dueDate = flatpickr(dueDate, config);
+            if (expDate) datePickers.expDate = flatpickr(expDate, config);
 
             const today = getDeviceLocalDateStr();
-            datePickers.reportStart.setDate(today);
-            datePickers.reportEnd.setDate(today);
+            if (datePickers.reportStart) datePickers.reportStart.setDate(today, false);
+            if (datePickers.reportEnd) datePickers.reportEnd.setDate(today, false);
         }
 
         function setDateRange(prefix, type) {
@@ -1433,22 +1467,560 @@
         }
 
         function saveData() {
-            if (currentUser) {
-                db.collection("shopData").doc(currentUser).set(shopData)
-                    .then(() => {
-                        console.log("Cloud Firestore-এ ডাটা সফলভাবে সেভ হয়েছে!");
-                    })
-                    .catch((error) => {
-                        console.error("ডাটা সেভ করতে সমস্যা হয়েছে: ", error);
-                    });
-            }
+            shopData = normalizeShopData(shopData);
+
+            // UI updates immediately; Firebase save happens in parallel.
             updateUI();
             renderStockTable();
             renderCategoryTable();
             renderExpenseTable();
             renderDailyReport();
             populateCategorySelects();
+
+            if (!currentUser) {
+                console.warn("Firebase save skipped: no authenticated user.");
+                return Promise.resolve();
+            }
+
+            const dataToSave = JSON.parse(JSON.stringify(shopData));
+
+            return db.collection("shopData").doc(currentUser).set(dataToSave)
+                .then(() => {
+                    console.log("Cloud Firestore-এ ডাটা সফলভাবে সেভ হয়েছে!");
+                })
+                .catch((error) => {
+                    console.error("Firebase/Firestore-এ ডাটা সেভ করতে সমস্যা হয়েছে:", error);
+                });
         }
+
+        function renderDues() {
+            const tbody = document.getElementById('dues-table-body');
+            if(!tbody) return;
+            let totalReceivable = 0;
+            let totalPayable = 0;
+
+            tbody.innerHTML = shopData.dues.map(d => {
+                if (d.type === 'receivable') totalReceivable += d.amount;
+                if (d.type === 'payable') totalPayable += d.amount;
+
+                const typeBadge = d.type === 'receivable' 
+                    ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-bold">পাওনা</span>' 
+                    : '<span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded-full font-bold">দেনা</span>';
+
+                return `
+                    <tr>
+                        <td class="p-4">${d.date}</td>
+                        <td class="p-4">${typeBadge}</td>
+                        <td class="p-4 font-bold text-slate-800">${d.person}</td>
+                        <td class="p-4 text-slate-600">${d.phone}</td>
+                        <td class="p-4 text-slate-600">${d.details}</td>
+                        <td class="p-4 font-bold ${d.type === 'receivable' ? 'text-emerald-600' : 'text-rose-600'}">৳ ${d.amount.toFixed(2)}</td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো দেনা-পাওনার তথ্য নেই</td></tr>';
+
+            if(document.getElementById('total-receivable')) document.getElementById('total-receivable').innerText = `৳ ${totalReceivable.toFixed(2)}`;
+            if(document.getElementById('total-payable')) document.getElementById('total-payable').innerText = `৳ ${totalPayable.toFixed(2)}`;
+        }
+
+        function editEntry(type, id) {
+            if (type === 'product') {
+                const p = shopData.products.find(item => item.id === id);
+                if (!p) return;
+                document.getElementById('p-id').value = p.id;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-category').value = p.category;
+                document.getElementById('p-cost').value = p.cost;
+                document.getElementById('p-price').value = p.price;
+                document.getElementById('p-stock').value = p.stock;
+                document.getElementById('p-unit').value = p.unit;
+                document.getElementById('product-modal-title').innerText = "পণ্য এডিট করুন (আপডেট)";
+                openModal('product-modal');
+            } else if (type === 'sales') {
+                const s = shopData.sales.find(item => item.id === id);
+                if (!s) return;
+                document.getElementById('sales-id').value = s.id;
+                document.getElementById('sales-invoice').value = s.invoiceNo || 'N/A';
+                document.getElementById('sales-cname').value = s.customerName || '';
+                document.getElementById('sales-cphone').value = s.customerPhone || '';
+                document.getElementById('sales-pname').value = s.productName;
+                document.getElementById('sales-qty').value = s.qty;
+                document.getElementById('sales-unit').value = s.unit;
+                document.getElementById('sales-price').value = s.price;
+                document.getElementById('sales-cost').value = s.cost;
+                openModal('sales-modal');
+            } else if (type === 'expense') {
+                const e = shopData.expenses.find(item => item.id === id);
+                if (!e) return;
+                document.getElementById('exp-id').value = e.id;
+                if(datePickers.expDate) datePickers.expDate.setDate(e.date);
+                document.getElementById('exp-category').value = e.category;
+                document.getElementById('exp-amount').value = e.amount;
+                document.getElementById('expense-modal-title').innerText = "খরচের হিসাব এডিট করুন (আপডেট)";
+                openModal('expense-modal');
+            } else if (type === 'category') {
+                document.getElementById('cat-old-name').value = id;
+                document.getElementById('cat-name').value = id;
+                document.getElementById('category-modal-title').innerText = "ক্যাটাগরি এডিট করুন (আপডেট)";
+                openModal('category-modal');
+            } else if (type === 'due') {
+                const d = shopData.dues.find(item => item.id === id);
+                if (!d) return;
+                document.getElementById('due-id').value = d.id;
+                document.getElementById('due-type').value = d.type;
+                if(datePickers.dueDate) datePickers.dueDate.setDate(d.date);
+                document.getElementById('due-person').value = d.person;
+                document.getElementById('due-phone').value = d.phone;
+                document.getElementById('due-details').value = d.details;
+                document.getElementById('due-amount').value = d.amount;
+                document.getElementById('due-modal-title').innerText = "দেনা/পাওনা এডিট করুন";
+                openModal('due-modal');
+            }
+        }
+
+        function deleteToRecycleBin(type, id) {
+            if (!confirm('আপনি কি এই এন্ট্রিটি রিসাইকেল বিনে সরাতে চান?')) return;
+
+            let deletedItem = null;
+
+            if (type === 'product') {
+                const idx = shopData.products.findIndex(p => p.id === id);
+                if (idx !== -1) deletedItem = { type: 'product', data: shopData.products.splice(idx, 1)[0] };
+            } else if (type === 'sales') {
+                const idx = shopData.sales.findIndex(s => s.id === id);
+                if (idx !== -1) deletedItem = { type: 'sales', data: shopData.sales.splice(idx, 1)[0] };
+            } else if (type === 'expense') {
+                const idx = shopData.expenses.findIndex(e => e.id === id);
+                if (idx !== -1) deletedItem = { type: 'expense', data: shopData.expenses.splice(idx, 1)[0] };
+            } else if (type === 'category') {
+                const idx = shopData.categories.indexOf(id);
+                if (idx !== -1) deletedItem = { type: 'category', data: shopData.categories.splice(idx, 1)[0] };
+            } else if (type === 'due') {
+                const idx = shopData.dues.findIndex(d => d.id === id);
+                if (idx !== -1) deletedItem = { type: 'due', data: shopData.dues.splice(idx, 1)[0] };
+            }
+
+            if (deletedItem) {
+                shopData.recycleBin.push(deletedItem);
+                saveData();
+                renderManageReport();
+                renderRecycleBin();
+            }
+        }
+
+        function permanentlyDelete(index) {
+            if (confirm("আপনি কি নিশ্চিতভাবে এই এন্ট্রিটি চিরতরে মুছে ফেলতে চান?")) {
+                shopData.recycleBin.splice(index, 1);
+                saveData();
+                renderManageReport();
+                renderRecycleBin();
+            }
+        }
+
+        function restoreFromRecycleBin(index) {
+            const item = shopData.recycleBin[index];
+            if (!item) return;
+
+            if (item.type === 'product') shopData.products.push(item.data);
+            else if (item.type === 'sales') shopData.sales.push(item.data);
+            else if (item.type === 'expense') shopData.expenses.push(item.data);
+            else if (item.type === 'category') {
+                if (!shopData.categories.includes(item.data)) shopData.categories.push(item.data);
+            } else if (item.type === 'due') shopData.dues.push(item.data);
+
+            shopData.recycleBin.splice(index, 1);
+            saveData();
+            renderManageReport();
+            renderRecycleBin();
+        }
+
+        function sendWhatsAppMessage() {
+            let formattedPhone = currentReceiptDetails.customerPhone.replace(/[^0-9]/g, '');
+            if (formattedPhone.startsWith('0')) {
+                formattedPhone = '88' + formattedPhone;
+            }
+
+            const msg = `আসসালামু আলাইকুম ${currentReceiptDetails.customerName} সাহেব,\n` +
+                        `আপনার ক্যাশ মেমো তৈরি হয়েছে।\n` +
+                        `ইনভয়েস: ${currentReceiptDetails.invoiceNo}\n` +
+                        `সর্বমোট টাকা: ৳${currentReceiptDetails.total}\n` +
+                        `পরিশোধিত: ৳${currentReceiptDetails.cashPaid}\n` +
+                        `স্ট্যাটাস: ${currentReceiptDetails.status}\n` +
+                        (currentReceiptDetails.due > 0 ? `বাকি টাকা: ৳${currentReceiptDetails.due}\n` : '') +
+                        `ধন্যবাদ!`;
+
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(msg)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function saveDue(e) {
+            e.preventDefault();
+            const dueId = document.getElementById('due-id').value;
+            const dueData = {
+                id: dueId ? parseFloat(dueId) : Date.now(),
+                type: document.getElementById('due-type').value,
+                date: document.getElementById('due-date').value || getDeviceLocalDateStr(),
+                person: document.getElementById('due-person').value,
+                phone: document.getElementById('due-phone').value || '--',
+                details: document.getElementById('due-details').value,
+                amount: parseFloat(document.getElementById('due-amount').value)
+            };
+
+            if (dueId) {
+                const idx = shopData.dues.findIndex(d => d.id === parseFloat(dueId));
+                if (idx !== -1) shopData.dues[idx] = dueData;
+            } else {
+                shopData.dues.push(dueData);
+            }
+
+            closeModal('due-modal');
+            saveData();
+        }
+
+        function saveCategory(e) {
+            e.preventDefault();
+            const catName = document.getElementById('cat-name').value.trim();
+            const oldName = document.getElementById('cat-old-name').value;
+
+            if(!catName) return;
+
+            if (oldName) {
+                const index = shopData.categories.indexOf(oldName);
+                if (index !== -1) {
+                    shopData.categories[index] = catName;
+                    shopData.products.forEach(p => {
+                        if (p.category === oldName) p.category = catName;
+                    });
+                }
+            } else {
+                if(!shopData.categories.includes(catName)) shopData.categories.push(catName);
+            }
+
+            closeModal('category-modal');
+            saveData();
+        }
+
+        function saveProduct(e) {
+            e.preventDefault();
+            const pId = document.getElementById('p-id').value;
+            const productData = {
+                id: pId ? parseFloat(pId) : Date.now(),
+                name: document.getElementById('p-name').value,
+                category: document.getElementById('p-category').value,
+                cost: parseFloat(document.getElementById('p-cost').value),
+                price: parseFloat(document.getElementById('p-price').value),
+                stock: parseFloat(document.getElementById('p-stock').value),
+                unit: document.getElementById('p-unit').value,
+                initialStock: parseFloat(document.getElementById('p-stock').value)
+            };
+
+            if (pId) {
+                const idx = shopData.products.findIndex(p => p.id === parseFloat(pId));
+                if (idx !== -1) {
+                    productData.initialStock = shopData.products[idx].initialStock || productData.stock;
+                    shopData.products[idx] = productData;
+                }
+            } else {
+                shopData.products.push(productData);
+            }
+
+            closeModal('product-modal');
+            saveData();
+        }
+
+        function saveExpense(e) {
+            e.preventDefault();
+            const expId = document.getElementById('exp-id').value;
+            const expenseData = {
+                id: expId ? parseFloat(expId) : Date.now(),
+                date: document.getElementById('exp-date').value || getDeviceLocalDateStr(),
+                category: document.getElementById('exp-category').value,
+                amount: parseFloat(document.getElementById('exp-amount').value)
+            };
+
+            if (expId) {
+                const idx = shopData.expenses.findIndex(ex => ex.id === parseFloat(expId));
+                if (idx !== -1) shopData.expenses[idx] = expenseData;
+            } else {
+                shopData.expenses.push(expenseData);
+            }
+
+            closeModal('expense-modal');
+            saveData();
+        }
+
+        function saveSalesEdit(e) {
+            e.preventDefault();
+            const sId = parseFloat(document.getElementById('sales-id').value);
+            const idx = shopData.sales.findIndex(s => s.id === sId);
+
+            if (idx !== -1) {
+                const qty = parseFloat(document.getElementById('sales-qty').value);
+                const price = parseFloat(document.getElementById('sales-price').value);
+                const cost = parseFloat(document.getElementById('sales-cost').value);
+
+                shopData.sales[idx].customerName = document.getElementById('sales-cname').value;
+                shopData.sales[idx].customerPhone = document.getElementById('sales-cphone').value;
+                shopData.sales[idx].productName = document.getElementById('sales-pname').value;
+                shopData.sales[idx].qty = qty;
+                shopData.sales[idx].unit = document.getElementById('sales-unit').value;
+                shopData.sales[idx].price = price;
+                shopData.sales[idx].cost = cost;
+                shopData.sales[idx].total = qty * price;
+                shopData.sales[idx].profit = (price - cost) * qty;
+            }
+
+            closeModal('sales-modal');
+            saveData();
+        }
+
+        function toggleSelectAllManage(masterCheckbox) {
+            const checkboxes = document.querySelectorAll('.manage-row-checkbox');
+            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+        }
+
+        function deleteSelectedManageEntries() {
+            const checkboxes = document.querySelectorAll('.manage-row-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert("দয়া করে ডিলিট করার জন্য অন্তত একটি এন্ট্রি সিলেক্ট করুন!");
+                return;
+            }
+
+            if (!confirm(`আপনি কি নিশ্চিতভাবে সিলেক্ট করা ${checkboxes.length} টি এন্ট্রি রিসাইকেল বিনে পাঠাতে চান?`)) return;
+
+            checkboxes.forEach(cb => {
+                const type = cb.getAttribute('data-type');
+                const rawId = cb.getAttribute('data-id');
+                const id = isNaN(rawId) ? rawId : parseFloat(rawId);
+
+                let deletedItem = null;
+                if (type === 'product') {
+                    const idx = shopData.products.findIndex(p => p.id === id);
+                    if (idx !== -1) deletedItem = { type: 'product', data: shopData.products.splice(idx, 1)[0] };
+                } else if (type === 'sales') {
+                    const idx = shopData.sales.findIndex(s => s.id === id);
+                    if (idx !== -1) deletedItem = { type: 'sales', data: shopData.sales.splice(idx, 1)[0] };
+                } else if (type === 'expense') {
+                    const idx = shopData.expenses.findIndex(e => e.id === id);
+                    if (idx !== -1) deletedItem = { type: 'expense', data: shopData.expenses.splice(idx, 1)[0] };
+                } else if (type === 'category') {
+                    const idx = shopData.categories.indexOf(id);
+                    if (idx !== -1) deletedItem = { type: 'category', data: shopData.categories.splice(idx, 1)[0] };
+                } else if (type === 'due') {
+                    const idx = shopData.dues.findIndex(d => d.id === id);
+                    if (idx !== -1) deletedItem = { type: 'due', data: shopData.dues.splice(idx, 1)[0] };
+                }
+
+                if (deletedItem) {
+                    shopData.recycleBin.push(deletedItem);
+                }
+            });
+
+            const selectAllManage = document.getElementById('select-all-manage');
+            if (selectAllManage) selectAllManage.checked = false;
+            saveData();
+            renderManageReport();
+            renderRecycleBin();
+        }
+
+        function clearAllRecycleBin() {
+            if (shopData.recycleBin.length === 0) {
+                alert("রিসাইকেল বিন ইতিমধ্যেই খালি রয়েছে!");
+                return;
+            }
+            if (confirm("আপনি কি নিশ্চিত যে রিসাইকেল বিনের সকল ডাটা চিরতরে মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা যাবে না।")) {
+                shopData.recycleBin = [];
+                saveData();
+                renderManageReport();
+                renderRecycleBin();
+            }
+        }
+
+        function toggleRecycleBinView() {
+            isRecycleBinExpanded = !isRecycleBinExpanded;
+            renderRecycleBin();
+        }
+
+        function renderManageReport() {
+            const filter = document.getElementById('manage-type-filter').value;
+            const tbody = document.getElementById('manage-report-table-body');
+            if(!tbody) return;
+            let rowsHtml = '';
+            const selectAllCheckbox = document.getElementById('select-all-manage');
+            if (selectAllCheckbox) selectAllCheckbox.checked = false;
+
+            if (filter === 'all' || filter === 'products') {
+                shopData.products.forEach(p => {
+                    rowsHtml += `
+                        <tr>
+                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="product" data-id="${p.id}"></td>
+                            <td class="p-4"><span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-bold">পণ্য/স্টক</span></td>
+                            <td class="p-4 font-bold text-slate-800">${p.name}</td>
+                            <td class="p-4 text-slate-600">${p.category}</td>
+                            <td class="p-4">৳ ${p.price} (স্টক: ${p.stock} ${p.unit})</td>
+                            <td class="p-4 space-x-2">
+                                <button onclick="editEntry('product', ${p.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
+                                <button onclick="deleteToRecycleBin('product', ${p.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            if (filter === 'all' || filter === 'categories') {
+                shopData.categories.forEach(cat => {
+                    rowsHtml += `
+                        <tr>
+                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="category" data-id="${cat}"></td>
+                            <td class="p-4"><span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full font-bold">ক্যাটাগরি</span></td>
+                            <td class="p-4 font-bold text-slate-800">${cat}</td>
+                            <td class="p-4 text-slate-600">মোট পণ্য: ${shopData.products.filter(p => p.category === cat).length} টি</td>
+                            <td class="p-4">--</td>
+                            <td class="p-4 space-x-2">
+                                <button onclick="editEntry('category', '${cat}')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
+                                <button onclick="deleteToRecycleBin('category', '${cat}')" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            if (filter === 'all' || filter === 'sales') {
+                shopData.sales.forEach(s => {
+                    rowsHtml += `
+                        <tr>
+                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="sales" data-id="${s.id}"></td>
+                            <td class="p-4"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-bold">বিক্রি</span></td>
+                            <td class="p-4 font-bold text-slate-800">${s.productName} (${s.customerName || 'N/A'})</td>
+                            <td class="p-4 text-slate-600">${s.date} (${s.time || ''})</td>
+                            <td class="p-4 text-emerald-600 font-bold">৳ ${s.total.toFixed(2)} (${s.qty} ${s.unit})</td>
+                            <td class="p-4 space-x-2">
+                                <button onclick="editEntry('sales', ${s.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
+                                <button onclick="deleteToRecycleBin('sales', ${s.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            if (filter === 'all' || filter === 'expenses') {
+                shopData.expenses.forEach(e => {
+                    rowsHtml += `
+                        <tr>
+                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="expense" data-id="${e.id}"></td>
+                            <td class="p-4"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded-full font-bold">খরচ</span></td>
+                            <td class="p-4 font-bold text-slate-800">${e.category}</td>
+                            <td class="p-4 text-slate-600">${e.date}</td>
+                            <td class="p-4 text-rose-600 font-bold">৳ ${e.amount.toFixed(2)}</td>
+                            <td class="p-4 space-x-2">
+                                <button onclick="editEntry('expense', ${e.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
+                                <button onclick="deleteToRecycleBin('expense', ${e.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            if (filter === 'all' || filter === 'dues') {
+                shopData.dues.forEach(d => {
+                    const typeText = d.type === 'receivable' ? 'পাওনা' : 'দেনা';
+                    rowsHtml += `
+                        <tr>
+                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="due" data-id="${d.id}"></td>
+                            <td class="p-4"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full font-bold">${typeText}</span></td>
+                            <td class="p-4 font-bold text-slate-800">${d.person} (${d.phone})</td>
+                            <td class="p-4 text-slate-600">${d.date} - ${d.details}</td>
+                            <td class="p-4 font-bold ${d.type === 'receivable' ? 'text-emerald-600' : 'text-rose-600'}">৳ ${d.amount.toFixed(2)}</td>
+                            <td class="p-4 space-x-2">
+                                <button onclick="editEntry('due', ${d.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
+                                <button onclick="deleteToRecycleBin('due', ${d.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tbody.innerHTML = rowsHtml || `<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো ডাটা পাওয়া যায়নি</td></tr>`;
+        }
+
+        function renderRecycleBin() {
+            const tbody = document.getElementById('recycle-bin-table-body');
+            if(!tbody) return;
+            const container = document.getElementById('recycle-bin-see-more-container');
+            const toggleBtn = document.getElementById('recycle-bin-toggle-btn');
+
+            if (shopData.recycleBin.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">রিসাইকেল বিন খালি রয়েছে</td></tr>`;
+                if(container) container.classList.add('hidden');
+                return;
+            }
+
+            let displayItems = shopData.recycleBin;
+            if (shopData.recycleBin.length > 5 && !isRecycleBinExpanded) {
+                displayItems = shopData.recycleBin.slice(-5).reverse();
+                if(container) container.classList.remove('hidden');
+                if(toggleBtn) toggleBtn.innerHTML = `<i class="fa-solid fa-chevron-down me-1"></i> সি মোর (See More) (${shopData.recycleBin.length} টি)`;
+            } else {
+                displayItems = [...shopData.recycleBin].reverse();
+                if (shopData.recycleBin.length > 5) {
+                    if(container) container.classList.remove('hidden');
+                    if(toggleBtn) toggleBtn.innerHTML = `<i class="fa-solid fa-chevron-up me-1"></i> সংকুচিত করুন (See Less)`;
+                } else {
+                    if(container) container.classList.add('hidden');
+                }
+            }
+
+            tbody.innerHTML = displayItems.map((item, index) => {
+                const actualIndex = shopData.recycleBin.length - 1 - index;
+                let typeName = '';
+                let nameInfo = '';
+                let dateInfo = '';
+
+                if (item.type === 'product') {
+                    typeName = '<span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-bold">পণ্য</span>';
+                    nameInfo = item.data.name;
+                    dateInfo = `মূল্য: ৳${item.data.price}, স্টক: ${item.data.stock}`;
+                } else if (item.type === 'sales') {
+                    typeName = '<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-bold">বিক্রি</span>';
+                    nameInfo = `${item.data.productName} (${item.data.customerName || 'N/A'})`;
+                    dateInfo = `তারিখ: ${item.data.date}, মোট: ৳${item.data.total.toFixed(2)}`;
+                } else if (item.type === 'expense') {
+                    typeName = '<span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded-full font-bold">খরচ</span>';
+                    nameInfo = item.data.category;
+                    dateInfo = `তারিখ: ${item.data.date}, পরিমাণ: ৳${item.data.amount.toFixed(2)}`;
+                } else if (item.type === 'category') {
+                    typeName = '<span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full font-bold">ক্যাটাগরি</span>';
+                    nameInfo = item.data;
+                    dateInfo = 'ক্যাটাগরি নাম';
+                } else if (item.type === 'due') {
+                    typeName = '<span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full font-bold">দেনা/পাওনা</span>';
+                    nameInfo = `${item.data.person} (${item.data.phone})`;
+                    dateInfo = `পরিমাণ: ৳${item.data.amount.toFixed(2)}`;
+                }
+
+                return `
+                    <tr>
+                        <td class="p-4">${typeName}</td>
+                        <td class="p-4 font-bold text-slate-800">${nameInfo}</td>
+                        <td class="p-4 text-slate-600">${dateInfo}</td>
+                        <td class="p-4 space-x-3">
+                            <button onclick="restoreFromRecycleBin(${actualIndex})" class="text-emerald-600 hover:text-emerald-800 text-xs font-bold"><i class="fa-solid fa-rotate-left me-1"></i> রিস্টোর</button>
+                            <button onclick="permanentlyDelete(${actualIndex})" class="text-rose-600 hover:text-rose-800 text-xs font-bold"><i class="fa-solid fa-trash-can me-1"></i> চিরতরে ডিলিট</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.onload = function() {
+            initDatePickers();
+            populateCategorySelects();
+            updateUI();
+            renderStockTable();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDailyReport();
+        };
 
         function updateUI() {
             renderBalanceSheet();
