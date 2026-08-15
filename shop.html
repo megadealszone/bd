@@ -27,7 +27,6 @@
             #printable-receipt { position: absolute; left: 0; top: 0; width: 100%; }
             .no-print { display: none !important; }
         }
-        /* Custom Premium Input Focus for Datepickers */
         .premium-date-input {
             background-color: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -43,7 +42,6 @@
             white-space: nowrap;
             transition: all 0.2s ease;
         }
-        /* Premium Button Styles */
         .btn-premium-emerald {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
@@ -127,7 +125,7 @@
     <!-- Main Content Area -->
     <main class="flex-1 p-4 md:p-6 overflow-y-auto w-full">
 
-        <!-- GLOBAL TOP NAVIGATION BAR WITH HAMBURGER BUTTON -->
+        <!-- GLOBAL TOP NAVIGATION BAR -->
         <header class="mb-6 bg-white p-3 rounded-xl shadow-sm border border-slate-200 no-print flex items-center space-x-3">
             <button onclick="toggleSidebar()" class="p-2.5 bg-slate-900 text-emerald-400 hover:bg-slate-800 rounded-lg flex items-center justify-center transition shadow-sm focus:outline-none shrink-0" title="মেনু খুলুন">
                 <i class="fa-solid fa-bars text-xl"></i>
@@ -692,11 +690,10 @@
     </main>
 
     <!-- MODALS -->
-    <!-- Receipt Modal with PAID/DUE Stamp & WhatsApp Option -->
+    <!-- Receipt Modal -->
     <div id="receipt-modal" class="fixed inset-0 bg-slate-900/60 hidden flex items-center justify-center p-4 z-50">
         <div class="bg-white w-full max-w-sm rounded-xl p-6 space-y-4 shadow-2xl relative">
             <div id="printable-receipt" class="text-slate-800 relative bg-white p-2 rounded">
-                <!-- Status Watermark (PAID / DUE) -->
                 <div id="receipt-status-stamp" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-[-25deg] border-4 text-3xl font-extrabold px-4 py-1 rounded-lg opacity-25 pointer-events-none uppercase tracking-widest hidden"></div>
 
                 <div class="text-center border-b pb-3 mb-3">
@@ -737,7 +734,6 @@
             </div>
             
             <div class="flex flex-col space-y-2 pt-2 no-print">
-                <!-- হোয়াটসঅ্যাপ ও পিডিএফ ডাউনলোড বাটন একই রোতে (এক লাইনে) -->
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="downloadReceiptPDF()" class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded text-xs md:text-sm flex items-center justify-center shadow transition" title="পিডিএফ ডাউনলোড">
                         <i class="fa-solid fa-file-pdf text-base me-1"></i> পিডিএফ
@@ -763,7 +759,7 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium mb-1">ক্যাটাগরি সিলেক্ট করুন</label>
-                    <select id="p-category" required class="w-full border rounded p-2"></select>
+                    <select id="p-category" required class="w-full border rounded p-2 bg-white"></select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
@@ -935,6 +931,26 @@
     </div>
 
     <!-- Application JavaScript -->
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDKhxr7tDwWyVH-lO-iJsToZhkw5i_tclU",
+          authDomain: "megadealszone-49103.firebaseapp.com",
+          projectId: "megadealszone-49103",
+          storageBucket: "megadealszone-49103.firebasestorage.app",
+          messagingSenderId: "457042872489",
+          appId: "1:457042872489:web:875aa8d6b95863d97ac1b8",
+          measurementId: "G-KGRKW1W4C6"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
+
     <script>
         let shopData = JSON.parse(localStorage.getItem('shop_app_data')) || {
             categories: ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'],
@@ -956,7 +972,7 @@
         let isRecycleBinExpanded = false;
         let currentCustomerPreviousDue = 0;
         let datePickers = {};
-        let currentReceiptDetails = {}; // Stores latest checkout details for WhatsApp
+        let currentReceiptDetails = {};
 
         function toggleSidebar() {
             const sidebar = document.getElementById('main-sidebar');
@@ -1042,6 +1058,18 @@
         function saveData() {
             localStorage.setItem('shop_app_data', JSON.stringify(shopData));
             updateUI();
+            renderStockTable();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDailyReport();
+            populateCategorySelects();
+        }
+
+        function updateUI() {
+            renderBalanceSheet();
+            renderDues();
+            renderManageReport();
+            renderRecycleBin();
         }
 
         function switchTab(tabId) {
@@ -1077,6 +1105,9 @@
                 renderRecycleBin();
             }
             else if(tabId === 'dues') renderDues();
+            else if(tabId === 'stock') renderStockTable();
+            else if(tabId === 'category') renderCategoryTable();
+            else if(tabId === 'expenses') renderExpenseTable();
         }
 
         function resetReportDates() {
@@ -1091,6 +1122,224 @@
             if(datePickers.bsStart) datePickers.bsStart.clear();
             if(datePickers.bsEnd) datePickers.bsEnd.clear();
             updateUI();
+        }
+
+        function populateCategorySelects() {
+            const posCatSelect = document.getElementById('pos-category-select');
+            const pCatSelect = document.getElementById('p-category');
+
+            let catOptions = '<option value="">-- ক্যাটাগরি বেছে নিন --</option>';
+            shopData.categories.forEach(cat => {
+                catOptions += `<option value="${cat}">${cat}</option>`;
+            });
+
+            if(posCatSelect) {
+                const currentPosVal = posCatSelect.value;
+                posCatSelect.innerHTML = catOptions;
+                posCatSelect.value = currentPosVal;
+            }
+            if(pCatSelect) {
+                const currentPVal = pCatSelect.value;
+                pCatSelect.innerHTML = catOptions;
+                pCatSelect.value = currentPVal;
+            }
+        }
+
+        function renderStockTable() {
+            const tbody = document.getElementById('stock-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = shopData.products.map(p => `
+                <tr>
+                    <td class="p-4 font-bold text-slate-800">${p.name}</td>
+                    <td class="p-4 text-slate-600">${p.category}</td>
+                    <td class="p-4">৳ ${p.cost.toFixed(2)}</td>
+                    <td class="p-4 font-bold text-emerald-600">৳ ${p.price.toFixed(2)}</td>
+                    <td class="p-4 font-bold ${p.stock <= 5 ? 'text-rose-600' : 'text-slate-800'}">${p.stock} ${p.unit}</td>
+                    <td class="p-4 text-slate-600">${p.unit}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো পণ্য স্টক করা হয়নি</td></tr>';
+        }
+
+        function renderCategoryTable() {
+            const tbody = document.getElementById('category-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = shopData.categories.map(cat => {
+                const count = shopData.products.filter(p => p.category === cat).length;
+                return `
+                    <tr>
+                        <td class="p-4 font-bold text-slate-800">${cat}</td>
+                        <td class="p-4 text-slate-600">${count} টি</td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="2" class="p-4 text-center text-slate-400">কোনো ক্যাটাগরি নেই</td></tr>';
+        }
+
+        function renderExpenseTable() {
+            const tbody = document.getElementById('expense-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = shopData.expenses.map(e => `
+                <tr>
+                    <td class="p-4">${e.date}</td>
+                    <td class="p-4 font-bold text-slate-800">${e.category}</td>
+                    <td class="p-4 font-bold text-rose-600">৳ ${e.amount.toFixed(2)}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো খরচের হিসাব নেই</td></tr>';
+        }
+
+        function renderBalanceSheet() {
+            const startDate = document.getElementById('bs-start-date').value;
+            const endDate = document.getElementById('bs-end-date').value;
+            
+            let dateRangeText = "সময়সীমা: সকল সময়";
+            if(startDate && endDate) {
+                dateRangeText = `সময়সীমা: ${startDate} হতে ${endDate}`;
+            } else if(startDate) {
+                dateRangeText = `সময়সীমা: ${startDate} থেকে পরবর্তী সকল সময়`;
+            } else if(endDate) {
+                dateRangeText = `সময়সীমা: শুরু থেকে ${endDate} পর্যন্ত`;
+            }
+            const bsDateDisplay = document.getElementById('bs-date-range-display');
+            if(bsDateDisplay) bsDateDisplay.innerText = dateRangeText;
+
+            let cashInHand = 0;
+            shopData.sales.forEach(s => {
+                if(!startDate || (s.date >= startDate && s.date <= endDate || (!endDate && s.date >= startDate))) {
+                    cashInHand += (s.cashPaid || 0);
+                }
+            });
+            shopData.expenses.forEach(e => {
+                if(!startDate || (e.date >= startDate && e.date <= endDate || (!endDate && e.date >= startDate))) {
+                    cashInHand -= (e.amount || 0);
+                }
+            });
+            if(cashInHand < 0) cashInHand = 0;
+
+            let stockValue = 0;
+            shopData.products.forEach(p => {
+                stockValue += (p.cost * p.stock);
+            });
+
+            let totalReceivables = 0;
+            shopData.dues.filter(d => d.type === 'receivable').forEach(d => {
+                totalReceivables += d.amount;
+            });
+
+            let totalPayables = 0;
+            shopData.dues.filter(d => d.type === 'payable').forEach(d => {
+                totalPayables += d.amount;
+            });
+
+            let totalAssets = cashInHand + stockValue + totalReceivables;
+
+            let totalProfit = 0;
+            shopData.sales.forEach(s => {
+                if(!startDate || (s.date >= startDate && s.date <= endDate || (!endDate && s.date >= startDate))) {
+                    totalProfit += (s.profit || 0);
+                }
+            });
+            shopData.expenses.forEach(e => {
+                if(!startDate || (e.date >= startDate && e.date <= endDate || (!endDate && e.date >= startDate))) {
+                    totalProfit -= (e.amount || 0);
+                }
+            });
+
+            let initialCapital = 0;
+            shopData.products.forEach(p => {
+                initialCapital += (p.cost * (p.initialStock !== undefined ? p.initialStock : p.stock));
+            });
+
+            let totalLiabilitiesAndEquity = totalPayables + initialCapital + totalProfit;
+
+            if(document.getElementById('bs-cash-in-hand')) document.getElementById('bs-cash-in-hand').innerText = `৳ ${cashInHand.toFixed(2)}`;
+            if(document.getElementById('bs-stock-value')) document.getElementById('bs-stock-value').innerText = `৳ ${stockValue.toFixed(2)}`;
+            if(document.getElementById('bs-total-receivables')) document.getElementById('bs-total-receivables').innerText = `৳ ${totalReceivables.toFixed(2)}`;
+            if(document.getElementById('bs-total-assets')) document.getElementById('bs-total-assets').innerText = `৳ ${totalAssets.toFixed(2)}`;
+
+            if(document.getElementById('bs-total-payables')) document.getElementById('bs-total-payables').innerText = `৳ ${totalPayables.toFixed(2)}`;
+            if(document.getElementById('bs-capital')) document.getElementById('bs-capital').innerText = `৳ ${initialCapital.toFixed(2)}`;
+            if(document.getElementById('bs-retained-profit')) document.getElementById('bs-retained-profit').innerText = `৳ ${totalProfit.toFixed(2)}`;
+            if(document.getElementById('bs-total-liabilities')) document.getElementById('bs-total-liabilities').innerText = `৳ ${totalLiabilitiesAndEquity.toFixed(2)}`;
+
+            const statusBox = document.getElementById('bs-status-box');
+            if(statusBox) {
+                if(Math.abs(totalAssets - totalLiabilitiesAndEquity) < 1) {
+                    statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-emerald-600 text-white border-emerald-700";
+                    statusBox.innerText = "ব্যালেন্স শীট ১০০% নিখুঁত ও সমতায় রয়েছে (Assets = Liabilities & Equity)";
+                } else {
+                    statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-amber-500 text-white border-amber-600";
+                    statusBox.innerText = `ব্যালেন্স শীট চেক করুন (পার্থক্য: ৳ ${Math.abs(totalAssets - totalLiabilitiesAndEquity).toFixed(2)})`;
+                }
+            }
+        }
+
+        function renderDailyReport() {
+            const startDate = document.getElementById('report-start-date').value;
+            const endDate = document.getElementById('report-end-date').value;
+            const searchQuery = (document.getElementById('report-search-input').value || '').trim().toLowerCase();
+
+            let filteredSales = shopData.sales.filter(s => {
+                if (startDate && endDate) return s.date >= startDate && s.date <= endDate;
+                if (startDate) return s.date >= startDate;
+                if (endDate) return s.date <= endDate;
+                return true;
+            });
+
+            if (searchQuery) {
+                filteredSales = filteredSales.filter(s => 
+                    (s.customerName && s.customerName.toLowerCase().includes(searchQuery)) ||
+                    (s.customerPhone && s.customerPhone.toLowerCase().includes(searchQuery)) ||
+                    (s.invoiceNo && s.invoiceNo.toLowerCase().includes(searchQuery)) ||
+                    (s.productName && s.productName.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            let totalSales = 0;
+            let totalQty = 0;
+            let totalProfit = 0;
+            let totalDue = 0;
+
+            filteredSales.forEach(s => {
+                totalSales += s.total;
+                totalQty += s.qty;
+                totalProfit += s.profit;
+                totalDue += (s.due || 0);
+            });
+
+            let totalExpense = 0;
+            shopData.expenses.forEach(e => {
+                if (!startDate || (e.date >= startDate && e.date <= endDate || (!endDate && e.date >= startDate))) {
+                    totalExpense += e.amount;
+                }
+            });
+
+            let netProfit = totalProfit - totalExpense;
+
+            if(document.getElementById('daily-sales-total')) document.getElementById('daily-sales-total').innerText = `৳ ${totalSales.toFixed(2)}`;
+            if(document.getElementById('daily-expense-total')) document.getElementById('daily-expense-total').innerText = `৳ ${totalExpense.toFixed(2)}`;
+            if(document.getElementById('daily-due-total')) document.getElementById('daily-due-total').innerText = `৳ ${totalDue.toFixed(2)}`;
+            if(document.getElementById('daily-profit-total')) document.getElementById('daily-profit-total').innerText = `৳ ${netProfit.toFixed(2)}`;
+            if(document.getElementById('daily-qty-total')) document.getElementById('daily-qty-total').innerText = `${totalQty} টি`;
+
+            let stockVal = 0;
+            shopData.products.forEach(p => stockVal += (p.cost * p.stock));
+            if(document.getElementById('daily-bs-amount')) document.getElementById('daily-bs-amount').innerText = `৳ ${stockVal.toFixed(2)}`;
+
+            const tbody = document.getElementById('daily-sales-table');
+            if(tbody) {
+                tbody.innerHTML = filteredSales.map(s => `
+                    <tr>
+                        <td class="p-3 font-bold text-indigo-600">${s.invoiceNo || 'N/A'}</td>
+                        <td class="p-3 text-slate-600">${s.date} <span class="text-xs text-slate-400">(${s.time || ''})</span></td>
+                        <td class="p-3 font-semibold text-slate-800">${s.customerName || 'N/A'}</td>
+                        <td class="p-3 text-slate-600">${s.customerPhone || 'N/A'}</td>
+                        <td class="p-3 font-medium text-slate-800">${s.productName}</td>
+                        <td class="p-3 text-slate-600">${s.qty} ${s.unit}</td>
+                        <td class="p-3 text-emerald-600 font-semibold">৳ ${(s.cashPaid || 0).toFixed(2)}</td>
+                        <td class="p-3 text-amber-600 font-semibold">৳ ${(s.due || 0).toFixed(2)}</td>
+                        <td class="p-3 font-bold text-slate-900">৳ ${s.total.toFixed(2)}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="9" class="p-3 text-center text-slate-400">কোনো বিক্রির হিস্ট্রি পাওয়া যায়নি</td></tr>';
+            }
         }
 
         function downloadBalanceSheetPDF() {
@@ -1634,7 +1883,6 @@
                 dueRow.classList.add('hidden');
             }
 
-            // Store current receipt information for WhatsApp sending
             currentReceiptDetails = {
                 invoiceNo: invoiceNo,
                 customerName: customerName,
@@ -1658,15 +1906,12 @@
             openModal('receipt-modal');
         }
 
-        // --- WHATSAPP MESSAGE SEND FUNCTION ---
         function sendWhatsAppMessage() {
-            // Format Phone Number
             let formattedPhone = currentReceiptDetails.customerPhone.replace(/[^0-9]/g, '');
             if (formattedPhone.startsWith('0')) {
                 formattedPhone = '88' + formattedPhone;
             }
 
-            // WhatsApp Text Message
             const msg = `আসসালামু আলাইকুম ${currentReceiptDetails.customerName} সাহেব,\n` +
                         `আপনার ক্যাশ মেমো তৈরি হয়েছে।\n` +
                         `ইনভয়েস: ${currentReceiptDetails.invoiceNo}\n` +
@@ -1677,8 +1922,6 @@
                         `ধন্যবাদ!`;
 
             const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(msg)}`;
-            
-            // Open WhatsApp Chat Box
             window.open(whatsappUrl, '_blank');
         }
 
@@ -1708,6 +1951,7 @@
 
         function renderDues() {
             const tbody = document.getElementById('dues-table-body');
+            if(!tbody) return;
             let totalReceivable = 0;
             let totalPayable = 0;
 
@@ -1731,8 +1975,8 @@
                 `;
             }).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো দেনা-পাওনার তথ্য নেই</td></tr>';
 
-            document.getElementById('total-receivable').innerText = `৳ ${totalReceivable.toFixed(2)}`;
-            document.getElementById('total-payable').innerText = `৳ ${totalPayable.toFixed(2)}`;
+            if(document.getElementById('total-receivable')) document.getElementById('total-receivable').innerText = `৳ ${totalReceivable.toFixed(2)}`;
+            if(document.getElementById('total-payable')) document.getElementById('total-payable').innerText = `৳ ${totalPayable.toFixed(2)}`;
         }
 
         function saveCategory(e) {
@@ -1807,6 +2051,21 @@
             saveData();
         }
 
+        function openSalesEdit(id) {
+            const s = shopData.sales.find(item => item.id === id);
+            if (!s) return;
+            document.getElementById('sales-id').value = s.id;
+            document.getElementById('sales-invoice').value = s.invoiceNo || 'N/A';
+            document.getElementById('sales-cname').value = s.customerName || '';
+            document.getElementById('sales-cphone').value = s.customerPhone || '';
+            document.getElementById('sales-pname').value = s.productName || '';
+            document.getElementById('sales-qty').value = s.qty || 1;
+            document.getElementById('sales-unit').value = s.unit || 'পিস';
+            document.getElementById('sales-price').value = s.price || 0;
+            document.getElementById('sales-cost').value = s.cost || 0;
+            openModal('sales-modal');
+        }
+
         function saveSalesEdit(e) {
             e.preventDefault();
             const sId = parseFloat(document.getElementById('sales-id').value);
@@ -1825,502 +2084,263 @@
                 shopData.sales[idx].price = price;
                 shopData.sales[idx].cost = cost;
                 shopData.sales[idx].total = qty * price;
-                shopData.sales[idx].profit = (price - cost) * qty;
+                shopData.sales[idx].profit = (qty * price) - (qty * cost);
             }
 
             closeModal('sales-modal');
             saveData();
         }
 
-        function editEntry(type, id) {
-            if (type === 'product') {
-                const p = shopData.products.find(item => item.id === id);
-                if (!p) return;
-                document.getElementById('p-id').value = p.id;
-                document.getElementById('p-name').value = p.name;
-                document.getElementById('p-category').value = p.category;
-                document.getElementById('p-cost').value = p.cost;
-                document.getElementById('p-price').value = p.price;
-                document.getElementById('p-stock').value = p.stock;
-                document.getElementById('p-unit').value = p.unit;
-                document.getElementById('product-modal-title').innerText = "পণ্য এডিট করুন (আপডেট)";
-                openModal('product-modal');
-            } else if (type === 'sales') {
-                const s = shopData.sales.find(item => item.id === id);
-                if (!s) return;
-                document.getElementById('sales-id').value = s.id;
-                document.getElementById('sales-invoice').value = s.invoiceNo || 'N/A';
-                document.getElementById('sales-cname').value = s.customerName || '';
-                document.getElementById('sales-cphone').value = s.customerPhone || '';
-                document.getElementById('sales-pname').value = s.productName;
-                document.getElementById('sales-qty').value = s.qty;
-                document.getElementById('sales-unit').value = s.unit;
-                document.getElementById('sales-price').value = s.price;
-                document.getElementById('sales-cost').value = s.cost;
-                openModal('sales-modal');
-            } else if (type === 'expense') {
-                const e = shopData.expenses.find(item => item.id === id);
-                if (!e) return;
-                document.getElementById('exp-id').value = e.id;
-                if(datePickers.expDate) datePickers.expDate.setDate(e.date);
-                document.getElementById('exp-category').value = e.category;
-                document.getElementById('exp-amount').value = e.amount;
-                document.getElementById('expense-modal-title').innerText = "খরচের হিসাব এডিট করুন (আপডেট)";
-                openModal('expense-modal');
-            } else if (type === 'category') {
-                document.getElementById('cat-old-name').value = id;
-                document.getElementById('cat-name').value = id;
-                document.getElementById('category-modal-title').innerText = "ক্যাটাগরি এডিট করুন (আপডেট)";
-                openModal('category-modal');
-            } else if (type === 'due') {
-                const d = shopData.dues.find(item => item.id === id);
-                if (!d) return;
-                document.getElementById('due-id').value = d.id;
-                document.getElementById('due-type').value = d.type;
-                if(datePickers.dueDate) datePickers.dueDate.setDate(d.date);
-                document.getElementById('due-person').value = d.person;
-                document.getElementById('due-phone').value = d.phone;
-                document.getElementById('due-details').value = d.details;
-                document.getElementById('due-amount').value = d.amount;
-                document.getElementById('due-modal-title').innerText = "দেনা/পাওনা এডিট করুন";
-                openModal('due-modal');
-            }
-        }
-
-        function deleteToRecycleBin(type, id) {
-            if (!confirm('আপনি কি এই এন্ট্রিটি রিসাইকেল বিনে সরাতে চান?')) return;
-
-            let deletedItem = null;
-
-            if (type === 'product') {
-                const idx = shopData.products.findIndex(p => p.id === id);
-                if (idx !== -1) deletedItem = { type: 'product', data: shopData.products.splice(idx, 1)[0] };
-            } else if (type === 'sales') {
-                const idx = shopData.sales.findIndex(s => s.id === id);
-                if (idx !== -1) deletedItem = { type: 'sales', data: shopData.sales.splice(idx, 1)[0] };
-            } else if (type === 'expense') {
-                const idx = shopData.expenses.findIndex(e => e.id === id);
-                if (idx !== -1) deletedItem = { type: 'expense', data: shopData.expenses.splice(idx, 1)[0] };
-            } else if (type === 'category') {
-                const idx = shopData.categories.indexOf(id);
-                if (idx !== -1) deletedItem = { type: 'category', data: shopData.categories.splice(idx, 1)[0] };
-            } else if (type === 'due') {
-                const idx = shopData.dues.findIndex(d => d.id === id);
-                if (idx !== -1) deletedItem = { type: 'due', data: shopData.dues.splice(idx, 1)[0] };
-            }
-
-            if (deletedItem) {
-                shopData.recycleBin.push(deletedItem);
-                saveData();
-            }
-        }
-
-        // --- MULTIPLE SELECTION DELETE FUNCTIONS FOR MANAGE REPORT ---
-        function toggleSelectAllManage(masterCheckbox) {
-            const checkboxes = document.querySelectorAll('.manage-row-checkbox');
-            checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
-        }
-
-        function deleteSelectedManageEntries() {
-            const checkboxes = document.querySelectorAll('.manage-row-checkbox:checked');
-            if (checkboxes.length === 0) {
-                alert("দয়া করে ডিলিট করার জন্য অন্তত একটি এন্ট্রি সিলেক্ট করুন!");
-                return;
-            }
-
-            if (!confirm(`আপনি কি নিশ্চিতভাবে সিলেক্ট করা ${checkboxes.length} টি এন্ট্রি রিসাইকেল বিনে পাঠাতে চান?`)) return;
-
-            checkboxes.forEach(cb => {
-                const type = cb.getAttribute('data-type');
-                const rawId = cb.getAttribute('data-id');
-                const id = isNaN(rawId) ? rawId : parseFloat(rawId);
-
-                let deletedItem = null;
-                if (type === 'product') {
-                    const idx = shopData.products.findIndex(p => p.id === id);
-                    if (idx !== -1) deletedItem = { type: 'product', data: shopData.products.splice(idx, 1)[0] };
-                } else if (type === 'sales') {
-                    const idx = shopData.sales.findIndex(s => s.id === id);
-                    if (idx !== -1) deletedItem = { type: 'sales', data: shopData.sales.splice(idx, 1)[0] };
-                } else if (type === 'expense') {
-                    const idx = shopData.expenses.findIndex(e => e.id === id);
-                    if (idx !== -1) deletedItem = { type: 'expense', data: shopData.expenses.splice(idx, 1)[0] };
-                } else if (type === 'category') {
-                    const idx = shopData.categories.indexOf(id);
-                    if (idx !== -1) deletedItem = { type: 'category', data: shopData.categories.splice(idx, 1)[0] };
-                } else if (type === 'due') {
-                    const idx = shopData.dues.findIndex(d => d.id === id);
-                    if (idx !== -1) deletedItem = { type: 'due', data: shopData.dues.splice(idx, 1)[0] };
-                }
-
-                if (deletedItem) {
-                    shopData.recycleBin.push(deletedItem);
-                }
-            });
-
-            document.getElementById('select-all-manage').checked = false;
-            saveData();
-        }
-
-        function restoreFromRecycleBin(index) {
-            const item = shopData.recycleBin[index];
-            if (!item) return;
-
-            if (item.type === 'product') shopData.products.push(item.data);
-            else if (item.type === 'sales') shopData.sales.push(item.data);
-            else if (item.type === 'expense') shopData.expenses.push(item.data);
-            else if (item.type === 'category') {
-                if (!shopData.categories.includes(item.data)) shopData.categories.push(item.data);
-            } else if (item.type === 'due') shopData.dues.push(item.data);
-
-            shopData.recycleBin.splice(index, 1);
-            saveData();
-        }
-
-        function clearAllRecycleBin() {
-            if (shopData.recycleBin.length === 0) {
-                alert("রিসাইকেল বিন ইতিমধ্যেই খালি রয়েছে!");
-                return;
-            }
-            if (confirm("আপনি কি নিশ্চিত যে রিসাইকেল বিনের সকল ডাটা চিরতরে মুছে ফেলতে চান? এটি আর ফিরিয়ে আনা যাবে না।")) {
-                shopData.recycleBin = [];
-                saveData();
-            }
-        }
-
-        function toggleRecycleBinView() {
-            isRecycleBinExpanded = !isRecycleBinExpanded;
-            renderRecycleBin();
-        }
-
         function renderManageReport() {
-            const filter = document.getElementById('manage-type-filter').value;
             const tbody = document.getElementById('manage-report-table-body');
-            let rowsHtml = '';
-            document.getElementById('select-all-manage').checked = false;
+            if(!tbody) return;
+            const filter = document.getElementById('manage-type-filter').value;
+            let rows = [];
 
             if (filter === 'all' || filter === 'products') {
                 shopData.products.forEach(p => {
-                    rowsHtml += `
-                        <tr>
-                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="product" data-id="${p.id}"></td>
-                            <td class="p-4"><span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-bold">পণ্য/স্টক</span></td>
-                            <td class="p-4 font-bold text-slate-800">${p.name}</td>
-                            <td class="p-4 text-slate-600">${p.category}</td>
-                            <td class="p-4">৳ ${p.price} (স্টক: ${p.stock} ${p.unit})</td>
-                            <td class="p-4 space-x-2">
-                                <button onclick="editEntry('product', ${p.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
-                                <button onclick="deleteToRecycleBin('product', ${p.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-
-            if (filter === 'all' || filter === 'categories') {
-                shopData.categories.forEach(cat => {
-                    rowsHtml += `
-                        <tr>
-                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="category" data-id="${cat}"></td>
-                            <td class="p-4"><span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full font-bold">ক্যাটাগরি</span></td>
-                            <td class="p-4 font-bold text-slate-800">${cat}</td>
-                            <td class="p-4 text-slate-600">মোট পণ্য: ${shopData.products.filter(p => p.category === cat).length} টি</td>
-                            <td class="p-4">--</td>
-                            <td class="p-4 space-x-2">
-                                <button onclick="editEntry('category', '${cat}')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
-                                <button onclick="deleteToRecycleBin('category', '${cat}')" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
-                            </td>
-                        </tr>
-                    `;
+                    rows.push({
+                        type: 'product',
+                        id: p.id,
+                        badge: '<span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded font-bold">পণ্য</span>',
+                        name: p.name,
+                        info: `ক্যাটাগরি: ${p.category}`,
+                        amount: `স্টক: ${p.stock} ${p.unit} (ক্রয়: ৳${p.cost}, বিক্রি: ৳${p.price})`,
+                        rawObj: p
+                    });
                 });
             }
 
             if (filter === 'all' || filter === 'sales') {
                 shopData.sales.forEach(s => {
-                    rowsHtml += `
-                        <tr>
-                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="sales" data-id="${s.id}"></td>
-                            <td class="p-4"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-bold">বিক্রি</span></td>
-                            <td class="p-4 font-bold text-slate-800">${s.productName} (${s.customerName || 'N/A'})</td>
-                            <td class="p-4 text-slate-600">${s.date} (${s.time})</td>
-                            <td class="p-4 text-emerald-600 font-bold">৳ ${s.total.toFixed(2)} (${s.qty} ${s.unit})</td>
-                            <td class="p-4 space-x-2">
-                                <button onclick="editEntry('sales', ${s.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
-                                <button onclick="deleteToRecycleBin('sales', ${s.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
-                            </td>
-                        </tr>
-                    `;
+                    rows.push({
+                        type: 'sale',
+                        id: s.id,
+                        badge: '<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded font-bold">বিক্রি</span>',
+                        name: `${s.productName} (${s.customerName || 'নগদ'})`,
+                        info: `${s.date} ${s.time || ''} [${s.invoiceNo || 'N/A'}]`,
+                        amount: `৳ ${s.total.toFixed(2)}`,
+                        rawObj: s
+                    });
                 });
             }
 
             if (filter === 'all' || filter === 'expenses') {
                 shopData.expenses.forEach(e => {
-                    rowsHtml += `
-                        <tr>
-                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="expense" data-id="${e.id}"></td>
-                            <td class="p-4"><span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded-full font-bold">খরচ</span></td>
-                            <td class="p-4 font-bold text-slate-800">${e.category}</td>
-                            <td class="p-4 text-slate-600">${e.date}</td>
-                            <td class="p-4 text-rose-600 font-bold">৳ ${e.amount.toFixed(2)}</td>
-                            <td class="p-4 space-x-2">
-                                <button onclick="editEntry('expense', ${e.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
-                                <button onclick="deleteToRecycleBin('expense', ${e.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
-                            </td>
-                        </tr>
-                    `;
+                    rows.push({
+                        type: 'expense',
+                        id: e.id,
+                        badge: '<span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded font-bold">খরচ</span>',
+                        name: e.category,
+                        info: e.date,
+                        amount: `৳ ${e.amount.toFixed(2)}`,
+                        rawObj: e
+                    });
+                });
+            }
+
+            if (filter === 'all' || filter === 'categories') {
+                shopData.categories.forEach(cat => {
+                    rows.push({
+                        type: 'category',
+                        id: cat,
+                        badge: '<span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded font-bold">ক্যাটাগরি</span>',
+                        name: cat,
+                        info: 'স্টক ক্যাটাগরি',
+                        amount: `${shopData.products.filter(p => p.category === cat).length} টি পণ্য`,
+                        rawObj: cat
+                    });
                 });
             }
 
             if (filter === 'all' || filter === 'dues') {
                 shopData.dues.forEach(d => {
-                    rowsHtml += `
-                        <tr>
-                            <td class="p-4 text-center"><input type="checkbox" class="manage-row-checkbox cursor-pointer" data-type="due" data-id="${d.id}"></td>
-                            <td class="p-4"><span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full font-bold">দেনা/পাওনা</span></td>
-                            <td class="p-4 font-bold text-slate-800">${d.person} (${d.type === 'receivable' ? 'পাওনা' : 'দেনা'})</td>
-                            <td class="p-4 text-slate-600">${d.date}</td>
-                            <td class="p-4 font-bold text-slate-700">৳ ${d.amount.toFixed(2)}</td>
-                            <td class="p-4 space-x-2">
-                                <button onclick="editEntry('due', ${d.id})" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold"><i class="fa-solid fa-pen-to-square me-1"></i> এডিট</button>
-                                <button onclick="deleteToRecycleBin('due', ${d.id})" class="text-rose-600 hover:text-rose-800 text-xs font-semibold"><i class="fa-solid fa-trash me-1"></i> ডিলিট</button>
-                            </td>
-                        </tr>
-                    `;
+                    rows.push({
+                        type: 'due',
+                        id: d.id,
+                        badge: d.type === 'receivable' ? '<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded font-bold">পাওনা</span>' : '<span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded font-bold">দেনা</span>',
+                        name: d.person,
+                        info: `${d.date} (${d.phone})`,
+                        amount: `৳ ${d.amount.toFixed(2)}`,
+                        rawObj: d
+                    });
                 });
             }
 
-            tbody.innerHTML = rowsHtml || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো ডাটা খুঁজে পাওয়া যায়নি</td></tr>';
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td class="p-4 text-center"><input type="checkbox" class="manage-checkbox cursor-pointer" data-type="${r.type}" data-id="${r.id}"></td>
+                    <td class="p-4">${r.badge}</td>
+                    <td class="p-4 font-bold text-slate-800">${r.name}</td>
+                    <td class="p-4 text-slate-600">${r.info}</td>
+                    <td class="p-4 font-semibold text-slate-700">${r.amount}</td>
+                    <td class="p-4 space-x-2">
+                        ${r.type === 'sale' ? `<button onclick="openSalesEdit(${r.id})" class="text-indigo-600 hover:text-indigo-800 text-sm font-bold"><i class="fa-solid fa-pen"></i></button>` : ''}
+                        <button onclick="deleteManageItem('${r.type}', '${r.id}')" class="text-rose-500 hover:text-rose-700 text-sm font-bold"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো ডাটা পাওয়া যায়নি</td></tr>';
+        }
+
+        function toggleSelectAllManage(source) {
+            const checkboxes = document.querySelectorAll('.manage-checkbox');
+            checkboxes.forEach(cb => cb.checked = source.checked);
+        }
+
+        function deleteManageItem(type, id) {
+            if(!confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান? এটি রিসাইকেল বিনে চলে যাবে।")) return;
+
+            let itemObj = null;
+            if (type === 'product') {
+                const idx = shopData.products.findIndex(p => p.id == id);
+                if (idx !== -1) itemObj = shopData.products.splice(idx, 1)[0];
+            } else if (type === 'sale') {
+                const idx = shopData.sales.findIndex(s => s.id == id);
+                if (idx !== -1) itemObj = shopData.sales.splice(idx, 1)[0];
+            } else if (type === 'expense') {
+                const idx = shopData.expenses.findIndex(e => e.id == id);
+                if (idx !== -1) itemObj = shopData.expenses.splice(idx, 1)[0];
+            } else if (type === 'category') {
+                const idx = shopData.categories.indexOf(id);
+                if (idx !== -1) itemObj = shopData.categories.splice(idx, 1)[0];
+            } else if (type === 'due') {
+                const idx = shopData.dues.findIndex(d => d.id == id);
+                if (idx !== -1) itemObj = shopData.dues.splice(idx, 1)[0];
+            }
+
+            if (itemObj) {
+                shopData.recycleBin.push({
+                    deletedAt: getDeviceLocalDateStr(),
+                    type: type,
+                    data: itemObj
+                });
+            }
+
+            saveData();
+        }
+
+        function deleteSelectedManageEntries() {
+            const checkboxes = document.querySelectorAll('.manage-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert("দয়া করে অন্তত একটি এন্ট্রি সিলেক্ট করুন!");
+                return;
+            }
+
+            if (!confirm(`সিলেক্ট করা ${checkboxes.length}টি এন্ট্রি রিসাইকেল বিনে পাঠাতে চান?`)) return;
+
+            checkboxes.forEach(cb => {
+                const type = cb.getAttribute('data-type');
+                const id = cb.getAttribute('data-id');
+                deleteManageItemSilently(type, id);
+            });
+
+            saveData();
+        }
+
+        function deleteManageItemSilently(type, id) {
+            let itemObj = null;
+            if (type === 'product') {
+                const idx = shopData.products.findIndex(p => p.id == id);
+                if (idx !== -1) itemObj = shopData.products.splice(idx, 1)[0];
+            } else if (type === 'sale') {
+                const idx = shopData.sales.findIndex(s => s.id == id);
+                if (idx !== -1) itemObj = shopData.sales.splice(idx, 1)[0];
+            } else if (type === 'expense') {
+                const idx = shopData.expenses.findIndex(e => e.id == id);
+                if (idx !== -1) itemObj = shopData.expenses.splice(idx, 1)[0];
+            } else if (type === 'category') {
+                const idx = shopData.categories.indexOf(id);
+                if (idx !== -1) itemObj = shopData.categories.splice(idx, 1)[0];
+            } else if (type === 'due') {
+                const idx = shopData.dues.findIndex(d => d.id == id);
+                if (idx !== -1) itemObj = shopData.dues.splice(idx, 1)[0];
+            }
+
+            if (itemObj) {
+                shopData.recycleBin.push({
+                    deletedAt: getDeviceLocalDateStr(),
+                    type: type,
+                    data: itemObj
+                });
+            }
         }
 
         function renderRecycleBin() {
             const tbody = document.getElementById('recycle-bin-table-body');
             const seeMoreContainer = document.getElementById('recycle-bin-see-more-container');
-            const toggleBtn = document.getElementById('recycle-bin-toggle-btn');
-            
-            if (!tbody) return;
-            
-            if (shopData.recycleBin.length === 0) {
+            if(!tbody) return;
+
+            if (!shopData.recycleBin || shopData.recycleBin.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">রিসাইকেল বিন খালি রয়েছে</td></tr>';
                 if(seeMoreContainer) seeMoreContainer.classList.add('hidden');
                 return;
             }
 
-            const visibleItems = isRecycleBinExpanded 
-                ? shopData.recycleBin 
-                : shopData.recycleBin.slice(0, 3);
+            if(seeMoreContainer) {
+                if(shopData.recycleBin.length > 5) seeMoreContainer.classList.remove('hidden');
+                else seeMoreContainer.classList.add('hidden');
+            }
 
-            tbody.innerHTML = visibleItems.map((item, idx) => {
-                let name = '', detail = '', typeLabel = '';
+            const displayList = isRecycleBinExpanded ? shopData.recycleBin : shopData.recycleBin.slice(-5).reverse();
 
-                if (item.type === 'product') {
-                    typeLabel = '<span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-bold">পণ্য</span>';
-                    name = item.data.name;
-                    detail = `ক্যাটাগরি: ${item.data.category} | মূল্য: ৳${item.data.price}`;
-                } else if (item.type === 'category') {
-                    typeLabel = '<span class="bg-teal-100 text-teal-800 text-xs px-2 py-1 rounded-full font-bold">ক্যাটাগরি</span>';
-                    name = item.data;
-                    detail = 'ক্যাটাগরি তালিকা';
-                } else if (item.type === 'sales') {
-                    typeLabel = '<span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-1 rounded-full font-bold">বিক্রি</span>';
-                    name = `${item.data.productName} (${item.data.customerName || 'N/A'})`;
-                    detail = `তারিখ: ${item.data.date} | মোট: ৳${item.data.total.toFixed(2)}`;
-                } else if (item.type === 'expense') {
-                    typeLabel = '<span class="bg-rose-100 text-rose-800 text-xs px-2 py-1 rounded-full font-bold">খরচ</span>';
-                    name = item.data.category;
-                    detail = `তারিখ: ${item.data.date} | পরিমাণ: ৳${item.data.amount.toFixed(2)}`;
-                } else if (item.type === 'due') {
-                    typeLabel = '<span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full font-bold">দেনা/পাওনা</span>';
-                    name = item.data.person;
-                    detail = `তারিখ: ${item.data.date} | পরিমাণ: ৳${item.data.amount.toFixed(2)}`;
-                }
-
+            tbody.innerHTML = displayList.map((item, index) => {
+                const actualIndex = isRecycleBinExpanded ? index : shopData.recycleBin.length - 1 - index;
+                let name = item.data.name || item.data.customerName || item.data.category || item.data.person || 'অজ্ঞাত';
+                let info = `মোছা হয়েছে: ${item.deletedAt} (${item.type})`;
                 return `
                     <tr>
-                        <td class="p-4">${typeLabel}</td>
+                        <td class="p-4"><span class="bg-slate-200 text-slate-800 text-xs px-2 py-1 rounded font-bold">${item.type}</span></td>
                         <td class="p-4 font-bold text-slate-800">${name}</td>
-                        <td class="p-4 text-slate-600 text-xs">${detail}</td>
-                        <td class="p-4">
-                            <button onclick="restoreFromRecycleBin(${idx})" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold transition shadow">
-                                <i class="fa-solid fa-rotate-left me-1"></i> রিস্টোর
-                            </button>
+                        <td class="p-4 text-slate-600">${info}</td>
+                        <td class="p-4 space-x-2">
+                            <button onclick="restoreRecycleItem(${actualIndex})" class="text-emerald-600 hover:text-emerald-800 text-sm font-bold"><i class="fa-solid fa-rotate-left"></i> রিস্টোর</button>
+                            <button onclick="permanentDeleteRecycleItem(${actualIndex})" class="text-rose-500 hover:text-rose-700 text-sm font-bold"><i class="fa-solid fa-xmark"></i> স্থায়ী ডিলিট</button>
                         </td>
                     </tr>
                 `;
             }).join('');
+        }
 
-            if (shopData.recycleBin.length > 3) {
-                seeMoreContainer.classList.remove('hidden');
-                toggleBtn.innerHTML = isRecycleBinExpanded 
-                    ? '<i class="fa-solid fa-chevron-up me-1"></i> সি লেস (See Less)' 
-                    : '<i class="fa-solid fa-chevron-down me-1"></i> সি মোর (See More)';
+        function toggleRecycleBinView() {
+            isRecycleBinExpanded = !isRecycleBinExpanded;
+            const btn = document.getElementById('recycle-bin-toggle-btn');
+            if(isRecycleBinExpanded) {
+                btn.innerHTML = `<i class="fa-solid fa-chevron-up me-1"></i> কম দেখুন (See Less)`;
             } else {
-                seeMoreContainer.classList.add('hidden');
+                btn.innerHTML = `<i class="fa-solid fa-chevron-down me-1"></i> সি মোর (See More)`;
             }
+            renderRecycleBin();
         }
 
-        function renderStockTable() {
-            const tbody = document.getElementById('stock-table-body');
-            tbody.innerHTML = shopData.products.map(p => `
-                <tr>
-                    <td class="p-4 font-bold text-slate-800">${p.name}</td>
-                    <td class="p-4 text-slate-600">${p.category}</td>
-                    <td class="p-4">৳ ${p.cost.toFixed(2)}</td>
-                    <td class="p-4 font-bold text-emerald-600">৳ ${p.price.toFixed(2)}</td>
-                    <td class="p-4 font-bold ${p.stock <= 3 ? 'text-rose-600' : 'text-slate-700'}">${p.stock} ${p.unit}</td>
-                    <td class="p-4 text-slate-600">${p.unit}</td>
-                </tr>
-            `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো পণ্য মজুদ নেই</td></tr>';
-        }
+        function restoreRecycleItem(index) {
+            const item = shopData.recycleBin.splice(index, 1)[0];
+            if (!item) return;
 
-        function renderCategoryDropdowns() {
-            const pCatSelect = document.getElementById('p-category');
-            const posCatSelect = document.getElementById('pos-category-select');
-            
-            let optionsHtml = '<option value="">-- ক্যাটাগরি বেছে নিন --</option>';
-            shopData.categories.forEach(cat => {
-                optionsHtml += `<option value="${cat}">${cat}</option>`;
-            });
-
-            pCatSelect.innerHTML = optionsHtml;
-            posCatSelect.innerHTML = optionsHtml;
-        }
-
-        function renderCategoryTable() {
-            const tbody = document.getElementById('category-table-body');
-            tbody.innerHTML = shopData.categories.map(cat => {
-                const count = shopData.products.filter(p => p.category === cat).length;
-                return `
-                    <tr>
-                        <td class="p-4 font-bold text-slate-800">${cat}</td>
-                        <td class="p-4 text-slate-600">${count} টি পণ্য</td>
-                    </tr>
-                `;
-            }).join('') || '<tr><td colspan="2" class="p-4 text-center text-slate-400">কোনো ক্যাটাগরি নেই</td></tr>';
-        }
-
-        function renderExpenseTable() {
-            const tbody = document.getElementById('expense-table-body');
-            tbody.innerHTML = shopData.expenses.map(e => `
-                <tr>
-                    <td class="p-4">${e.date}</td>
-                    <td class="p-4 font-bold text-slate-800">${e.category}</td>
-                    <td class="p-4 font-bold text-rose-600">৳ ${e.amount.toFixed(2)}</td>
-                </tr>
-            `).join('') || '<tr><td colspan="3" class="p-4 text-center text-slate-400">কোনো খরচের হিসাব নেই</td></tr>';
-        }
-
-        function renderDailyReport() {
-            const startDate = document.getElementById('report-start-date').value;
-            const endDate = document.getElementById('report-end-date').value;
-            const searchQuery = (document.getElementById('report-search-input').value || '').trim().toLowerCase();
-
-            if (!startDate || !endDate) return;
-
-            let filteredSales = shopData.sales.filter(s => s.date >= startDate && s.date <= endDate);
-            let filteredExpenses = shopData.expenses.filter(e => e.date >= startDate && e.date <= endDate);
-            let filteredDues = shopData.dues.filter(d => d.date >= startDate && d.date <= endDate);
-
-            if (searchQuery) {
-                filteredSales = filteredSales.filter(s => 
-                    (s.customerName && s.customerName.toLowerCase().includes(searchQuery)) ||
-                    (s.customerPhone && s.customerPhone.toLowerCase().includes(searchQuery)) ||
-                    (s.invoiceNo && s.invoiceNo.toLowerCase().includes(searchQuery))
-                );
+            if (item.type === 'product') {
+                shopData.products.push(item.data);
+            } else if (item.type === 'sale') {
+                shopData.sales.push(item.data);
+            } else if (item.type === 'expense') {
+                shopData.expenses.push(item.data);
+            } else if (item.type === 'category') {
+                if(!shopData.categories.includes(item.data)) shopData.categories.push(item.data);
+            } else if (item.type === 'due') {
+                shopData.dues.push(item.data);
             }
 
-            let totalSalesAmount = 0;
-            let totalProfit = 0;
-            let totalQty = 0;
-            let totalDue = 0;
-
-            filteredSales.forEach(s => {
-                totalSalesAmount += s.total;
-                totalProfit += (s.profit || 0);
-                totalQty += s.qty;
-                totalDue += (s.due || 0);
-            });
-
-            let totalExpenseAmount = filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
-
-            document.getElementById('daily-sales-total').innerText = `৳ ${totalSalesAmount.toFixed(2)}`;
-            document.getElementById('daily-expense-total').innerText = `৳ ${totalExpenseAmount.toFixed(2)}`;
-            document.getElementById('daily-due-total').innerText = `৳ ${totalDue.toFixed(2)}`;
-            document.getElementById('daily-profit-total').innerText = `৳ ${totalProfit.toFixed(2)}`;
-            document.getElementById('daily-qty-total').innerText = `${totalQty} টি`;
-
-            const tbody = document.getElementById('daily-sales-table');
-            tbody.innerHTML = filteredSales.map(s => `
-                <tr>
-                    <td class="p-3 font-bold text-indigo-600">${s.invoiceNo || 'N/A'}</td>
-                    <td class="p-3 text-slate-600">${s.date} <span class="text-xs text-slate-400">(${s.time || ''})</span></td>
-                    <td class="p-3 font-semibold text-slate-800">${s.customerName || 'N/A'}</td>
-                    <td class="p-3 text-slate-600">${s.customerPhone || 'N/A'}</td>
-                    <td class="p-3 text-slate-800">${s.productName}</td>
-                    <td class="p-3">${s.qty} ${s.unit}</td>
-                    <td class="p-3 text-emerald-600 font-medium">৳ ${(s.cashPaid || 0).toFixed(2)}</td>
-                    <td class="p-3 text-amber-600 font-medium">৳ ${(s.due || 0).toFixed(2)}</td>
-                    <td class="p-3 font-bold text-slate-900">৳ ${s.total.toFixed(2)}</td>
-                </tr>
-            `).join('') || '<tr><td colspan="9" class="p-4 text-center text-slate-400">নির্বাচিত সময়ে কোনো বিক্রির তথ্য নেই</td></tr>';
+            saveData();
         }
 
-        function updateUI() {
-            renderStockTable();
-            renderCategoryDropdowns();
-            renderCategoryTable();
-            renderExpenseTable();
-            renderDues();
-            renderDailyReport();
+        function permanentDeleteRecycleItem(index) {
+            if(!confirm("নিশ্চিতভাবে স্থায়ীভাবে ডিলিট করতে চান?")) return;
+            shopData.recycleBin.splice(index, 1);
+            saveData();
+        }
 
-            // Balance Sheet Calculations with Optional Date Range
-            const bsStart = document.getElementById('bs-start-date').value;
-            const bsEnd = document.getElementById('bs-end-date').value;
-            document.getElementById('bs-date-range-display').innerText = bsStart && bsEnd ? `সময়সীমা: ${bsStart} থেকে ${bsEnd}` : 'সময়সীমা: সকল সময়';
-
-            let cashInHand = 0;
-            shopData.sales.forEach(s => cashInHand += (s.cashPaid || 0));
-            shopData.expenses.forEach(e => cashInHand -= e.amount);
-
-            let closingStockValue = 0;
-            let capitalInvestment = 0;
-            shopData.products.forEach(p => {
-                closingStockValue += (p.stock * p.cost);
-                capitalInvestment += ((p.initialStock || p.stock) * p.cost);
-            });
-
-            let totalReceivables = 0;
-            let totalPayables = 0;
-            shopData.dues.forEach(d => {
-                if (d.type === 'receivable') totalReceivables += d.amount;
-                if (d.type === 'payable') totalPayables += d.amount;
-            });
-
-            let totalNetProfit = 0;
-            shopData.sales.forEach(s => totalNetProfit += (s.profit || 0));
-            shopData.expenses.forEach(e => totalNetProfit -= e.amount);
-
-            const totalAssets = cashInHand + closingStockValue + totalReceivables;
-            const totalLiabilitiesAndEquity = totalPayables + capitalInvestment + totalNetProfit;
-
-            document.getElementById('bs-cash-in-hand').innerText = `৳ ${cashInHand.toFixed(2)}`;
-            document.getElementById('bs-stock-value').innerText = `৳ ${closingStockValue.toFixed(2)}`;
-            document.getElementById('bs-total-receivables').innerText = `৳ ${totalReceivables.toFixed(2)}`;
-            document.getElementById('bs-total-assets').innerText = `৳ ${totalAssets.toFixed(2)}`;
-
-            document.getElementById('bs-total-payables').innerText = `৳ ${totalPayables.toFixed(2)}`;
-            document.getElementById('bs-capital').innerText = `৳ ${capitalInvestment.toFixed(2)}`;
-            document.getElementById('bs-retained-profit').innerText = `৳ ${totalNetProfit.toFixed(2)}`;
-            document.getElementById('bs-total-liabilities').innerText = `৳ ${totalLiabilitiesAndEquity.toFixed(2)}`;
-
-            const diff = Math.abs(totalAssets - totalLiabilitiesAndEquity);
-            const statusBox = document.getElementById('bs-status-box');
-            if (diff < 1) {
-                statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-emerald-600 text-white border-emerald-700";
-                statusBox.innerText = "ব্যালেন্স শীট ১০০% নিখুঁত ও সমতায় রয়েছে (Assets = Liabilities & Equity)";
-            } else {
-                statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-amber-500 text-white border-amber-600";
-                statusBox.innerText = `ব্যালেন্স শীটে সামান্য ব্যবধান রয়েছে: ৳ ${diff.toFixed(2)}`;
-            }
+        function clearAllRecycleBin() {
+            if(!confirm("রিসাইকেল বিনের সকল ডাটা স্থায়ীভাবে মুছে ফেলতে চান?")) return;
+            shopData.recycleBin = [];
+            saveData();
         }
 
         function exportData() {
@@ -2328,9 +2348,7 @@
             const dlAnchorElem = document.createElement('a');
             dlAnchorElem.setAttribute("href", dataStr);
             dlAnchorElem.setAttribute("download", `shop_data_backup_${getDeviceLocalDateStr()}.json`);
-            document.body.appendChild(dlAnchorElem);
             dlAnchorElem.click();
-            dlAnchorElem.remove();
         }
 
         function importData(event) {
@@ -2339,19 +2357,16 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const imported = JSON.parse(e.target.result);
-                    if (imported && imported.products && imported.sales) {
-                        shopData = imported;
-                        if (!shopData.recycleBin) shopData.recycleBin = [];
-                        if (!shopData.dues) shopData.dues = [];
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && parsed.categories && parsed.products) {
+                        shopData = parsed;
                         saveData();
                         alert("সফলভাবে ডাটা ইমপোর্ট করা হয়েছে!");
-                        location.reload();
                     } else {
-                        alert("ভুল ফরম্যাটের ব্যাকআপ ফাইল!");
+                        alert("ভুল ফাইল ফরম্যাট!");
                     }
-                } catch (err) {
-                    alert("ফাইল রিড করতে সমস্যা হয়েছে!");
+                } catch(err) {
+                    alert("ডাটা পার্স করতে সমস্যা হয়েছে!");
                 }
             };
             reader.readAsText(file);
@@ -2359,6 +2374,12 @@
 
         window.onload = function() {
             initDatePickers();
+            populateCategorySelects();
+            renderStockTable();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDues();
+            renderDailyReport();
             updateUI();
         };
     </script>
