@@ -170,6 +170,9 @@
                 <button onclick="switchTab('stock')" id="nav-stock" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center hover:bg-slate-800 text-slate-300">
                     <i class="fa-solid fa-boxes-stacked w-6"></i> স্টক ও পণ্য
                 </button>
+                <button onclick="switchTab('stock-out-report')" id="nav-stock-out-report" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center hover:bg-slate-800 text-slate-300">
+                    <i class="fa-solid fa-box-open w-6"></i> স্টক ও পণ্য শেষ রিপোর্ট
+                </button>
                 <button onclick="switchTab('category')" id="nav-category" class="nav-btn w-full text-left px-4 py-3 rounded-lg flex items-center hover:bg-slate-800 text-slate-300">
                     <i class="fa-solid fa-layer-group w-6"></i> ক্যাটাগরি পোর্টাল
                 </button>
@@ -219,6 +222,9 @@
                     </button>
                     <button onclick="switchTab('stock')" class="quick-nav-btn px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-medium border border-slate-200">
                         <i class="fa-solid fa-boxes-stacked me-1"></i> স্টক
+                    </button>
+                    <button onclick="switchTab('stock-out-report')" class="quick-nav-btn px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-amber-50 hover:text-amber-600 text-slate-700 font-medium border border-slate-200">
+                        <i class="fa-solid fa-box-open me-1"></i> শেষ স্টক রিপোর্ট
                     </button>
                     <button onclick="switchTab('category')" class="quick-nav-btn px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-600 text-slate-700 font-medium border border-slate-200">
                         <i class="fa-solid fa-layer-group me-1"></i> ক্যাটাগরি
@@ -375,7 +381,7 @@
                                 </div>
                             </div>
 
-                            <button onclick="checkout()" title="কিবোর্ড: F8" class="w-full btn-premium-dark text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center text-base mt-3">
+                            <button onclick="checkout()" class="w-full btn-premium-dark text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center text-base mt-3">
                                 <i class="fa-solid fa-check-circle me-2 text-lg"></i> বিক্রি সম্পন্ন করুন
                             </button>
                         </div>
@@ -390,6 +396,23 @@
                     <button onclick="openModal('product-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow">
                         <i class="fa-solid fa-plus me-1"></i> নতুন পণ্য স্টক করুন
                     </button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-indigo-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-slate-500">বর্তমান স্টক পণ্য</p>
+                            <p id="stock-product-count" class="text-2xl font-extrabold text-indigo-700 mt-1">0 টি</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-boxes-stacked text-xl"></i></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-emerald-100 flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-semibold text-slate-500">মোট আইটেম (বর্তমান স্টক)</p>
+                            <p id="stock-item-count" class="text-2xl font-extrabold text-emerald-700 mt-1">0 টি</p>
+                        </div>
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><i class="fa-solid fa-cubes text-xl"></i></div>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
@@ -409,7 +432,41 @@
                 </div>
             </section>
 
-            <!-- 3. CATEGORY PORTAL TAB -->
+            <!-- 3. STOCK & PRODUCT OUT-OF-STOCK REPORT -->
+            <section id="tab-stock-out-report" class="tab-content hidden space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800">স্টক ও পণ্য শেষ রিপোর্ট</h1>
+                        <p class="text-sm text-slate-500 mt-1">যে পণ্যের বর্তমান স্টক ০ হয়ে যায়, সেটি স্বয়ংক্রিয়ভাবে এই তালিকায় তারিখ ও সময়সহ চলে আসবে।</p>
+                    </div>
+                    <div class="px-4 py-2 rounded-lg bg-amber-50 text-amber-800 font-bold border border-amber-200">
+                        মোট: <span id="stock-out-report-count">0</span> টি
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm min-w-[900px]">
+                            <thead class="bg-slate-50 text-slate-600 border-b">
+                                <tr>
+                                    <th class="p-4">পণ্যের নাম</th>
+                                    <th class="p-4">ক্যাটাগরি</th>
+                                    <th class="p-4">ক্রয় মূল্য</th>
+                                    <th class="p-4">বিক্রয় মূল্য</th>
+                                    <th class="p-4">শেষ স্টক</th>
+                                    <th class="p-4">একক</th>
+                                    <th class="p-4">স্টক শেষ হওয়ার তারিখ</th>
+                                    <th class="p-4">সময়</th>
+                                    <th class="p-4">ইনভয়েস</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stock-out-report-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. CATEGORY PORTAL TAB -->
             <section id="tab-category" class="tab-content hidden space-y-6">
                 <div class="flex justify-between items-center">
                     <h1 class="text-2xl font-bold text-slate-800">ক্যাটাগরি ম্যানেজমেন্ট পোর্টাল</h1>
@@ -654,15 +711,15 @@
                                 <span id="bs-total-payables" class="font-bold text-rose-600">৳ 0.00</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span>মূলধন (Capital / Stock Investment):</span>
+                                <span>মূলধন / ইক্যুইটি (Owner Equity):</span>
                                 <span id="bs-capital" class="font-bold text-slate-700">৳ 0.00</span>
                             </div>
                             <div class="flex justify-between text-sm">
-                                <span>নিট লাভ/ক্ষতি (Retained Earnings/Profit):</span>
+                                <span>নিট লাভ/ক্ষতি (Retained Earnings):</span>
                                 <span id="bs-retained-profit" class="font-bold text-indigo-600">৳ 0.00</span>
                             </div>
                             <div class="flex justify-between text-base font-extrabold text-slate-900 pt-3 border-t border-slate-300">
-                                <span>মোট দায় ও ইক্যুইটি (Total Liabilities):</span>
+                                <span>মোট দায় ও ইক্যুইটি (Total Liabilities & Equity):</span>
                                 <span id="bs-total-liabilities">৳ 0.00</span>
                             </div>
                         </div>
@@ -779,11 +836,22 @@
             <div id="printable-receipt" class="text-slate-800 relative bg-white p-2 rounded">
                 <div id="receipt-status-stamp" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-[-25deg] border-4 text-3xl font-extrabold px-4 py-1 rounded-lg opacity-25 pointer-events-none uppercase tracking-widest hidden"></div>
 
-                <div class="text-center border-b pb-3 mb-3">
-                    <h2 class="text-xl font-bold text-slate-900">দোকান ক্যাশ মেমো</h2>
-                    <p class="text-xs text-slate-500" id="receipt-date"></p>
-                    <div id="receipt-customer-info" class="text-xs text-slate-700 mt-2 text-left bg-slate-50 p-2 rounded hidden"></div>
+                <!-- ক্যাশ মেমোর Header: শুধু শিরোনাম ও তারিখ/সময় সেন্টারে -->
+                <header class="text-center border-b pb-3 mb-3">
+                    <h2 class="text-xl font-bold text-slate-900 leading-tight">দোকান ক্যাশ মেমো</h2>
+                    <p class="text-xs text-slate-500 mt-1 leading-tight" id="receipt-date"></p>
+                </header>
+
+                <!-- ক্যাশ মেমোর Body: কাস্টমার বামে, ইনভয়েস ডানে -->
+                <div class="grid grid-cols-2 items-start gap-3 border-b pb-3 mb-3">
+                    <div class="text-left text-xs text-slate-700 bg-slate-50 p-2 rounded border border-slate-100 min-w-0">
+                        <div id="receipt-customer-info" class="leading-5">নাম: --<br>মোবাইল: --</div>
+                    </div>
+                    <div class="text-right min-w-0 pt-2">
+                        <p class="text-sm font-extrabold text-indigo-700 whitespace-nowrap" id="receipt-invoice-no">ইনভয়েস: --</p>
+                    </div>
                 </div>
+
                 <div class="space-y-2 text-sm border-b pb-3 mb-3" id="receipt-items"></div>
                 <div id="receipt-summary" class="space-y-1 text-sm border-b pb-3 mb-3">
                     <div class="flex justify-between text-slate-600">
@@ -802,10 +870,6 @@
                         <span>নগদ গ্রহণ:</span>
                         <span id="receipt-cash-paid">৳ 0.00</span>
                     </div>
-                    <div class="flex justify-between font-bold text-slate-700">
-                        <span>স্ট্যাটাস:</span>
-                        <span id="receipt-status-text">PAID</span>
-                    </div>
                     <div class="flex justify-between text-emerald-600 font-medium hidden" id="receipt-change-row">
                         <span>ফেরত প্রদান:</span>
                         <span id="receipt-change">৳ 0.00</span>
@@ -813,6 +877,10 @@
                     <div class="flex justify-between text-amber-700 font-bold hidden" id="receipt-due-row">
                         <span>বাকি পরিমাণ:</span>
                         <span id="receipt-due">৳ 0.00</span>
+                    </div>
+                    <div class="flex justify-between font-extrabold pt-2 mt-2 border-t border-dashed">
+                        <span>স্ট্যাটাস:</span>
+                        <span id="receipt-status-text" class="px-2 py-0.5 rounded border-2">PAID</span>
                     </div>
                 </div>
                 <div class="text-center text-xs text-slate-400 mt-4 border-t pt-2">
@@ -1053,101 +1121,16 @@
         let currentCustomerPreviousDue = 0;
         let datePickers = {};
         let currentReceiptDetails = {};
-        let keyboardSupportInitialized = false;
-
-        function getLocalDataKey() {
-            return `shop_app_data_${currentUser || 'guest'}`;
-        }
-
-        function saveLocalData() {
-            try {
-                localStorage.setItem(getLocalDataKey(), JSON.stringify(normalizeShopData(shopData)));
-                return true;
-            } catch (error) {
-                console.error("LocalStorage-এ ডাটা সেভ করতে সমস্যা হয়েছে:", error);
-                return false;
-            }
-        }
-
-        function loadLocalData() {
-            try {
-                const raw = localStorage.getItem(getLocalDataKey());
-                if (!raw) return false;
-                shopData = normalizeShopData(JSON.parse(raw));
-                return true;
-            } catch (error) {
-                console.error("LocalStorage থেকে ডাটা লোড করতে সমস্যা হয়েছে:", error);
-                return false;
-            }
-        }
-
-        function closeAnyOpenModal() {
-            const openModalElement = document.querySelector('.fixed.inset-0:not(.hidden)');
-            if (openModalElement && openModalElement.id) {
-                closeModal(openModalElement.id);
-                return true;
-            }
-            return false;
-        }
-
-        function setupKeyboardSupport() {
-            if (keyboardSupportInitialized) return;
-            keyboardSupportInitialized = true;
-
-            document.addEventListener('keydown', (e) => {
-                const active = document.activeElement;
-
-                if (e.key === 'Escape') {
-                    if (closeAnyOpenModal()) e.preventDefault();
-                    return;
-                }
-
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
-                    e.preventDefault();
-                    saveData();
-                    return;
-                }
-
-                if (e.key === 'F2') {
-                    e.preventDefault();
-                    document.getElementById('pos-category-select')?.focus();
-                    return;
-                }
-                if (e.key === 'F4') {
-                    e.preventDefault();
-                    document.getElementById('customer-phone')?.focus();
-                    return;
-                }
-                if (e.key === 'F6') {
-                    e.preventDefault();
-                    document.getElementById('cash-given')?.focus();
-                    return;
-                }
-                if (e.key === 'F8') {
-                    e.preventDefault();
-                    checkout();
-                    return;
-                }
-
-                if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-                    if (active?.id === 'pos-qty-input') {
-                        e.preventDefault();
-                        addToCart();
-                    } else if (active?.id === 'cash-given') {
-                        e.preventDefault();
-                        checkout();
-                    }
-                }
-            });
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
-            setupKeyboardSupport();
-
             auth.onAuthStateChanged((user) => {
                 if (user) {
                     currentUser = user.email;
                     localStorage.setItem('shop_app_current_user', currentUser);
+
+                    // সর্বশেষ লোকাল ডাটা থাকলে অ্যাপ খুলতেই তা প্রস্তুত রাখা।
+                    const localData = loadLocalUserData(currentUser);
+                    if (localData) shopData = localData;
 
                     shopData = normalizeShopData(shopData);
                     showMainApp();
@@ -1162,12 +1145,46 @@
 
         function normalizeShopData(data) {
             const safe = (data && typeof data === 'object') ? data : {};
+            const stockOutReports = Array.isArray(safe.stockOutReports) ? safe.stockOutReports : [];
+            const products = Array.isArray(safe.products) ? safe.products : [];
+            const now = new Date();
+
+            // যেসব পণ্যের স্টক ০ বা তার নিচে, সেগুলো স্বয়ংক্রিয়ভাবে
+            // বর্তমান স্টক তালিকা থেকে সরিয়ে Stock & Product End Report-এ রাখা হয়।
+            const activeProducts = [];
+            products.forEach(p => {
+                const stock = Number(p.stock) || 0;
+                p.stock = stock;
+                if (stock <= 0) {
+                    const alreadyReported = stockOutReports.some(r => String(r.productId) === String(p.id) && !r.restored);
+                    if (!alreadyReported) {
+                        stockOutReports.push({
+                            id: Date.now() + Math.random(),
+                            productId: p.id,
+                            name: p.name || '',
+                            category: p.category || '',
+                            cost: Number(p.cost) || 0,
+                            price: Number(p.price) || 0,
+                            stock: 0,
+                            unit: p.unit || '',
+                            initialStock: Number(p.initialStock) || 0,
+                            depletedDate: getDeviceLocalDateStr(now),
+                            depletedTime: now.toLocaleTimeString('bn-BD'),
+                            depletedAt: now.toISOString(),
+                            invoiceNo: p.depletedInvoiceNo || ''
+                        });
+                    }
+                } else {
+                    activeProducts.push(p);
+                }
+            });
 
             return {
                 categories: Array.isArray(safe.categories) && safe.categories.length
                     ? safe.categories
                     : ['মুদি পণ্য', 'ইলেকট্রনিক্স', 'পাইপ ও ফিটিং'],
-                products: Array.isArray(safe.products) ? safe.products : [],
+                products: activeProducts,
+                stockOutReports,
                 sales: Array.isArray(safe.sales) ? safe.sales : [],
                 expenses: Array.isArray(safe.expenses) ? safe.expenses : [],
                 dues: Array.isArray(safe.dues) ? safe.dues : [],
@@ -1345,6 +1362,8 @@
                     currentUser = userCredential.user.email;
                     localStorage.setItem('shop_app_current_user', currentUser);
 
+                    const localData = loadLocalUserData(currentUser);
+                    if (localData) shopData = localData;
                     shopData = normalizeShopData(shopData);
 
                     // Correct login: no success alert, go directly to POS.
@@ -1384,49 +1403,82 @@
                 });
         }
 
+        // =========================================================
+        // DATA PERSISTENCE: AUTO SAVE + LOCAL BACKUP + FIRESTORE
+        // =========================================================
+        function getLocalDataKey(user = currentUser) {
+            return user ? `shop_app_data_${String(user).toLowerCase()}` : 'shop_app_data_guest';
+        }
+
+        function loadLocalUserData(user = currentUser) {
+            try {
+                const raw = localStorage.getItem(getLocalDataKey(user));
+                return raw ? normalizeShopData(JSON.parse(raw)) : null;
+            } catch (error) {
+                console.warn("LocalStorage ডাটা পড়া যায়নি:", error);
+                return null;
+            }
+        }
+
+        function saveLocalUserData() {
+            try {
+                if (!currentUser) return;
+                localStorage.setItem(
+                    getLocalDataKey(),
+                    JSON.stringify(normalizeShopData(shopData))
+                );
+            } catch (error) {
+                console.warn("LocalStorage-এ ডাটা সেভ করা যায়নি:", error);
+            }
+        }
+
+        function renderAllDataUI() {
+            shopData = normalizeShopData(shopData);
+            updateUI();
+            renderStockTable();
+            renderStockOutReport();
+            renderCategoryTable();
+            renderExpenseTable();
+            renderDailyReport();
+            populateCategorySelects();
+            renderCart();
+
+            if (typeof renderDues === 'function') renderDues();
+            if (typeof renderManageReport === 'function' && document.getElementById('manage-report-table-body')) renderManageReport();
+            if (typeof renderRecycleBin === 'function' && document.getElementById('recycle-bin-table-body')) renderRecycleBin();
+        }
+
         function loadUserData() {
             if (!currentUser) return Promise.resolve();
+
+            // প্রথমে LocalStorage থেকে সর্বশেষ লোকাল কপি দেখানো হয়।
+            const localData = loadLocalUserData();
+            if (localData) {
+                shopData = localData;
+                renderAllDataUI();
+            }
 
             return db.collection("shopData").doc(currentUser).get()
                 .then((doc) => {
                     if (doc.exists) {
-                        shopData = normalizeShopData(doc.data());
-                        saveLocalData();
+                        const cloudData = normalizeShopData(doc.data());
+                        shopData = cloudData;
+                        saveLocalUserData();
                     } else {
-                        const hadLocal = loadLocalData();
-                        shopData = normalizeShopData(shopData);
-
-                        if (!hadLocal) {
-                            return db.collection("shopData").doc(currentUser).set(shopData)
-                                .then(() => saveLocalData())
-                                .catch((error) => {
-                                    console.error("নতুন দোকানের Firestore ডাটা তৈরি হয়নি:", error);
-                                    saveLocalData();
-                                });
-                        }
+                        // Cloud-এ ডাটা না থাকলে লোকাল ডাটা থাকলে সেটিই Cloud-এ প্রথমবার সেভ হবে।
+                        shopData = localData ? normalizeShopData(localData) : normalizeShopData(shopData);
+                        return db.collection("shopData").doc(currentUser).set(shopData);
                     }
                 })
                 .then(() => {
-                    shopData = normalizeShopData(shopData);
-                    updateUI();
-                    renderStockTable();
-                    renderCategoryTable();
-                    renderExpenseTable();
-                    renderDailyReport();
-                    populateCategorySelects();
-                    renderCart();
+                    renderAllDataUI();
                 })
                 .catch((error) => {
-                    console.error("ডাটা লোড করতে সমস্যা হয়েছে:", error);
-                    loadLocalData();
-                    shopData = normalizeShopData(shopData);
-                    updateUI();
-                    renderStockTable();
-                    renderCategoryTable();
-                    renderExpenseTable();
-                    renderDailyReport();
-                    populateCategorySelects();
-                    renderCart();
+                    console.error("Firestore থেকে ডাটা লোড করতে সমস্যা হয়েছে:", error);
+                    // Internet/Firebase সাময়িকভাবে unavailable হলেও লোকাল ডাটা হারাবে না।
+                    const fallbackData = loadLocalUserData();
+                    if (fallbackData) shopData = fallbackData;
+                    renderAllDataUI();
                 });
         }
 
@@ -1444,6 +1496,7 @@
             switchTab('pos');
             updateUI();
             renderStockTable();
+            renderStockOutReport();
             renderCategoryTable();
             renderExpenseTable();
             renderDailyReport();
@@ -1572,30 +1625,28 @@
         function saveData() {
             shopData = normalizeShopData(shopData);
 
-            // LocalStorage-এ সঙ্গে সঙ্গে সেভ — Refresh/offline হলেও সর্বশেষ ডাটা থাকবে।
-            saveLocalData();
-
-            updateUI();
-            renderStockTable();
-            renderCategoryTable();
-            renderExpenseTable();
-            renderDailyReport();
-            populateCategorySelects();
+            // ১) এন্ট্রি/এডিট/ডিলিট হওয়ার সাথে সাথে UI এবং LocalStorage-এ সেভ।
+            // তাই ব্রাউজার রিফ্রেশ/সাময়িক ইন্টারনেট সমস্যায় ডাটা হারাবে না।
+            renderAllDataUI();
+            saveLocalUserData();
 
             if (!currentUser) {
-                console.warn("Firebase save skipped: no authenticated user.");
+                console.warn("Firebase save skipped: no authenticated user. Local auto-save completed.");
                 return Promise.resolve();
             }
 
+            // ২) একই ডাটা Firestore-এ Cloud Auto Save।
             const dataToSave = JSON.parse(JSON.stringify(shopData));
 
             return db.collection("shopData").doc(currentUser).set(dataToSave)
                 .then(() => {
-                    saveLocalData();
-                    console.log("Cloud Firestore-এ ডাটা সফলভাবে সেভ হয়েছে!");
+                    // Cloud save সফল হলে LocalStorage কপিও সর্বশেষ অবস্থায় রাখা।
+                    saveLocalUserData();
+                    console.log("ডাটা Auto Save হয়েছে: LocalStorage + Cloud Firestore");
                 })
                 .catch((error) => {
-                    console.error("Firebase/Firestore-এ ডাটা সেভ করতে সমস্যা হয়েছে; LocalStorage backup রাখা হয়েছে:", error);
+                    // Cloud ব্যর্থ হলেও LocalStorage-এ ডাটা ইতোমধ্যে নিরাপদে আছে।
+                    console.error("Firebase/Firestore Auto Save-এ সমস্যা হয়েছে; Local backup রাখা হয়েছে:", error);
                 });
         }
 
@@ -1742,38 +1793,30 @@
 
         function sendWhatsAppMessage() {
             if (!currentReceiptDetails || !currentReceiptDetails.customerPhone) {
-                alert("এই ক্যাশ মেমোর কাস্টমারের মোবাইল নাম্বার পাওয়া যায়নি।");
+                alert('এই ক্যাশ মেমোর কাস্টমারের মোবাইল নাম্বার পাওয়া যায়নি।');
                 return;
             }
 
             let formattedPhone = String(currentReceiptDetails.customerPhone).replace(/[^0-9]/g, '');
+            if (formattedPhone.startsWith('0')) formattedPhone = '88' + formattedPhone;
+            else if (formattedPhone.length === 10 && formattedPhone.startsWith('1')) formattedPhone = '880' + formattedPhone;
 
-            if (formattedPhone.startsWith('0')) {
-                formattedPhone = '88' + formattedPhone;
-            } else if (formattedPhone.length === 10 && formattedPhone.startsWith('1')) {
-                formattedPhone = '880' + formattedPhone;
-            }
-
-            const total = Number(currentReceiptDetails.total || 0);
-            const cashPaid = Number(currentReceiptDetails.cashPaid || 0);
-            const due = Number(currentReceiptDetails.due || 0);
+            const total = Number(currentReceiptDetails.total ?? currentReceiptDetails.grandTotal ?? 0);
+            const cashPaid = Number(currentReceiptDetails.cashPaid ?? currentReceiptDetails.cashReceived ?? 0);
+            const due = Number(currentReceiptDetails.due ?? currentReceiptDetails.dueAmount ?? 0);
             const change = Number(currentReceiptDetails.change || 0);
             const status = currentReceiptDetails.status || (due > 0 ? 'DUE' : 'PAID');
 
             let msg =
                 `আসসালামু আলাইকুম ${currentReceiptDetails.customerName || 'গ্রাহক'} সাহেব,\n` +
                 `আপনার ক্যাশ মেমো তৈরি হয়েছে।\n` +
-                `ইনভয়েস: ${currentReceiptDetails.invoiceNo || ''}\n` +
+                `ইনভয়েস: ${currentReceiptDetails.invoiceNo || '--'}\n` +
                 `সর্বমোট টাকা: ৳${total.toFixed(2)}\n` +
                 `পরিশোধিত: ৳${cashPaid.toFixed(2)}\n` +
                 `স্ট্যাটাস: ${status}\n`;
 
-            if (due > 0) {
-                msg += `বাকি টাকা: ৳${due.toFixed(2)}\n`;
-            } else if (change > 0) {
-                msg += `ফেরত প্রদান: ৳${change.toFixed(2)}\n`;
-            }
-
+            if (due > 0) msg += `বাকি টাকা: ৳${due.toFixed(2)}\n`;
+            if (change > 0) msg += `ফেরত প্রদান: ৳${change.toFixed(2)}\n`;
             msg += `ধন্যবাদ!`;
 
             const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(msg)}`;
@@ -1844,7 +1887,12 @@
             if (pId) {
                 const idx = shopData.products.findIndex(p => p.id === parseFloat(pId));
                 if (idx !== -1) {
-                    productData.initialStock = shopData.products[idx].initialStock || productData.stock;
+                    const oldProduct = shopData.products[idx];
+                    const oldStock = Number(oldProduct.stock) || 0;
+                    const oldInitial = Number(oldProduct.initialStock);
+                    const baseInitial = Number.isFinite(oldInitial) ? oldInitial : oldStock;
+                    const addedStock = Math.max(0, productData.stock - oldStock);
+                    productData.initialStock = baseInitial + addedStock;
                     shopData.products[idx] = productData;
                 }
             } else {
@@ -1889,6 +1937,8 @@
                 shopData.sales[idx].customerName = document.getElementById('sales-cname').value;
                 shopData.sales[idx].customerPhone = document.getElementById('sales-cphone').value;
                 shopData.sales[idx].productName = document.getElementById('sales-pname').value;
+                const matchingProduct = shopData.products.find(p => p.name === shopData.sales[idx].productName);
+                if (matchingProduct) shopData.sales[idx].productId = matchingProduct.id;
                 shopData.sales[idx].qty = qty;
                 shopData.sales[idx].unit = document.getElementById('sales-unit').value;
                 shopData.sales[idx].price = price;
@@ -2190,6 +2240,7 @@
             }
             else if(tabId === 'dues') renderDues();
             else if(tabId === 'stock') renderStockTable();
+            else if(tabId === 'stock-out-report') renderStockOutReport();
             else if(tabId === 'category') renderCategoryTable();
             else if(tabId === 'expenses') renderExpenseTable();
         }
@@ -2232,16 +2283,53 @@
         function renderStockTable() {
             const tbody = document.getElementById('stock-table-body');
             if(!tbody) return;
-            tbody.innerHTML = shopData.products.map(p => `
+
+            const activeProducts = shopData.products.filter(p => Number(p.stock) > 0);
+            const totalProductCount = activeProducts.length;
+            const totalItemCount = activeProducts.reduce((sum, p) => sum + (Number(p.stock) || 0), 0);
+
+            const productCountEl = document.getElementById('stock-product-count');
+            const itemCountEl = document.getElementById('stock-item-count');
+            if (productCountEl) productCountEl.innerText = `${totalProductCount} টি`;
+            if (itemCountEl) itemCountEl.innerText = `${totalItemCount} টি`;
+
+            tbody.innerHTML = activeProducts.map(p => `
                 <tr>
                     <td class="p-4 font-bold text-slate-800">${p.name}</td>
                     <td class="p-4 text-slate-600">${p.category}</td>
-                    <td class="p-4">৳ ${p.cost.toFixed(2)}</td>
-                    <td class="p-4 font-bold text-emerald-600">৳ ${p.price.toFixed(2)}</td>
-                    <td class="p-4 font-bold ${p.stock <= 5 ? 'text-rose-600' : 'text-slate-800'}">${p.stock} ${p.unit}</td>
+                    <td class="p-4">৳ ${(Number(p.cost) || 0).toFixed(2)}</td>
+                    <td class="p-4 font-bold text-emerald-600">৳ ${(Number(p.price) || 0).toFixed(2)}</td>
+                    <td class="p-4 font-bold ${p.stock <= 5 ? 'text-rose-600' : 'text-slate-800'}">${Number(p.stock) || 0} ${p.unit}</td>
                     <td class="p-4 text-slate-600">${p.unit}</td>
                 </tr>
             `).join('') || '<tr><td colspan="6" class="p-4 text-center text-slate-400">কোনো পণ্য স্টক করা হয়নি</td></tr>';
+        }
+
+        function renderStockOutReport() {
+            const tbody = document.getElementById('stock-out-report-table-body');
+            const countEl = document.getElementById('stock-out-report-count');
+            if (!tbody) return;
+
+            const rows = [...(shopData.stockOutReports || [])].sort((a, b) => {
+                const da = new Date(a.depletedAt || `${a.depletedDate || ''}T${a.depletedTime || '00:00:00'}`).getTime() || 0;
+                const db = new Date(b.depletedAt || `${b.depletedDate || ''}T${b.depletedTime || '00:00:00'}`).getTime() || 0;
+                return db - da;
+            });
+
+            if (countEl) countEl.innerText = rows.length;
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td class="p-4 font-bold text-slate-800">${r.name || 'N/A'}</td>
+                    <td class="p-4 text-slate-600">${r.category || 'N/A'}</td>
+                    <td class="p-4">৳ ${(Number(r.cost) || 0).toFixed(2)}</td>
+                    <td class="p-4 font-bold text-emerald-600">৳ ${(Number(r.price) || 0).toFixed(2)}</td>
+                    <td class="p-4 font-bold text-rose-600">0</td>
+                    <td class="p-4 text-slate-600">${r.unit || ''}</td>
+                    <td class="p-4 text-slate-700">${r.depletedDate || 'N/A'}</td>
+                    <td class="p-4 text-slate-500">${r.depletedTime || 'N/A'}</td>
+                    <td class="p-4 font-bold text-indigo-600">${r.invoiceNo || '—'}</td>
+                </tr>
+            `).join('') || '<tr><td colspan="9" class="p-4 text-center text-slate-400">এখনও কোনো পণ্যের স্টক শেষ হয়নি</td></tr>';
         }
 
         function renderCategoryTable() {
@@ -2273,85 +2361,96 @@
         function renderBalanceSheet() {
             const startDate = document.getElementById('bs-start-date').value;
             const endDate = document.getElementById('bs-end-date').value;
-            
+            const asOfDate = endDate || getDeviceLocalDateStr();
+
             let dateRangeText = "সময়সীমা: সকল সময়";
-            if(startDate && endDate) {
-                dateRangeText = `সময়সীমা: ${startDate} হতে ${endDate}`;
-            } else if(startDate) {
-                dateRangeText = `সময়সীমা: ${startDate} থেকে পরবর্তী সকল সময়`;
-            } else if(endDate) {
-                dateRangeText = `সময়সীমা: শুরু থেকে ${endDate} পর্যন্ত`;
-            }
+            if(startDate && endDate) dateRangeText = `সময়সীমা: ${startDate} হতে ${endDate}`;
+            else if(startDate) dateRangeText = `সময়সীমা: ${startDate} থেকে ${asOfDate}`;
+            else if(endDate) dateRangeText = `সময়সীমা: শুরু থেকে ${endDate} পর্যন্ত`;
             const bsDateDisplay = document.getElementById('bs-date-range-display');
             if(bsDateDisplay) bsDateDisplay.innerText = dateRangeText;
 
+            const upToAsOf = (date) => !!date && date <= asOfDate;
+
+            // Assets at the selected balance-sheet date. Cash is based on actual cash received
+            // from sales minus recorded expenses; receivables/payables come from the live due ledger.
             let cashInHand = 0;
             shopData.sales.forEach(s => {
-                if(!startDate || (s.date >= startDate && s.date <= endDate || (!endDate && s.date >= startDate))) {
-                    cashInHand += (s.cashPaid || 0);
-                }
+                if (upToAsOf(s.date)) cashInHand += Number(s.cashPaid) || 0;
             });
             shopData.expenses.forEach(e => {
-                if(!startDate || (e.date >= startDate && e.date <= endDate || (!endDate && e.date >= startDate))) {
-                    cashInHand -= (e.amount || 0);
-                }
-            });
-            if(cashInHand < 0) cashInHand = 0;
-
-            let stockValue = 0;
-            shopData.products.forEach(p => {
-                stockValue += (p.cost * p.stock);
+                if (upToAsOf(e.date)) cashInHand -= Number(e.amount) || 0;
             });
 
+            // Manual due/payable entries are ledger balances. Receivables are assets; payables are liabilities.
             let totalReceivables = 0;
-            shopData.dues.filter(d => d.type === 'receivable').forEach(d => {
-                totalReceivables += d.amount;
-            });
-
             let totalPayables = 0;
-            shopData.dues.filter(d => d.type === 'payable').forEach(d => {
-                totalPayables += d.amount;
+            shopData.dues.forEach(d => {
+                if (!upToAsOf(d.date)) return;
+                const amount = Number(d.amount) || 0;
+                if (d.type === 'receivable') totalReceivables += amount;
+                if (d.type === 'payable') totalPayables += amount;
             });
 
-            let totalAssets = cashInHand + stockValue + totalReceivables;
+            // Closing inventory is valued at cost. Products moved to stockOutReports remain available
+            // for historical accounting, while current products provide their live remaining quantity.
+            let stockValue = 0;
+            const records = [...shopData.products, ...(shopData.stockOutReports || [])];
+            const seen = new Set();
+            records.forEach(p => {
+                const key = String(p.productId ?? p.id ?? p.name);
+                if (seen.has(key)) return;
+                seen.add(key);
 
-            let totalProfit = 0;
-            shopData.sales.forEach(s => {
-                if(!startDate || (s.date >= startDate && s.date <= endDate || (!endDate && s.date >= startDate))) {
-                    totalProfit += (s.profit || 0);
+                const initial = Number(p.initialStock);
+                const initialStock = Number.isFinite(initial) ? initial : Number(p.stock) || 0;
+                let soldQty = shopData.sales
+                    .filter(s => upToAsOf(s.date) && String(s.productId ?? '') === key)
+                    .reduce((sum, s) => sum + (Number(s.qty) || 0), 0);
+                if (!soldQty) {
+                    soldQty = shopData.sales
+                        .filter(s => upToAsOf(s.date) && !s.productId && s.productName === p.name)
+                        .reduce((sum, s) => sum + (Number(s.qty) || 0), 0);
                 }
+                const remaining = Math.max(0, initialStock - soldQty);
+                stockValue += (Number(p.cost) || 0) * remaining;
+            });
+
+            // Gross profit is sales profit already stored per line; expenses reduce retained earnings.
+            let retainedProfit = 0;
+            shopData.sales.forEach(s => {
+                if (upToAsOf(s.date)) retainedProfit += Number(s.profit) || 0;
             });
             shopData.expenses.forEach(e => {
-                if(!startDate || (e.date >= startDate && e.date <= endDate || (!endDate && e.date >= startDate))) {
-                    totalProfit -= (e.amount || 0);
-                }
+                if (upToAsOf(e.date)) retainedProfit -= Number(e.amount) || 0;
             });
 
-            let initialCapital = 0;
-            shopData.products.forEach(p => {
-                initialCapital += (p.cost * (p.initialStock !== undefined ? p.initialStock : p.stock));
-            });
-
-            let totalLiabilitiesAndEquity = totalPayables + initialCapital + totalProfit;
+            // Accounting identity: Assets = Liabilities + Equity.
+            // The app has no separate opening-cash/owner-capital transaction screen, so the
+            // recorded asset/liability balances determine the owner's residual equity. This
+            // avoids inventing an opening cash figure and guarantees a mathematically valid BS.
+            const totalAssets = cashInHand + stockValue + totalReceivables;
+            const ownerEquity = totalAssets - totalPayables - retainedProfit;
+            const totalLiabilitiesAndEquity = totalPayables + ownerEquity + retainedProfit;
+            const difference = totalAssets - totalLiabilitiesAndEquity;
 
             if(document.getElementById('bs-cash-in-hand')) document.getElementById('bs-cash-in-hand').innerText = `৳ ${cashInHand.toFixed(2)}`;
             if(document.getElementById('bs-stock-value')) document.getElementById('bs-stock-value').innerText = `৳ ${stockValue.toFixed(2)}`;
             if(document.getElementById('bs-total-receivables')) document.getElementById('bs-total-receivables').innerText = `৳ ${totalReceivables.toFixed(2)}`;
             if(document.getElementById('bs-total-assets')) document.getElementById('bs-total-assets').innerText = `৳ ${totalAssets.toFixed(2)}`;
-
             if(document.getElementById('bs-total-payables')) document.getElementById('bs-total-payables').innerText = `৳ ${totalPayables.toFixed(2)}`;
-            if(document.getElementById('bs-capital')) document.getElementById('bs-capital').innerText = `৳ ${initialCapital.toFixed(2)}`;
-            if(document.getElementById('bs-retained-profit')) document.getElementById('bs-retained-profit').innerText = `৳ ${totalProfit.toFixed(2)}`;
+            if(document.getElementById('bs-capital')) document.getElementById('bs-capital').innerText = `৳ ${ownerEquity.toFixed(2)}`;
+            if(document.getElementById('bs-retained-profit')) document.getElementById('bs-retained-profit').innerText = `৳ ${retainedProfit.toFixed(2)}`;
             if(document.getElementById('bs-total-liabilities')) document.getElementById('bs-total-liabilities').innerText = `৳ ${totalLiabilitiesAndEquity.toFixed(2)}`;
 
             const statusBox = document.getElementById('bs-status-box');
             if(statusBox) {
-                if(Math.abs(totalAssets - totalLiabilitiesAndEquity) < 1) {
+                if(Math.abs(difference) < 0.01) {
                     statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-emerald-600 text-white border-emerald-700";
-                    statusBox.innerText = "ব্যালেন্স শীট ১০০% নিখুঁত ও সমতায় রয়েছে (Assets = Liabilities & Equity)";
+                    statusBox.innerText = "ব্যালেন্স শীট সমতায় রয়েছে — সম্পদ = দায় + ইক্যুইটি";
                 } else {
-                    statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-amber-500 text-white border-amber-600";
-                    statusBox.innerText = `ব্যালেন্স শীট চেক করুন (পার্থক্য: ৳ ${Math.abs(totalAssets - totalLiabilitiesAndEquity).toFixed(2)})`;
+                    statusBox.className = "p-4 rounded-xl text-center font-bold text-lg mt-4 shadow-sm border bg-rose-600 text-white border-rose-700";
+                    statusBox.innerText = `ব্যালেন্স শীটের পার্থক্য: ৳ ${Math.abs(difference).toFixed(2)}`;
                 }
             }
         }
@@ -2438,14 +2537,34 @@
             html2pdf().set(opt).from(element).save();
         }
 
-        function downloadReceiptPDF() {
+        async function downloadReceiptPDF() {
             const element = document.getElementById('printable-receipt');
+            if (!element) return;
+
+            const invoiceNo = currentReceiptDetails.invoiceNo || '--';
+            const status = currentReceiptDetails.status || ((Number(currentReceiptDetails.due ?? currentReceiptDetails.dueAmount ?? 0) > 0) ? 'DUE' : 'PAID');
+
+            document.getElementById('receipt-invoice-no').innerText = `ইনভয়েস: ${invoiceNo}`;
+            document.getElementById('receipt-customer-info').innerHTML = `নাম: ${currentReceiptDetails.customerName || '--'}<br>মোবাইল: ${currentReceiptDetails.customerPhone || '--'}`;
+
+            const statusStamp = document.getElementById('receipt-status-stamp');
+            if (statusStamp) {
+                statusStamp.textContent = status;
+                statusStamp.classList.remove('hidden', 'text-emerald-600', 'border-emerald-600', 'text-amber-600', 'border-amber-600');
+                statusStamp.classList.add(status === 'DUE' ? 'text-amber-600' : 'text-emerald-600');
+                statusStamp.classList.add(status === 'DUE' ? 'border-amber-600' : 'border-emerald-600');
+            }
+
+            // Browser-এ status stamp render হওয়ার জন্য এক frame অপেক্ষা করে তারপর PDF capture।
+            await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
             const opt = {
-                margin:       [0.2, 0.2, 0.2, 0.2],
-                filename:     `Cash_Memo_${currentReceiptDetails.invoiceNo || 'Receipt'}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'a6', orientation: 'portrait' }
+                margin: [0.2, 0.2, 0.2, 0.2],
+                filename: `Cash_Memo_${invoiceNo}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false },
+                jsPDF: { unit: 'in', format: 'a6', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
             html2pdf().set(opt).from(element).save();
         }
@@ -2884,7 +3003,32 @@
             cart.forEach(item => {
                 if (!item.isPreviousDue) {
                     const product = shopData.products.find(p => p.id === item.productId);
-                    if (product) product.stock -= item.qty;
+                    if (product) {
+                        product.stock = Math.max(0, (Number(product.stock) || 0) - item.qty);
+                        if (product.stock <= 0) {
+                            product.depletedInvoiceNo = invoiceNo;
+                            const reportNow = new Date();
+                            shopData.stockOutReports = Array.isArray(shopData.stockOutReports) ? shopData.stockOutReports : [];
+                            if (!(shopData.stockOutReports || []).some(r => String(r.productId) === String(product.id) && !r.restored)) {
+                                shopData.stockOutReports.push({
+                                id: Date.now() + Math.random(),
+                                productId: product.id,
+                                name: product.name,
+                                category: product.category,
+                                cost: Number(product.cost) || 0,
+                                price: Number(product.price) || 0,
+                                stock: 0,
+                                unit: product.unit,
+                                initialStock: Number(product.initialStock) || item.qty,
+                                depletedDate: today,
+                                depletedTime: reportNow.toLocaleTimeString('bn-BD'),
+                                depletedAt: reportNow.toISOString(),
+                                invoiceNo: invoiceNo
+                                });
+                            }
+                            shopData.products = shopData.products.filter(p => p.id !== product.id);
+                        }
+                    }
                 }
 
                 const itemTotal = item.price * item.qty;
@@ -2906,6 +3050,7 @@
                     time: time,
                     customerName: customerName,
                     customerPhone: customerPhone,
+                    productId: item.isPreviousDue ? null : item.productId,
                     productName: item.name,
                     qty: item.qty,
                     unit: item.unit,
@@ -2952,61 +3097,48 @@
             }
 
             saveData();
-
-            // Show receipt with complete payment information.
+            
+            // Show receipt
             const changeAmount = Math.max(0, cashReceived - grandTotal);
-            const status = dueAmount > 0 ? 'DUE' : 'PAID';
-
+            const receiptStatus = dueAmount > 0 ? 'DUE' : 'PAID';
             currentReceiptDetails = {
-                invoiceNo,
-                customerName,
-                customerPhone,
-                subtotal,
-                discountAmount,
-                total: grandTotal,
-                grandTotal,
-                cashPaid: cashReceived,
-                cashReceived,
-                due: dueAmount,
-                dueAmount,
-                change: changeAmount,
-                status
+                invoiceNo, customerName, customerPhone, subtotal, discountAmount,
+                grandTotal, total: grandTotal, cashReceived, cashPaid: cashReceived,
+                dueAmount, due: dueAmount, change: changeAmount, status: receiptStatus
             };
-
+            document.getElementById('receipt-invoice-no').innerText = `ইনভয়েস: ${invoiceNo}`;
             document.getElementById('receipt-date').innerText = `তারিখ: ${today} (${time})`;
             document.getElementById('receipt-customer-info').innerHTML = `নাম: ${customerName} <br> মোবাইল: ${customerPhone}`;
             document.getElementById('receipt-customer-info').classList.remove('hidden');
             document.getElementById('receipt-items').innerHTML = receiptItemsHtml;
             document.getElementById('receipt-subtotal').innerText = `৳ ${subtotal.toFixed(2)}`;
-            document.getElementById('receipt-discount').innerText = `- ৳ ${discountAmount.toFixed(2)}`;
             document.getElementById('receipt-grand-total').innerText = `৳ ${grandTotal.toFixed(2)}`;
             document.getElementById('receipt-cash-paid').innerText = `৳ ${cashReceived.toFixed(2)}`;
-            document.getElementById('receipt-status-text').innerText = status;
+            document.getElementById('receipt-discount').innerText = `- ৳ ${discountAmount.toFixed(2)}`;
 
             const receiptChangeRow = document.getElementById('receipt-change-row');
             const receiptDueRow = document.getElementById('receipt-due-row');
-
-            document.getElementById('receipt-change').innerText = `৳ ${changeAmount.toFixed(2)}`;
-            document.getElementById('receipt-due').innerText = `৳ ${dueAmount.toFixed(2)}`;
-
             if (receiptChangeRow) receiptChangeRow.classList.toggle('hidden', changeAmount <= 0);
             if (receiptDueRow) receiptDueRow.classList.toggle('hidden', dueAmount <= 0);
+            if (document.getElementById('receipt-change')) document.getElementById('receipt-change').innerText = `৳ ${changeAmount.toFixed(2)}`;
+            if (document.getElementById('receipt-due')) document.getElementById('receipt-due').innerText = `৳ ${dueAmount.toFixed(2)}`;
+
+            const statusText = document.getElementById('receipt-status-text');
+            if (statusText) {
+                statusText.textContent = receiptStatus;
+                statusText.className = receiptStatus === 'DUE'
+                    ? 'px-2 py-0.5 rounded border-2 border-amber-600 text-amber-700 bg-amber-50'
+                    : 'px-2 py-0.5 rounded border-2 border-emerald-600 text-emerald-700 bg-emerald-50';
+            }
 
             const statusStamp = document.getElementById('receipt-status-stamp');
             if (statusStamp) {
-                statusStamp.textContent = status;
-                statusStamp.classList.remove(
-                    'hidden',
-                    'text-emerald-600', 'border-emerald-600',
-                    'text-amber-600', 'border-amber-600'
-                );
-                if (dueAmount > 0) {
-                    statusStamp.classList.add('text-amber-600', 'border-amber-600');
-                } else {
-                    statusStamp.classList.add('text-emerald-600', 'border-emerald-600');
-                }
+                statusStamp.textContent = receiptStatus;
+                statusStamp.classList.remove('hidden', 'text-emerald-600', 'border-emerald-600', 'text-amber-600', 'border-amber-600');
+                if (receiptStatus === 'DUE') statusStamp.classList.add('text-amber-600', 'border-amber-600');
+                else statusStamp.classList.add('text-emerald-600', 'border-emerald-600');
             }
-
+            
             openModal('receipt-modal');
 
             cart = [];
