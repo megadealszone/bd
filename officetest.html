@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta name="theme-color" content="#12304a">
+<title>দৈনিক লেনদেন ও ভাউচার ম্যানেজমেন্ট</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#f3f6fa;color:#18232e}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:flex}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:245px;background:#092033;color:#fff;padding:14px 10px;overflow-y:auto;z-index:20}
+.brand{font-size:19px;font-weight:700;text-align:center;padding:14px 5px 20px;border-bottom:1px solid #29465b;margin-bottom:10px}
+.nav-btn{width:100%;border:0;background:transparent;color:#dce8f0;text-align:left;padding:12px;border-radius:8px;margin:3px 0}
+.nav-btn:hover,.nav-btn.active{background:#124363;color:#fff}
+.main{margin-left:245px;width:calc(100% - 245px);padding:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.topbar h1{margin:0 0 5px;font-size:25px}
+.today{background:#fff;border:1px solid #d5dfe8;border-radius:9px;padding:10px 13px;font-weight:700;white-space:nowrap}
+.section{display:none}.section.active{display:block}
+.card{background:#fff;border:1px solid #d7e0e8;border-radius:12px;padding:17px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+h2{font-size:21px;margin:0 0 15px}h3{margin:0 0 12px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:#fff;border:1px solid #d7e0e8;border-radius:10px;padding:15px}
+.stat span{font-size:14px;color:#64748b}.stat b{display:block;font-size:23px;margin-top:7px}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:700;font-size:14px}
+input,select{width:100%;border:1px solid #b8c7d5;border-radius:7px;padding:10px 11px;background:#fff;color:#17212b}
+input:focus,select:focus{outline:2px solid #90caf9;border-color:#1976d2}
+input:disabled{background:#eef2f5;color:#9aa6b2}
+.full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.btn{border:0;border-radius:7px;padding:10px 15px;background:#1565c0;color:#fff}
+.btn:hover{filter:brightness(.95)}
+.btn.gray{background:#607d8b}.btn.green{background:#16834b}.btn.red{background:#c62828}.btn.orange{background:#e67e22}
+.small{font-size:12px;color:#687787}
+.hidden{display:none!important}
+.notice{padding:11px 12px;border-left:4px solid #1565c0;background:#eef6ff;border-radius:6px;margin-top:12px}
+.search-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:9px}
+.filters{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:950px}
+th,td{border:1px solid #d8e1e9;padding:8px 9px;text-align:left;vertical-align:middle}
+th{background:#edf3f8;white-space:nowrap}
+.money{text-align:right;font-variant-numeric:tabular-nums}
+.good{color:#16834b;font-weight:700}.bad{color:#c62828;font-weight:700}
+.badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:12px;font-weight:700}
+.badge.green{background:#d9f5e5;color:#12633c}.badge.red{background:#ffe1e1;color:#a61d1d}.badge.blue{background:#e0efff;color:#155b9b}.clickable-status{cursor:pointer}.clickable-status:hover{filter:brightness(.95);text-decoration:underline}
+.empty{text-align:center;color:#758494;padding:28px}
+.voucher-box{margin-top:12px;padding:13px;border:1px dashed #9db3c5;background:#f7fbff;border-radius:8px}
+.radio-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.radio-row label{border:1px solid #c8d3dc;border-radius:7px;padding:9px 12px;background:#fff;cursor:pointer}
+.radio-row input{width:auto}
+.modal-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;align-items:center;justify-content:center;padding:15px}
+.modal{background:#fff;width:min(500px,100%);border-radius:12px;padding:18px}
+.modal h3{margin-top:0}
+hr{border:0;border-top:1px solid #e2e8f0;margin:15px 0}
+@media(max-width:1000px){.form-grid{grid-template-columns:repeat(2,1fr)}.grid4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+ .app{display:block}.sidebar{position:relative;width:100%;height:auto}.main{margin-left:0;width:100%;padding:12px}
+ .topbar{align-items:flex-start;flex-direction:column}.today{width:100%}
+ .form-grid,.grid4,.filters,.search-grid{grid-template-columns:1fr}.full{grid-column:auto}
+ .topbar h1{font-size:21px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand">💰 লেনদেন ম্যানেজমেন্ট</div>
+  <button class="nav-btn active" data-page="dashboard">🏠 ড্যাশবোর্ড</button>
+  <button class="nav-btn" data-page="entry">📝 দৈনিক এন্ট্রি</button>
+  <button class="nav-btn" data-page="details">📋 বিবরণী</button>
+  <button class="nav-btn" data-page="due">⚠️ কে টাকা পরিশোধ করে নি</button>
+  <button class="nav-btn" data-page="receivable">💵 আমার কাছে কে পাবে</button>
+  <button class="nav-btn" data-page="balance">📊 ব্যালেন্স শিট রিপোর্ট</button>
+  <button class="nav-btn" data-page="recent">🕘 সাম্প্রতিক এন্ট্রি</button>
+  <button class="nav-btn" data-page="manage">⚙️ ম্যানেজ</button>
+</aside>
+
+<div class="modal-back" id="voucherModal">
+  <div class="modal">
+    <h3>ভাউচার / পরিশোধ আপডেট</h3>
+    <div id="voucherPersonInfo" class="notice"></div>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr; margin-top:12px">
+      <div class="field">
+        <label>প্রদানকৃত টাকার পরিমাণ</label>
+        <input id="voucherDueAmount" type="text" readonly>
+      </div>
+      <div class="field">
+        <label>মোট ভাউচারের পরিমাণ</label>
+        <input id="voucherTotalAmount" type="number" min="0" step="0.01" placeholder="ভাউচারের মোট পরিমাণ">
+      </div>
+    </div>
+    <div id="voucherResult" class="notice">ফলাফল এখানে দেখাবে।</div>
+    <div id="extraVoucherWrap" class="voucher-box hidden">
+      <div class="field">
+        <label id="extraVoucherAmountLabel">অবশিষ্ট অর্থ জমা</label>
+        <input id="extraVoucherAmount" type="number" min="0" step="0.01" placeholder="অবশিষ্ট অর্থের পরিমাণ">
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label id="extraExpenseDetailsLabel">অবশিষ্ট অর্থ জমার বিবরণী</label>
+        <input id="extraExpenseDetails" placeholder="অবশিষ্ট অর্থ জমার বিবরণ লিখুন">
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" type="button" id="saveVoucherUpdate">💾 আপডেট করুন</button>
+      <button class="btn gray" type="button" id="closeVoucherModal">বন্ধ করুন</button>
+    </div>
+  </div>
+</div>
+
+<main class="main">
+<div class="topbar">
+  <div>
+    <h1>দৈনিক লেনদেন ও ভাউচার</h1>
+    <div class="small">সব ডাটা এই ডিভাইসের LocalStorage-এ সংরক্ষিত থাকবে।</div>
+  </div>
+  <div class="today">বর্তমান তারিখ: <span id="currentDate"></span></div>
+</div>
+
+<section id="dashboard" class="section active">
+  <div class="grid4">
+    <div class="stat"><span>মোট আয় + ক্যাশ জমা</span><b id="dIncome">0.00</b></div>
+    <div class="stat"><span>মোট ব্যয়</span><b id="dExpense">0.00</b></div>
+    <div class="stat"><span>মোট ভাউচার পরিমাণ</span><b id="dVoucher">0.00</b></div>
+    <div class="stat"><span>বর্তমান ব্যালেন্স</span><b id="dBalance">0.00</b></div>
+    <div class="stat"><span>অফিসের পাওনা/বাকি</span><b id="dDue">0.00</b></div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <h2>সেকশন-১</h2>
+    <div id="dashboardDueTable"></div>
+  </div>
+</section>
+
+<section id="entry" class="section">
+<div class="card">
+<h2>দৈনিক এন্ট্রি</h2>
+<form id="entryForm" autocomplete="off">
+<div class="form-grid">
+  <div class="field"><label>সিরিয়াল নম্বর</label><input id="serial" readonly></div>
+  <div class="field"><label>তারিখ (DD-MM-YYYY)</label><input id="entryDate" maxlength="10" inputmode="numeric" placeholder="DD-MM-YYYY" required></div>
+  <div class="field"><label>ID নাম্বার</label><input id="entryId" required></div>
+  <div class="field"><label>নাম</label><input id="entryName" required></div>
+  <div class="field full"><label>কি কাজে টাকা নেওয়া/জমা করা হবে?</label><input id="details" placeholder="যেমন: অফিস খরচ / রোলিং মেশিন / ভাউচার জমা" required></div>
+  <div class="field">
+    <label>লেনদেনের ধরন</label>
+    <select id="type" required>
+      <option value="">-- নির্বাচন করুন --</option>
+      <option value="income">আয়</option>
+      <option value="expense">ব্যয়</option>
+      <option value="cash">ক্যাশ জমা</option>
+    </select>
+  </div>
+  <div class="field hidden" id="amountWrap"><label>পরিমাণ</label><input id="amount" type="number" min="0" step="0.01" placeholder="টাকার পরিমাণ"></div>
+</div>
+<div id="entryHint" class="notice hidden"></div>
+<div class="actions">
+  <button class="btn" type="submit">💾 এন্ট্রি সেভ</button>
+  <button class="btn gray" type="button" id="newEntry">নতুন এন্ট্রি</button>
+</div>
+</form>
+</div>
+
+<div class="card">
+<h3>ID / নাম দিয়ে বাকি হিসাব খুঁজুন</h3>
+<div class="search-grid">
+  <input id="searchId" placeholder="ID দিয়ে সার্চ">
+  <input id="searchName" placeholder="নাম দিয়ে সার্চ">
+  <button class="btn" id="searchPerson" type="button">সার্চ</button>
+</div>
+<div id="personResult"></div>
+</div>
+</section>
+
+<section id="details" class="section">
+<div class="card">
+<h2>বিবরণী রিপোর্ট</h2>
+<div class="filters">
+ <div class="field"><label>শুরু তারিখ</label><input id="detailFrom" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <div class="field"><label>শেষ তারিখ</label><input id="detailTo" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <button class="btn" id="detailRun">রিপোর্ট দেখুন</button>
+</div>
+</div>
+<div class="card"><div id="detailsTable"></div></div>
+</section>
+
+<section id="due" class="section">
+<div class="card">
+<h2>কে টাকা/ভাউচার পরিশোধ করে নি</h2>
+<div class="filters">
+ <div class="field"><label>শুরু তারিখ</label><input id="dueFrom" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <div class="field"><label>শেষ তারিখ</label><input id="dueTo" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <button class="btn" id="dueRun">রিপোর্ট দেখুন</button>
+</div>
+</div>
+<div class="card"><div id="dueTable"></div></div>
+</section>
+
+<section id="receivable" class="section">
+<div class="card">
+<h2>আমার কাছে কে পাবে</h2>
+<div class="filters">
+ <div class="field"><label>শুরু তারিখ</label><input id="recFrom" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <div class="field"><label>শেষ তারিখ</label><input id="recTo" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <button class="btn" id="recRun">রিপোর্ট দেখুন</button>
+</div>
+</div>
+<div class="card"><div id="recTable"></div></div>
+</section>
+
+<section id="balance" class="section">
+<div class="card">
+<h2>ব্যালেন্স শিট রিপোর্ট</h2>
+<div class="filters">
+ <div class="field"><label>শুরু তারিখ</label><input id="balFrom" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <div class="field"><label>শেষ তারিখ</label><input id="balTo" class="filterDate" maxlength="10" inputmode="numeric"></div>
+ <button class="btn" id="balRun">রিপোর্ট দেখুন</button>
+</div>
+</div>
+<div class="grid4">
+ <div class="stat"><span>মোট আয় + ক্যাশ জমা</span><b id="bIncome">0.00</b></div>
+ <div class="stat"><span>মোট ব্যয়</span><b id="bExpense">0.00</b></div>
+ <div class="stat"><span>নিট ব্যালেন্স</span><b id="bNet">0.00</b></div>
+ <div class="stat"><span>মোট বাকি</span><b id="bDue">0.00</b></div>
+</div>
+<div class="card" style="margin-top:16px"><div id="balanceTable"></div></div>
+</section>
+<section id="recent" class="section">
+<div class="card">
+<h2>সাম্প্রতিক এন্ট্রি</h2>
+<div id="recentTable"></div>
+</div>
+</section>
+<section id="manage" class="section"><div class="card"><h2>⚙️ ম্যানেজ — সকল ডাটা নিয়ন্ত্রণ</h2><div class="notice">এই সেকশনে প্রবেশ করতে ৫১০১ পাসওয়ার্ড প্রয়োজন। এখান থেকে সকল এন্ট্রি এডিট, আপডেট ও ডিলেট করা যাবে।</div></div><div class="card"><div class="filters"><div class="field"><label>সার্চ</label><input id="manageSearch" placeholder="ID, নাম, বিবরণ বা সিরিয়াল"></div><div class="field"><label>লেনদেনের ধরন</label><select id="manageType"><option value="">সব</option><option value="income">আয়</option><option value="expense">ব্যয়</option><option value="cash">ক্যাশ জমা</option></select></div><button class="btn" id="manageSearchBtn" type="button">সার্চ</button></div></div><div class="card"><div id="manageTable"></div></div></section>
+</main>
+</div>
+
+<script>
+'use strict';
+
+const STORAGE_KEY = 'daily_transaction_manager_v3';
+let records = [];
+
+function $(id){ return document.getElementById(id); }
+
+function money(n){
+  return Number(n || 0).toLocaleString('en-IN',{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function todayString(){
+  const d = new Date();
+  return pad(d.getDate()) + '-' + pad(d.getMonth()+1) + '-' + d.getFullYear();
+}
+
+function isValidDate(s){
+  const m = String(s || '').trim().match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if(!m) return false;
+  const day = Number(m[1]), month = Number(m[2]), year = Number(m[3]);
+  const d = new Date(year, month-1, day);
+  return d.getFullYear()===year && d.getMonth()===month-1 && d.getDate()===day;
+}
+
+function dateToISO(s){
+  if(!isValidDate(s)) return '';
+  const p = s.split('-');
+  return p[2] + '-' + p[1] + '-' + p[0];
+}
+
+function formatDateInput(el){
+  let v = String(el.value || '').replace(/\D/g,'').slice(0,8);
+  if(v.length > 4) v = v.slice(0,2)+'-'+v.slice(2,4)+'-'+v.slice(4);
+  else if(v.length > 2) v = v.slice(0,2)+'-'+v.slice(2);
+  el.value = v;
+}
+
+function esc(v){
+  return String(v ?? '').replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c];
+  });
+}
+
+function loadData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    records = raw ? JSON.parse(raw) : [];
+    if(!Array.isArray(records)) records = [];
+  }catch(e){
+    records = [];
+    alert('LocalStorage থেকে ডাটা পড়া যাচ্ছে না। ব্রাউজারের স্টোরেজ অনুমতি পরীক্ষা করুন।');
+  }
+}
+
+function saveData(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    const verify = localStorage.getItem(STORAGE_KEY);
+    if(verify === null) throw new Error('Storage verification failed');
+    return true;
+  }catch(e){
+    console.error(e);
+    alert('ডাটা সেভ হয়নি। ব্রাউজারের LocalStorage/স্টোরেজ অনুমতি চালু আছে কিনা পরীক্ষা করুন।');
+    return false;
+  }
+}
+
+function uniqueSerial(){
+  const used = new Set(records.map(r => String(r.serial || '')));
+  let serial = String(Date.now());
+  let i = 0;
+  while(used.has(serial)){
+    i++;
+    serial = String(Date.now()) + String(i);
+  }
+  return serial;
+}
+
+function normalizeRecords(){
+  let changed = false;
+  const used = new Set();
+
+  records = records.map(function(r){
+    const x = Object.assign({}, r);
+
+    if(!x.serial || used.has(String(x.serial))){
+      x.serial = uniqueSerial();
+      changed = true;
+    }
+    used.add(String(x.serial));
+
+    if(!isValidDate(x.date)){
+      x.date = todayString();
+      changed = true;
+    }
+    if(!x.id) x.id = '';
+    if(!x.name) x.name = '';
+    if(!x.details) x.details = '';
+    if(!x.type) x.type = 'income';
+    if(typeof x.amount !== 'number') x.amount = Number(x.amount || 0);
+    // ক্যাশ এন্ট্রির নোটশীট অনুমোদন হিসেবে একই পরিমাণ ব্যবহার হবে।
+    const noteApproval = x.type === 'cash' ? Number(x.amount || 0) : 0;
+    if(Number(x.noteApproval || 0) !== noteApproval){
+      x.noteApproval = noteApproval;
+      changed = true;
+    }
+    if(typeof x.voucherAmount !== 'number') x.voucherAmount = Number(x.voucherAmount || 0);
+    if(typeof x.extraExpense !== 'number') x.extraExpense = Number(x.extraExpense || 0);
+    if(typeof x.remainingDeposit !== 'number') x.remainingDeposit = Number(x.remainingDeposit || 0);
+    if(typeof x.remainingDepositDetails !== 'string') x.remainingDepositDetails = '';
+    if(typeof x.createdAt !== 'number') x.createdAt = Date.now();
+
+    return x;
+  });
+
+  if(changed) saveData();
+}
+
+function mergeLegacyVoucherExpenseRows(){
+  let changed = false;
+  const removeSerials = new Set();
+  records.forEach(function(v){
+    if(v.type !== 'voucher' || !v.voucherStatus) return;
+    const legacy = records.find(function(r){
+      return r !== v && r.type === 'expense' && r.voucherStatus &&
+        normalizeSearchId(r.id) === normalizeSearchId(v.id) &&
+        Number(r.voucherAmount || 0) === 0 && Number(r.extraExpense || 0) > 0 &&
+        (Number(r.createdAt || 0) === Number(v.createdAt || 0) + 1 ||
+         Number(r.amount || 0) === Number(r.extraExpense || 0));
+    });
+    if(legacy){
+      v.extraExpense = Number(legacy.extraExpense || legacy.amount || 0);
+      if(legacy.details) v.details = legacy.details;
+      removeSerials.add(legacy.serial);
+      changed = true;
+    }
+  });
+  if(removeSerials.size){
+    records = records.filter(r=>!removeSerials.has(r.serial));
+    changed = true;
+  }
+  if(changed) saveData();
+}
+
+function initDates(){
+  const t = todayString();
+  $('currentDate').textContent = t;
+  if(!$('entryDate').value) $('entryDate').value = t;
+
+  document.querySelectorAll('.filterDate').forEach(function(el){
+    if(!el.value) el.value = t;
+  });
+}
+
+function updateTypeFields(){
+  const type = $('type').value;
+  const amountWrap = $('amountWrap');
+  const amount = $('amount');
+  const hint = $('entryHint');
+  const noteWrap = $('noteApprovalWrap');
+  const noteApproval = $('noteApproval');
+
+  amountWrap.classList.add('hidden');
+  amount.disabled = true;
+  amount.required = false;
+
+  if(noteWrap){
+    noteWrap.classList.add('hidden');
+    noteApproval.disabled = true;
+    noteApproval.required = false;
+    noteApproval.value = '';
+  }
+
+  hint.classList.add('hidden');
+
+  if(type === 'income'){
+    amountWrap.classList.remove('hidden');
+    amount.disabled = false;
+    amount.required = true;
+    hint.textContent = 'আয় নির্বাচন করা হয়েছে: শুধু পরিমাণ ঘরে টাকা লিখুন।';
+    hint.classList.remove('hidden');
+  }else if(type === 'expense'){
+    amountWrap.classList.remove('hidden');
+    amount.disabled = false;
+    amount.required = true;
+    hint.textContent = 'ব্যয় নির্বাচন করা হয়েছে: শুধু পরিমাণ ঘরে টাকা লিখুন।';
+    hint.classList.remove('hidden');
+  }else if(type === 'cash'){
+    amountWrap.classList.remove('hidden');
+    amount.disabled = false;
+    amount.required = true;
+
+    if(noteWrap){
+      noteWrap.classList.remove('hidden');
+      noteApproval.disabled = false;
+      noteApproval.required = true;
+    }
+
+    hint.textContent = 'ক্যাশ জমা নির্বাচন করা হয়েছে: ক্যাশের পরিমাণ নোটশীট অনুমোদন ঘরে থাকবে এবং সরাসরি ব্যালেন্সে যোগ হবে।';
+    hint.classList.remove('hidden');
+  }
+}
+
+function resetEntry(){
+  $('entryForm').reset();
+  $('serial').value = uniqueSerial();
+  $('entryDate').value = todayString();
+  $('personResult').innerHTML = '';
+  updateTypeFields();
+}
+
+function getFinancialValue(r){
+  const a = Number(r.amount || 0);
+  if(r.type === 'expense') return -a;
+  if(r.type === 'voucher'){
+    // ভাউচার বেশি হলে অতিরিক্ত অংশের খরচ বাদ যাবে,
+    // আর ভাউচার কম হলে জমা করা অবশিষ্ট অর্থ যোগ হবে।
+    // ফলে অবশিষ্ট অর্থের পরিমাণ পার্থক্যের সমান হলে সেকশন-১
+    // থেকে আগের মতোই ব্যক্তির সম্পূর্ণ বাকি সমন্বয় হয়ে যাবে।
+    return a - Number(r.extraExpense || 0) + Number(r.remainingDeposit || 0);
+  }
+  return a; // income and cash are positive
+}
+
+function personFinancialValue(r){
+  // ক্যাশ জমা শুধু আয়/ক্যাশ রিপোর্টে থাকবে; ব্যক্তির দেনা-পাওনায় যাবে না।
+  if(r.type === 'cash') return 0;
+  return getFinancialValue(r);
+}
+
+function filteredRecords(from,to){
+  const f = isValidDate(from) ? dateToISO(from) : '';
+  const t = isValidDate(to) ? dateToISO(to) : '';
+  return records.filter(function(r){
+    const d = dateToISO(r.date);
+    if(f && d < f) return false;
+    if(t && d > t) return false;
+    return true;
+  }).sort(function(a,b){
+    return Number(a.createdAt || 0) - Number(b.createdAt || 0);
+  });
+}
+
+function totalType(type,list){
+  // ভাউচার থেকে তৈরি পুরোনো/সহায়ক expense record যেন আবার সাধারণ
+  // ব্যয়ের সঙ্গে যোগ হয়ে দ্বিগুণ হিসাব না হয়। voucherStatus=true থাকা
+  // expense record-গুলো ভাউচারের embedded extraExpense হিসাবেই ধরা হবে।
+  const normal = list.filter(r => r.type === type && !(type === 'expense' && r.voucherStatus))
+    .reduce((s,r)=>s+Number(r.amount||0),0);
+
+  // শুধু voucher record-এর embedded অতিরিক্ত খরচ মোট ব্যয়ে যোগ হবে।
+  const embeddedExtra = type === 'expense'
+    ? list.filter(r=>r.type==='voucher').reduce((s,r)=>s+Number(r.extraExpense||0),0)
+    : 0;
+
+  return normal + embeddedExtra;
+}
+
+function typeText(type){
+  if(type === 'income') return 'আয়';
+  if(type === 'expense') return 'ব্যয়';
+  if(type === 'cash') return 'ক্যাশ জমা';
+  return 'ভাউচার';
+}
+
+function renderTable(headers, rows){
+  if(!rows.length) return '<div class="empty">এই সময়ের মধ্যে কোনো রেকর্ড পাওয়া যায়নি।</div>';
+  return '<div class="table-wrap"><table><thead><tr>' +
+    headers.map(h=>'<th>'+h+'</th>').join('') +
+    '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
+}
+
+function transactionRow(r, running){
+  const income = r.type==='income' ? Number(r.amount||0) : 0;
+  const expense = r.type==='expense' ? Number(r.amount||0) : (r.type==='voucher' ? Number(r.extraExpense||0) : 0);
+  return '<tr>' +
+    '<td>'+esc(r.serial)+'</td>' +
+    '<td>'+esc(r.date)+'</td>' +
+    '<td>'+esc(r.id)+'</td>' +
+    '<td>'+esc(r.name)+'</td>' +
+    '<td>'+esc(r.details)+'</td>' +
+    '<td><span class="badge blue">'+typeText(r.type)+'</span></td>' +
+    '<td class="money">'+(income ? money(income) : '-')+'</td>' +
+    '<td class="money">'+(expense ? money(expense) : '-')+'</td>' +
+    '<td class="money">'+money(running)+'</td>' +
+    '<td>'+(r.voucherStatus ? '<span class="badge green">ভাউচার জমা হয়েছে</span>' : (r.type==='cash' ? '<span class="badge green">ক্যাশ জমা</span>' : '-'))+'</td>' +
+    '</tr>';
+}
+
+let voucherTargetId = null;
+
+function getPersonDue(id){
+  const normalized = normalizeSearchId(id);
+  return records.filter(r=>normalizeSearchId(r.id)===normalized)
+    .reduce((s,r)=>s+personFinancialValue(r),0);
+}
+
+function openVoucherUpdate(id){
+  const normalized = normalizeSearchId(id);
+  const person = personBalances(records).find(p=>normalizeSearchId(p.id)===normalized && p.net<0);
+  if(!person){
+    alert('এই ব্যক্তির কোনো বাকি পাওয়া যায়নি।');
+    return;
+  }
+  voucherTargetId = person.id;
+  $('voucherPersonInfo').innerHTML = '<b>ID:</b> '+esc(person.id)+' &nbsp; <b>নাম:</b> '+esc(person.name);
+  $('voucherDueAmount').value = money(Math.abs(person.net));
+  $('voucherTotalAmount').value = '';
+  $('extraVoucherAmount').value = '';
+  $('extraExpenseDetails').value = '';
+  setVoucherDifferenceLabels(false);
+  $('extraVoucherWrap').classList.add('hidden');
+  $('voucherResult').textContent = 'মোট ভাউচারের পরিমাণ লিখুন।';
+  $('voucherModal').style.display = 'flex';
+  $('voucherTotalAmount').focus();
+}
+
+function closeVoucherUpdate(){
+  voucherTargetId = null;
+  $('voucherModal').style.display = 'none';
+}
+
+function setVoucherDifferenceLabels(isExpense){
+  if(isExpense){
+    $('extraVoucherAmountLabel').textContent = 'অবশিষ্ট অতিরিক্ত খরচের পরিমাণ';
+    $('extraVoucherAmount').placeholder = 'অবশিষ্ট অতিরিক্ত খরচের পরিমাণ';
+    $('extraExpenseDetailsLabel').textContent = 'অতিরিক্ত টাকার খরচের বিবরণী';
+    $('extraExpenseDetails').placeholder = 'অতিরিক্ত টাকার খরচের বিবরণ লিখুন';
+  }else{
+    $('extraVoucherAmountLabel').textContent = 'অবশিষ্ট অর্থ জমা';
+    $('extraVoucherAmount').placeholder = 'অবশিষ্ট অর্থের পরিমাণ';
+    $('extraExpenseDetailsLabel').textContent = 'অবশিষ্ট অর্থ জমার বিবরণী';
+    $('extraExpenseDetails').placeholder = 'অবশিষ্ট অর্থ জমার বিবরণ লিখুন';
+  }
+}
+
+function updateVoucherPreview(){
+  const due = Number(String($('voucherDueAmount').value||'0').replace(/,/g,'')) || 0;
+  const voucher = Number($('voucherTotalAmount').value||0);
+  const difference = voucher - due;
+  const required = Math.abs(difference);
+
+  if(!voucher){
+    $('voucherResult').textContent = 'ফলাফল এখানে দেখাবে।';
+    $('extraVoucherWrap').classList.add('hidden');
+    $('extraVoucherAmount').value = '';
+    $('extraExpenseDetails').value = '';
+    return;
+  }
+
+  if(difference === 0){
+    setVoucherDifferenceLabels(false);
+    $('voucherResult').textContent = 'প্রদানকৃত টাকা ও ভাউচারের পরিমাণ সমান। কোনো অবশিষ্ট অর্থ নেই।';
+    $('extraVoucherWrap').classList.add('hidden');
+    $('extraVoucherAmount').value = '';
+    $('extraExpenseDetails').value = '';
+    return;
+  }
+
+  // ভাউচার বেশি হলে একই অপশন থাকবে, কিন্তু জমার পরিবর্তে খরচের
+  // শিরোনাম ও ইনপুটের placeholder স্বয়ংক্রিয়ভাবে পরিবর্তন হবে।
+  setVoucherDifferenceLabels(difference > 0);
+  $('extraVoucherAmount').value = required.toFixed(2);
+  $('extraVoucherWrap').classList.remove('hidden');
+
+  if(difference > 0){
+    $('voucherResult').textContent = 'প্রদানকৃত টাকার চেয়ে মোট ভাউচারের পরিমাণ '+money(required)+' বেশি। অতিরিক্ত খরচের তথ্য দিন।';
+  }else{
+    $('voucherResult').textContent = 'প্রদানকৃত টাকার চেয়ে মোট ভাউচারের পরিমাণ '+money(required)+' কম। অবশিষ্ট অর্থ জমার তথ্য দিন।';
+  }
+}
+
+function saveVoucherUpdate(){
+  if(!voucherTargetId) return;
+  const normalized = normalizeSearchId(voucherTargetId);
+  const person = personBalances(records).find(p=>normalizeSearchId(p.id)===normalized && p.net<0);
+  if(!person){ alert('এই ব্যক্তির বাকি আর পাওয়া যায়নি।'); closeVoucherUpdate(); return; }
+
+  const due = Math.abs(person.net);
+  const voucher = Number($('voucherTotalAmount').value||0);
+  if(voucher<=0){ alert('মোট ভাউচারের পরিমাণ দিন।'); $('voucherTotalAmount').focus(); return; }
+
+  const difference = voucher - due;
+  const requiredDeposit = Math.abs(difference);
+  let enteredDeposit = 0;
+  let extraExpense = 0;
+  let remainingDeposit = 0;
+  const depositDetails = $('extraExpenseDetails').value.trim();
+
+  // ভাউচার কম বা বেশি—দুই অবস্থাতেই একই অপশন খুলবে।
+  // ইনপুটের অবশিষ্ট অর্থ অবশ্যই পার্থক্যের সমান হতে হবে।
+  if(difference !== 0){
+    enteredDeposit = Number($('extraVoucherAmount').value||0);
+
+    if(!Number.isFinite(enteredDeposit) || enteredDeposit < 0){
+      alert(difference > 0 ? 'অবশিষ্ট অতিরিক্ত খরচের পরিমাণ সঠিকভাবে দিন।' : 'অবশিষ্ট অর্থ জমার পরিমাণ সঠিকভাবে দিন।');
+      $('extraVoucherAmount').focus();
+      return;
+    }
+
+    if(Math.abs(enteredDeposit - requiredDeposit) > 0.005){
+      alert((difference > 0 ? 'অবশিষ্ট অতিরিক্ত খরচের পরিমাণ ' : 'অবশিষ্ট অর্থ জমার পরিমাণ ')+money(requiredDeposit)+' হতে হবে।');
+      $('extraVoucherAmount').focus();
+      return;
+    }
+
+    if(!depositDetails){
+      alert(difference > 0 ? 'অতিরিক্ত টাকার খরচের বিবরণী লিখুন।' : 'অবশিষ্ট অর্থ জমার বিবরণী লিখুন।');
+      $('extraExpenseDetails').focus();
+      return;
+    }
+
+    if(difference > 0){
+      // মোট ভাউচার প্রদত্ত টাকার চেয়ে বেশি: আগের মতো অতিরিক্ত অংশ
+      // খরচ/সমন্বয় হিসেবে বাদ দিয়ে সেকশন-১ শূন্য হবে।
+      extraExpense = enteredDeposit;
+    }else{
+      // মোট ভাউচার প্রদত্ত টাকার চেয়ে কম: অবশিষ্ট অংশ জমা হিসেবে যোগ হবে,
+      // যার ফলে সেকশন-১ এর বাকি আগের নিয়মেই সম্পূর্ণ সমন্বয় হবে।
+      remainingDeposit = enteredDeposit;
+    }
+  }
+
+  const now = Date.now();
+  const baseName = person.name || '';
+  const voucherRecord = {
+    serial: uniqueSerial(),
+    date: todayString(),
+    id: person.id,
+    name: baseName,
+    details: difference !== 0 ? depositDetails : 'ভাউচার জমা হয়েছে',
+    type: 'voucher',
+    amount: voucher,
+    voucherAmount: voucher,
+    extraExpense: extraExpense,
+    remainingDeposit: remainingDeposit,
+    remainingDepositDetails: difference !== 0 ? depositDetails : '',
+    voucherStatus: true,
+    createdAt: now
+  };
+
+  records.push(voucherRecord);
+
+  if(saveData()){
+    closeVoucherUpdate();
+    renderAll();
+    if(difference > 0){
+      alert('ভাউচার জমা হয়েছে এবং অতিরিক্ত অংশের হিসাব মিলেছে। সেকশন-১ এর বাকি সম্পূর্ণ সমন্বয় হয়েছে।');
+    }else if(difference < 0){
+      alert('ভাউচার জমা হয়েছে এবং অবশিষ্ট অর্থ জমার পরিমাণ মিলেছে। সেকশন-১ এর বাকি সম্পূর্ণ সমন্বয় হয়েছে।');
+    }else{
+      alert('ভাউচার জমা হয়েছে।');
+    }
+  }else{
+    records = records.filter(r=>r.serial!==voucherRecord.serial);
+  }
+}
+
+function renderDashboard(){
+  // ড্যাশবোর্ডের আর্থিক হিসাব:
+  // মোট আয় + ক্যাশ জমা = আয় + ক্যাশ
+  // মোট ব্যয় = সাধারণ ব্যয় + ভাউচারের অতিরিক্ত খরচ
+  // অবশিষ্ট অর্থ জমা অফিসের ব্যালেন্সে যোগ হবে
+  const income = totalType('income',records) + totalType('cash',records);
+  const expense = totalType('expense',records);
+  // মোট ব্যয়ে duplicate voucher expense record ধরা হবে না।
+  const voucher = records.reduce((s,r)=>s+Number(r.voucherAmount||0),0);
+  const remainingDeposit = records.reduce((s,r)=>s+Number(r.remainingDeposit||0),0);
+  const balance = income - expense + remainingDeposit;
+
+  let due = 0;
+  const ids = [...new Set(records.map(r=>r.id).filter(Boolean))];
+  ids.forEach(function(id){
+    const rows = records.filter(r=>r.id===id);
+    const net = rows.reduce((s,r)=>s+personFinancialValue(r),0);
+    if(net < 0) due += Math.abs(net);
+  });
+
+  $('dIncome').textContent = money(income);
+  $('dExpense').textContent = money(expense);
+  $('dVoucher').textContent = money(voucher);
+  $('dBalance').textContent = money(balance);
+  $('dDue').textContent = money(due);
+
+  const list = records.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).slice(0,10);
+  let running = 0;
+  const all = records.slice().sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));
+  all.forEach(r=>running += getFinancialValue(r));
+  const map = {};
+  all.forEach(r=>map[r.serial]=0);
+  let current = 0;
+  all.forEach(r=>{ current += getFinancialValue(r); map[r.serial]=current; });
+
+  renderRecentTable(list, map);
+  renderDashboardSection1();
+}
+
+function renderRecentTable(list, map){
+  $('recentTable').innerHTML = renderTable(
+    ['সিরিয়াল','তারিখ','ID','নাম','বিবরণ','ধরন','জমা/আয়','ব্যয়','ব্যালেন্স','ভাউচার'],
+    list.map(r=>transactionRow(r,map[r.serial]||0))
+  );
+}
+
+function renderDashboardSection1(){
+  const rows = personBalances(records).filter(p=>p.net<0);
+  $('dashboardDueTable').innerHTML = renderTable(
+    ['ID','নাম','অফিসের কাছে বাকি','অবস্থা'],
+    rows.map(p=>'<tr><td>'+esc(p.id)+'</td><td>'+esc(p.name)+'</td><td class="money">'+money(Math.abs(p.net))+'</td><td><span class="badge red clickable-status" data-id="'+esc(p.id)+'" onclick="openVoucherUpdate(this.getAttribute(\'data-id\'))">পরিশোধ/ভাউচার বাকি</span></td></tr>')
+  );
+}
+
+function detailsTransactionRow(r, running){
+  const income = r.type==='income' ? Number(r.amount||0) : 0;
+  const expense = r.type==='expense' ? Number(r.amount||0) : 0;
+  const noteApproval = r.type==='cash' ? Number(r.noteApproval || r.amount || 0) : 0;
+  const voucherAmount = Number(r.voucherAmount || 0);
+  const extraExpense = Number(r.extraExpense || 0);
+  const remainingDeposit = Number(r.remainingDeposit || 0);
+
+  // বিবরণী টেবিলের ব্যালেন্সের নির্দিষ্ট সূত্র:
+  // নোটশীট অনুমোদন + অবশিষ্ট অর্থ জমা + জমা/আয় − ব্যয় − অতিরিক্ত খরচ = ব্যালেন্স
+  return '<tr>' +
+    '<td>'+esc(r.serial)+'</td>' +
+    '<td>'+esc(r.date)+'</td>' +
+    '<td>'+esc(r.id)+'</td>' +
+    '<td>'+esc(r.name)+'</td>' +
+    '<td>'+esc(r.details)+'</td>' +
+    '<td><span class="badge blue">'+typeText(r.type)+'</span></td>' +
+    '<td class="money">'+(noteApproval ? money(noteApproval) : '-')+'</td>' +
+    '<td class="money">'+(voucherAmount ? money(voucherAmount) : '-')+'</td>' +
+    '<td class="money">'+(extraExpense ? money(extraExpense) : '-')+'</td>' +
+    '<td class="money">'+(remainingDeposit ? money(remainingDeposit) : '-')+'</td>' +
+    '<td class="money">'+(income ? money(income) : '-')+'</td>' +
+    '<td class="money">'+(expense ? money(expense) : '-')+'</td>' +
+    '<td class="money '+(running>=0?'good':'bad')+'">'+money(running)+'</td>' +
+    '<td>'+(r.voucherStatus ? '<span class="badge green">সম্পূর্ণ তথ্য</span>' : (r.type==='cash' ? '<span class="badge green">ক্যাশ জমা</span>' : '-'))+'</td>' +
+    '</tr>';
+}
+
+function getDetailsBalanceValue(r){
+  const noteApproval = r.type==='cash' ? Number(r.noteApproval || r.amount || 0) : 0;
+  const remainingDeposit = Number(r.remainingDeposit || 0);
+  const income = r.type==='income' ? Number(r.amount || 0) : 0;
+  const expense = r.type==='expense' ? Number(r.amount || 0) : 0;
+  const extraExpense = Number(r.extraExpense || 0);
+
+  // Exact formula requested by the user:
+  // নোটশীট অনুমোদন + অবশিষ্ট অর্থ জমা + জমা/আয় − ব্যয় − অতিরিক্ত খরচ
+  return noteApproval + remainingDeposit + income - expense - extraExpense;
+}
+
+function renderDetails(){
+  const list = filteredRecords($('detailFrom').value,$('detailTo').value);
+  let running = 0;
+  const rows = list.map(function(r){
+    running += getDetailsBalanceValue(r);
+    return detailsTransactionRow(r,running);
+  });
+  $('detailsTable').innerHTML = renderTable(
+    ['সিরিয়াল','তারিখ','ID','নাম','বিবরণ','ধরন','নোটশীট অনুমোদন','ভাউচারের পরিমাণ','অতিরিক্ত খরচ','অবশিষ্ট অর্থ জমা','জমা/আয়','ব্যয়','ব্যালেন্স','ভাউচার'], rows
+  );
+}
+function personBalances(list){
+  const map = {};
+  list.forEach(function(r){
+    if(!r.id) return;
+    if(!map[r.id]) map[r.id]={id:r.id,name:r.name,net:0};
+    map[r.id].net += getFinancialValue(r);
+    map[r.id].name = r.name || map[r.id].name;
+  });
+  return Object.values(map);
+}
+
+function renderDue(){
+  const list = filteredRecords($('dueFrom').value,$('dueTo').value);
+  const rows = personBalances(list).filter(p=>p.net<0);
+  $('dueTable').innerHTML = renderTable(
+    ['ID','নাম','অফিসের কাছে বাকি','অবস্থা'],
+    rows.map(p=>'<tr><td>'+esc(p.id)+'</td><td>'+esc(p.name)+'</td><td class="money">'+money(Math.abs(p.net))+'</td><td><span class="badge red">পরিশোধ/ভাউচার বাকি</span></td></tr>')
+  );
+}
+
+function renderReceivable(){
+  const list = filteredRecords($('recFrom').value,$('recTo').value);
+  const rows = personBalances(list).filter(p=>p.net>0);
+  $('recTable').innerHTML = renderTable(
+    ['ID','নাম','ব্যক্তির পাওনা','অবস্থা'],
+    rows.map(p=>'<tr><td>'+esc(p.id)+'</td><td>'+esc(p.name)+'</td><td class="money">'+money(p.net)+'</td><td><span class="badge green">আমার কাছে পাবে</span></td></tr>')
+  );
+}
+
+function renderBalance(){
+  const list = filteredRecords($('balFrom').value,$('balTo').value);
+  const income = totalType('income',list)+totalType('cash',list);
+  const expense = totalType('expense',list);
+  const net = income-expense;
+
+  let due=0;
+  personBalances(list).forEach(p=>{if(p.net<0) due += Math.abs(p.net);});
+
+  $('bIncome').textContent=money(income);
+  $('bExpense').textContent=money(expense);
+  $('bNet').textContent=money(net);
+  $('bDue').textContent=money(due);
+
+  const byDate={};
+  list.forEach(function(r){
+    if(!byDate[r.date]) byDate[r.date]={income:0,expense:0};
+    if(r.type==='expense') byDate[r.date].expense += Number(r.amount||0);
+    else if(r.type==='income'||r.type==='cash') byDate[r.date].income += Number(r.amount||0);
+  });
+
+  const dates=Object.keys(byDate).sort((a,b)=>dateToISO(a).localeCompare(dateToISO(b)));
+  let running=0;
+  const rows=dates.map(function(d){
+    const x=byDate[d];
+    const daily=x.income-x.expense;
+    running += daily;
+    return '<tr><td>'+d+'</td><td class="money">'+money(x.income)+'</td><td class="money">'+money(x.expense)+'</td><td class="money '+(daily>=0?'good':'bad')+'">'+money(daily)+'</td><td class="money">'+money(running)+'</td></tr>';
+  });
+
+  $('balanceTable').innerHTML=renderTable(
+    ['তারিখ','মোট আয় + ক্যাশ জমা','মোট ব্যয়','দৈনিক নিট','চলতি ব্যালেন্স'],rows
+  );
+}
+
+function renderAll(){
+  $('serial').value = uniqueSerial();
+  renderDashboard();
+  renderDetails();
+  renderDue();
+  renderReceivable();
+  renderBalance();
+}
+
+const MANAGE_PASSWORD="5101"; let manageUnlocked=false;
+function askManagePassword(){const p=prompt("ম্যানেজ সেকশনে প্রবেশ করতে ৫১০১ পাসওয়ার্ড দিন:");if(p===MANAGE_PASSWORD){manageUnlocked=true;showPage("manage");}else if(p!==null) alert("ভুল পাসওয়ার্ড।");}
+function renderManage(){if(!manageUnlocked)return;const q=String($("manageSearch").value||"").toLowerCase().trim(),t=$("manageType").value;let a=records.slice().sort((x,y)=>(y.createdAt||0)-(x.createdAt||0));a=a.filter(r=>(!q||[r.serial,r.id,r.name,r.details].some(v=>String(v||"").toLowerCase().includes(q)))&&(!t||r.type===t));$("manageTable").innerHTML=renderTable(["সিরিয়াল","তারিখ","ID","নাম","বিবরণ","ধরন","পরিমাণ","অ্যাকশন"],a.map(r=>`<tr><td>${esc(r.serial)}</td><td>${esc(r.date)}</td><td>${esc(r.id)}</td><td>${esc(r.name)}</td><td>${esc(r.details)}</td><td>${esc(typeText(r.type))}</td><td class="money">${money(r.amount)}</td><td><button class="btn orange" type="button" onclick="editManageRecord('${String(r.serial).replace(/'/g,"\'")}')">✏️ এডিট</button> <button class="btn red" type="button" onclick="deleteManageRecord('${String(r.serial).replace(/'/g,"\'")}')">🗑️ ডিলেট</button></td></tr>`));}
+function editManageRecord(serial){const r=records.find(x=>String(x.serial)===String(serial));if(!r)return;const d=prompt("তারিখ (DD-MM-YYYY):",r.date);if(d===null)return;const id=prompt("ID:",r.id);if(id===null)return;const n=prompt("নাম:",r.name);if(n===null)return;const det=prompt("বিবরণ:",r.details);if(det===null)return;const ty=prompt("ধরন (income / expense / cash):",r.type);if(ty===null)return;const am=prompt("পরিমাণ:",r.amount);if(am===null)return;if(!isValidDate(d.trim())||!['income','expense','cash'].includes(ty.trim())||Number(am)<=0)return alert("তথ্য সঠিকভাবে দিন।");Object.assign(r,{date:d.trim(),id:id.trim(),name:n.trim(),details:det.trim(),type:ty.trim(),amount:Number(am),noteApproval:ty.trim()==='cash'?Number(am):0,updatedAt:Date.now()});if(saveData()){renderAll();renderManage();alert("রেকর্ড আপডেট হয়েছে।");}}
+function deleteManageRecord(serial){const i=records.findIndex(x=>String(x.serial)===String(serial));if(i<0)return;if(confirm("এই রেকর্ডটি ডিলেট করতে চান?")){records.splice(i,1);if(saveData()){renderAll();renderManage();alert("রেকর্ড ডিলেট হয়েছে।");}}}
+function showPage(page){
+  if(page==="manage"&&!manageUnlocked){askManagePassword();return;}
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===page));
+  if(page==='recent'){
+    renderDashboard();
+  }
+  if(page==='entry'){
+    if(!$('entryDate').value) $('entryDate').value=todayString();
+    $('serial').value=uniqueSerial();
+  }
+  renderAll();
+}
+
+document.querySelectorAll('.nav-btn').forEach(function(btn){
+  btn.addEventListener('click',()=>showPage(btn.dataset.page));
+});
+
+$('type').addEventListener('change',updateTypeFields);
+
+$('entryDate').addEventListener('input',function(){formatDateInput(this);});
+document.querySelectorAll('.filterDate').forEach(function(el){
+  el.addEventListener('input',function(){formatDateInput(this);});
+});
+
+$('entryForm').addEventListener('submit',function(e){
+  e.preventDefault();
+
+  const date=$('entryDate').value.trim();
+  const id=$('entryId').value.trim();
+  const name=$('entryName').value.trim();
+  const details=$('details').value.trim();
+  const type=$('type').value;
+  const amount=Number($('amount').value||0);
+
+  if(!isValidDate(date)){
+    alert('তারিখ সঠিক নয়। DD-MM-YYYY ফরম্যাটে দিন, যেমন 19-08-2026।');
+    $('entryDate').focus();
+    return;
+  }
+  if(!id||!name||!details){
+    alert('ID, নাম এবং বিবরণ পূরণ করুন।');
+    return;
+  }
+  if(!type){
+    alert('লেনদেনের ধরন নির্বাচন করুন।');
+    return;
+  }
+  if(!['income','expense','cash'].includes(type)){
+    alert('লেনদেনের ধরন সঠিক নয়।');
+    return;
+  }
+  if(amount<=0){
+    alert('পরিমাণ দিন।');
+    return;
+  }
+
+  const finalAmount=amount;
+
+
+  const record={
+    serial:uniqueSerial(),
+    date:date,
+    id:id,
+    name:name,
+    details:details,
+    type:type,
+    amount:finalAmount,
+    noteApproval: type === 'cash' ? finalAmount : 0,
+    createdAt:Date.now()
+  };
+
+  records.push(record);
+  if(saveData()){
+    renderAll();
+    resetEntry();
+    alert('ডাটা সফলভাবে সেভ হয়েছে।');
+  }else{
+    records.pop();
+  }
+});
+
+$('newEntry').addEventListener('click',resetEntry);
+
+function normalizeSearchId(value){
+  return String(value || '').trim().replace(/[০-৯]/g, function(d){
+    return '০১২৩৪৫৬৭৮৯'.indexOf(d);
+  });
+}
+
+function findPerson(){
+  const idInput=$('searchId').value.trim();
+  const name=$('searchName').value.trim().toLowerCase();
+  const id=normalizeSearchId(idInput);
+
+  if(!id&&!name){
+    alert('বাংলা/ইংরেজি ID অথবা নাম দিয়ে সার্চ করুন।');
+    return;
+  }
+
+  const matches=records.filter(function(r){
+    const recordId=normalizeSearchId(r.id);
+    const recordName=String(r.name || '').toLowerCase();
+    return (id && recordId===id) || (name && recordName.includes(name));
+  });
+
+  if(!matches.length){
+    $('personResult').innerHTML='<div class="empty">কোনো ব্যক্তি পাওয়া যায়নি।</div>';
+    return;
+  }
+
+  const latest=matches[matches.length-1];
+  const personRows=records.filter(r=>normalizeSearchId(r.id)===normalizeSearchId(latest.id));
+  const net=personRows.reduce((s,r)=>s+personFinancialValue(r),0);
+  const due=Math.max(0,-net);
+  const receivable=Math.max(0,net);
+
+  $('personResult').innerHTML=
+    '<div class="notice"><b>'+esc(latest.name)+'</b> — ID: <b>'+esc(latest.id)+'</b><br>'+
+    'অফিসের কাছে বাকি: <strong>'+money(due)+'</strong><br>'+
+    'আমার কাছে তার পাওনা: <strong>'+money(receivable)+'</strong>'+
+    '<br><span class="small">ক্যাশ জমা ব্যক্তির দেনা-পাওনায় গণনা করা হয় না।</span></div>';
+}
+
+$('searchPerson').addEventListener('click',findPerson);
+
+
+$('detailRun').addEventListener('click',renderDetails);
+$('dueRun').addEventListener('click',renderDue);
+$('recRun').addEventListener('click',renderReceivable);
+$('balRun').addEventListener('click',renderBalance);
+$('manageSearchBtn').addEventListener('click',renderManage); $('manageSearch').addEventListener('input',renderManage); $('manageType').addEventListener('change',renderManage);
+
+$('voucherTotalAmount').addEventListener('input',updateVoucherPreview);
+$('extraVoucherAmount').addEventListener('input',function(){
+  const due = Number(String($('voucherDueAmount').value||'0').replace(/,/g,'')) || 0;
+  const voucher = Number($('voucherTotalAmount').value||0);
+  const required = Math.abs(voucher - due);
+  if(voucher && required > 0 && Number(this.value||0) !== required){
+    $('voucherResult').textContent = 'অবশিষ্ট অর্থ জমা '+money(Number(this.value||0))+' — প্রয়োজনীয় পরিমাণ '+money(required);
+  }
+});
+$('saveVoucherUpdate').addEventListener('click',saveVoucherUpdate);
+$('closeVoucherModal').addEventListener('click',closeVoucherUpdate);
+$('voucherModal').addEventListener('click',function(e){if(e.target===this) closeVoucherUpdate();});
+
+loadData();
+normalizeRecords();
+mergeLegacyVoucherExpenseRows();
+initDates();
+updateTypeFields();
+$('serial').value=uniqueSerial();
+renderAll();
+</script>
+</body>
+</html>
