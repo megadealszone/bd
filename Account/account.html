@@ -46,6 +46,10 @@ table{width:100%;border-collapse:collapse;min-width:950px}
 th,td{border:1px solid #d8e1e9;padding:8px 9px;text-align:left;vertical-align:middle}
 th{background:#edf3f8;white-space:nowrap}
 .money{text-align:right;font-variant-numeric:tabular-nums}
+.balance-report-table{table-layout:fixed;min-width:0;width:100%}
+.balance-report-table th{font-weight:700;text-align:center;white-space:normal;line-height:1.25;overflow-wrap:anywhere}
+.balance-report-table td{overflow-wrap:anywhere}
+.balance-report-table th:nth-child(1){width:6%}.balance-report-table th:nth-child(2){width:11%}.balance-report-table th:nth-child(3){width:14%}.balance-report-table th:nth-child(4){width:13%}.balance-report-table th:nth-child(5){width:15%}.balance-report-table th:nth-child(6){width:15%}.balance-report-table th:nth-child(7){width:14%}.balance-report-table th:nth-child(8){width:12%}
 .good{color:#16834b;font-weight:700}.bad{color:#c62828;font-weight:700}
 .badge{display:inline-block;padding:4px 8px;border-radius:20px;font-size:12px;font-weight:700}
 .badge.green{background:#d9f5e5;color:#12633c}.badge.red{background:#ffe1e1;color:#a61d1d}.badge.blue{background:#e0efff;color:#155b9b}.clickable-status{cursor:pointer}.clickable-status:hover{filter:brightness(.95);text-decoration:underline}
@@ -226,7 +230,7 @@ hr{border:0;border-top:1px solid #e2e8f0;margin:15px 0}
  <div class="stat"><span>নিট ব্যালেন্স</span><b id="bNet">0.00</b></div>
  <div class="stat"><span>মোট বাকি</span><b id="bDue">0.00</b></div>
 </div>
-<div class="card" style="margin-top:16px"><div id="balanceTable"></div></div>
+<div class="card" style="margin-top:16px"><div class="actions"><button class="btn green" id="balanceExcelBtn" type="button">📊 Excel</button><button class="btn red" id="balancePdfBtn" type="button">📄 PDF</button></div><div id="balanceTable"></div></div>
 </section>
 
 <section id="userAdd" class="section">
@@ -609,9 +613,10 @@ function typeText(type){
   return 'ভাউচার';
 }
 
-function renderTable(headers, rows){
+function renderTable(headers, rows, tableClass){
   if(!rows.length) return '<div class="empty">এই সময়ের মধ্যে কোনো রেকর্ড পাওয়া যায়নি।</div>';
-  return '<div class="table-wrap"><table><thead><tr>' +
+  const cls = tableClass ? ' class="'+tableClass+'"' : '';
+  return '<div class="table-wrap"><table'+cls+'><thead><tr>' +
     headers.map(h=>'<th>'+h+'</th>').join('') +
     '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
 }
@@ -913,49 +918,178 @@ function renderReceivable(){
   );
 }
 
+
+let balanceReportRows=[];
+let balanceReportTotals={voucherAmount:0,extraExpense:0,remainingDeposit:0,officeDue:0,personReceivable:0,total:0};
+
+function getBalanceExportTable(){
+  const rows = balanceReportRows.map(function(r){
+    return [r.id,r.name,Number(r.voucherAmount||0),Number(r.extraExpense||0),Number(r.remainingDeposit||0),Number(r.officeDue||0),Number(r.personReceivable||0),Number(r.total||0)];
+  });
+  rows.push(['','সর্বমোট',balanceReportTotals.voucherAmount,balanceReportTotals.extraExpense,balanceReportTotals.remainingDeposit,balanceReportTotals.officeDue,balanceReportTotals.personReceivable,balanceReportTotals.total]);
+  return rows;
+}
+
+function exportBalanceExcel(){
+  /* Excel download: শুধু ব্যালেন্স শিটের ৫-কলামের টেবিল + সর্বমোট রো */
+  const rows=getBalanceExportTable();
+  let html='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>'+
+    '<table border="1"><thead><tr><th>ID</th><th>নাম</th><th>ভাউচারের পরিমাণ</th><th>অতিরিক্ত ব্যয়</th><th>অবশিষ্ট অর্থ জমা</th><th>অফিসের কাছে বাকি</th><th>মোট আয়</th><th>মোট ব্যয়</th></tr></thead><tbody>';
+  rows.forEach(function(r,i){
+    html+='<tr>'+r.map(function(v){
+      return '<td>'+esc(String(v==null?'':(typeof v==='number'?v.toFixed(2):v)))+'</td>';
+    }).join('')+'</tr>';
+  });
+  html+='</tbody></table></body></html>';
+  const blob=new Blob(['\uFEFF'+html],{type:'application/vnd.ms-excel;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='balance-report.xls';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+}
+
+function exportBalancePdf(){
+  /* PDF download: শুধু রিপোর্ট টেবিলের তথ্য। Bengali text আগে SVG-তে render করে PNG করা হয়,
+     যাতে PDF-এ তথ্য ফাঁকা না থাকে এবং window.print ব্যবহার না হয়। */
+  const rows=getBalanceExportTable();
+  const headers=['ID','নাম','ভাউচারের পরিমাণ','অতিরিক্ত ব্যয়','অবশিষ্ট অর্থ জমা','অফিসের কাছে বাকি','মোট আয়','মোট ব্যয়'];
+  /* A4 portrait: পুরো ৮-কলামের টেবিল পেজের মাঝখানে, কোনো অংশ কাটা না গিয়ে ফিট করা হয়। */
+  const pageW=595, pageH=842, margin=20, titleH=34, headerH=46, rowH=27;
+  const colW=[40,60,73,68,75,72,72,55];
+  const maxRows=Math.max(1,Math.floor((pageH-margin*2-titleH-headerH)/rowH));
+  const pages=[];
+  for(let i=0;i<rows.length;i+=maxRows) pages.push(rows.slice(i,i+maxRows));
+  if(!pages.length) pages.push([]);
+
+  function escXml(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');}
+  function drawPageSvg(pageRows){
+    const tableW=colW.reduce((a,b)=>a+b,0), x0=Math.max(margin,(pageW-tableW)/2), y0=margin+titleH;
+    let svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+pageW+'" height="'+pageH+'" viewBox="0 0 '+pageW+' '+pageH+'">';
+    svg+='<rect width="100%" height="100%" fill="white"/>';
+    svg+='<style>text{font-family:Noto Sans Bengali,Noto Sans,Arial,sans-serif;fill:#111} .title{font-size:19px;font-weight:700}.head{font-size:10.5px;font-weight:700}.cell{font-size:10.5px}.money{text-anchor:end}</style>';
+    svg+='<text class="title" x="'+(pageW/2)+'" y="24" text-anchor="middle">ব্যালেন্স শিট রিপোর্ট</text>';
+    let x=x0;
+    headers.forEach(function(h,j){
+      svg+='<rect x="'+x+'" y="'+y0+'" width="'+colW[j]+'" height="'+headerH+'" fill="#eeeeee" stroke="#555"/>';
+      const headerParts = ({'ভাউচারের পরিমাণ':['ভাউচারের','পরিমাণ'],'অতিরিক্ত ব্যয়':['অতিরিক্ত','ব্যয়'],'অবশিষ্ট অর্থ জমা':['অবশিষ্ট অর্থ','জমা'],'অফিসের কাছে বাকি':['অফিসের কাছে','বাকি'],'মোট আয়':['মোট','আয়']})[h] || [h];
+      headerParts.forEach(function(part,pi){
+        svg+='<text class="head" x="'+(x+colW[j]/2)+'" y="'+(y0+18+pi*14)+'" text-anchor="middle">'+escXml(part)+'</text>';
+      });
+      x+=colW[j];
+    });
+    let y=y0+headerH;
+    pageRows.forEach(function(r){
+      x=x0;
+      const isTotal=(r[1]==='সর্বমোট');
+      r.forEach(function(v,j){
+        svg+='<rect x="'+x+'" y="'+y+'" width="'+colW[j]+'" height="'+rowH+'" fill="'+(isTotal?'#f5f5f5':'white')+'" stroke="#777"/>';
+        let text=typeof v==='number'?v.toFixed(2):String(v==null?'':v);
+        const anchor=(j>=2)?'end':'start';
+        const tx=(j>=2)?x+colW[j]-6:x+6;
+        svg+='<text class="'+(isTotal?'head':'cell')+(j>=2?' money':'')+'" x="'+tx+'" y="'+(y+19)+'"'+(anchor==='end'?' text-anchor="end"':'')+'>'+escXml(text)+'</text>';
+        x+=colW[j];
+      });
+      y+=rowH;
+    });
+    svg+='</svg>';
+    return svg;
+  }
+
+  function svgToJpegData(svg){
+    return new Promise(function(resolve,reject){
+      const img=new Image();
+      img.onload=function(){
+        const c=document.createElement('canvas'); c.width=pageW*2; c.height=pageH*2;
+        const ctx=c.getContext('2d'); ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height); ctx.drawImage(img,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg',0.95).split(',')[1]);
+      };
+      img.onerror=reject;
+      img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+    });
+  }
+  function b64ToBytes(b64){const bin=atob(b64),a=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i);return a;}
+
+  Promise.all(pages.map(function(pr){return svgToJpegData(drawPageSvg(pr));})).then(function(imgB64s){
+    const objects=[], pageIds=[], imageIds=[];
+    function addObj(body){objects.push(body);return objects.length;}
+    const catalogId=addObj(''), pagesId=addObj('');
+    imgB64s.forEach(function(b64){
+      const bytes=b64ToBytes(b64), imgId=addObj(null); imageIds.push({id:imgId,bytes:bytes});
+      const content='q\n'+pageW+' 0 0 '+pageH+' 0 0 cm\n/Im'+imgId+' Do\nQ\n';
+      const contentId=addObj(content), pageId=addObj(null); pageIds.push({id:pageId,imgId:imgId,contentId:contentId});
+    });
+    objects[catalogId-1]='<< /Type /Catalog /Pages '+pagesId+' 0 R >>';
+    objects[pagesId-1]='<< /Type /Pages /Kids ['+pageIds.map(p=>p.id+' 0 R').join(' ')+'] /Count '+pageIds.length+' >>';
+    pageIds.forEach(function(p){
+      objects[p.id-1]='<< /Type /Page /Parent '+pagesId+' 0 R /MediaBox [0 0 '+pageW+' '+pageH+'] /Resources << /XObject << /Im'+p.imgId+' '+p.imgId+' 0 R >> >> /Contents '+p.contentId+' 0 R >>';
+      objects[p.contentId-1]='<< /Length '+objects[p.contentId-1].length+' >>\nstream\n'+objects[p.contentId-1]+'endstream';
+    });
+    imageIds.forEach(function(im){objects[im.id-1]={image:im.bytes};});
+    let pdf='%PDF-1.4\n', offsets=[0];
+    function enc(v){return new TextEncoder().encode(v);}
+    const chunks=[enc(pdf)]; let pos=chunks[0].length;
+    objects.forEach(function(obj,i){
+      offsets[i+1]=pos; let head=enc((i+1)+' 0 obj\n'); chunks.push(head); pos+=head.length;
+      if(obj&&obj.image){
+        const h=enc('<< /Type /XObject /Subtype /Image /Width '+pageW*2+' /Height '+pageH*2+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+obj.image.length+' >>\nstream\n');
+        chunks.push(h);pos+=h.length;chunks.push(obj.image);pos+=obj.image.length;const tail=enc('\nendstream\nendobj\n');chunks.push(tail);pos+=tail.length;
+      }else{const b=enc(String(obj));chunks.push(b);pos+=b.length;const tail=enc('\nendobj\n');chunks.push(tail);pos+=tail.length;}
+    });
+    const xrefPos=pos; let xref='xref\n0 '+(objects.length+1)+'\n0000000000 65535 f \n';
+    for(let i=1;i<=objects.length;i++) xref+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+    xref+='trailer\n<< /Size '+(objects.length+1)+' /Root '+catalogId+' 0 R >>\nstartxref\n'+xrefPos+'\n%%EOF'; chunks.push(enc(xref));
+    const totalLen=chunks.reduce((n,c)=>n+c.length,0),out=new Uint8Array(totalLen); let off=0; chunks.forEach(function(c){out.set(c,off);off+=c.length;});
+    const blob=new Blob([out],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a'); a.href=url; a.download='balance-report.pdf'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){URL.revokeObjectURL(url);},1500);
+  }).catch(function(){alert('PDF তৈরি করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।');});
+}
+
 function renderBalance(){
   const list = filteredRecords($('balFrom').value,$('balTo').value);
   let totalIncome = 0;
   let totalExpense = 0;
   const byDate = {};
-
   list.forEach(function(r){
-    const inc = (r.type === 'income' ? Number(r.amount || 0) : 0) + 
-                (r.type === 'cash' ? Number(r.noteApproval || r.amount || 0) : 0) + 
+    const inc = (r.type === 'income' ? Number(r.amount || 0) : 0) +
+                (r.type === 'cash' ? Number(r.noteApproval || r.amount || 0) : 0) +
                 Number(r.remainingDeposit || 0);
-    const exp = (r.type === 'expense' ? Number(r.amount || 0) : 0) + 
-                Number(r.extraExpense || 0);
-
-    totalIncome += inc;
-    totalExpense += exp;
-
+    const exp = (r.type === 'expense' ? Number(r.amount || 0) : 0) + Number(r.extraExpense || 0);
+    totalIncome += inc; totalExpense += exp;
     if(!byDate[r.date]) byDate[r.date] = { income: 0, expense: 0 };
-    byDate[r.date].income += inc;
-    byDate[r.date].expense += exp;
+    byDate[r.date].income += inc; byDate[r.date].expense += exp;
   });
-
   const net = totalIncome - totalExpense;
+  let due = 0; personBalances(list).forEach(p => { if(p.net < 0) due += Math.abs(p.net); });
+  $('bIncome').textContent = money(totalIncome); $('bExpense').textContent = money(totalExpense); $('bNet').textContent = money(net); $('bDue').textContent = money(due);
 
-  let due = 0;
-  personBalances(list).forEach(p => { if(p.net < 0) due += Math.abs(p.net); });
-
-  $('bIncome').textContent = money(totalIncome);
-  $('bExpense').textContent = money(totalExpense);
-  $('bNet').textContent = money(net);
-  $('bDue').textContent = money(due);
-
-  const dates = Object.keys(byDate).sort((a,b) => dateToISO(a).localeCompare(dateToISO(b)));
-  let running = 0;
-  const rows = dates.map(function(d){
-    const x = byDate[d];
-    const daily = x.income - x.expense;
-    running += daily;
-    return '<tr><td>'+d+'</td><td class="money">'+money(x.income)+'</td><td class="money">'+money(x.expense)+'</td><td class="money '+(daily>=0?'good':'bad')+'">'+money(daily)+'</td><td class="money">'+money(running)+'</td></tr>';
+  const byId = {};
+  list.forEach(function(r){
+    const id = String(r.id || '').trim(); if(!id) return;
+    if(!byId[id]) byId[id] = {id:id,name:r.name||'',voucherAmount:0,extraExpense:0,remainingDeposit:0,officeDue:0};
+    byId[id].name = r.name || byId[id].name;
+    byId[id].voucherAmount += Number(r.voucherAmount || 0);
+    byId[id].extraExpense += Number(r.extraExpense || 0);
+    byId[id].remainingDeposit += Number(r.remainingDeposit || 0);
   });
-
-  $('balanceTable').innerHTML = renderTable(
-    ['তারিখ','মোট আয় + ক্যাশ জমা','মোট ব্যয়','দৈনিক নিট','চলতি ব্যালেন্স'], rows
-  );
+  // 'কে টাকা/ভাউচার পরিশোধ করে নি' মেনুর 'অফিসের কাছে বাকি' অনুযায়ী ID, নাম ও বাকি যুক্ত করা
+  personBalances(list).filter(function(p){return p.net<0;}).forEach(function(p){
+    const id=String(p.id||'').trim(); if(!id) return;
+    if(!byId[id]) byId[id]={id:id,name:p.name||'',voucherAmount:0,extraExpense:0,remainingDeposit:0,officeDue:0};
+    byId[id].name=p.name||byId[id].name;
+    byId[id].officeDue=Math.abs(Number(p.net||0));
+  });
+  // 'অনুমোদিত অর্থ উত্তোলন' মেনুর 'ব্যক্তির পাওনা' অনুযায়ী ID, নাম ও পাওনা যুক্ত করা
+  personBalances(list).filter(function(p){return p.net>0;}).forEach(function(p){
+    const id=String(p.id||'').trim(); if(!id) return;
+    if(!byId[id]) byId[id]={id:id,name:p.name||'',voucherAmount:0,extraExpense:0,remainingDeposit:0,officeDue:0,personReceivable:0};
+    byId[id].name=p.name||byId[id].name;
+    byId[id].personReceivable=Number(p.net||0);
+  });
+  balanceReportRows = Object.values(byId).map(function(r){r.total=Number(r.voucherAmount||0)+Number(r.extraExpense||0)-Number(r.remainingDeposit||0)+Number(r.officeDue||0);return r;}).sort(function(a,b){return String(a.id).localeCompare(String(b.id),undefined,{numeric:true,sensitivity:'base'});});
+  balanceReportTotals = balanceReportRows.reduce(function(t,r){t.voucherAmount+=Number(r.voucherAmount||0);t.extraExpense+=Number(r.extraExpense||0);t.remainingDeposit+=Number(r.remainingDeposit||0);t.officeDue+=Number(r.officeDue||0);t.personReceivable+=Number(r.personReceivable||0);t.total+=Number(r.total||0);return t;},{voucherAmount:0,extraExpense:0,remainingDeposit:0,officeDue:0,personReceivable:0,total:0});
+  const payRows = balanceReportRows.map(function(r){return '<tr><td>'+esc(r.id)+'</td><td>'+esc(r.name)+'</td><td class="money">'+money(r.voucherAmount)+'</td><td class="money">'+money(r.extraExpense)+'</td><td class="money">'+money(r.remainingDeposit)+'</td><td class="money">'+money(r.officeDue)+'</td><td class="money">'+money(r.personReceivable)+'</td><td class="money">'+money(r.total)+'</td></tr>';});
+  payRows.push('<tr class="balance-total-row"><th colspan="2">সর্বমোট</th><th class="money">'+money(balanceReportTotals.voucherAmount)+'</th><th class="money">'+money(balanceReportTotals.extraExpense)+'</th><th class="money">'+money(balanceReportTotals.remainingDeposit)+'</th><th class="money">'+money(balanceReportTotals.officeDue)+'</th><th class="money">'+money(balanceReportTotals.personReceivable)+'</th><th class="money">'+money(balanceReportTotals.total)+'</th></tr>');
+  $('balanceTable').innerHTML = renderTable(['ID','নাম','ভাউচারের পরিমাণ','অতিরিক্ত ব্যয়','অবশিষ্ট অর্থ জমা','অফিসের কাছে বাকি','মোট আয়','মোট ব্যয়'], payRows, 'balance-report-table');
 }
 
 function renderUserReport(){
@@ -1391,3 +1525,5 @@ renderAll();
 </script>
 </body>
 </html>
+
+<script>document.addEventListener('click',function(e){if(e.target&&e.target.id==='balanceExcelBtn')exportBalanceExcel();if(e.target&&e.target.id==='balancePdfBtn')exportBalancePdf();});</script>
