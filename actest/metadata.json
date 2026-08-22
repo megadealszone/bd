@@ -1,0 +1,6 @@
+{
+  "name": "দৈনিক লেনদেন ও ভাউচার ম্যানেজমেন্ট",
+  "description": "দৈনিক আয়, ব্যয়, ক্যাশ জমা, ভাউচার সমন্বয় এবং ব্যালেন্স শিট রিপোর্টসহ সম্পূর্ণ হিসাব ব্যবস্থাপনা",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
