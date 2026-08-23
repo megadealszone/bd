@@ -1504,22 +1504,54 @@ p {
                         <li><p>প্খুব ভালো খবর যে আপনার সমস্যা সফলভাবে সমাধান হয়েছে! ভবিষ্যতে দুটি কম্পিউটারের মধ্যে ল্যান ক্যাবলের মাধ্যমে সফলভাবে ফাইল শেয়ার ও কানেক্ট করার জন্য সম্পূর্ণ ও ধারাবাহিক নির্দেশিকা (Step-by-step Guide) নিচে গুছিয়ে দেওয়া হলো:</p></li>
                         <li><p>ধাপ ১: আইপি এড্রেস সেটআপ (IP Address Setup) প্রথমে ল্যান ক্যাবল দিয়ে কম্পিউটার দুটি যুক্ত করে উভয় কম্পিউটারে আইপি সেট করতে হবে: * প্রথম কম্পিউটার (Computer 1):</p></li>
                         <li><p>* Control Panel থেকে Ethernet Properties-এ গিয়ে IPv4-এ নিচের আইপি দিন:</p></li>
+                        <li><p> * IP address: </p></li>
                         <div class="code-box"><span class="code-text" id="cmdCode1">192.168.1.1</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p>  * Subnet mask: </p></li>
                         <div class="code-box"><span class="code-text" id="cmdCode1">255.255.255.0</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p> * Default gateway: </p></li> 
                         <div class="code-box"><span class="code-text" id="cmdCode1"> 192.168.1.2</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+
+                        <li><p> * দ্বিতীয় কম্পিউটার (Computer 2): </p></li> 
+                        <li><p>  * একইভাবে IPv4-এ গিয়ে নিচের আইপি দিন: </p></li> 
+                        <li><p> * IP address: </p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">192.168.1.2</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p>  * Subnet mask: </p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">255.255.255.0</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p> * Default gateway: (প্রথম কম্পিউটারের আইপি) </p></li> 
+                        <div class="code-box"><span class="code-text" id="cmdCode1"> 192.168.1.1</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+
+                        <li><p>ধাপ ২: নেটওয়ার্ক প্রোফাইল 'Private' করা (উভয় কম্পিউটারে) উইন্ডোজ যেন ফাইল শেয়ারিং ব্লক না করে, সেজন্য নেটওয়ার্ক টাইপ বদলাতে হবে:</p></li>
+                        <li><p> * Settings > Network & internet > Ethernet-এ যান। </p></li>
+                        <li><p> * নেটওয়ার্ক প্রোফাইলটি Private network সিলেক্ট করা আছে কি না নিশ্চিত করুন।</p></li>
                         
-                        <li><p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন: </p></li>
-                        <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
-                        <li>এরপর `F:` ড্রাইভ খুলে দেখুন ফাইলগুলো ফিরে এসেছে কি না।</li>
-                        <li>স্ক্রিনশটটি দেখে খুব ভালো লাগলো যে আপনার মূল ডেটা (ফোল্ডারটি) অক্ষত অবস্থায় ফিরে এসেছে!</li>
-                        <li>বাকি যে দুটি ফোল্ডার দেখছেন—**System Volume Information** এবং **sysvolume**—এগুলো মূলত উইন্ডোজের সিস্টেম ফাইল এবং ভাইরাসের অবশিষ্টাংশ। এগুলোকে আগের মতো লুকিয়ে ফেলতে এবং শুধুমাত্র আপনার Main ফোল্ডারটি দৃশ্যমান রাখতে উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন:</li>
-                        <div class="code-box"><span class="code-text" id="cmdCode1_2">F: attrib +h +s "System Volume Information"</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
-                        <li>**sysvolume**—এগুলো মূলত ভাইরাসের অবশিষ্টাংশ। এরপর ফাইলটি সিলেক্ট করে Shift + Delete চাপলে সাধারণত এটি ডিলিট হয়ে যাবে।</li>
+                        <li><p> ধাপ ৩: অ্যাডভান্সড শেয়ারিং সেটিংস চালু করা</p></li>
+                        <li><p>  * Control Panel > Network and Sharing Center > Change advanced sharing settings-এ যান।</p></li>
+                        <li><p> * Turn on network discovery এবং Turn on file and printer sharing চালু করুন। </p></li>
+                        <li><p>* একেবারে নিচে গিয়ে Password protected sharing অপশনটি Turn off করে দিন। </p></li>
+                        
+                        <li><p>ধাপ ৪: প্রথম কম্পিউটার থেকে ফোল্ডার শেয়ার করা</p></li>
+                        <li><p>* যে ফোল্ডার বা ড্রাইভটি শেয়ার করতে চান, তার ওপর রাইট-ক্লিক করে Properties > Sharing > Advanced Sharing-এ যান।</p></li>
+                        <li><p>* Share this folder বক্সে টিক দিন।</p></li>
+                        <li><p>* Permissions-এ গিয়ে Everyone সিলেক্ট করে ফুল কন্ট্রোল বা রিড পারমিশন দিন।</p></li>
+                       
+                        <li><p>ধাপ ৫: আধুনিক উইন্ডোজ সিকিউরিটি পলিসি বাইপাস করা (দ্বিতীয় কম্পিউটারে) উইন্ডোজ ১১-এর আধুনিক সিকিউরিটি ব্লক এড়াতে এই ধাপটি জরুরি:</p></li>
+                        <li><p>* কিবোর্ড থেকে Windows Key + R চেপে gpedit.msc লিখুন।</p></li>
+                        <li><p>* যান: Computer Configuration > Administrative Templates > Network > Lanman Workstation।</p></li>
+                        <li><p>* Enable insecure guest logons অপশনটিতে ডাবল ক্লিক చేసి এটি Enabled করে দিন।</p></li>
+                        <li><p>* এরপর PowerShell (Admin) ওপেন করে এই কমান্ডটি দিয়ে এন্টার দিন ও Y প্রেস করুন:</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1"> Set-SmbClientConfiguration -RequireSecuritySignature $false</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        
+                        <li><p>ধাপ ৬: ফাইল এক্সেস করা</p></li>
+                        <li><p>* সমস্ত সেটিংস সম্পন্ন করার পর উভয় কম্পিউটার একবার রিস্টার্ট (Restart) করে নিন।</p></li>
+                        <li><p>* রিস্টার্ট হওয়ার পর দ্বিতীয় কম্পিউটারের কিবোর্ড থেকে Windows Key + R চাপুন।</p></li>
+                        <li><p> * রান বক্সে টাইপ করুন:</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1_2">\\192.168.1.1</span><button class="copy-btn" onclick="copyText('cmdCode1_2', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li>* এরপর Enter চাপলেই প্রথম কম্পিউটারের শেয়ার করা সমস্ত ফাইল ও ফোল্ডার আপনার সামনে চলে আসবে!</li>
                     </ul>
                 </div>
                 <div class="note-box">
                     <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
-                    <p>কমান্ড ব্যবহারের সময় আপনার পেনড্রাইভের সঠিক ড্রাইভ লেটারটি ব্যবহার করা নিশ্চিত করুন। ভুল ড্রাইভ লেটার দিলে অন্য ড্রাইভের ফাইল হাইড বা আনহাইড হয়ে যেতে পারে।</p>
+                    <p>এই নিয়মগুলো অনুসরণ করলেই খুব সহজে দুটি কম্পিউটার কানেক্ট করতে পারবেন।</p>
                 </div>
             </section>
 
