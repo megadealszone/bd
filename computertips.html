@@ -755,6 +755,8 @@ p {
                     <a href="#hibernation" class="menu-item" onclick="showTip(event, 'hibernation')"><span class="tip-id">TIP 48</span><span class="tip-title">উইন্ডোজের হাইবারনেশন অপশন চালু</span></a>
                     <a href="#text-from-img" class="menu-item" onclick="showTip(event, 'text-from-img')"><span class="tip-id">TIP 49</span><span class="tip-title">ছবি থেকে বাংলা টেক্সট কনভার্ট</span></a>
                     <a href="#hosts-block" class="menu-item" onclick="showTip(event, 'hosts-block')"><span class="tip-id">TIP 50</span><span class="tip-title">সফটওয়্যার ছাড়া নির্দিষ্ট ওয়েবসাইট ব্লক</span></a>
+
+                    <a href="#2computer-connection" class="menu-item" onclick="showTip(event, '2computer-connection')"><span class="tip-id">TIP 51</span><span class="tip-title">2Computer-Connected</span></a>
                 </div>
             </div>
         </aside>
@@ -1492,16 +1494,20 @@ p {
 
 
                         <!-- ১ থেকে ৫ পূর্বের কন্টেন্ট সেকশন------------------------Start-------------------------------------------------------------- -->
-            <section id="shortcut-recovery" class="tip-content-section">
+            <section id="2computer-connection" class="tip-content-section">
                 <span class="category-tag">Storage & Fix</span>
-                <h2 class="tip-detail-title"> নষ্ট পেনড্রাইভ শর্টকাট ভাইরাস রিকভারি (CMD ব্যবহার করে)</h2>
+                <h2 class="tip-detail-title"> দুইটি কম্পিউটার ইথারনেট্ ক্যাবল দিয়ে কানেক্টেড করুন </h2>
                 <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> : লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
                 <div class="instruction-card">
                     <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
                     <ul class="step-list">
-                        <li><p>প্রথমে "This PC" বা "My Computer"-এ যান।</p></li>
-                        <li><p>আপনার পেনড্রাইভটি সেখানে কোন ড্রাইভ লেটার (যেমন: F:, G:, H:) দেখাচ্ছে, তা লক্ষ্য করুন।</p></li>
-                        <li><p>যদি আপনার পেনড্রাইভটি G: ড্রাইভে থাকে, তবে কমান্ডের F: এর পরিবর্তে G: ব্যবহার করতে হবে।</p></li>
+                        <li><p>প্খুব ভালো খবর যে আপনার সমস্যা সফলভাবে সমাধান হয়েছে! ভবিষ্যতে দুটি কম্পিউটারের মধ্যে ল্যান ক্যাবলের মাধ্যমে সফলভাবে ফাইল শেয়ার ও কানেক্ট করার জন্য সম্পূর্ণ ও ধারাবাহিক নির্দেশিকা (Step-by-step Guide) নিচে গুছিয়ে দেওয়া হলো:</p></li>
+                        <li><p>ধাপ ১: আইপি এড্রেস সেটআপ (IP Address Setup) প্রথমে ল্যান ক্যাবল দিয়ে কম্পিউটার দুটি যুক্ত করে উভয় কম্পিউটারে আইপি সেট করতে হবে: * প্রথম কম্পিউটার (Computer 1):</p></li>
+                        <li><p>* Control Panel থেকে Ethernet Properties-এ গিয়ে IPv4-এ নিচের আইপি দিন:</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">192.168.1.1</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">255.255.255.0</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <div class="code-box"><span class="code-text" id="cmdCode1"> 192.168.1.2</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        
                         <li><p>উইন্ডোজ সার্চ বারে গিয়ে CMD লিখে রাইট ক্লিক করে Run as Administrator হিসেবে ওপেন করে নিচের কোডটি রান করুন: </p></li>
                         <div class="code-box"><span class="code-text" id="cmdCode1">F: attrib -h -r -s /s /d *.*</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
                         <li>এরপর `F:` ড্রাইভ খুলে দেখুন ফাইলগুলো ফিরে এসেছে কি না।</li>
