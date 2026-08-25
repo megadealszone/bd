@@ -1493,11 +1493,23 @@ margin-bottom:20px;
    to the Google Sheet through Apps Script.
 ========================================================= */
 
+/*
+   GitHub-hosted mode:
+   Put your deployed Google Apps Script Web App URL here.
+   Example:
+   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/XXXXXXXX/exec";
+*/
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzaK_WBaYQCm-ypTE6HcOzlIOU86Xg-EEgEjR9-zd_u2kTcBKgj_--2CBG0U9pIo5-W/exec";
+
+let transactions = [];
+let recycleBin = [];
+
 let manageView = "active";
 let cloudLoadDone = false;
 let cloudSyncInProgress = false;
 let cloudSyncQueued = false;
 let cloudSyncPayload = null;
+let cloudSaveTimer = null;
 
 
 /* =========================================================
@@ -1528,8 +1540,75 @@ function amountText(v){
 
 
 /* =========================================================
-   GOOGLE SHEETS SAVE
+   GOOGLE SHEETS DIRECT STORAGE
+   This page is designed to run from GitHub/GitHub Pages.
+   It does NOT use LocalStorage or any browser database.
+   All application data is read from and written directly
+   to the Google Apps Script Web App / Google Sheet.
 ========================================================= */
+
+function gasReady(){
+    return GAS_WEB_APP_URL &&
+           GAS_WEB_APP_URL !== "PASTE_YOUR_WEB_APP_URL_HERE";
+}
+
+function gasUrl(params){
+    const base = String(GAS_WEB_APP_URL || "").trim();
+    const query = Object.keys(params || {})
+        .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+        .join("&");
+    return base + (base.indexOf("?") >= 0 ? "&" : "?") + query;
+}
+
+/* JSONP is used only for GET responses because GitHub-hosted
+   pages cannot call the Apps Script client bridge. */
+function gasJsonp(params, onSuccess, onFailure){
+    if(!gasReady()){
+        if(onFailure) onFailure(new Error("Google Apps Script Web App URL সেট করা হয়নি।"));
+        return;
+    }
+
+    const callbackName =
+        "__gasJsonp_" + Date.now() + "_" +
+        Math.random().toString(36).slice(2);
+
+    const script = document.createElement("script");
+    let finished = false;
+
+    const cleanup = () => {
+        try { delete window[callbackName]; } catch(e) {}
+        if(script.parentNode) script.parentNode.removeChild(script);
+    };
+
+    const timer = setTimeout(() => {
+        if(finished) return;
+        finished = true;
+        cleanup();
+        if(onFailure) onFailure(new Error("Google Apps Script response timeout."));
+    }, 30000);
+
+    window[callbackName] = function(data){
+        if(finished) return;
+        finished = true;
+        clearTimeout(timer);
+        cleanup();
+        if(onSuccess) onSuccess(data);
+    };
+
+    script.onerror = function(){
+        if(finished) return;
+        finished = true;
+        clearTimeout(timer);
+        cleanup();
+        if(onFailure) onFailure(new Error("Google Apps Script connection failed."));
+    };
+
+    script.src = gasUrl(Object.assign({}, params, {
+        callback: callbackName
+    }));
+
+    document.head.appendChild(script);
+}
 
 function saveData(){
     if(!window.__sessionToken){
@@ -1547,63 +1626,108 @@ function saveData(){
 }
 
 function queueCloudSave(){
-    if(cloudSyncInProgress) {
+    if(cloudSyncInProgress){
         cloudSyncQueued = true;
         return;
     }
 
     cloudSyncInProgress = true;
+
     const payload = cloudSyncPayload || {
         transactions: transactions,
         recycleBin: recycleBin,
         savedAt: new Date().toISOString()
     };
 
-    if(!(window.google && google.script && google.script.run)){
+    if(!gasReady()){
         cloudSyncInProgress = false;
-        showMessage("Google Sheets connection পাওয়া যায়নি।", "error");
+        showMessage("Google Apps Script Web App URL সেট করুন।", "error");
         return;
     }
 
-    google.script.run
-        .withSuccessHandler(function(result){
-            cloudSyncInProgress = false;
+    /*
+       A normal HTML form POST is used for writes. This avoids
+       browser CORS restrictions when index.html is hosted on GitHub.
+       The payload contains the complete active + recycle-bin data.
+    */
+    const frameId = "__gasSaveFrame";
+    let frame = document.getElementById(frameId);
 
-            if(result && result.ok === false){
-                showMessage(result.error || "Google Sheet-এ Save করা যায়নি।", "error");
-                return;
-            }
+    if(!frame){
+        frame = document.createElement("iframe");
+        frame.id = frameId;
+        frame.name = frameId;
+        frame.style.display = "none";
+        document.body.appendChild(frame);
+    }
 
-            if(cloudSyncQueued){
-                cloudSyncQueued = false;
-                queueCloudSave();
-            }
-        })
-        .withFailureHandler(function(error){
-            cloudSyncInProgress = false;
-            showMessage(
-                "Google Sheet-এ Save ব্যর্থ হয়েছে। " +
-                ((error && error.message) ? error.message : "Try Again."),
-                "error"
-            );
-        })
-        .saveAllData(payload, window.__sessionToken);
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = GAS_WEB_APP_URL;
+    form.target = frameId;
+    form.style.display = "none";
+
+    const addField = (name, value) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+    };
+
+    addField("action", "saveAll");
+    addField("token", window.__sessionToken);
+    addField("payload", JSON.stringify(payload));
+
+    document.body.appendChild(form);
+
+    try{
+        form.submit();
+    }catch(error){
+        cloudSyncInProgress = false;
+        form.remove();
+        showMessage(
+            "Google Sheet-এ Save ব্যর্থ হয়েছে। " +
+            (error && error.message ? error.message : "Try Again."),
+            "error"
+        );
+        return;
+    }
+
+    setTimeout(function(){
+        if(form.parentNode) form.parentNode.removeChild(form);
+
+        cloudSyncInProgress = false;
+
+        if(cloudSyncQueued){
+            cloudSyncQueued = false;
+            queueCloudSave();
+        }
+    }, 1500);
 }
-
 
 function loadFromGoogleSheets(){
     if(cloudLoadDone) return;
     cloudLoadDone = true;
 
-    if(!(window.google && google.script && google.script.run)){
-        showMessage("Google Sheets connection পাওয়া যায়নি।", "error");
+    if(!gasReady()){
+        cloudLoadDone = false;
+        showMessage("Google Apps Script Web App URL সেট করুন।", "error");
         return;
     }
 
-    google.script.run
-        .withSuccessHandler(function(data){
+    gasJsonp(
+        {
+            action: "loadAll",
+            token: window.__sessionToken
+        },
+        function(data){
             if(data && data.ok === false){
-                showMessage(data.error || "Google Sheet data load করা যায়নি।", "error");
+                cloudLoadDone = false;
+                showMessage(
+                    data.error || "Google Sheet data load করা যায়নি।",
+                    "error"
+                );
                 return;
             }
 
@@ -1612,18 +1736,19 @@ function loadFromGoogleSheets(){
                 recycleBin = Array.isArray(data.recycleBin)
                     ? data.recycleBin
                     : [];
+
                 refreshAll();
             }
-        })
-        .withFailureHandler(function(error){
+        },
+        function(error){
             cloudLoadDone = false;
             showMessage(
                 "Google Sheet থেকে data load করা যায়নি। " +
                 ((error && error.message) ? error.message : "Try Again."),
                 "error"
             );
-        })
-        .loadAllData(window.__sessionToken);
+        }
+    );
 }
 
 function nextSerial(){
@@ -1703,6 +1828,14 @@ function showSection(id,button){
 
     if(!window.__loggedIn){
         return;
+    }
+
+    if(id === "manage"){
+        const password = prompt("Manage মেনুতে প্রবেশের Password দিন:");
+        if(password !== "2095"){
+            alert("Wrong Password");
+            return;
+        }
     }
 
     document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
@@ -2843,34 +2976,52 @@ function exportReportPDF(){
 
 /* =========================================================
    LOGIN
+   Server-side password verification through the Apps Script
+   Web App. No application data is loaded before login.
 ========================================================= */
+
 document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
 
-    const password = document.getElementById("loginPassword").value;
-    const err = document.getElementById("loginError");
-    const button = this.querySelector('button[type="submit"]');
+    const password =
+        document.getElementById("loginPassword").value;
+
+    const err =
+        document.getElementById("loginError");
+
+    const button =
+        this.querySelector('button[type="submit"]');
 
     err.style.display = "none";
 
-    if(!(window.google && google.script && google.script.run)){
+    if(!gasReady()){
         err.style.display = "block";
-        err.textContent = "Google Sheets connection পাওয়া যায়নি। Try Again.";
+        err.textContent =
+            "Web App URL সেট করা হয়নি। Try Again.";
         return;
     }
 
     button.disabled = true;
     button.textContent = "Checking...";
 
-    google.script.run
-        .withSuccessHandler(function(result){
+    gasJsonp(
+        {
+            action: "login",
+            password: password
+        },
+        function(result){
             button.disabled = false;
             button.textContent = "Login";
 
             if(!result || !result.ok || !result.token){
                 err.style.display = "block";
-                err.textContent = "ভুল Password। Try Again.";
-                document.getElementById("loginPassword").select();
+                err.textContent =
+                    "ভুল Password। Try Again.";
+
+                document
+                    .getElementById("loginPassword")
+                    .select();
+
                 return;
             }
 
@@ -2878,20 +3029,31 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
             window.__loggedIn = true;
 
             err.style.display = "none";
-            document.getElementById("loginOverlay").style.display = "none";
-            document.getElementById("appRoot").style.display = "flex";
+
+            document
+                .getElementById("loginOverlay")
+                .style.display = "none";
+
+            document
+                .getElementById("appRoot")
+                .style.display = "flex";
 
             refreshAll();
             loadFromGoogleSheets();
-        })
-        .withFailureHandler(function(){
+        },
+        function(){
             button.disabled = false;
             button.textContent = "Login";
+
             err.style.display = "block";
-            err.textContent = "ভুল Password। Try Again.";
-            document.getElementById("loginPassword").select();
-        })
-        .authenticate(password);
+            err.textContent =
+                "ভুল Password। Try Again.";
+
+            document
+                .getElementById("loginPassword")
+                .select();
+        }
+    );
 });
 
 toggleReportDateInputs();
