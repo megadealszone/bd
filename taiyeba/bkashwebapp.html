@@ -1621,7 +1621,7 @@ margin-bottom:20px;
 /* =========================================================
    GOOGLE SHEETS + MULTI-USER CLOUD STORAGE
 ========================================================= */
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzswS09nl8T5Wsrlwold5GF613r5Uq-0uB7MWmhtt5r3r1vP5AjyDcBGtKvcCbHqcof/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbytrUnwLO5acU2JyjqGLfqm8uOMc0M0OjuleBx9BOnKRiaPjJpAO20G-bPFiNnj7vU1/exec";
 let transactions = [];
 let recycleBin = [];
 let statementTransactions = [];
@@ -1692,33 +1692,77 @@ function gasReady(){
 
 function jsonp(action, params, success, failure){
     if(!gasReady()){failure(new Error("Apps Script Web App URL সেট করা হয়নি।"));return;}
-    const callbackName="gas_cb_"+Date.now()+"_"+Math.floor(Math.random()*1000000),script=document.createElement("script");
-    let finished=false;
-    const cleanup=function(){if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}};
-    const timer=setTimeout(function(){if(finished)return;finished=true;cleanup();failure(new Error("Google Sheets connection timeout."));},30000);
-    window[callbackName]=function(data){if(finished)return;finished=true;clearTimeout(timer);cleanup();success(data);};
-    const query=new URLSearchParams();query.set("action",action);query.set("callback",callbackName);query.set("_ts",String(Date.now()));query.set("_v","auth-cloud-auto-reconnect-20260826");
-    Object.keys(params||{}).forEach(function(k){if(params[k]!==undefined&&params[k]!==null)query.set(k,String(params[k]));});
-    script.src=GAS_WEB_APP_URL+"?"+query.toString();
-    script.onerror=function(){if(finished)return;finished=true;clearTimeout(timer);cleanup();failure(new Error("Google Sheets connection failed."));};
-    document.head.appendChild(script);
+    const MAX_ATTEMPTS=3, TIMEOUT_MS=90000;
+    let attempt=0, settled=false, timer=null, script=null, callbackName="";
+    const run=function(){
+        if(settled)return;
+        attempt++;
+        callbackName="gas_cb_"+Date.now()+"_"+Math.floor(Math.random()*1000000)+"_"+attempt;
+        script=document.createElement("script");
+        const cleanup=function(){
+            if(timer)clearTimeout(timer);
+            if(script&&script.parentNode)script.parentNode.removeChild(script);
+            try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}
+        };
+        const retryOrFail=function(err){
+            if(settled)return;
+            cleanup();
+            if(attempt<MAX_ATTEMPTS){
+                setCloudConnectionState("connecting","Google Sheets Reconnecting...");
+                setTimeout(run,Math.min(1500*Math.pow(2,attempt-1),6000));
+            }else{
+                settled=true;
+                failure(err||new Error("Google Sheets connection failed."));
+            }
+        };
+        timer=setTimeout(function(){retryOrFail(new Error("Google Sheets connection timeout. Auto retry চলছে..."));},TIMEOUT_MS);
+        window[callbackName]=function(data){
+            if(settled)return;
+            settled=true;cleanup();success(data);
+        };
+        const query=new URLSearchParams();
+        query.set("action",action);query.set("callback",callbackName);query.set("_ts",String(Date.now()));
+        query.set("_v","mobile-stable-20260826");query.set("_attempt",String(attempt));
+        Object.keys(params||{}).forEach(function(k){if(params[k]!==undefined&&params[k]!==null)query.set(k,String(params[k]));});
+        script.src=GAS_WEB_APP_URL+"?"+query.toString();
+        script.onerror=function(){retryOrFail(new Error("Google Sheets connection failed. Auto retry চলছে..."));};
+        document.head.appendChild(script);
+    };
+    run();
 }
 
 
 
 function postToGas(action, fields, done){
     if(!gasReady()){done({ok:false,error:"Apps Script Web App URL সেট করা হয়নি।"});return;}
-    const requestId="req_"+Date.now()+"_"+Math.floor(Math.random()*1000000),frameName="gas_frame_"+requestId;
-    const iframe=document.createElement("iframe");iframe.name=frameName;iframe.style.display="none";document.body.appendChild(iframe);
-    const form=document.createElement("form");form.method="POST";form.action=GAS_WEB_APP_URL;form.target=frameName;form.style.display="none";
-    const add=function(name,value){const input=document.createElement("input");input.type="hidden";input.name=name;input.value=value==null?"":String(value);form.appendChild(input);};
-    add("requestId",requestId);add("action",action);Object.keys(fields||{}).forEach(function(k){add(k,fields[k]);});document.body.appendChild(form);
-    let finished=false,timeoutId=null;
-    const cleanup=function(){window.removeEventListener("message",onMessage);if(timeoutId)clearTimeout(timeoutId);if(form.parentNode)form.parentNode.removeChild(form);setTimeout(function(){if(iframe.parentNode)iframe.parentNode.removeChild(iframe);},1000);};
-    const finish=function(data){if(finished)return;finished=true;cleanup();done(data||{ok:false,error:"No response."});};
-    const onMessage=function(e){const d=e.data;if(!d||d.__gasRequestId!==requestId)return;finish(d);};
-    window.addEventListener("message",onMessage);timeoutId=setTimeout(function(){finish({ok:false,error:"Google Sheets connection timeout."});},30000);
-    try{form.submit();}catch(err){finish({ok:false,error:err.message||String(err)});}
+    const MAX_ATTEMPTS=3, TIMEOUT_MS=90000;
+    let attempt=0, finished=false;
+    const run=function(){
+        if(finished)return;
+        attempt++;
+        const requestId="req_"+Date.now()+"_"+Math.floor(Math.random()*1000000)+"_"+attempt;
+        const frameName="gas_frame_"+requestId;
+        const iframe=document.createElement("iframe");iframe.name=frameName;iframe.style.display="none";document.body.appendChild(iframe);
+        const form=document.createElement("form");form.method="POST";form.action=GAS_WEB_APP_URL;form.target=frameName;form.style.display="none";
+        const add=function(name,value){const input=document.createElement("input");input.type="hidden";input.name=name;input.value=value==null?"":String(value);form.appendChild(input);};
+        add("requestId",requestId);add("action",action);add("_ts",String(Date.now()));add("_attempt",String(attempt));
+        Object.keys(fields||{}).forEach(function(k){add(k,fields[k]);});document.body.appendChild(form);
+        let timer=null;
+        const cleanup=function(){window.removeEventListener("message",onMessage);if(timer)clearTimeout(timer);if(form.parentNode)form.parentNode.removeChild(form);setTimeout(function(){if(iframe.parentNode)iframe.parentNode.removeChild(iframe);},500);};
+        const retryOrFinish=function(result){
+            cleanup();
+            if(attempt<MAX_ATTEMPTS){
+                setCloudConnectionState("connecting","Google Sheets Reconnecting...");
+                setTimeout(run,Math.min(1500*Math.pow(2,attempt-1),6000));
+            }else{finished=true;done(result);}
+        };
+        const finish=function(data){if(finished)return;finished=true;cleanup();done(data||{ok:false,error:"No response."});};
+        const onMessage=function(e){const d=e.data;if(!d||d.__gasRequestId!==requestId)return;finish(d);};
+        window.addEventListener("message",onMessage);
+        timer=setTimeout(function(){if(finished)return;retryOrFinish({ok:false,error:"Google Sheets connection timeout. Auto retry শেষ হয়েছে।"});},TIMEOUT_MS);
+        try{form.submit();}catch(err){if(finished)return;retryOrFinish({ok:false,error:err.message||String(err)});}
+    };
+    run();
 }
 
 
