@@ -522,6 +522,13 @@ tr:hover td{
 .statement-table td{ vertical-align:middle; white-space:nowrap; }
 .statement-downloads{ display:flex; gap:8px; flex-wrap:wrap; }
 
+/* ================= GOOGLE SHEETS CONNECTION STATUS ================= */
+.cloud-status{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:5px 9px;border-radius:20px;font-size:12px;font-weight:700;vertical-align:middle;}
+.cloud-status::before{content:"";width:8px;height:8px;border-radius:50%;background:#999;}
+.cloud-status.online{background:#e4f7eb;color:#13753c}.cloud-status.online::before{background:#159957}
+.cloud-status.connecting{background:#fff2cf;color:#805b00}.cloud-status.connecting::before{background:#e09b00}
+.cloud-status.offline{background:#fde1e1;color:#a50000}.cloud-status.offline::before{background:#dc3545}
+
 /* ================= AUTHENTICATION OVERLAY ================= */
 #authOverlay{
     position:fixed;
@@ -676,6 +683,7 @@ tr:hover td{
 
     <h1 id="pageTitle">
         Dashboard
+        <span id="cloudConnectionStatus" class="cloud-status connecting">Connecting to Google Sheets...</span>
     </h1>
 
     <div class="date-box"
@@ -1613,7 +1621,7 @@ margin-bottom:20px;
 /* =========================================================
    GOOGLE SHEETS + MULTI-USER CLOUD STORAGE
 ========================================================= */
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5c17QWZLpgzuep5t0VxcitppPFRVT4j_yxjLmdxns1OhIrll0YIjNUKgDacNNdHh2/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzTdQgFIf2NjdDH28UnDwFVfJ6iHoZuJfXYyQRue52bZ7pURNbQWca7U4GDaQ46to0N/exec";
 let transactions = [];
 let recycleBin = [];
 let statementTransactions = [];
@@ -1623,82 +1631,97 @@ let cloudSyncInProgress = false;
 let cloudSyncQueued = false;
 let cloudSyncPayload = null;
 let __pendingSaveMessage = null;
+
+/* ================= CLOUD CONNECTION AUTO-RECOVERY ================= */
+let cloudRetryTimer = null;
+let cloudKeepAliveTimer = null;
+let cloudRetryDelay = 3000;
+let cloudConnectionState = "offline";
 window.__loggedIn = false;
 window.__sessionToken = "";
 window.__currentUser = null;
+
+const CLOUD_RETRY_MAX = 60000;
+const CLOUD_KEEPALIVE_MS = 8 * 60 * 1000;
+
+function setCloudConnectionState(state,message){
+    cloudConnectionState=state;
+    const el=document.getElementById("cloudConnectionStatus");
+    if(el){
+        el.textContent=message||(state==="online"?"Google Sheets Connected":state==="connecting"?"Connecting to Google Sheets...":"Google Sheets Reconnecting...");
+        el.className="cloud-status "+state;
+    }
+}
+function clearCloudRetry(){if(cloudRetryTimer){clearTimeout(cloudRetryTimer);cloudRetryTimer=null;}}
+function scheduleCloudRetry(){
+    if(!window.__loggedIn||!window.__sessionToken)return;
+    clearCloudRetry();setCloudConnectionState("connecting","Google Sheets Reconnecting...");
+    const delay=cloudRetryDelay;
+    cloudRetryTimer=setTimeout(function(){cloudRetryTimer=null;loadFromGoogleSheets(true,true);},delay);
+    cloudRetryDelay=Math.min(Math.round(cloudRetryDelay*1.7),CLOUD_RETRY_MAX);
+}
+function markCloudOnline(){cloudRetryDelay=3000;clearCloudRetry();setCloudConnectionState("online","Google Sheets Connected");}
+function startCloudKeepAlive(){
+    if(cloudKeepAliveTimer)clearInterval(cloudKeepAliveTimer);
+    cloudKeepAliveTimer=setInterval(function(){if(window.__loggedIn&&window.__sessionToken)loadFromGoogleSheets(true,true);},CLOUD_KEEPALIVE_MS);
+}
+function stopCloudKeepAlive(){if(cloudKeepAliveTimer){clearInterval(cloudKeepAliveTimer);cloudKeepAliveTimer=null;}}
+function persistSession(){
+    try{
+        if(window.__sessionToken){
+            localStorage.setItem("tm_session_token",window.__sessionToken);
+            localStorage.setItem("tm_current_user",JSON.stringify(window.__currentUser||null));
+        }else{
+            localStorage.removeItem("tm_session_token");localStorage.removeItem("tm_current_user");
+        }
+    }catch(e){}
+}
+function restoreSavedSession(){
+    try{
+        const token=localStorage.getItem("tm_session_token");if(!token)return false;
+        window.__sessionToken=token;const raw=localStorage.getItem("tm_current_user");
+        window.__currentUser=raw?JSON.parse(raw):null;window.__loggedIn=true;
+        document.getElementById("authOverlay").style.display="none";document.getElementById("appRoot").style.display="block";
+        setCloudConnectionState("connecting","Connecting to Google Sheets...");startCloudKeepAlive();loadFromGoogleSheets(true,true);return true;
+    }catch(e){return false;}
+}
 
 function gasReady(){
     return /^https:\/\/script\.google\.com\/macros\/s\/[^\s]+\/exec$/.test(GAS_WEB_APP_URL);
 }
 
 function jsonp(action, params, success, failure){
-    if(!gasReady()){ failure(new Error("Apps Script Web App URL সেট করা হয়নি।")); return; }
-    const callbackName = "gas_cb_" + Date.now() + "_" + Math.floor(Math.random()*1000000);
-    const script = document.createElement("script");
-    let finished = false;
-    const cleanup = function(){
-        if(script.parentNode) script.parentNode.removeChild(script);
-        try{ delete window[callbackName]; }catch(e){ window[callbackName]=undefined; }
-    };
-    const timer = setTimeout(function(){
-        if(finished)return;
-        finished=true; cleanup(); failure(new Error("Google Sheets connection timeout."));
-    },30000);
-    window[callbackName] = function(data){
-        if(finished)return;
-        finished=true; clearTimeout(timer); cleanup(); success(data);
-    };
-    const query = new URLSearchParams();
-    query.set("action",action);
-    query.set("callback",callbackName);
-    query.set("_ts",String(Date.now()));
-    query.set("_v","auth-cloud-fixed-20260826");
-    Object.keys(params||{}).forEach(function(k){
-        if(params[k]!==undefined && params[k]!==null) query.set(k,String(params[k]));
-    });
-    script.src = GAS_WEB_APP_URL + "?" + query.toString();
-    script.onerror = function(){
-        if(finished)return;
-        finished=true; clearTimeout(timer); cleanup(); failure(new Error("Google Sheets connection failed."));
-    };
+    if(!gasReady()){failure(new Error("Apps Script Web App URL সেট করা হয়নি।"));return;}
+    const callbackName="gas_cb_"+Date.now()+"_"+Math.floor(Math.random()*1000000),script=document.createElement("script");
+    let finished=false;
+    const cleanup=function(){if(script.parentNode)script.parentNode.removeChild(script);try{delete window[callbackName];}catch(e){window[callbackName]=undefined;}};
+    const timer=setTimeout(function(){if(finished)return;finished=true;cleanup();failure(new Error("Google Sheets connection timeout."));},30000);
+    window[callbackName]=function(data){if(finished)return;finished=true;clearTimeout(timer);cleanup();success(data);};
+    const query=new URLSearchParams();query.set("action",action);query.set("callback",callbackName);query.set("_ts",String(Date.now()));query.set("_v","auth-cloud-auto-reconnect-20260826");
+    Object.keys(params||{}).forEach(function(k){if(params[k]!==undefined&&params[k]!==null)query.set(k,String(params[k]));});
+    script.src=GAS_WEB_APP_URL+"?"+query.toString();
+    script.onerror=function(){if(finished)return;finished=true;clearTimeout(timer);cleanup();failure(new Error("Google Sheets connection failed."));};
     document.head.appendChild(script);
 }
 
+
+
 function postToGas(action, fields, done){
-    if(!gasReady()){ done({ok:false,error:"Apps Script Web App URL সেট করা হয়নি।"}); return; }
-    const requestId = "req_" + Date.now() + "_" + Math.floor(Math.random()*1000000);
-    const frameName = "gas_frame_" + requestId;
-    const iframe = document.createElement("iframe");
-    iframe.name = frameName; iframe.style.display="none";
-    document.body.appendChild(iframe);
-    const form = document.createElement("form");
-    form.method="POST"; form.action=GAS_WEB_APP_URL; form.target=frameName; form.style.display="none";
-    const add = function(name,value){
-        const input=document.createElement("input");
-        input.type="hidden"; input.name=name; input.value=value==null?"":String(value);
-        form.appendChild(input);
-    };
-    add("requestId",requestId); add("action",action);
-    Object.keys(fields||{}).forEach(function(k){add(k,fields[k]);});
-    document.body.appendChild(form);
-    let finished=false;
-    const cleanup=function(){
-        window.removeEventListener("message",onMessage);
-        if(form.parentNode)form.parentNode.removeChild(form);
-        setTimeout(function(){if(iframe.parentNode)iframe.parentNode.removeChild(iframe);},1000);
-    };
-    const finish=function(data){
-        if(finished)return; finished=true; cleanup(); done(data||{ok:false,error:"No response."});
-    };
-    const onMessage=function(e){
-        const d=e.data;
-        if(!d || d.__gasRequestId!==requestId)return;
-        finish(d);
-    };
-    window.addEventListener("message",onMessage);
-    setTimeout(function(){finish({ok:false,error:"Google Sheets connection timeout."});},30000);
+    if(!gasReady()){done({ok:false,error:"Apps Script Web App URL সেট করা হয়নি।"});return;}
+    const requestId="req_"+Date.now()+"_"+Math.floor(Math.random()*1000000),frameName="gas_frame_"+requestId;
+    const iframe=document.createElement("iframe");iframe.name=frameName;iframe.style.display="none";document.body.appendChild(iframe);
+    const form=document.createElement("form");form.method="POST";form.action=GAS_WEB_APP_URL;form.target=frameName;form.style.display="none";
+    const add=function(name,value){const input=document.createElement("input");input.type="hidden";input.name=name;input.value=value==null?"":String(value);form.appendChild(input);};
+    add("requestId",requestId);add("action",action);Object.keys(fields||{}).forEach(function(k){add(k,fields[k]);});document.body.appendChild(form);
+    let finished=false,timeoutId=null;
+    const cleanup=function(){window.removeEventListener("message",onMessage);if(timeoutId)clearTimeout(timeoutId);if(form.parentNode)form.parentNode.removeChild(form);setTimeout(function(){if(iframe.parentNode)iframe.parentNode.removeChild(iframe);},1000);};
+    const finish=function(data){if(finished)return;finished=true;cleanup();done(data||{ok:false,error:"No response."});};
+    const onMessage=function(e){const d=e.data;if(!d||d.__gasRequestId!==requestId)return;finish(d);};
+    window.addEventListener("message",onMessage);timeoutId=setTimeout(function(){finish({ok:false,error:"Google Sheets connection timeout."});},30000);
     try{form.submit();}catch(err){finish({ok:false,error:err.message||String(err)});}
 }
+
+
 
 function saveData(successMessage){
     if(!window.__sessionToken){
@@ -1716,48 +1739,64 @@ function saveData(successMessage){
 }
 
 function queueCloudSave(){
+    if(!window.__sessionToken){showMessage("Login session পাওয়া যায়নি। Try Again.","error");return;}
     if(cloudSyncInProgress){cloudSyncQueued=true;return;}
     cloudSyncInProgress=true;
-    const payload=cloudSyncPayload||{
-        transactions:transactions,
-        recycleBin:recycleBin,
-        statementTransactions:statementTransactions,
-        savedAt:new Date().toISOString()
+    const payload=cloudSyncPayload||{transactions:transactions,recycleBin:recycleBin,statementTransactions:statementTransactions,savedAt:new Date().toISOString()};
+    const attempt=function(delay){
+        if(!window.__sessionToken){cloudSyncInProgress=false;return;}
+        postToGas("saveAllData",{token:window.__sessionToken,payload:JSON.stringify(payload)},function(result){
+            if(result&&result.ok){
+                cloudSyncInProgress=false;markCloudOnline();
+                if(window.__pendingSaveMessage){showMessage(window.__pendingSaveMessage,"success");window.__pendingSaveMessage=null;}else showMessage("Google Sheet-এ Save হয়েছে।","success");
+                if(cloudSyncQueued){cloudSyncQueued=false;queueCloudSave();}
+            }else if(result&&/session|unauthorized|login/i.test(String(result.error||""))){
+                cloudSyncInProgress=false;clearCloudRetry();stopCloudKeepAlive();
+                try{localStorage.removeItem("tm_session_token");localStorage.removeItem("tm_current_user");}catch(e){}
+                window.__sessionToken="";window.__currentUser=null;window.__loggedIn=false;
+                document.getElementById("appRoot").style.display="none";document.getElementById("authOverlay").style.display="flex";showLoginPanel();
+                setAuthMessage((result&&result.error)||"Session expired. Please login again.","error");
+            }else{
+                setCloudConnectionState("connecting","Google Sheets Reconnecting...");
+                setTimeout(function(){attempt(Math.min(Math.round(delay*1.7),CLOUD_RETRY_MAX));},delay);
+            }
+        });
     };
-    postToGas("saveAllData",{
-        token:window.__sessionToken,
-        payload:JSON.stringify(payload)
-    },function(result){
-        cloudSyncInProgress=false;
-        if(result&&result.ok){
-            if(window.__pendingSaveMessage){ showMessage(window.__pendingSaveMessage,"success"); window.__pendingSaveMessage=null; } else { showMessage("Google Sheet-এ Save হয়েছে।","success"); }
-            if(cloudSyncQueued){cloudSyncQueued=false;queueCloudSave();}
-        }else{
-            showMessage((result&&result.error)||"Google Sheet-এ Save ব্যর্থ হয়েছে।","error");
-        }
-    });
+    attempt(1500);
 }
 
-function loadFromGoogleSheets(){
-    if(cloudLoadDone)return;
-    cloudLoadDone=true;
+
+
+function loadFromGoogleSheets(force,silent){
+    if(!window.__sessionToken)return;
+    if(cloudLoadDone&&!force)return;
+    cloudLoadDone=true;setCloudConnectionState("connecting","Connecting to Google Sheets...");
     jsonp("loadAllData",{token:window.__sessionToken},function(data){
         if(!data||data.ok===false){
             cloudLoadDone=false;
-            showMessage((data&&data.error)||"Google Sheet data load করা যায়নি।","error");
-            return;
+            if(data&&/session|unauthorized|login/i.test(String(data.error||""))){
+                try{localStorage.removeItem("tm_session_token");localStorage.removeItem("tm_current_user");}catch(e){}
+                window.__sessionToken="";window.__currentUser=null;window.__loggedIn=false;stopCloudKeepAlive();clearCloudRetry();
+                document.getElementById("appRoot").style.display="none";document.getElementById("authOverlay").style.display="flex";showLoginPanel();
+                setAuthMessage((data&&data.error)||"Session expired. Please login again.","error");setCloudConnectionState("offline","Google Sheets Disconnected");return;
+            }
+            if(!silent)showMessage((data&&data.error)||"Google Sheet data load করা যায়নি। Auto reconnect চলছে...","warning");
+            scheduleCloudRetry();return;
         }
-        transactions=Array.isArray(data.transactions)?data.transactions:[];
-        transactions.forEach(function(t){ if(t && t.type === "Bank") t.bankAmount = bankAmountFor(t); });
-        recycleBin=Array.isArray(data.recycleBin)?data.recycleBin:[];
-        statementTransactions=Array.isArray(data.statementTransactions)?data.statementTransactions:[];
-        statementTransactions.forEach(function(t){ if(t && t.type === "Bank") t.bankAmount = bankAmountFor(t); });
-        refreshAll();
-    },function(error){
-        cloudLoadDone=false;
-        showMessage("Google Sheet থেকে data load করা যায়নি। "+(error.message||"Try Again."),"error");
+        transactions=Array.isArray(data.transactions)?data.transactions:[];transactions.forEach(function(t){if(t&&t.type==="Bank")t.bankAmount=bankAmountFor(t);});
+        recycleBin=Array.isArray(data.recycleBin)?data.recycleBin:[];statementTransactions=Array.isArray(data.statementTransactions)?data.statementTransactions:[];
+        statementTransactions.forEach(function(t){if(t&&t.type==="Bank")t.bankAmount=bankAmountFor(t);});
+        cloudLoadDone=true;markCloudOnline();if(!cloudKeepAliveTimer)startCloudKeepAlive();refreshAll();
+    },function(){
+        cloudLoadDone=false;setCloudConnectionState("connecting","Google Sheets Reconnecting...");
+        if(!silent)showMessage("Google Sheet থেকে data load করা যায়নি। Auto reconnect চলছে...","warning");
+        scheduleCloudRetry();
     });
 }
+
+
+/* =========================================================
+   AUTHENTICATION
 
 
 /* =========================================================
@@ -1797,10 +1836,13 @@ function finishLogin(result){
     window.__sessionToken=result.token;
     window.__currentUser=result.user||null;
     window.__loggedIn=true;
+    persistSession();
     cloudLoadDone=false;
     document.getElementById("authOverlay").style.display="none";
     document.getElementById("appRoot").style.display="block";
-    loadFromGoogleSheets();
+    setCloudConnectionState("connecting","Connecting to Google Sheets...");
+    startCloudKeepAlive();
+    loadFromGoogleSheets(true);
 }
 
 function logoutUser(){
@@ -1809,6 +1851,8 @@ function logoutUser(){
     window.__sessionToken = "";
     window.__currentUser = null;
     window.__loggedIn = false;
+    try{localStorage.removeItem("tm_session_token");localStorage.removeItem("tm_current_user");}catch(e){}
+    stopCloudKeepAlive();clearCloudRetry();
     cloudLoadDone = false;
     cloudSyncInProgress = false;
     cloudSyncQueued = false;
@@ -3356,6 +3400,11 @@ document.getElementById("signupForm").addEventListener("submit",function(e){
 toggleReportDateInputs();
 toggleStatementDateInputs();
 
+/* AUTO CONNECT / AUTO RESTORE */
+(function(){
+    if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",function(){restoreSavedSession();},{once:true});
+    else restoreSavedSession();
+})();
 </script>
 
 <!-- Bangla PDF font embedded: Noto Sans Bengali -->
