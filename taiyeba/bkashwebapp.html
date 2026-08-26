@@ -6,7 +6,7 @@
 
 <title>Bkash & Bank Transaction Manager</title>
 
-<!-- Excel------------ -->
+<!-- Excel -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <!-- PDF -->
@@ -1621,7 +1621,7 @@ margin-bottom:20px;
 /* =========================================================
    GOOGLE SHEETS + MULTI-USER CLOUD STORAGE
 ========================================================= */
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzTdQgFIf2NjdDH28UnDwFVfJ6iHoZuJfXYyQRue52bZ7pURNbQWca7U4GDaQ46to0N/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzswS09nl8T5Wsrlwold5GF613r5Uq-0uB7MWmhtt5r3r1vP5AjyDcBGtKvcCbHqcof/exec";
 let transactions = [];
 let recycleBin = [];
 let statementTransactions = [];
@@ -3361,13 +3361,30 @@ document.getElementById("loginForm").addEventListener("submit",function(e){
     if(!username||!password){setAuthMessage("User Name এবং Password দিন।","error");return;}
     if(!gasReady()){setAuthMessage("Apps Script Web App URL সেট করা হয়নি।","error");return;}
     button.disabled=true;button.textContent="Checking...";
-    jsonp("login",{username:username,password:password},function(result){
+    // Mobile browsers can occasionally block/interrupt a cross-origin JSONP
+    // request to the Apps Script endpoint. Try JSONP first (keeps the existing
+    // behaviour), then transparently fall back to the hidden-iframe POST bridge.
+    let loginFinished=false;
+    const finishLoginOnce=function(result){
+        if(loginFinished)return;
+        loginFinished=true;
         button.disabled=false;button.textContent="Login";
         finishLogin(result);
-    },function(error){
-        button.disabled=false;button.textContent="Login";
-        setAuthMessage(error.message||"Login ব্যর্থ হয়েছে।","error");
-    });
+    };
+    const loginFailed=function(error){
+        if(loginFinished)return;
+        postToGas("login",{username:username,password:password},function(result){
+            finishLoginOnce(result);
+        },function(postError){
+            if(loginFinished)return;
+            loginFinished=true;
+            button.disabled=false;button.textContent="Login";
+            setAuthMessage((postError&&postError.message)||((error&&error.message)||"Login ব্যর্থ হয়েছে।"),"error");
+        });
+    };
+    jsonp("login",{username:username,password:password},function(result){
+        finishLoginOnce(result);
+    },loginFailed);
 });
 
 document.getElementById("signupForm").addEventListener("submit",function(e){
