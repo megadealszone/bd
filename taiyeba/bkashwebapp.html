@@ -1785,6 +1785,7 @@ function finishLogin(result){
     cloudLoadDone=false;
     document.getElementById("authOverlay").style.display="none";
     document.getElementById("appRoot").style.display="flex";
+    showSection("dashboard", document.querySelector('.menu-btn[onclick*="dashboard"]'));
     loadFromGoogleSheets();
 }
 
@@ -1797,9 +1798,12 @@ document.getElementById("loginForm").addEventListener("submit",function(e){
     if(!username||!password){setAuthMessage("User Name এবং Password দিন।","error");return;}
     if(!gasReady()){setAuthMessage("Apps Script Web App URL সেট করা হয়নি।","error");return;}
     button.disabled=true;button.textContent="Checking...";
-    postToGas("login",{username,password},function(result){
+    jsonp("login",{username,password},function(result){
         button.disabled=false;button.textContent="Login";
         finishLogin(result);
+    },function(error){
+        button.disabled=false;button.textContent="Login";
+        setAuthMessage((error&&error.message)||"Login ব্যর্থ হয়েছে। আবার চেষ্টা করুন।","error");
     });
 });
 
@@ -1818,13 +1822,16 @@ document.getElementById("signupForm").addEventListener("submit",function(e){
     if(password!==confirmPassword){setAuthMessage("Password এবং Confirm Password মিলছে না।","error");return;}
     if(!gasReady()){setAuthMessage("Apps Script Web App URL সেট করা হয়নি।","error");return;}
     button.disabled=true;button.textContent="Creating...";
-    postToGas("signup",{name,username,mobile,email,password},function(result){
+    jsonp("signup",{name,username,mobile,email,password},function(result){
         button.disabled=false;button.textContent="Sign Up";
         if(!result||!result.ok){setAuthMessage((result&&result.error)||"Sign Up ব্যর্থ হয়েছে।","error");return;}
         document.getElementById("signupForm").reset();
         document.getElementById("loginUsername").value=username;
         showLoginPanel();
         setAuthMessage("Sign Up সফল হয়েছে। এখন User Name ও Password দিয়ে Login করুন।","success");
+    },function(error){
+        button.disabled=false;button.textContent="Sign Up";
+        setAuthMessage((error&&error.message)||"Sign Up ব্যর্থ হয়েছে। আবার চেষ্টা করুন।","error");
     });
 });
 
