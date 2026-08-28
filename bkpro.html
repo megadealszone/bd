@@ -421,6 +421,29 @@ tr:hover td{
 
 /* ================= MOBILE ================= */
 
+.mobile-toggle-btn{
+    display:none;
+    background:#172033;
+    color:#fff;
+    border:0;
+    border-radius:6px;
+    padding:8px 12px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+.sidebar-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:9998;
+}
+
+.sidebar-overlay.active{
+    display:block;
+}
+
 @media(max-width:1100px){
 
     .cards{
@@ -431,50 +454,102 @@ tr:hover td{
 
 @media(max-width:750px){
 
+    .mobile-toggle-btn{
+        display:inline-block;
+    }
+
     .sidebar{
-        width:70px;
-        padding:10px 7px;
+        width:240px;
+        padding:18px 12px;
+        transform:translateX(-100%);
+        transition:transform 0.3s ease;
+        z-index:9999;
+    }
+
+    .sidebar.mobile-open{
+        transform:translateX(0);
     }
 
     .logo{
-        font-size:0;
+        font-size:21px;
     }
 
     .logo::after{
-        content:"TM";
-        font-size:18px;
+        content:"";
     }
 
     .menu-btn{
-        text-align:center;
-        padding:12px 5px;
-        font-size:0;
+        text-align:left;
+        padding:13px 15px;
+        font-size:15px;
     }
 
     .main{
-        margin-left:70px;
-        width:calc(100% - 70px);
-        padding:15px;
+        margin-left:0;
+        width:100%;
+        padding:12px;
     }
 
     .topbar{
-        flex-direction:column;
-        align-items:flex-start;
+        flex-direction:row;
+        justify-content:space-between;
+        align-items:center;
         gap:10px;
+        flex-wrap:wrap;
+    }
+
+    .topbar h1{
+        font-size:20px;
     }
 
     .cards{
         grid-template-columns:1fr;
+        gap:10px;
     }
 
-    .form-grid{
-        grid-template-columns:1fr;
+    .form-grid,
+    .form-grid[style*="grid-template-columns"]{
+        grid-template-columns:1fr !important;
+        gap:12px;
     }
 
     .panel{
-        padding:17px;
+        padding:14px;
     }
 
+    .entry-tabs{
+        flex-wrap:wrap;
+    }
+
+    .entry-tab{
+        flex:1;
+        text-align:center;
+        padding:10px 12px;
+        font-size:14px;
+    }
+
+    .manage-tabs{
+        flex-wrap:wrap;
+    }
+
+    .manage-tab{
+        flex:1 1 auto;
+        text-align:center;
+        padding:9px 12px;
+        font-size:13px;
+    }
+
+    .table-wrapper{
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .auth-card{
+        padding:20px;
+    }
+
+    .modal-content{
+        padding:16px;
+    }
 }
 
 
@@ -616,13 +691,14 @@ tr:hover td{
 </div>
 
 <div id="appRoot" style="display:none;">
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 <div class="app">
 
 <!-- =====================================================
      SIDEBAR
 ===================================================== -->
 
-<aside class="sidebar">
+<aside class="sidebar" id="appSidebar">
 
     <div class="logo">
         Transaction Manager
@@ -674,9 +750,12 @@ tr:hover td{
 
 <div class="topbar">
 
-    <h1 id="pageTitle">
-        Dashboard
-    </h1>
+    <div style="display:flex;align-items:center;gap:12px;">
+        <button type="button" class="mobile-toggle-btn" onclick="toggleMobileSidebar()" aria-label="Toggle navigation menu">☰</button>
+        <h1 id="pageTitle" style="margin:0;">
+            Dashboard
+        </h1>
+    </div>
 
     <div class="date-box"
          id="todayDate">
@@ -1484,6 +1563,36 @@ margin-bottom:20px;
 
 
 <!-- =====================================================
+     ADMIN LOGIN MODAL
+===================================================== -->
+<div class="modal" id="adminLoginModal">
+<div class="modal-content" style="max-width:400px;">
+<div class="modal-header">
+    <h3 style="margin:0;">Admin Login</h3>
+    <span class="close" onclick="closeAdminLoginModal()">&times;</span>
+</div>
+<form id="adminLoginForm">
+    <div id="adminModalError" class="auth-message auth-error" style="display:none;margin-bottom:12px;"></div>
+    <div class="auth-field">
+        <label for="adminModalEmail">Admin Email</label>
+        <input type="email" id="adminModalEmail" required placeholder="Admin Email দিন">
+    </div>
+    <div class="auth-field">
+        <label for="adminModalPassword">Admin Password</label>
+        <div class="auth-password">
+            <input type="password" id="adminModalPassword" required placeholder="Admin Password দিন">
+            <button type="button" class="auth-eye" onclick="togglePasswordVisibility('adminModalPassword', this)">👁️</button>
+        </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:15px;">
+        <button type="submit" class="auth-submit" id="adminModalSubmitBtn">Login Admin</button>
+        <button type="button" class="btn btn-secondary" onclick="closeAdminLoginModal()" style="padding:11px 14px;">Cancel</button>
+    </div>
+</form>
+</div>
+</div>
+
+<!-- =====================================================
      EDIT MODAL
 ===================================================== -->
 
@@ -1638,7 +1747,7 @@ margin-bottom:20px;
 /* =========================================================
    GOOGLE SHEETS + MULTI-USER CLOUD STORAGE
 ========================================================= */
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxWHP6oX5Aq3hzBAmEW-RRlqFQqL1_YZt07CqeDWJ0Fj9-B7FCVW1nUhtOJPJm485rUzg/exec";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx0ZV0AGXJWzpyY-u59heUImEJDEchT3T2RdiYmiVtcMa6TrOE7R8-UOfLkXf5KjJ0qPQ/exec";
 let transactions = [];
 let recycleBin = [];
 let statementTransactions = [];
@@ -1965,10 +2074,25 @@ function getBkashBalance(){
 
 
 /* =========================================================
-   NAVIGATION
+   MOBILE MENU & NAVIGATION
 ========================================================= */
 
+function toggleMobileSidebar(){
+    const sidebar = document.getElementById("appSidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    if(sidebar) sidebar.classList.toggle("mobile-open");
+    if(overlay) overlay.classList.toggle("active");
+}
+
+function closeMobileSidebar(){
+    const sidebar = document.getElementById("appSidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    if(sidebar) sidebar.classList.remove("mobile-open");
+    if(overlay) overlay.classList.remove("active");
+}
+
 function showSection(id,button){
+    closeMobileSidebar();
 
     if(id === "manage"){
         const password = prompt("Manage মেনুতে প্রবেশের Password দিন:");
@@ -3362,18 +3486,55 @@ function adminMessage(text,type){
     el.className='message '+(type||'success'); el.textContent=text; el.style.display='block';
     clearTimeout(window.__adminMsgTimer); window.__adminMsgTimer=setTimeout(()=>{el.style.display='none';},3500);
 }
+function togglePasswordVisibility(id, btn){
+    const input = document.getElementById(id);
+    if(!input) return;
+    input.type = input.type === 'password' ? 'text' : 'password';
+    if(btn) btn.textContent = input.type === 'password' ? '👁️' : '🙈';
+}
 function openAdminLogin(){
-    const email=prompt('Admin Email দিন:'); if(email===null)return;
-    const password=prompt('Admin Password দিন:'); if(password===null)return;
-    if(!email||!password){adminMessage('Admin Email এবং Password দিন।','error');return;}
-    postToGas('adminLogin',{email:email,password:password},function(r){
-        if(!r||!r.ok){adminMessage((r&&r.error)||'Admin Login ব্যর্থ হয়েছে।','error');return;}
-        window.__adminToken=r.adminToken||'';
-        document.getElementById('manageAdminView').style.display='block';
-        loadAdminUsers();
-    });
+    const modal = document.getElementById('adminLoginModal');
+    const errBox = document.getElementById('adminModalError');
+    if(errBox){ errBox.style.display = 'none'; errBox.textContent = ''; }
+    document.getElementById('adminModalEmail').value = '';
+    document.getElementById('adminModalPassword').value = '';
+    if(modal) modal.classList.add('show');
+}
+function closeAdminLoginModal(){
+    const modal = document.getElementById('adminLoginModal');
+    if(modal) modal.classList.remove('show');
 }
 function closeAdminPanel(){ window.__adminToken=''; switchManageView('active', document.getElementById('manageActiveTab')); }
+
+document.getElementById('adminLoginForm')?.addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('adminModalEmail').value.trim();
+    const password = document.getElementById('adminModalPassword').value;
+    const errBox = document.getElementById('adminModalError');
+    const submitBtn = document.getElementById('adminModalSubmitBtn');
+    if(!email || !password){
+        if(errBox){ errBox.textContent = 'Admin Email এবং Password দিন।'; errBox.style.display = 'block'; }
+        return;
+    }
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Verifying...'; }
+    if(errBox){ errBox.style.display = 'none'; }
+
+    jsonp('adminLogin', {email: email, password: password}, function(r){
+        if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Login Admin'; }
+        if(!r || !r.ok){
+            if(errBox){ errBox.textContent = (r && r.error) || 'Admin Login ব্যর্থ হয়েছে।'; errBox.style.display = 'block'; }
+            return;
+        }
+        window.__adminToken = r.adminToken || '';
+        closeAdminLoginModal();
+        document.getElementById('manageAdminView').style.display = 'block';
+        loadAdminUsers();
+        adminMessage('Admin Login সফল হয়েছে।', 'success');
+    }, function(err){
+        if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = 'Login Admin'; }
+        if(errBox){ errBox.textContent = err.message || 'Admin Login ব্যর্থ হয়েছে।'; errBox.style.display = 'block'; }
+    });
+});
 
 function downloadProjectFile(filename){
     let content = "";
@@ -3402,15 +3563,20 @@ function triggerDownload(text, filename){
 }
 function loadAdminUsers(){
     if(!window.__adminToken)return;
-    postToGas('adminListUsers',{adminToken:window.__adminToken},function(r){
+    jsonp('adminListUsers',{adminToken:window.__adminToken},function(r){
         if(!r||!r.ok){
-            jsonp('adminListUsers',{adminToken:window.__adminToken},function(r2){
+            postToGas('adminListUsers',{adminToken:window.__adminToken},function(r2){
                 if(!r2||!r2.ok){adminMessage((r2&&r2.error)||'User list load failed.','error');return;}
                 renderAdminUserTable(r2.users||[]);
-            },function(e){adminMessage(e.message||'User list load failed.','error');});
+            });
             return;
         }
         renderAdminUserTable(r.users||[]);
+    },function(e){
+        postToGas('adminListUsers',{adminToken:window.__adminToken},function(r2){
+            if(!r2||!r2.ok){adminMessage(e.message||'User list load failed.','error');return;}
+            renderAdminUserTable(r2.users||[]);
+        });
     });
 }
 
@@ -3421,16 +3587,38 @@ function renderAdminUserTable(users){
 }
 function adminSetStatus(userId,status){
     if(!confirm(status==='Active'?'এই User Activate করবেন?':'এই User Deactivate করবেন?'))return;
-    postToGas('adminSetUserStatus',{adminToken:window.__adminToken,userId:userId,status:status},function(r){
-        if(!r||!r.ok){adminMessage((r&&r.error)||'Status update failed.','error');return;}
+    jsonp('adminSetUserStatus',{adminToken:window.__adminToken,userId:userId,status:status},function(r){
+        if(!r||!r.ok){
+            postToGas('adminSetUserStatus',{adminToken:window.__adminToken,userId:userId,status:status},function(r2){
+                if(!r2||!r2.ok){adminMessage((r2&&r2.error)||'Status update failed.','error');return;}
+                adminMessage('User status updated.','success'); loadAdminUsers();
+            });
+            return;
+        }
         adminMessage('User status updated.','success'); loadAdminUsers();
+    },function(){
+        postToGas('adminSetUserStatus',{adminToken:window.__adminToken,userId:userId,status:status},function(r2){
+            if(!r2||!r2.ok){adminMessage('Status update failed.','error');return;}
+            adminMessage('User status updated.','success'); loadAdminUsers();
+        });
     });
 }
 function adminDeleteUser(userId,username){
     if(!confirm('User '+username+' এবং তার সকল সংরক্ষিত Data স্থায়ীভাবে Delete করবেন?'))return;
-    postToGas('adminDeleteUser',{adminToken:window.__adminToken,userId:userId},function(r){
-        if(!r||!r.ok){adminMessage((r&&r.error)||'User delete failed.','error');return;}
+    jsonp('adminDeleteUser',{adminToken:window.__adminToken,userId:userId},function(r){
+        if(!r||!r.ok){
+            postToGas('adminDeleteUser',{adminToken:window.__adminToken,userId:userId},function(r2){
+                if(!r2||!r2.ok){adminMessage((r2&&r2.error)||'User delete failed.','error');return;}
+                adminMessage('User এবং তার Data Delete হয়েছে।','success'); loadAdminUsers();
+            });
+            return;
+        }
         adminMessage('User এবং তার Data Delete হয়েছে।','success'); loadAdminUsers();
+    },function(){
+        postToGas('adminDeleteUser',{adminToken:window.__adminToken,userId:userId},function(r2){
+            if(!r2||!r2.ok){adminMessage('User delete failed.','error');return;}
+            adminMessage('User এবং তার Data Delete হয়েছে।','success'); loadAdminUsers();
+        });
     });
 }
 
@@ -3461,17 +3649,28 @@ document.getElementById("signupForm").addEventListener("submit",function(e){
     const email=document.getElementById("signupEmail").value.trim();
     const password=document.getElementById("signupPassword").value;
     const confirmPassword=document.getElementById("signupConfirmPassword").value;
+    const button=this.querySelector('button[type="submit"]');
 
-    if(username){
+    if(!name || !username || !mobile || !email || !password || !confirmPassword){
+        setAuthMessage("সবগুলো তথ্য পূরণ করুন।","error"); return;
+    }
+    if(password !== confirmPassword){
+        setAuthMessage("Password এবং Confirm Password মিলছে না।","error"); return;
+    }
+    if(!gasReady()){ setAuthMessage("Apps Script Web App URL সেট করা হয়নি।","error"); return; }
+
+    button.disabled=true; button.textContent="Creating Account...";
+    postToGas("signup",{name:name,username:username,mobile:mobile,email:email,password:password},function(res){
+        button.disabled=false; button.textContent="Sign Up";
+        if(!res || !res.ok){
+            setAuthMessage((res && res.error) || "Sign Up ব্যর্থ হয়েছে।","error");
+            return;
+        }
         document.getElementById("loginUsername").value=username;
         document.getElementById("loginPassword").value="";
-    }
-    showLoginPanel();
-    clearAuthMessage();
-
-    if(name && username && mobile && email && password && password === confirmPassword && gasReady()){
-        postToGas("signup",{name:name,username:username,mobile:mobile,email:email,password:password},function(){});
-    }
+        showLoginPanel();
+        setAuthMessage("Account সফলভাবে তৈরি হয়েছে। এখন Login করুন।","success");
+    });
 });
 
 toggleReportDateInputs();
