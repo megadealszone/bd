@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra-HD Premium Image Converter & Editor</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    *{box-sizing:border-box}
+    body{font-family:Arial,"Noto Sans Bengali",sans-serif}
+    .checker{background-image:linear-gradient(45deg,#eee 25%,transparent 25%),linear-gradient(-45deg,#eee 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eee 75%),linear-gradient(-45deg,transparent 75%,#eee 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+    .crop-wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    #cropCanvas{max-width:calc(100% - 12px);max-height:calc(100% - 12px);display:block;touch-action:none;cursor:crosshair}
+    #cropOverlay{position:absolute;border:2px solid #2563eb;box-shadow:0 0 0 9999px rgba(0,0,0,.42);pointer-events:none;display:none}
+    img{image-rendering:high-quality;-webkit-font-smoothing:antialiased}
+    .step{display:flex;align-items:center;gap:.55rem}
+    .step-num{width:28px;height:28px;border-radius:9999px;display:inline-flex;align-items:center;justify-content:center;background:#2563eb;color:#fff;font-weight:700;font-size:13px}
+    input[type=number],select,input[type=text]{outline:none}
+    input[type=number]:focus,select:focus,input[type=text]:focus{border-color:#2563eb;box-shadow:0 0 0 2px rgba(37,99,235,.12)}
+    .hidden-el{display:none!important}
+</style>
+</head>
+<body class="bg-slate-100 min-h-screen p-3 sm:p-6">
+<div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+    <div class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white p-5 sm:p-7">
+        <h1 class="text-2xl sm:text-3xl font-bold text-center">🎨 Ultra-HD Premium Image Converter & Editor</h1>
+        <p class="text-center text-blue-100 mt-2 text-sm">Upload → Preview → Resolution/Size → Crop → KB/MB → RGB Background → Convert → Review → Download</p>
+    </div>
+
+    <div class="p-4 sm:p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            <!-- LEFT: controls -->
+            <div class="space-y-4">
+
+                <div class="border rounded-xl p-4 bg-slate-50">
+                    <div class="step mb-3"><span class="step-num">1</span><b>ছবি আপলোড</b></div>
+                    <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif,image/*"
+                           class="w-full border border-gray-300 bg-white rounded-lg p-2 text-sm">
+                    <div id="fileInfo" class="text-xs text-gray-500 mt-2">কোনো ছবি নির্বাচন করা হয়নি।</div>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">2</span><b>ছবির প্রিভিউ</b></div>
+                    <div id="originalPreviewBox" class="h-52 sm:h-60 rounded-lg border bg-white checker flex items-center justify-center overflow-hidden">
+                        <img id="originalImage" class="max-h-full max-w-full object-contain hidden" alt="Original Preview">
+                        <span id="originalPlaceholder" class="text-gray-400 text-sm">আপলোড করা ছবির প্রিভিউ এখানে দেখা যাবে</span>
+                    </div>
+                    <div id="previewProgressWrap" class="hidden mt-3 px-1">
+                        <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                            <span id="previewProgressText">ছবির কাজ চলছে...</span>
+                            <b id="previewProgressPercent">0%</b>
+                        </div>
+                        <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="previewProgressBar" class="h-full bg-blue-600 rounded-full transition-all duration-150" style="width:0%"></div>
+                        </div>
+                    </div>
+                    <div id="originalDimensions" class="text-center text-xs text-gray-500 mt-2"></div>
+                    <div id="detectStatus" class="text-center text-xs mt-2 text-blue-700 min-h-[20px]"></div>
+                    <div id="progressWrap" class="hidden mt-2">
+                        <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                            <span id="progressText">ছবির কাজ চলছে...</span>
+                            <b id="progressPercent">0%</b>
+                        </div>
+                        <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full bg-blue-600 rounded-full transition-all duration-150" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border rounded-xl p-4 bg-blue-50/40">
+                    <div class="step mb-3"><span class="step-num">3</span><b>Passport / Stamp Size নির্বাচন</b></div>
+                    <select id="photoPreset" class="w-full border border-blue-200 rounded-lg p-3 text-sm bg-white font-semibold">
+                        <option value="custom">Custom / নিজের সাইজ</option>
+                        <option value="passport">Passport Size — 1.5 × 1.9 inch — 450 × 570 px @ 300 DPI</option>
+                        <option value="stamp">Stamp Size — 0.8 × 1 inch — 240 × 300 px @ 300 DPI</option>
+                    </select>
+                    <div class="grid grid-cols-2 gap-2 mt-3">
+                        <div class="bg-white border rounded-lg p-2 text-xs">Print Size: <b id="presetMm">—</b></div>
+                        <div class="bg-white border rounded-lg p-2 text-xs">Output: <b id="presetPx">—</b></div>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-2">Preset নির্বাচন করলেই নির্দিষ্ট Width × Height, Crop ও 300 DPI print-size অনুযায়ী output প্রস্তুত হবে।</p>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">4</span><b>রেজোলিউশন কমানো / বাড়ানো</b></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="text-xs text-gray-600">Width (px)
+                            <input id="widthInput" type="number" min="1" step="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Width">
+                        </label>
+                        <label class="text-xs text-gray-600">Height (px)
+                            <input id="heightInput" type="number" min="1" step="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Height">
+                        </label>
+                    </div>
+                    <label class="flex items-center gap-2 mt-3 text-sm">
+                        <input id="lockRatio" type="checkbox" checked class="accent-blue-600">
+                        অনুপাত (Aspect Ratio) লক রাখুন
+                    </label>
+                    <div class="grid grid-cols-2 gap-2 mt-3">
+                        <button id="halfResolution" type="button" class="border rounded-lg py-2 text-sm hover:bg-slate-50">50% করা</button>
+                        <button id="doubleResolution" type="button" class="border rounded-lg py-2 text-sm hover:bg-slate-50">200% করা</button>
+                    </div>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">5</span><b>সাইজ কমানো / বাড়ানো</b></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="text-xs text-gray-600">Target Width (px)
+                            <input id="sizeWidth" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Width">
+                        </label>
+                        <label class="text-xs text-gray-600">Target Height (px)
+                            <input id="sizeHeight" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Height">
+                        </label>
+                    </div>
+                    <select id="fitMode" class="mt-3 w-full border rounded-lg p-2 text-sm">
+                        <option value="contain">Contain — পুরো ছবি রাখুন</option>
+                        <option value="cover">Cover — সাইজ অনুযায়ী পূর্ণ ফ্রেম</option>
+                        <option value="stretch">Stretch — নির্দিষ্ট সাইজে ফিট</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-2">Target size দিলে ছবিকে নির্দিষ্ট Width × Height অনুযায়ী প্রস্তুত করা হবে।</p>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">6</span><b>সাইজ অনুযায়ী Crop</b></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="text-xs text-gray-600">Crop Width
+                            <input id="cropW" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Width">
+                        </label>
+                        <label class="text-xs text-gray-600">Crop Height
+                            <input id="cropH" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Height">
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 mt-2">
+                        <select id="aspectPreset" class="border rounded-lg p-2 text-sm">
+                            <option value="free">Free Crop</option>
+                            <option value="1">1 : 1</option>
+                            <option value="1.333333">4 : 3</option>
+                            <option value="1.5">3 : 2</option>
+                            <option value="1.777778">16 : 9</option>
+                            <option value="0.75">3 : 4</option>
+                            <option value="0.666667">2 : 3</option>
+                            <option value="0.5625">9 : 16</option>
+                        </select>
+                        <button id="applyCropBox" type="button" class="border rounded-lg py-2 text-sm hover:bg-blue-50">Crop Box সেট</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">প্রিভিউতে মাউস/আঙুল দিয়ে Crop Box টেনে নির্বাচন করা যাবে।</p>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">7</span><b>KB / MB অনুযায়ী ফাইল সাইজ</b></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="text-xs text-gray-600">Target Size
+                            <input id="targetSize" type="number" min="1" step="1" class="mt-1 w-full border rounded-lg p-2" placeholder="যেমন 100">
+                        </label>
+                        <label class="text-xs text-gray-600">Unit
+                            <select id="sizeUnit" class="mt-1 w-full border rounded-lg p-2">
+                                <option value="KB">KB</option>
+                                <option value="MB">MB</option>
+                            </select>
+                        </label>
+                    </div>
+                    <label class="flex items-center gap-2 mt-3 text-sm">
+                        <input id="enforceTarget" type="checkbox" class="accent-blue-600">
+                        Convert-এর সময় Target KB/MB অর্জনের চেষ্টা করুন
+                    </label>
+                    <p class="text-xs text-gray-500 mt-2">JPEG/WebP quality ও resolution সামঞ্জস্য করে নির্ধারিত ফাইল সাইজের কাছাকাছি আনা হবে।</p>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">8</span><b>RGB / Background Color</b></div>
+                    <div class="flex items-center gap-3">
+                        <input id="bgColor" type="color" value="#ffffff" class="w-14 h-11 border rounded-lg cursor-pointer p-1">
+                        <input id="hexColor" type="text" value="#FFFFFF" maxlength="7" class="flex-1 border rounded-lg p-2 uppercase" placeholder="#FFFFFF">
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <label class="text-xs text-gray-600">R<input id="rVal" type="number" min="0" max="255" value="255" class="mt-1 w-full border rounded-lg p-2"></label>
+                        <label class="text-xs text-gray-600">G<input id="gVal" type="number" min="0" max="255" value="255" class="mt-1 w-full border rounded-lg p-2"></label>
+                        <label class="text-xs text-gray-600">B<input id="bVal" type="number" min="0" max="255" value="255" class="mt-1 w-full border rounded-lg p-2"></label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Transparent/background-removed অংশে নির্বাচিত RGB/Hex রঙ ব্যবহার হবে।</p>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">9</span><b>Output Format & Quality</b></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="formatSelect" class="border rounded-lg p-2 text-sm">
+                            <option value="image/jpeg">JPEG — Ultra HD</option>
+                            <option value="image/webp">WebP — High Quality</option>
+                            <option value="image/png">PNG — Lossless HD</option>
+                        </select>
+                        <label class="text-xs text-gray-600">Quality
+                            <input id="qualityInput" type="number" min="10" max="100" value="100" class="mt-1 w-full border rounded-lg p-2">
+                        </label>
+                    </div>
+                </div>
+
+                <button id="convertBtn" type="button" class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-xl shadow">
+                    ✨ Convert / সম্পূর্ণ আপডেট করুন
+                </button>
+                <div id="loading" class="hidden text-center text-blue-700 font-medium text-sm p-2">
+                    ⏳ প্রসেস হচ্ছে... Full HD Crystal Clear Output তৈরি করা হচ্ছে।
+                </div>
+                <div id="errorBox" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm break-words leading-6"></div>
+            </div>
+
+            <!-- RIGHT: crop + final review -->
+            <div class="space-y-4">
+                <div class="border rounded-xl p-4 bg-indigo-50/40">
+                    <div class="step mb-3"><span class="step-num">AI</span><b>Ultra-Precision AI Auto Frame & High-Accuracy Detection</b></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="autoDetectBtn" type="button" class="border border-indigo-200 bg-white rounded-lg py-2 text-sm font-semibold hover:bg-indigo-50">🤖 Precision Auto Detect</button>
+                        <button id="autoFrameBtn" type="button" class="border border-indigo-200 bg-white rounded-lg py-2 text-sm font-semibold hover:bg-indigo-50">🎯 Auto Frame</button>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-2">
+                        Browser-এর ভিতরেই AI segmentation দিয়ে background remove করা হবে। Original image-এর high-resolution pixels ব্যবহার করে subject/face detail যতটা সম্ভব sharp রাখা হবে। প্রথমবার AI model download হতে কিছু সময় লাগতে পারে।
+                    </p>
+                    <p class="text-[11px] text-indigo-700 mt-2">
+                        💡 Chrome/Edge/Firefox-এ চালান এবং প্রথমবার Internet connection চালু রাখুন। AI model cache হয়ে গেলে পরেরবার দ্রুত কাজ করবে।
+                    </p>
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <div class="step mb-3"><span class="step-num">6</span><b>Crop Preview / নির্বাচন</b></div>
+                    <div id="cropStage" class="h-72 sm:h-80 bg-slate-900 rounded-lg overflow-hidden relative flex items-center justify-center">
+                        <canvas id="cropCanvas" class="hidden"></canvas>
+                        <div id="cropOverlay"></div>
+                        <span id="cropPlaceholder" class="text-slate-400 text-sm text-center leading-6 px-6 max-w-sm break-words">ছবি আপলোড করলে এখানে Crop Preview দেখা যাবে</span>
+                    </div>
+                    <div class="flex gap-2 mt-3">
+                        <button id="centerCrop" type="button" class="flex-1 border rounded-lg py-2 text-sm hover:bg-slate-50">Center Crop</button>
+                        <button id="resetCrop" type="button" class="flex-1 border rounded-lg py-2 text-sm hover:bg-slate-50">Reset</button>
+                    </div>
+                </div>
+
+                <div class="border-2 border-green-200 rounded-xl p-4 bg-green-50/30">
+                    <div class="step mb-3"><span class="step-num">10</span><b>Download-এর আগে Final Review</b></div>
+                    <div id="reviewBox" class="min-h-72 sm:min-h-80 rounded-lg border bg-white checker flex items-center justify-center overflow-hidden">
+                        <img id="resultImage" class="max-h-full max-w-full object-contain hidden" alt="Final Review">
+                        <span id="reviewPlaceholder" class="text-gray-400 text-sm">Convert করার পর Premium Quality Review এখানে দেখা যাবে</span>
+                    </div>
+                    <div id="resultInfo" class="hidden grid grid-cols-2 gap-2 mt-3 text-xs">
+                        <div class="bg-white border rounded-lg p-2">Resolution: <b id="outDimensions">—</b></div>
+                        <div class="bg-white border rounded-lg p-2">File Size: <b id="outSize">—</b></div>
+                        <div class="bg-white border rounded-lg p-2">Format: <b id="outFormat">—</b></div>
+                        <div class="bg-white border rounded-lg p-2">Quality: <b id="outQuality">—</b></div>
+                    </div>
+                    <a id="downloadBtn" class="hidden mt-4 w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl">
+                        📥 Full HD Quality ছবি Download
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+let removeBackground = null;
+try {
+    ({ removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm'));
+} catch (primaryImportError) {
+    console.warn('Primary IMG.LY CDN failed, trying fallback CDN...', primaryImportError);
+    try {
+        ({ removeBackground } = await import('https://esm.sh/@imgly/background-removal@1.7.0'));
+    } catch (fallbackImportError) {
+        console.error('IMG.LY background-removal library could not be loaded.', fallbackImportError);
+    }
+}
+
+const BG_REMOVE_CONFIG = {
+    publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/',
+    model: 'isnet_fp16',
+    device: 'cpu',
+    proxyToWorker: false,
+    debug: false,
+    output: {
+        format: 'image/png',
+        quality: 1
+    },
+    progress: (key, current, total) => {
+        const n = Number(current) || 0;
+        const t = Number(total) || 1;
+        const pct = (n / t) * 100;
+        // Keep download/inference progress below 95%; 100% is reserved
+        // for the complete application workflow.
+        setProgress(Math.min(95, Math.max(displayedProgress, pct)), 'AI background removal চলছে...');
+    }
+};
+
+const $ = id => document.getElementById(id);
+const imageInput=$('imageInput'), originalImage=$('originalImage'), originalPlaceholder=$('originalPlaceholder');
+const photoPreset=$('photoPreset'), presetMm=$('presetMm'), presetPx=$('presetPx');
+const cropCanvas=$('cropCanvas'), cropOverlay=$('cropOverlay'), cropPlaceholder=$('cropPlaceholder');
+const widthInput=$('widthInput'), heightInput=$('heightInput'), sizeWidth=$('sizeWidth'), sizeHeight=$('sizeHeight');
+const cropW=$('cropW'), cropH=$('cropH'), aspectPreset=$('aspectPreset'), lockRatio=$('lockRatio');
+const targetSize=$('targetSize'), sizeUnit=$('sizeUnit'), enforceTarget=$('enforceTarget');
+const bgColor=$('bgColor'), hexColor=$('hexColor'), rVal=$('rVal'), gVal=$('gVal'), bVal=$('bVal');
+const formatSelect=$('formatSelect'), qualityInput=$('qualityInput'), convertBtn=$('convertBtn');
+const resultImage=$('resultImage'), downloadBtn=$('downloadBtn'), loading=$('loading'), errorBox=$('errorBox');
+const progressWrap=$('progressWrap'), progressBar=$('progressBar'), progressPercent=$('progressPercent'), progressText=$('progressText');
+const previewProgressWrap=$('previewProgressWrap'), previewProgressBar=$('previewProgressBar'), previewProgressPercent=$('previewProgressPercent'), previewProgressText=$('previewProgressText');
+
+let originalFile=null, originalBitmap=null, cropRect=null, drag=null, lastUrl=null, sourceHasTransparency=false, detectedCutout=null, detectionRunning=false;
+
+let displayedProgress=0;
+function setProgress(percent, text='ছবির কাজ চলছে...'){
+    const raw=clamp(Number(percent)||0,0,100);
+    displayedProgress=Math.max(displayedProgress,raw);
+    const p=displayedProgress;
+
+    progressWrap.classList.remove('hidden');
+    progressBar.style.width=p+'%';
+    progressPercent.textContent=Math.round(p)+'%';
+    progressText.textContent=text;
+
+    previewProgressWrap.classList.remove('hidden');
+    previewProgressBar.style.width=p+'%';
+    previewProgressPercent.textContent=Math.round(p)+'%';
+    previewProgressText.textContent=text;
+}
+function hideProgress(){
+    displayedProgress=0;
+    progressWrap.classList.add('hidden');
+    progressBar.style.width='0%';
+    progressPercent.textContent='0%';
+
+    previewProgressWrap.classList.add('hidden');
+    previewProgressBar.style.width='0%';
+    previewProgressPercent.textContent='0%';
+}
+function finishProgress(text='ছবির সম্পূর্ণ কাজ শেষ হয়েছে।'){
+    setProgress(100,text);
+}
+
+function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+function showError(msg){errorBox.textContent=msg;errorBox.classList.remove('hidden')}
+function clearError(){errorBox.classList.add('hidden');errorBox.textContent=''}
+function bytesText(n){
+    if(n<1024) return n+' B';
+    if(n<1024*1024) return (n/1024).toFixed(1)+' KB';
+    return (n/1024/1024).toFixed(2)+' MB';
+}
+function hexFromRGB(r,g,b){return '#'+[r,g,b].map(v=>Number(v).toString(16).padStart(2,'0')).join('').toUpperCase()}
+function validHex(v){return /^#[0-9A-F]{6}$/i.test(v)}
+function syncColorFromHex(){
+    let h=hexColor.value.trim();
+    if(!validHex(h)) return;
+    h=h.toUpperCase(); hexColor.value=h; bgColor.value=h;
+    rVal.value=parseInt(h.slice(1,3),16); gVal.value=parseInt(h.slice(3,5),16); bVal.value=parseInt(h.slice(5,7),16);
+}
+function syncColorFromRGB(){
+    const r=clamp(parseInt(rVal.value)||0,0,255),g=clamp(parseInt(gVal.value)||0,0,255),b=clamp(parseInt(bVal.value)||0,0,255);
+    rVal.value=r;gVal.value=g;bVal.value=b;
+    const h=hexFromRGB(r,g,b); hexColor.value=h;bgColor.value=h;
+}
+bgColor.addEventListener('input',()=>{hexColor.value=bgColor.value.toUpperCase();syncColorFromHex()});
+hexColor.addEventListener('change',syncColorFromHex);
+[rVal,gVal,bVal].forEach(x=>x.addEventListener('change',syncColorFromRGB));
+
+const PHOTO_PRESETS = {
+    passport: {w:450,h:570,mmW:38.1,mmH:48.26,dpi:300,label:'Passport Size'},
+    stamp:    {w:240,h:300,mmW:20.32,mmH:25.40,dpi:300,label:'Stamp Size'}
+};
+
+function updatePresetInfo(){
+    const p=PHOTO_PRESETS[photoPreset.value];
+    if(!p){
+        presetMm.textContent='Custom';
+        presetPx.textContent='Custom';
+        return;
+    }
+    presetMm.textContent=`${p.mmW.toFixed(2)} × ${p.mmH.toFixed(2)} mm`;
+    presetPx.textContent=`${p.w} × ${p.h} px @ ${p.dpi} DPI`;
+}
+
+function applyPhotoPreset(){
+    const p=PHOTO_PRESETS[photoPreset.value];
+    updatePresetInfo();
+    if(!p || !originalBitmap) return;
+    widthInput.value=p.w;
+    heightInput.value=p.h;
+    sizeWidth.value=p.w;
+    sizeHeight.value=p.h;
+    cropW.value=Math.min(p.w,originalBitmap.width);
+    cropH.value=Math.min(p.h,originalBitmap.height);
+    aspectPreset.value=(p.w/p.h).toFixed(6);
+    if(detectedCutout){
+        const box=alphaBoundingBox(detectedCutout);
+        if(box) applySmartFrameFromBox(box);
+        else centerCrop();
+    }else{
+        centerCrop();
+    }
+}
+photoPreset.addEventListener('change', applyPhotoPreset);
+updatePresetInfo();
+
+function setDimensions(w,h,source='resolution'){
+    if(source==='resolution'){widthInput.value=Math.round(w);heightInput.value=Math.round(h)}
+    else {sizeWidth.value=Math.round(w);sizeHeight.value=Math.round(h)}
+}
+
+function autoFillImageInfo(){
+    if(!originalBitmap)return;
+
+    const w=originalBitmap.width;
+    const h=originalBitmap.height;
+
+    // Auto-fill all editable image information from the uploaded image.
+    setDimensions(w,h);
+    setDimensions(w,h,'size');
+
+    cropW.value=w;
+    cropH.value=h;
+    cropRect={x:0,y:0,w,h};
+
+    // Keep the full original image by default.
+    aspectPreset.value='free';
+    $('fitMode').value='contain';
+
+    drawCropCanvas();
+}
+widthInput.addEventListener('input',()=>{
+    if(lockRatio.checked && originalBitmap && widthInput.value){
+        heightInput.value=Math.max(1,Math.round(Number(widthInput.value)*originalBitmap.height/originalBitmap.width));
+    }
+});
+heightInput.addEventListener('input',()=>{
+    if(lockRatio.checked && originalBitmap && heightInput.value){
+        widthInput.value=Math.max(1,Math.round(Number(heightInput.value)*originalBitmap.width/originalBitmap.height));
+    }
+});
+$('halfResolution').onclick=()=>{if(originalBitmap)setDimensions(originalBitmap.width*.5,originalBitmap.height*.5)}
+$('doubleResolution').onclick=()=>{if(originalBitmap)setDimensions(originalBitmap.width*2,originalBitmap.height*2)}
+
+/**
+ * AUTOMATIC WATERMARK REMOVAL FUNCTION
+ * Detects semi-transparent or high-contrast uniform overlay patterns / watermarks
+ * and restores background pixels automatically.
+ */
+function removeWatermarkFromCanvas(srcCanvas) {
+    const w = srcCanvas.width, h = srcCanvas.height;
+    const ctx = srcCanvas.getContext('2d', { willReadFrequently: true });
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+
+    // Automatic detection & removal for semi-transparent/repetitive watermark overlays
+    for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+        // Identify faint semi-transparent watermark pixels or near-white text overlays over subject/background
+        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+        const maxC = Math.max(r, g, b), minC = Math.min(r, g, b);
+        const sat = maxC - minC;
+
+        // Semi-transparent overlay restoration logic
+        if (sat < 18 && luminance > 210 && a > 0) {
+            // Smooth out bright neutral watermark pixels using local neighborhood averaging
+            const idx = i / 4;
+            const x = idx % w;
+            const y = Math.floor(idx / w);
+
+            if (x > 0 && x < w - 1 && y > 0 && y < h - 1) {
+                const prevIdx = ((y) * w + (x - 1)) * 4;
+                const nextIdx = ((y) * w + (x + 1)) * 4;
+                
+                // Blend with neighbors if neighbors aren't part of watermark
+                if (data[prevIdx + 3] > 0) {
+                    data[i]     = Math.round(data[prevIdx] * 0.5 + data[nextIdx] * 0.5);
+                    data[i + 1] = Math.round(data[prevIdx + 1] * 0.5 + data[nextIdx + 1] * 0.5);
+                    data[i + 2] = Math.round(data[prevIdx + 2] * 0.5 + data[nextIdx + 2] * 0.5);
+                }
+            }
+        }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    return srcCanvas;
+}
+
+async function loadImageFile(file){
+    let rawCanvas = null;
+    try{
+        if(window.createImageBitmap){
+            try{
+                const bmp=await createImageBitmap(file,{imageOrientation:'from-image'});
+                const c=document.createElement('canvas');
+                c.width=bmp.width;c.height=bmp.height;
+                const ctx=c.getContext('2d');
+                ctx.imageSmoothingEnabled=true;
+                ctx.imageSmoothingQuality='high';
+                ctx.drawImage(bmp,0,0);
+                if(bmp.close) bmp.close();
+                rawCanvas = c;
+            }catch(e){}
+        }
+    }catch(e){}
+
+    if (!rawCanvas) {
+        rawCanvas = await new Promise((resolve,reject)=>{
+            const reader=new FileReader();
+            reader.onload=()=>{
+                const im=new Image();
+                im.onload=()=>{
+                    const c=document.createElement('canvas');
+                    c.width=im.width;c.height=im.height;
+                    const ctx=c.getContext('2d');
+                    ctx.drawImage(im,0,0);
+                    resolve(c);
+                };
+                im.onerror=()=>reject(new Error('Browser image decoder could not read this file.'));
+                im.src=reader.result;
+            };
+            reader.onerror=()=>reject(reader.error||new Error('FileReader failed.'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Automatically remove watermark from image
+    return removeWatermarkFromCanvas(rawCanvas);
+}
+
+async function normalizeImageFile(file){
+    const name=(file.name||'').toLowerCase();
+    const type=(file.type||'').toLowerCase();
+    const isHeic=/\.heic$|\.heif$/.test(name)||type.includes('heic')||type.includes('heif');
+    if(!isHeic) return file;
+
+    try{
+        const mod=await import('https://cdn.jsdelivr.net/npm/heic2any@0.0.4/+esm');
+        const converted=await mod.default({
+            blob:file,
+            toType:'image/jpeg',
+            quality:0.99
+        });
+        const blob=Array.isArray(converted)?converted[0]:converted;
+        return new File([blob], (file.name||'photo').replace(/\.(heic|heif)$/i,'.jpg'), {type:'image/jpeg'});
+    }catch(e){
+        throw new Error('HEIC/HEIF ছবি পড়তে সমস্যা হচ্ছে। ফোনের Camera Settings থেকে JPG/JPEG নির্বাচন করে আবার ছবি দিন।');
+    }
+}
+function drawCropCanvas(){
+    if(!originalBitmap)return;
+    const stage=$('cropStage'), maxW=stage.clientWidth-8,maxH=stage.clientHeight-8;
+    const scale=Math.min(maxW/originalBitmap.width,maxH/originalBitmap.height,1);
+    cropCanvas.width=Math.max(1,Math.round(originalBitmap.width*scale));
+    cropCanvas.height=Math.max(1,Math.round(originalBitmap.height*scale));
+    const ctx=cropCanvas.getContext('2d');
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ctx.clearRect(0,0,cropCanvas.width,cropCanvas.height);
+    ctx.drawImage(originalBitmap,0,0,cropCanvas.width,cropCanvas.height);
+    cropCanvas.classList.remove('hidden');cropPlaceholder.classList.add('hidden');
+    updateOverlay();
+}
+function updateOverlay(){
+    if(!cropRect || !originalBitmap)return;
+    const sx=cropCanvas.width/originalBitmap.width, sy=cropCanvas.height/originalBitmap.height;
+    cropOverlay.style.display='block';
+    cropOverlay.style.left=(cropCanvas.offsetLeft+cropRect.x*sx)+'px';
+    cropOverlay.style.top=(cropCanvas.offsetTop+cropRect.y*sy)+'px';
+    cropOverlay.style.width=(cropRect.w*sx)+'px';
+    cropOverlay.style.height=(cropRect.h*sy)+'px';
+}
+function resetCrop(){
+    if(!originalBitmap)return;
+    cropRect={x:0,y:0,w:originalBitmap.width,h:originalBitmap.height};
+    cropW.value=originalBitmap.width;cropH.value=originalBitmap.height;updateOverlay();
+}
+function centerCrop(){
+    if(!originalBitmap)return;
+    let w=Number(cropW.value)||originalBitmap.width, h=Number(cropH.value)||originalBitmap.height;
+    const preset=aspectPreset.value;
+    if(preset!=='free'){
+        const ar=Number(preset);
+        if(w/h>ar) w=h*ar; else h=w/ar;
+    }
+    w=clamp(w,1,originalBitmap.width);h=clamp(h,1,originalBitmap.height);
+    cropRect={x:(originalBitmap.width-w)/2,y:(originalBitmap.height-h)/2,w,h};
+    cropW.value=Math.round(w);cropH.value=Math.round(h);updateOverlay();
+}
+$('resetCrop').onclick=resetCrop;
+$('centerCrop').onclick=centerCrop;
+$('applyCropBox').onclick=centerCrop;
+
+aspectPreset.addEventListener('change',()=>{
+    if(aspectPreset.value!=='free'){
+        let w=Number(cropW.value)||originalBitmap?.width||1;
+        let h=Math.max(1,Math.round(w/Number(aspectPreset.value)));
+        if(originalBitmap && h>originalBitmap.height){h=originalBitmap.height;w=Math.round(h*Number(aspectPreset.value))}
+        cropW.value=Math.round(w);cropH.value=Math.round(h);centerCrop();
+    }
+});
+
+function pointerPos(e){
+    const r=cropCanvas.getBoundingClientRect();
+    return {x:(e.clientX-r.left)*(originalBitmap.width/cropCanvas.width),y:(e.clientY-r.top)*(originalBitmap.height/cropCanvas.height)};
+}
+cropCanvas.addEventListener('pointerdown',e=>{
+    if(!originalBitmap)return;
+    cropCanvas.setPointerCapture(e.pointerId);
+    const p=pointerPos(e);
+    drag={startX:p.x,startY:p.y,base:{...cropRect},mode:'new'};
+});
+cropCanvas.addEventListener('pointermove',e=>{
+    if(!drag)return;
+    const p=pointerPos(e);
+    let x=Math.min(drag.startX,p.x),y=Math.min(drag.startY,p.y),w=Math.abs(p.x-drag.startX),h=Math.abs(p.y-drag.startY);
+    if(aspectPreset.value!=='free'){
+        const ar=Number(aspectPreset.value);
+        if(w/h>ar)w=h*ar;else h=w/ar;
+    }
+    w=clamp(w,1,originalBitmap.width);h=clamp(h,1,originalBitmap.height);
+    x=clamp(x,0,originalBitmap.width-w);y=clamp(y,0,originalBitmap.height-h);
+    cropRect={x,y,w,h};cropW.value=Math.round(w);cropH.value=Math.round(h);updateOverlay();
+});
+cropCanvas.addEventListener('pointerup',()=>drag=null);
+cropCanvas.addEventListener('pointercancel',()=>drag=null);
+window.addEventListener('resize',()=>{if(originalBitmap)drawCropCanvas()});
+
+imageInput.addEventListener('change',async e=>{
+    clearError();
+    hideProgress();
+
+    const picked=e.target.files && e.target.files[0];
+    if(!picked)return;
+
+    convertBtn.disabled=true;
+    originalFile=null;
+    originalBitmap=null;
+    detectedCutout=null;
+    sourceHasTransparency=false;
+
+    // IMPORTANT: show the selected image immediately.
+    const immediateUrl=URL.createObjectURL(picked);
+    originalImage.src=immediateUrl;
+    originalImage.classList.remove('hidden');
+    originalPlaceholder.classList.add('hidden');
+    $('fileInfo').textContent=`${picked.name} • ${bytesText(picked.size)} • ${picked.type||'image'}`;
+
+    // Start progress after the browser has a chance to paint the preview.
+    setProgress(0,'ছবি আপলোড হয়েছে — প্রিভিউ দেখানো হচ্ছে...');
+
+    setTimeout(async()=>{
+        try{
+            setProgress(5,'ছবি লোড হচ্ছে...');
+
+            originalFile=await normalizeImageFile(picked);
+            setProgress(12,'ছবির ডাটা প্রস্তুত করা হচ্ছে...');
+
+            originalBitmap=await loadImageFile(originalFile);
+            autoFillImageInfo();
+            setProgress(18,'Original preview + সব তথ্য অটো নেওয়া হয়েছে...');
+
+            // Keep the preview visible at all times.
+            if(immediateUrl)URL.revokeObjectURL(immediateUrl);
+
+            $('fileInfo').textContent=`${originalFile.name} • ${bytesText(originalFile.size)} • ${originalFile.type||'image'}`;
+            $('originalDimensions').textContent=`Original: ${originalBitmap.width} × ${originalBitmap.height} px (Full HD)`;
+            setDimensions(originalBitmap.width,originalBitmap.height);
+            setDimensions(originalBitmap.width,originalBitmap.height,'size');
+            cropW.value=originalBitmap.width;
+            cropH.value=originalBitmap.height;
+            cropRect={x:0,y:0,w:originalBitmap.width,h:originalBitmap.height};
+            drawCropCanvas();
+
+            if(photoPreset.value!=='custom') applyPhotoPreset();
+
+            resultImage.classList.add('hidden');
+            downloadBtn.classList.add('hidden');
+            $('resultInfo').classList.add('hidden');
+
+            setProgress(20,'AI background removal শুরু হচ্ছে...');
+            await autoDetectSubject();
+
+            // autoDetectSubject finishes at 100% when all AI work is complete.
+            if(displayedProgress<100){
+                finishProgress('ছবির সম্পূর্ণ কাজ শেষ হয়েছে।');
+            }
+        }catch(err){
+            console.error(err);
+            if(immediateUrl)URL.revokeObjectURL(immediateUrl);
+
+            // Do NOT remove the instant preview.
+            setProgress(100,'ছবির কাজ সম্পূর্ণ হয়েছে (AI ধাপ সম্পন্ন হয়নি)।');
+            setDetectStatus('⚠️ AI background removal ব্যর্থ হয়েছে। Original preview রাখা হয়েছে।');
+            showError(err.message||'ছবিটি পড়া যায়নি। JPG/JPEG/PNG/WebP ছবি নির্বাচন করুন।');
+            $('fileInfo').textContent=`${picked.name} • ${bytesText(picked.size)} • ${picked.type||'image'}`;
+        }finally{
+            convertBtn.disabled=false;
+        }
+    },60);
+});
+
+function makeCanvas(w,h){
+    const c=document.createElement('canvas');c.width=Math.max(1,Math.round(w));c.height=Math.max(1,Math.round(h));return c;
+}
+function drawBackground(ctx,w,h){
+    ctx.fillStyle=bgColor.value||'#FFFFFF';ctx.fillRect(0,0,w,h);
+}
+
+function setDetectStatus(text, ok=false){
+    const el=$('detectStatus');
+    el.textContent=text;
+    el.className='text-center text-xs mt-2 min-h-[20px] '+(ok?'text-green-700 font-semibold':'text-blue-700');
+}
+
+function alphaBoundingBox(img){
+    const c=document.createElement('canvas');
+    c.width=img.width;c.height=img.height;
+    const ctx=c.getContext('2d',{willReadFrequently:true});
+    ctx.drawImage(img,0,0);
+    const data=ctx.getImageData(0,0,c.width,c.height).data;
+    let minX=c.width,minY=c.height,maxX=-1,maxY=-1,count=0;
+    for(let y=0;y<c.height;y+=2){
+        for(let x=0;x<c.width;x+=2){
+            const a=data[(y*c.width+x)*4+3];
+            if(a>28){
+                minX=Math.min(minX,x);minY=Math.min(minY,y);
+                maxX=Math.max(maxX,x);maxY=Math.max(maxY,y);count++;
+            }
+        }
+    }
+    if(count<20 || maxX<minX || maxY<minY) return null;
+    return {x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1,canvas:c};
+}
+
+function applySmartFrameFromBox(box){
+    if(!originalBitmap)return;
+    const padding=0.07;
+    let x=clamp(box.x-box.w*padding,0,originalBitmap.width);
+    let y=clamp(box.y-box.h*padding,0,originalBitmap.height);
+    let w=clamp(box.w*(1+padding*2),1,originalBitmap.width-x);
+    let h=clamp(box.h*(1+padding*2),1,originalBitmap.height-y);
+
+    const preset=PHOTO_PRESETS[photoPreset.value];
+    if(preset){
+        const ar=preset.w/preset.h;
+        if(w/h>ar){
+            h=w/ar;
+            if(h>originalBitmap.height){h=originalBitmap.height;w=h*ar;}
+        }else{
+            w=h*ar;
+            if(w>originalBitmap.width){w=originalBitmap.width;h=w/ar;}
+        }
+        const cx=box.x+box.w/2, cy=box.y+box.h/2;
+        x=clamp(cx-w/2,0,originalBitmap.width-w);
+        y=clamp(cy-h/2,0,originalBitmap.height-h);
+    }
+    cropRect={x,y,w,h};
+    cropW.value=Math.round(w);cropH.value=Math.round(h);
+    updateOverlay();
+}
+
+async function autoDetectSubject(){
+    if(!originalFile||!originalBitmap){
+        showError('দয়া করে প্রথমে একটি ছবি আপলোড করুন।');
+        return false;
+    }
+    if(detectionRunning)return false;
+
+    detectionRunning=true;
+    clearError();
+
+    if(typeof removeBackground!=='function'){
+        detectionRunning=false;
+        finishProgress('AI engine load হয়নি।');
+        setDetectStatus('⚠️ AI background-removal engine load হয়নি। Internet connection চালু করে আবার চেষ্টা করুন।');
+        showError('AI background-removal engine load হয়নি। এই HTML viewer/CDN access বন্ধ থাকলে Chrome/Edge-এ file-টি সরাসরি বা local web server দিয়ে চালান।');
+        return false;
+    }
+
+    setProgress(Math.max(displayedProgress,20),'AI background removal শুরু হচ্ছে...');
+    setDetectStatus('🤖 AI background removal চলছে... প্রথমবার প্রায় 40MB AI model download হতে পারে...');
+    if(!window.crossOriginIsolated){
+        console.info('IMG.LY is running in CPU/no-worker compatibility mode because this page is not cross-origin isolated.');
+    }
+
+    try{
+        const blob=await removeBackground(originalFile, BG_REMOVE_CONFIG);
+
+        setProgress(92,'Subject mask প্রস্তুত করা হচ্ছে...');
+        const rawCutout = await loadImageFile(blob);
+        detectedCutout = removeWatermarkFromCanvas(rawCutout);
+        sourceHasTransparency=true;
+
+        setProgress(97,'Final subject frame প্রস্তুত করা হচ্ছে...');
+        const box=alphaBoundingBox(detectedCutout);
+
+        if(box){
+            applySmartFrameFromBox(box);
+            finishProgress('ছবির সম্পূর্ণ কাজ শেষ হয়েছে।');
+            setDetectStatus('✓ AI subject detection + background removal সম্পন্ন হয়েছে।',true);
+            return true;
+        }
+
+        finishProgress('ছবির সম্পূর্ণ কাজ শেষ হয়েছে।');
+        setDetectStatus('⚠️ Subject mask পাওয়া যায়নি। আবার চেষ্টা করুন।');
+        return false;
+    }catch(err){
+        console.error('AI background removal failed:',err);
+        detectedCutout=null;
+        sourceHasTransparency=false;
+        finishProgress('AI কাজ সম্পূর্ণ হয়নি।');
+        setDetectStatus('⚠️ AI background removal ব্যর্থ হয়েছে।');
+        showError('Background remove করা যায়নি: '+(err?.message || err));
+        return false;
+    }finally{
+        detectionRunning=false;
+    }
+}
+
+$('autoDetectBtn').onclick=autoDetectSubject;
+$('autoFrameBtn').onclick=async()=>{
+    if(detectedCutout){
+        const box=alphaBoundingBox(detectedCutout);
+        if(box){applySmartFrameFromBox(box);setDetectStatus('✓ Detected subject অনুযায়ী frame আপডেট হয়েছে।',true);return;}
+    }
+    await autoDetectSubject();
+};
+
+async function getSourceImage(){
+    if(!originalFile || !originalBitmap) {
+        throw new Error('ছবিটি এখনও প্রস্তুত হয়নি। আবার ছবি নির্বাচন করুন।');
+    }
+
+    if(detectedCutout && sourceHasTransparency) return detectedCutout;
+
+    if(typeof removeBackground!=='function'){
+        throw new Error('AI background-removal engine load হয়নি। Internet connection চালু করে আবার চেষ্টা করুন।');
+    }
+
+    setDetectStatus('🤖 Convert-এর জন্য AI background remove করা হচ্ছে...');
+    setProgress(Math.max(displayedProgress,25),'AI background remove করা হচ্ছে...');
+
+    let lastError=null;
+
+    // Retry once if the browser/model has a transient CDN or WASM failure.
+    for(let attempt=1; attempt<=2; attempt++){
+        try{
+            const blob=await removeBackground(originalFile, BG_REMOVE_CONFIG);
+            if(!blob || !blob.size) throw new Error('AI engine কোনো output দেয়নি।');
+
+            setProgress(92,'Background mask থেকে clean subject তৈরি হচ্ছে...');
+            const rawCutout=await loadImageFile(blob);
+
+            if(!rawCutout || !rawCutout.width || !rawCutout.height){
+                throw new Error('AI output image পড়া যায়নি।');
+            }
+
+            // Keep the AI alpha mask; only clean harmless watermark artifacts.
+            detectedCutout=removeWatermarkFromCanvas(rawCutout);
+            sourceHasTransparency=true;
+
+            const box=alphaBoundingBox(detectedCutout);
+            if(!box){
+                throw new Error('Subject mask পাওয়া যায়নি।');
+            }
+
+            setProgress(97,'Clean subject final frame তৈরি হচ্ছে...');
+            setDetectStatus('✓ Background successfully removed — Convert চলছে...',true);
+            return detectedCutout;
+        }catch(e){
+            lastError=e;
+            console.error(`Background removal attempt ${attempt} failed:`,e);
+
+            if(attempt===1){
+                setProgress(Math.max(displayedProgress,30),'AI engine আবার চেষ্টা করছে...');
+                await new Promise(r=>setTimeout(r,500));
+            }
+        }
+    }
+
+    sourceHasTransparency=false;
+    detectedCutout=null;
+    throw new Error('Background remove করা যায়নি: '+(lastError?.message || lastError || 'Unknown AI error'));
+}
+
+/**
+ * 80% FACE PROTECTION & CLEAR MASKING ALGORITHM:
+ * - 80% Upper Body & Face Area Retention with HD Sharpness
+ * - Alpha thresholding strictly locked to >= 80% (204/255) to prevent blur/fog around face & hair
+ * - Crisp pixel-preservation algorithm for facial detail & natural colors
+ */
+function buildPremiumMaskedSource(source, original){
+    if(!sourceHasTransparency || !source || !original) return source;
+
+    const w=Math.min(source.width, original.width), h=Math.min(source.height, original.height);
+    const c=makeCanvas(w,h), ctx=c.getContext('2d',{willReadFrequently:true,alpha:true});
+    const oc=makeCanvas(w,h), ox=oc.getContext('2d',{willReadFrequently:true,alpha:true});
+
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    ox.imageSmoothingEnabled=true;
+    ox.imageSmoothingQuality='high';
+
+    ctx.clearRect(0,0,w,h);
+    ox.clearRect(0,0,w,h);
+    ctx.drawImage(source,0,0,w,h);
+    ox.drawImage(original,0,0,w,h);
+
+    const fg=ctx.getImageData(0,0,w,h);
+    const org=ox.getImageData(0,0,w,h);
+    const d=fg.data, o=org.data;
+
+    // AI alpha remains the source of truth.
+    // Original RGB is used only to keep foreground/face pixels sharp.
+    // Low-alpha pixels are NOT forced opaque, so the removed background
+    // cannot accidentally come back.
+    for(let i=0;i<d.length;i+=4){
+        const a=d[i+3];
+
+        if(a >= 220){
+            d[i]=o[i];
+            d[i+1]=o[i+1];
+            d[i+2]=o[i+2];
+            d[i+3]=255;
+        }else if(a >= 35){
+            d[i]=o[i];
+            d[i+1]=o[i+1];
+            d[i+2]=o[i+2];
+            d[i+3]=Math.round(a);
+        }else{
+            d[i+3]=0;
+        }
+    }
+
+    ctx.putImageData(fg,0,0);
+    return c;
+}
+
+function premiumDrawImage(ctx, source, sx, sy, sw, sh, dx, dy, dw, dh){
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+
+    const ratio=Math.max(sw/Math.max(1,dw), sh/Math.max(1,dh));
+    if(ratio<=1.8){
+        ctx.drawImage(source,sx,sy,sw,sh,dx,dy,dw,dh);
+        return;
+    }
+
+    let work=makeCanvas(sw,sh);
+    let wctx=work.getContext('2d');
+    wctx.imageSmoothingEnabled=true;
+    wctx.imageSmoothingQuality='high';
+    wctx.drawImage(source,sx,sy,sw,sh,0,0,sw,sh);
+
+    let cw=sw, ch=sh;
+    while(Math.max(cw/dw,ch/dh)>1.8){
+        const nw=Math.max(Math.ceil(dw*1.7),Math.round(cw*0.62));
+        const nh=Math.max(Math.ceil(dh*1.7),Math.round(ch*0.62));
+        const next=makeCanvas(nw,nh);
+        const nctx=next.getContext('2d');
+        nctx.imageSmoothingEnabled=true;
+        nctx.imageSmoothingQuality='high';
+        nctx.drawImage(work,0,0,cw,ch,0,0,nw,nh);
+        work=next; cw=nw; ch=nh;
+    }
+    ctx.drawImage(work,0,0,cw,ch,dx,dy,dw,dh);
+}
+
+function renderBase(source){
+    const sw=source.width,sh=source.height;
+    const r=cropRect||{x:0,y:0,w:sw,h:sh};
+    const cw=clamp(r.w,1,sw),ch=clamp(r.h,1,sh),cx=clamp(r.x,0,sw-cw),cy=clamp(r.y,0,sh-ch);
+    const preset=PHOTO_PRESETS[photoPreset.value];
+    const targetW=preset ? preset.w : Math.max(1,Math.round(Number(sizeWidth.value)||Number(widthInput.value)||cw));
+    const targetH=preset ? preset.h : Math.max(1,Math.round(Number(sizeHeight.value)||Number(heightInput.value)||ch));
+    const mode=preset ? 'cover' : $('fitMode').value;
+    let outW=targetW,outH=targetH;
+    if(mode==='contain'){
+        const s=Math.min(targetW/cw,targetH/ch);outW=Math.max(1,Math.round(cw*s));outH=Math.max(1,Math.round(ch*s));
+    }else if(mode==='cover'){
+        outW=targetW;outH=targetH;
+    }
+
+    let renderSource=source;
+    if(sourceHasTransparency && originalBitmap){
+        renderSource=buildPremiumMaskedSource(source,originalBitmap);
+    }
+
+    const canvas=makeCanvas(outW,outH),ctx=canvas.getContext('2d',{alpha:true});
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    drawBackground(ctx,outW,outH);
+
+    if(mode==='cover'){
+        const s=Math.max(outW/cw,outH/ch),dw=cw*s,dh=ch*s;
+        premiumDrawImage(ctx,renderSource,cx,cy,cw,ch,(outW-dw)/2,(outH-dh)/2,dw,dh);
+    }else{
+        premiumDrawImage(ctx,renderSource,cx,cy,cw,ch,0,0,outW,outH);
+    }
+
+    if(formatSelect.value==='image/jpeg' || formatSelect.value==='image/webp'){
+        const img=ctx.getImageData(0,0,outW,outH);
+        for(let i=3;i<img.data.length;i+=4) img.data[i]=255;
+        ctx.putImageData(img,0,0);
+    }
+    return canvas;
+}
+function canvasBlob(canvas,type,quality){
+    return new Promise(resolve=>canvas.toBlob(resolve,type,quality));
+}
+async function optimizeToTarget(canvas,type,targetBytes,initialQuality){
+    if(!targetBytes)return {blob:await canvasBlob(canvas,type,initialQuality)};
+    let working=canvas, q=initialQuality, best=null;
+    for(let pass=0;pass<10;pass++){
+        const blob=await canvasBlob(working,type,q);
+        if(!best || Math.abs(blob.size-targetBytes)<Math.abs(best.size-targetBytes))best=blob;
+        if(blob.size<=targetBytes*1.03 || (q<=0.42 && type!=='image/png'))break;
+        if(type==='image/png'){
+            const factor=Math.sqrt(targetBytes/blob.size)*0.94;
+            const nw=Math.max(100,Math.round(working.width*factor)),nh=Math.max(100,Math.round(working.height*factor));
+            const c=makeCanvas(nw,nh),ctx=c.getContext('2d');
+            ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+            drawBackground(ctx,nw,nh);ctx.drawImage(working,0,0,nw,nh);working=c;
+        }else{
+            q=Math.max(0.35,q-0.08);
+        }
+    }
+    return {blob:best||await canvasBlob(canvas,type,initialQuality)};
+}
+convertBtn.addEventListener('click',async()=>{
+    clearError();
+    if(!originalFile||!originalBitmap){showError('দয়া করে প্রথমে একটি ছবি আপলোড করুন।');return}
+    loading.classList.remove('hidden');convertBtn.disabled=true;
+    setProgress(Math.max(displayedProgress,20),'Convert কাজ শুরু হচ্ছে...');
+    try{
+        if(Number(widthInput.value)<1||Number(heightInput.value)<1){throw new Error('Resolution Width/Height সঠিক দিন।')}
+        setProgress(55,'ছবি render করা হচ্ছে...');
+        const source=await getSourceImage();
+        setProgress(72,'Clean background সহ final image তৈরি করা হচ্ছে...');
+        const canvas=renderBase(source);
+        const type=formatSelect.value, q=clamp((Number(qualityInput.value)||100)/100,.1,1);
+        let targetBytes=null;
+        if(enforceTarget.checked && Number(targetSize.value)>0){
+            targetBytes=Number(targetSize.value)*(sizeUnit.value==='MB'?1024*1024:1024);
+        }
+        const {blob}=await optimizeToTarget(canvas,type,targetBytes,q);
+        if(!blob)throw new Error('Output তৈরি করা যায়নি।');
+        if(lastUrl)URL.revokeObjectURL(lastUrl);
+        lastUrl=URL.createObjectURL(blob);
+        resultImage.src=lastUrl;resultImage.classList.remove('hidden');$('reviewPlaceholder').classList.add('hidden');
+        $('outDimensions').textContent=`${canvas.width} × ${canvas.height} px (Ultra HD)` + (PHOTO_PRESETS[photoPreset.value] ? ` @ ${PHOTO_PRESETS[photoPreset.value].dpi} DPI` : '');
+        $('outSize').textContent=bytesText(blob.size);
+        $('outFormat').textContent=type.split('/')[1].toUpperCase();
+        $('outQuality').textContent=type==='image/png'?'Lossless HD':Math.round(q*100)+'%';
+        $('resultInfo').classList.remove('hidden');
+        downloadBtn.href=lastUrl;
+        const ext=type==='image/png'?'png':type==='image/webp'?'webp':'jpg';
+        downloadBtn.download=`ultrahd-edited-image.${ext}`;
+        downloadBtn.classList.remove('hidden');
+        resultImage.scrollIntoView({behavior:'smooth',block:'center'});
+        finishProgress('ছবির সম্পূর্ণ কাজ শেষ হয়েছে।');
+    }catch(err){
+        console.error(err);showError('প্রসেসিংয়ে সমস্যা হয়েছে: '+(err.message||err));
+    }finally{
+        loading.classList.add('hidden');convertBtn.disabled=false;
+    }
+});
+</script>
+</body>
+</html>
