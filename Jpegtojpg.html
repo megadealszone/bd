@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JPEG to JPG Converter - 100 Photos</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #222;
+    }
+    .container {
+        max-width: 900px;
+        margin: 35px auto;
+        background: white;
+        border-radius: 14px;
+        padding: 28px;
+        box-shadow: 0 5px 25px rgba(0,0,0,.08);
+    }
+    h1 { margin-top: 0; color: #1769aa; }
+    .note {
+        background: #eef7ff;
+        border-left: 4px solid #2196f3;
+        padding: 12px 15px;
+        margin: 15px 0 20px;
+        border-radius: 5px;
+        line-height: 1.5;
+    }
+    input[type=file] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        background: #fff;
+    }
+    button, input[type=number], select {
+        border: 0;
+        border-radius: 7px;
+        padding: 12px 18px;
+        margin: 12px 8px 0 0;
+        font-size: 15px;
+    }
+    input[type=number], select {
+        border: 1px solid #ccc;
+        background: #fff;
+        outline: none;
+        width: 100px;
+    }
+    button {
+        cursor: pointer;
+        font-weight: bold;
+    }
+    #convertBtn { background: #2878f0; color: white; }
+    #downloadBtn { background: #16a085; color: white; display: none; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    #status {
+        margin-top: 18px;
+        font-weight: bold;
+    }
+    progress {
+        width: 100%;
+        height: 22px;
+        margin-top: 10px;
+        display: none;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 22px;
+    }
+    th, td {
+        border-bottom: 1px solid #ddd;
+        padding: 9px;
+        text-align: left;
+        font-size: 14px;
+    }
+    th { background: #f1f4f8; }
+    .ok { color: #16803c; }
+    .err { color: #c62828; }
+    .small { color: #666; font-size: 13px; }
+    .download-link {
+        background: #16a085;
+        color: white;
+        padding: 12px 20px;
+        text-decoration: none;
+        border-radius: 7px;
+        display: inline-block;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .download-link:hover {
+        background: #12806b;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>JPEG → JPG Converter</h1>
+
+    <div class="note">
+        <b>Maximum 100 photos at a time.</b><br>
+        Select your Student ID named photos, for example:
+        <b>260154.jpeg</b>, <b>260208.jpeg</b> etc.
+        The converted files will keep the same Student ID and become
+        <b>.jpg</b> files.
+        <br><br>
+        <b>Note:</b> Conversion is done locally in your browser. Your photos are not uploaded to any server.
+    </div>
+
+    <input id="files" type="file" accept=".jpeg,.jpg,image/jpeg" multiple>
+
+    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+        <button id="convertBtn">Convert to JPG</button>
+        <input type="number" id="targetSize" placeholder="Size" min="1">
+        <select id="sizeUnit">
+            <option value="KB">KB</option>
+            <option value="MB">MB</option>
+        </select>
+        <button id="downloadBtn">Create ZIP File</button>
+    </div>
+
+    <progress id="progress" value="0" max="100"></progress>
+    <div id="status">No files selected.</div>
+
+    <table id="resultTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Original File</th>
+                <th>Converted File</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+    </table>
+</div>
+
+<script>
+const fileInput = document.getElementById("files");
+const convertBtn = document.getElementById("convertBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const targetSizeInput = document.getElementById("targetSize");
+const sizeUnitSelect = document.getElementById("sizeUnit");
+const progress = document.getElementById("progress");
+const statusBox = document.getElementById("status");
+const resultTable = document.getElementById("resultTable");
+const resultBody = document.getElementById("resultBody");
+
+let convertedFiles = [];
+
+fileInput.addEventListener("change", () => {
+    const count = fileInput.files.length;
+
+    if (count === 0) {
+        statusBox.textContent = "No files selected.";
+        convertBtn.disabled = false;
+        return;
+    }
+
+    if (count > 100) {
+        statusBox.innerHTML = '<span class="err">Please select maximum 100 photos.</span>';
+        fileInput.value = "";
+        return;
+    }
+
+    statusBox.textContent = count + " photo(s) selected.";
+    resultTable.style.display = "none";
+    downloadBtn.style.display = "none";
+    convertedFiles = [];
+});
+
+function loadImage(file) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+        };
+
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error("Could not read image"));
+        };
+
+        img.src = url;
+    });
+}
+
+function canvasToBlob(canvas, quality = 0.95) {
+    return new Promise((resolve, reject) => {
+        canvas.toBlob(blob => {
+            if (blob) resolve(blob);
+            else reject(new Error("JPG conversion failed"));
+        }, "image/jpeg", quality);
+    });
+}
+
+async function getOptimizedBlob(canvas) {
+    const val = parseFloat(targetSizeInput.value);
+    let targetBytes = null;
+
+    if (!isNaN(val) && val > 0) {
+        const unit = sizeUnitSelect.value;
+        targetBytes = val * (unit === "MB" ? 1024 * 1024 : 1024);
+    }
+
+    let quality = 0.95;
+    let blob = await canvasToBlob(canvas, quality);
+
+    if (!targetBytes) return blob;
+
+    if (blob.size <= targetBytes) return blob;
+
+    for (let q = 0.9; q >= 0.1; q -= 0.1) {
+        blob = await canvasToBlob(canvas, q);
+        if (blob.size <= targetBytes) return blob;
+    }
+
+    let scale = 0.9;
+    let currentCanvas = canvas;
+    while (blob.size > targetBytes && scale > 0.1) {
+        const scaledCanvas = document.createElement("canvas");
+        scaledCanvas.width = Math.floor(canvas.width * scale);
+        scaledCanvas.height = Math.floor(canvas.height * scale);
+        const ctx = scaledCanvas.getContext("2d");
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, scaledCanvas.width, scaledCanvas.height);
+        ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+
+        blob = await canvasToBlob(scaledCanvas, 0.7);
+        scale -= 0.1;
+        currentCanvas = scaledCanvas;
+    }
+
+    return blob;
+}
+
+async function convertOne(file) {
+    const img = await loadImage(file);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    const blob = await getOptimizedBlob(canvas);
+
+    const baseName = file.name.replace(/\.(jpeg|jpg)$/i, "");
+    return {
+        name: baseName + ".jpg",
+        blob: blob
+    };
+}
+
+convertBtn.addEventListener("click", async () => {
+    const files = Array.from(fileInput.files);
+
+    if (!files.length) {
+        alert("Please select JPEG photos first.");
+        return;
+    }
+
+    if (files.length > 100) {
+        alert("Maximum 100 photos can be converted at a time.");
+        return;
+    }
+
+    convertedFiles = [];
+    resultBody.innerHTML = "";
+    resultTable.style.display = "table";
+    progress.style.display = "block";
+    progress.value = 0;
+    convertBtn.disabled = true;
+    downloadBtn.style.display = "none";
+
+    let success = 0;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const row = document.createElement("tr");
+
+        try {
+            const result = await convertOne(file);
+            convertedFiles.push(result);
+            success++;
+
+            row.innerHTML =
+                "<td>" + escapeHtml(file.name) + "</td>" +
+                "<td>" + escapeHtml(result.name) + "</td>" +
+                '<td class="ok">✓ Converted</td>';
+        } catch (error) {
+            row.innerHTML =
+                "<td>" + escapeHtml(file.name) + "</td>" +
+                "<td>-</td>" +
+                '<td class="err">✗ Failed</td>';
+        }
+
+        resultBody.appendChild(row);
+
+        const percent = Math.round(((i + 1) / files.length) * 100);
+        progress.value = percent;
+        statusBox.textContent =
+            "Converting... " + (i + 1) + " / " + files.length;
+
+        await new Promise(r => setTimeout(r, 10));
+    }
+
+    convertBtn.disabled = false;
+
+    if (success > 0) {
+        downloadBtn.style.display = "inline-block";
+        statusBox.innerHTML =
+            '<span class="ok">✓ ' + success + " photo(s) converted successfully.</span>" +
+            '<div class="small">Click “Create ZIP File” below to generate the download link.</div>';
+    } else {
+        statusBox.innerHTML = '<span class="err">No photos could be converted.</span>';
+    }
+});
+
+downloadBtn.addEventListener("click", async () => {
+    if (!convertedFiles.length) return;
+
+    downloadBtn.disabled = true;
+    statusBox.textContent = "Creating ZIP file, please wait...";
+
+    try {
+        const zipBlob = await createZip(convertedFiles);
+        const url = URL.createObjectURL(zipBlob);
+
+        statusBox.innerHTML = `
+            <span class="ok">✓ ZIP created successfully!</span><br>
+            <a class="download-link" href="${url}" download="Student_Photos_JPG.zip">
+                📥 Click Here to Download ZIP File
+            </a>
+        `;
+    } catch (e) {
+        statusBox.innerHTML =
+            '<span class="err">ZIP creation failed. Please try again.</span>';
+        downloadBtn.disabled = false;
+    }
+});
+
+function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, c => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;",
+        '"':"&quot;", "'":"&#039;"
+    }[c]));
+}
+
+async function createZip(files) {
+    const encoder = new TextEncoder();
+    const localParts = [];
+    const centralParts = [];
+    let offset = 0;
+
+    for (const item of files) {
+        const nameBytes = encoder.encode(item.name);
+        const data = new Uint8Array(await item.blob.arrayBuffer());
+        const crc = crc32(data);
+
+        const local = new Uint8Array(30 + nameBytes.length);
+        const lv = new DataView(local.buffer);
+
+        lv.setUint32(0, 0x04034b50, true);
+        lv.setUint16(4, 20, true);
+        lv.setUint16(6, 0, true);
+        lv.setUint16(8, 0, true);
+        lv.setUint16(10, 0, true);
+        lv.setUint16(12, 0, true);
+        lv.setUint32(14, crc, true);
+        lv.setUint32(18, data.length, true);
+        lv.setUint32(22, data.length, true);
+        lv.setUint16(26, nameBytes.length, true);
+        lv.setUint16(28, 0, true);
+        local.set(nameBytes, 30);
+
+        localParts.push(local, data);
+
+        const central = new Uint8Array(46 + nameBytes.length);
+        const cv = new DataView(central.buffer);
+
+        cv.setUint32(0, 0x02014b50, true);
+        cv.setUint16(4, 20, true);
+        cv.setUint16(6, 20, true);
+        cv.setUint16(8, 0, true);
+        cv.setUint16(10, 0, true);
+        cv.setUint16(12, 0, true);
+        cv.setUint16(14, 0, true);
+        cv.setUint32(16, crc, true);
+        cv.setUint32(20, data.length, true);
+        cv.setUint32(24, data.length, true);
+        cv.setUint16(28, nameBytes.length, true);
+        cv.setUint16(30, 0, true);
+        cv.setUint16(32, 0, true);
+        cv.setUint16(34, 0, true);
+        cv.setUint16(36, 0, true);
+        cv.setUint32(38, 0, true);
+        cv.setUint32(42, offset, true);
+        central.set(nameBytes, 46);
+
+        centralParts.push(central);
+        offset += local.length + data.length;
+    }
+
+    const centralOffset = offset;
+    let centralSize = 0;
+
+    for (const c of centralParts) centralSize += c.length;
+
+    const end = new Uint8Array(22);
+    const ev = new DataView(end.buffer);
+
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(4, 0, true);
+    ev.setUint16(6, 0, true);
+    ev.setUint16(8, files.length, true);
+    ev.setUint16(10, files.length, true);
+    ev.setUint32(12, centralSize, true);
+    ev.setUint32(16, centralOffset, true);
+    ev.setUint16(20, 0, true);
+
+    return new Blob([...localParts, ...centralParts, end],
+        { type: "application/zip" });
+}
+
+function crc32(data) {
+    let table = crc32.table;
+    if (!table) {
+        table = crc32.table = new Uint32Array(256);
+        for (let n = 0; n < 256; n++) {
+            let c = n;
+            for (let k = 0; k < 8; k++)
+                c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+            table[n] = c >>> 0;
+        }
+    }
+
+    let crc = 0xffffffff;
+    for (let i = 0; i < data.length; i++)
+        crc = table[(crc ^ data[i]) & 0xff] ^ (crc >>> 8);
+
+    return (crc ^ 0xffffffff) >>> 0;
+}
+</script>
+
+</body>
+</html>
