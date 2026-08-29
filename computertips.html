@@ -757,6 +757,7 @@ p {
                     <a href="#hosts-block" class="menu-item" onclick="showTip(event, 'hosts-block')"><span class="tip-id">TIP 50</span><span class="tip-title">সফটওয়্যার ছাড়া নির্দিষ্ট ওয়েবসাইট ব্লক</span></a>
 
                     <a href="#2computer-connection" class="menu-item" onclick="showTip(event, '2computer-connection')"><span class="tip-id">TIP 51</span><span class="tip-title">2Computer-Connected</span></a>
+                    <a href="#printer-connection" class="menu-item" onclick="showTip(event, 'printer-connection')"><span class="tip-id">TIP 52</span><span class="tip-title">Printer-Connected(Local Port)</span></a>
                 </div>
             </div>
         </aside>
@@ -1557,9 +1558,51 @@ p {
 
             <!-- ১ থেকে ৫ পূর্বের কন্টেন্ট সেকশন------------------------End-------------------------------------------------------------- -->
 
+            <!--  ৫2 পূর্বের কন্টেন্ট সেকশন------------------------Start-------------------------------------------------------------- -->
+            <section id="printer-connection" class="tip-content-section">
+                <span class="category-tag">Connection Printer to Multy PC Fix</span>
+                <h2 class="tip-detail-title"> Printer Connected </h2>
+                <div class="meta-info"><span><i class="fa-solid fa-circle-info"></i> : লেভেল: মাঝারি</span><span><i class="fa-solid fa-clock"></i> সময়: ২ মিনিট</span></div>
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-circle-info"></i> ব্যবহার নির্দেশিকা</h3>
+                    <ul class="step-list">
+                        <li><p>নেটওয়ার্ক প্রিন্টারটি (Local Port পদ্ধতির মাধ্যমে) স্থায়ীভাবে সেটআপ করার পুরো প্রক্রিয়াটি নিচে স্টেপ-বাই-স্টেপ সুন্দর করে গুছিয়ে দেওয়া হলো:</p></li>
+                        <li><p>ধাপ ১: ম্যানুয়াল সেটআপ পেজে প্রবেশ</p></li>
+                        <li><p>কম্পিউটারের Settings > Bluetooth & devices > Printers & scanners-এ যান।</p></li>
+                        <li><p>সেখান থেকে "Add manually" অপশনে ক্লিক করুন।</p></li>
+                        <li><p> এরপর সবার নিচে থাকা "Add a local printer or network printer with manual settings" অপশনটি সিলেক্ট করে Next দিন।</p></li>
+                        <li><p><h2>ধাপ ২: লোকাল পোর্ট তৈরি করা</h2></p></li>
+                        <li><p><h2>পরবর্তী পেজে "Create a new port" অপশনটিতে টিক দিন।</h2></p></li>
+                        <li><p><h2>ড্রপডাউন মেনু থেকে "Local Port" সিলেক্ট করে Next বাটনে ক্লিক করুন।</h2></p></li>
+                        <li><p><h2>ধাপ ৩: নেটওয়ার্ক পাথ বা পোর্ট নেম ইনপুট দেওয়া</h2></p></li>
+                        <li><p><h2>একটি ছোট বক্স আসবে, সেখানে মূল কম্পিউটার ও প্রিন্টারের সঠিক নেটওয়ার্ক পাথ হুবহু লিখে OK দিন:</h2></p></li>
+                        <li><p>\\192.168.1.2\HP LaserJet Pro 4003 (এখানে আপনার মূল কম্পিউটারের আইপি ও প্রিন্টারের নাম হবে)</p></li>
+                        <div class="code-box"><span class="code-text" id="cmdCode1">\\192.168.1.2\</span><button class="copy-btn" onclick="copyText('cmdCode1', event)"><i class="fa-regular fa-copy"></i> কপি করুন</button></div>
+                        <li><p> এরপর পেছনের মূল উইন্ডো থেকে Next ক্লিক করুন।</p></li>
+                        <li><p> ধাপ ৪: সঠিক ড্রাইভার সিলেক্ট করা</p></li>
+                        <li><p> বাঁ দিকের Manufacturer তালিকা থেকে HP সিলেক্ট করুন।</p></li>
+                        <li><p> ডান দিকের Printers তালিকা থেকে আপনার প্রিন্টারের সংশ্লিষ্ট ড্রাইভার (HP LaserJet Pro 4001 4002 4003 4004 PCL-6 (V4)) সিলেক্ট করে Next দিন।</p></li>
+                        <li><p> ধাপ ৫: প্রিন্টারের নাম দেওয়া </p></li>
+                        <li><p> প্রিন্টারের নাম চাইলে আগের নামের সাথে কনফ্লিক্ট এড়াতে পরিবর্তন করে নতুন একটি নাম দিন (যেমন: HP LaserJet Pro 4003 Network)।</p></li>
+                        <li><p> এরপর Next এ ক্লিক করুন।</p></li>
+                        <li><p> ধাপ ৬: শেয়ারিং ও সমাপ্তি </p></li>
+                        <li><p> প্রিন্টার শেয়ারিং পেজ আসলে "Do not share this printer" সিলেক্ট করুন (যেহেতু প্রিন্টারটি অলরেডি মূল কম্পিউটার থেকে শেয়ার করা আছে)। </p></li>
+                        <li><p> Next দিন এবং সবশেষে Finish বাটনে ক্লিক করুন। </p></li>
+             
+                </div>
+                <div class="note-box">
+                    <h4><i class="fa-solid fa-triangle-exclamation"></i> গুরুত্বপূর্ণ নোট:</h4>
+                    <p>ব্যস! এই কয়েকটি সহজ ধাপ অনুসরণ করলেই প্রিন্টারটি আপনার কম্পিউটারে একদম স্থায়ীভাবে এবং ঝামেলাহীনভাবে সংযুক্ত হয়ে যাবে। এটি যেকোনো সময় ব্যবহারের জন্য নোট করে রাখতে পারেন!</p>
+                </div>
+            </section>
+
+            <!--  ৫2 পূর্বের কন্টেন্ট সেকশন------------------------End-------------------------------------------------------------- -->
+            
+
+
+            
         </main>
     </div>
-
     <script>
         // ১. থিম পরিবর্তনের ফাংশন
         function toggleTheme(checkbox) {
