@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#4f46e5">
+<title>Premium PDF to JPG Converter</title>
+<style>
+:root{
+  --primary:#4f46e5;--primary2:#7c3aed;--success:#16a34a;--danger:#dc2626;
+  --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#667085;--line:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Noto Sans Bengali",sans-serif}
+.header{background:linear-gradient(110deg,#1944d8,#4f46e5 55%,#7c3aed);color:#fff;padding:22px 4%}
+.header-inner{max-width:1250px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:14px}.logo{font-size:36px}.brand h1{margin:0;font-size:26px}.brand p{margin:4px 0 0;opacity:.9}
+.badges{display:flex;gap:8px;flex-wrap:wrap}.badge{padding:10px 13px;border-radius:10px;background:#ffffff1c;font-size:13px;font-weight:bold}
+.wrap{max-width:1250px;margin:20px auto;padding:0 12px}
+.grid{display:grid;grid-template-columns:350px 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 5px 22px #1018280b}
+h2{font-size:17px;margin:0 0 14px}h3{font-size:15px;margin:20px 0 9px}
+.upload{border:2px dashed #cbd5e1;border-radius:13px;padding:26px 12px;text-align:center;cursor:pointer;background:#fafbff}
+.upload:hover{border-color:var(--primary);background:#f7f6ff}.upload input{display:none}.upload .ico{font-size:42px}
+.choose-pdf-btn{display:inline-block;background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;border:0;border-radius:9px;padding:11px 22px;font-size:14px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px #4f46e533}
+.choose-pdf-btn:hover{filter:brightness(1.06)}
+
+.fileinfo{display:none;margin-top:12px;padding:11px;border-radius:9px;background:#f0fdf4;font-size:13px}
+.field{margin:12px 0}.field label{display:block;font-weight:bold;font-size:13px;margin-bottom:7px}
+select,input[type=text]{width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;font-size:14px}
+.radio-row,.format-row{display:flex;gap:8px;flex-wrap:wrap}.choice{flex:1;min-width:80px;border:1px solid #d0d5dd;border-radius:9px;padding:10px;text-align:center;cursor:pointer}
+.choice.active{border-color:var(--primary);background:#f2f0ff;color:var(--primary);font-weight:bold}
+.range{width:100%}.range-row{display:flex;align-items:center;gap:10px}.value{min-width:50px;text-align:center;border:1px solid var(--line);padding:8px;border-radius:8px;font-weight:bold}
+.check{display:flex;gap:9px;align-items:center;margin:10px 0;font-size:13px}.check input{accent-color:var(--primary)}
+.btns{display:grid;gap:9px;margin-top:18px}button{border:0;border-radius:10px;padding:12px;font-weight:bold;font-size:15px;cursor:pointer}
+.primary{background:linear-gradient(90deg,var(--primary),var(--primary2));color:white}.success{background:var(--success);color:#fff}.secondary{background:#eef2ff;color:#3730a3}.danger{background:#fee2e2;color:#991b1b}
+button:disabled{opacity:.5;cursor:not-allowed}
+.privacy{margin-top:14px;padding:12px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:12px;line-height:1.5}
+.preview-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.count{color:var(--muted);font-size:13px}
+.progress{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden;margin:10px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--primary),#8b5cf6);transition:width .2s}
+.status{text-align:center;color:var(--muted);font-size:13px;min-height:20px}
+.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:14px}
+.thumb{border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff}.thumb img{width:100%;height:auto;display:block;border-radius:7px;background:#eee}
+.thumb .name{font-size:12px;font-weight:bold;margin:8px 2px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thumb button{width:100%;padding:9px;font-size:13px;background:#eef2ff;color:#3730a3}
+.empty{text-align:center;color:#98a2b3;padding:90px 20px;border:2px dashed #e5e7eb;border-radius:14px}
+.footer{text-align:center;color:#667085;font-size:12px;padding:25px}
+.hidden{display:none!important}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.header-inner{align-items:flex-start;flex-direction:column}.badges{display:none}}
+@media(max-width:500px){.wrap{margin:10px auto;padding:0 8px}.card{padding:14px}.results{grid-template-columns:repeat(2,1fr)}.brand h1{font-size:21px}.logo{font-size:30px}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="header-inner">
+<div class="brand"><div class="logo">📄</div><div><h1>PDF to JPG Converter <small>PREMIUM</small></h1><p>Full Page • No Crop • High Quality • Client Side</p></div></div>
+<div class="badges"><div class="badge">🏆 Premium Quality</div><div class="badge">⬜ Full Page</div><div class="badge">🛡️ 100% Private</div></div>
+</div>
+</header>
+
+<main class="wrap"><div class="grid">
+<section class="card">
+<h2>1. Select PDF File</h2>
+<label class="upload" id="dropZone">
+<input id="pdfInput" type="file" accept="application/pdf">
+<div class="ico">☁️</div>
+<button type="button" class="choose-pdf-btn" id="choosePdfBtn">☁️ Choose PDF File</button>
+<div style="font-size:12px;color:#667085;margin-top:8px">অথবা PDF এখানে Drag & Drop করুন</div>
+</label>
+<div class="fileinfo" id="fileInfo"></div>
+
+<h3>2. Page Range</h3>
+<div class="radio-row">
+<label class="choice active" id="allChoice"><input type="radio" name="pages" value="all" checked hidden>All Pages</label>
+<label class="choice" id="customChoice"><input type="radio" name="pages" value="custom" hidden>Custom Range</label>
+</div>
+<input id="pageRange" class="hidden" type="text" placeholder="উদাহরণ: 1-5, 8, 10-12">
+
+<h3>3. Image Quality</h3>
+<div class="range-row"><input id="quality" class="range" type="range" min="50" max="100" value="95"><div class="value" id="qualityVal">95%</div></div>
+
+<h3>4. Resolution / Scale</h3>
+<select id="scale">
+<option value="1.5">1.5× High</option><option value="2" selected>2× Very High</option><option value="3">3× Ultra</option><option value="4">4× Maximum</option>
+</select>
+
+<h3>5. Output Format</h3>
+<div class="format-row">
+<label class="choice active" id="jpgChoice"><input type="radio" name="format" value="jpg" checked hidden>JPG</label>
+<label class="choice" id="pngChoice"><input type="radio" name="format" value="png" hidden>PNG</label>
+</div>
+
+<h3>6. Background</h3>
+<select id="bg"><option value="#ffffff">White</option><option value="#000000">Black</option><option value="transparent">Transparent (PNG)</option></select>
+
+<h3>7. Options</h3>
+<label class="check"><input id="fullPage" type="checkbox" checked disabled> Maintain Full Page (No Crop)</label>
+<label class="check"><input id="openAfter" type="checkbox"> Open first image after convert</label>
+<label class="check"><input id="autoZip" type="checkbox" checked> Auto download ZIP after convert</label>
+
+<div class="btns">
+<button class="primary" id="convertBtn" disabled>🔄 Convert to JPG</button>
+<button class="success" id="zipBtn" disabled>⬇ Download All as ZIP</button>
+<button class="danger" id="clearBtn">Clear</button>
+</div>
+<div class="privacy">🔒 <b>100% Client Side</b><br>আপনার PDF কোনো server-এ upload হয় না। Processing আপনার browser-এই হয়।</div>
+</section>
+
+<section class="card">
+<div class="preview-head"><h2>Preview</h2><div class="count" id="count">No PDF selected</div></div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="status" id="status">PDF নির্বাচন করে Convert করুন</div>
+<div class="results" id="results"><div class="empty" id="empty">📄<br><br>Converted pages এখানে দেখা যাবে</div></div>
+</section>
+</div></main>
+<footer class="footer">PDF to JPG Converter • Full Page • High Quality • Secure Browser Processing</footer>
+
+<script type="module">
+import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs";
+
+const $=id=>document.getElementById(id);
+let file=null, outputs=[], pdf=null;
+
+$("choosePdfBtn").onclick=e=>{e.stopPropagation();$("pdfInput").click()};
+$("pdfInput").onchange=e=>loadFile(e.target.files[0]);
+$("dropZone").ondragover=e=>{e.preventDefault();$("dropZone").style.borderColor="#4f46e5"};
+$("dropZone").ondragleave=()=>$("dropZone").style.borderColor="";
+$("dropZone").ondrop=e=>{e.preventDefault();$("dropZone").style.borderColor="";loadFile(e.dataTransfer.files[0])};
+
+async function loadFile(f){
+ if(!f)return;
+ if(f.type!=="application/pdf"){alert("শুধুমাত্র PDF ফাইল নির্বাচন করুন।");return}
+ file=f; outputs=[]; $("results").innerHTML=""; $("results").appendChild(emptyNode());
+ $("fileInfo").style.display="block"; $("fileInfo").innerHTML="📄 <b>"+esc(f.name)+"</b><br>"+formatBytes(f.size);
+ $("convertBtn").disabled=false; $("zipBtn").disabled=true; $("count").textContent="Loading PDF…";
+ try{pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;$("count").textContent=pdf.numPages+" Pages";$("status").textContent="PDF ready — Convert to begin";}catch(e){alert("PDF পড়া যায়নি: "+e.message)}}
+
+function emptyNode(){let d=document.createElement("div");d.className="empty";d.id="empty";d.innerHTML="📄<br><br>Converted pages এখানে দেখা যাবে";return d}
+function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function formatBytes(n){if(n<1024)return n+" B";let u=["KB","MB","GB"];let i=-1;do{n/=1024;i++}while(n>=1024&&i<u.length-1);return n.toFixed(2)+" "+u[i]}
+
+$("quality").oninput=()=> $("qualityVal").textContent=$("quality").value+"%";
+$("allChoice").onclick=()=>{document.querySelector('input[value="all"]').checked=true;$("allChoice").classList.add("active");$("customChoice").classList.remove("active");$("pageRange").classList.add("hidden")};
+$("customChoice").onclick=()=>{document.querySelector('input[value="custom"]').checked=true;$("customChoice").classList.add("active");$("allChoice").classList.remove("active");$("pageRange").classList.remove("hidden")};
+$("jpgChoice").onclick=()=>selectFormat("jpg");$("pngChoice").onclick=()=>selectFormat("png");
+function selectFormat(v){document.querySelector('input[value="'+v+'"]').checked=true;$("jpgChoice").classList.toggle("active",v==="jpg");$("pngChoice").classList.toggle("active",v==="png");$("bg").disabled=v==="jpg"?false:false;if(v==="jpg"&&$("bg").value==="transparent")$("bg").value="#ffffff"}
+
+function parsePages(spec,total){
+ if(!spec.trim())throw Error("Custom page range দিন।");
+ const set=new Set();
+ for(const part of spec.split(",")){const p=part.trim();if(!p)continue;
+  if(/^\\d+$/.test(p)){let n=+p;if(n<1||n>total)throw Error("Page range-এর বাইরে: "+n);set.add(n)}
+  else if(/^(\\d+)\\s*-\\s*(\\d+)$/.test(p)){let [,a,b]=p.match(/^(\\d+)\\s*-\\s*(\\d+)$/).map(Number);if(a<1||b>total||a>b)throw Error("Invalid range: "+p);for(let n=a;n<=b;n++)set.add(n)}
+  else throw Error("Invalid page range: "+p);
+ } return [...set].sort((a,b)=>a-b);
+}
+
+$("convertBtn").onclick=async()=>{
+ if(!pdf)return;
+ $("convertBtn").disabled=true;$("zipBtn").disabled=true;outputs=[];$("results").innerHTML="";
+ const total=pdf.numPages, pages=document.querySelector('input[name="pages"]:checked').value==="all"?Array.from({length:total},(_,i)=>i+1):parsePages($("pageRange").value,total);
+ const scale=+ $("scale").value, q=+$("quality").value/100, fmt=document.querySelector('input[name="format"]:checked').value;
+ try{
+  for(let i=0;i<pages.length;i++){
+   const n=pages[i];$("status").textContent=`Page ${n} / ${total} converting…`;
+   const page=await pdf.getPage(n), vp=page.getViewport({scale});
+   const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d",{alpha:fmt==="png"});
+   canvas.width=Math.ceil(vp.width);canvas.height=Math.ceil(vp.height);
+   if(fmt==="jpg" || $("bg").value!=="transparent"){ctx.save();ctx.fillStyle=$("bg").value==="transparent"?"#fff":$("bg").value;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.restore()}
+   await page.render({canvasContext:ctx,viewport:vp,background:"white"}).promise;
+   const mime=fmt==="png"?"image/png":"image/jpeg";
+   const blob=await new Promise((res,rej)=>canvas.toBlob(b=>b?res(b):rej(Error("Image creation failed")),mime,fmt==="png"?undefined:q));
+   const base=file.name.replace(/\.pdf$/i,"").replace(/[<>:"/\\\\|?*]/g,"_");
+   const name=`${base}_Page_${n}.${fmt}`;
+   outputs.push({name,blob,page:n});addPreview(blob,name,n);
+   const pct=Math.round((i+1)/pages.length*100);$("bar").style.width=pct+"%";$("status").textContent=`Completed ${i+1} / ${pages.length} (${pct}%)`;
+   await new Promise(r=>setTimeout(r,0));
+  }
+  $("zipBtn").disabled=false;$("count").textContent=outputs.length+" converted page(s)";$("status").textContent="✅ Conversion complete — Full page, no crop.";
+  if($("openAfter").checked&&outputs[0])window.open(URL.createObjectURL(outputs[0].blob),"_blank");
+  if($("autoZip").checked)await downloadZip();
+ }catch(e){alert(e.message||"Conversion failed");$("status").textContent="❌ Conversion stopped";}
+ finally{$("convertBtn").disabled=false}
+};
+
+function addPreview(blob,name,n){
+ const empty=$("empty");if(empty)empty.remove();
+ const card=document.createElement("div");card.className="thumb";
+ const img=document.createElement("img");img.src=URL.createObjectURL(blob);img.alt="Page "+n;
+ const title=document.createElement("div");title.className="name";title.textContent="Page "+n;
+ const btn=document.createElement("button");btn.textContent="⬇ Download";btn.onclick=()=>downloadBlob(blob,name);
+ card.append(img,title,btn);$("results").appendChild(card);
+}
+function downloadBlob(blob,name){const a=document.createElement("a"),u=URL.createObjectURL(blob);a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1500)}
+
+async function downloadZip(){
+ if(!outputs.length)return;
+ $("status").textContent="ZIP তৈরি হচ্ছে…";
+ if(!window.JSZip){await new Promise((res,rej)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+ const zip=new JSZip(),folder=zip.folder(file.name.replace(/\.pdf$/i,"").replace(/[<>:"/\\\\|?*]/g,"_"));
+ outputs.forEach(x=>folder.file(x.name,x.blob));
+ const blob=await zip.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:6}});
+ downloadBlob(blob,file.name.replace(/\.pdf$/i,"")+"_JPG.zip");$("status").textContent="✅ ZIP download ready";$("zipBtn").disabled=false;
+}
+$("zipBtn").onclick=downloadZip;
+$("clearBtn").onclick=()=>{file=null;pdf=null;outputs=[];$("pdfInput").value="";$("fileInfo").style.display="none";$("convertBtn").disabled=true;$("zipBtn").disabled=true;$("results").innerHTML="";$("results").appendChild(emptyNode());$("count").textContent="No PDF selected";$("status").textContent="PDF নির্বাচন করে Convert করুন";$("bar").style.width="0";};
+</script>
+</body>
+</html>
