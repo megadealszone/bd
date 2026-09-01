@@ -1,6 +1,0 @@
-{
-  "name": "Bkash & Bank Transaction Manager",
-  "description": "Comprehensive Bkash and Bank Transaction Management Web Application with real-time Google Sheets sync, interactive dashboard charts, multi-user authentication, statement/report export in Excel & PDF with Bengali font support, recycle bin, and Admin User Management.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
