@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডভান্সড অটোমেটিক ক্যালকুলেটর</title>
+    <!-- FontAwesome Premium Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px 15px 15px 15px;
+        }
+        .calculator-box {
+            position: relative;
+            background-color: white;
+            padding: 28px 20px 20px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            text-align: center;
+            width: 400px;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+        }
+
+        /* Top Right Window Control Buttons */
+        .window-controls {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 100;
+        }
+        .win-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 13px;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .win-btn.minimize-btn:hover {
+            background-color: #e0e0e0;
+            color: #000;
+        }
+        .win-btn.close-btn:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        .header-controls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .header-controls.mobile-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+        button, .nav-link-btn {
+            cursor: pointer;
+            border: none;
+            padding: 8px 3px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            text-decoration: none;
+            color: white;
+        }
+        .lang-btn { background-color: #007bff; }
+        .lang-btn:hover { background-color: #0056b3; }
+        
+        .history-btn { background-color: #ffc107; color: #333; }
+        .history-btn:hover { background-color: #e0a800; }
+
+        .refresh-btn { background-color: #dc3545; }
+        .refresh-btn:hover { background-color: #c82333; }
+
+        .nav-link-btn { background-color: #17a2b8; }
+        .nav-link-btn:hover { background-color: #138496; }
+
+        .view-btn { background-color: #6f42c1; display: none; }
+        .view-btn:hover { background-color: #5a32a3; }
+
+        /* Input Container with Paste Icon Outside */
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        textarea, input[type="text"] {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 12px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            text-align: center;
+            font-family: inherit;
+            resize: vertical;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .paste-btn {
+            position: static;
+            background: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 10px 14px;
+            border-radius: 6px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            white-space: nowrap;
+        }
+        .paste-btn:hover {
+            background: #0056b3;
+            color: white;
+        }
+        
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 40px;
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        .single-result-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .result-text-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            max-width: 100%;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+
+        .result-symbol {
+            font-size: 22px;
+            font-weight: bold;
+            color: #28a745;
+            line-height: 1;
+        }
+
+        .result {
+            font-size: 22px;
+            font-weight: bold;
+            color: #28a745;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+            line-height: 1.2;
+        }
+
+        .copy-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .copy-btn:hover { background-color: #218838; }
+
+        /* Percentage List UI */
+        .pct-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f8f9fa;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid #dee2e6;
+        }
+        .pct-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .pct-row.total-row {
+            background-color: #e2e6ea;
+            font-weight: bold;
+        }
+        .pct-label { color: #495057; }
+        .pct-val { color: #28a745; }
+
+        .error {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* History Section Styles */
+        .history-container {
+            margin-top: 15px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: left;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+        }
+        .history-header h4 {
+            margin: 0;
+            color: #555;
+            font-size: 14px;
+        }
+        .clear-history-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 3px 6px;
+            font-size: 11px;
+            border-radius: 4px;
+        }
+        .clear-history-btn:hover { background-color: #c82333; }
+
+        .history-container ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .history-container li {
+            padding: 6px 0;
+            border-bottom: 1px dashed #ccc;
+            font-size: 13px;
+            color: #333;
+            word-break: break-all;
+        }
+        .history-container li:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-box" id="calcBox">
+        <!-- Top Right Corner Controls (Minimize & Close) -->
+        <div class="window-controls">
+            <button id="minimizeBtn" class="win-btn minimize-btn" title="Minimize"><i class="fa-solid fa-minus"></i></button>
+            <button id="closeBtn" class="win-btn close-btn" title="Exit"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <div id="calcContent">
+            <h2 id="mainTitle">Automatic Calculator</h2>
+            
+            <div class="input-group">
+                <input type="text" id="mathInput" placeholder="যেমন: 100+200 বা Excel থেকে পেস্ট করুন">
+                <button id="pasteBtn" class="paste-btn" title="Paste"><i class="fa-regular fa-paste"></i></button>
+            </div>
+            
+            <div id="resultContainer" class="result-container"></div>
+            
+            <div id="errorOutput" class="error"></div>
+
+            <!-- কন্ট্রোল বাটনসমূহ -->
+            <div class="header-controls">
+                <button id="langToggleBtn" class="lang-btn"><i class="fa-solid fa-language"></i> <span id="langTxt">বাংলা</span></button>
+                <button id="historyToggleBtn" class="history-btn"><i class="fa-solid fa-clock-rotate-left"></i> <span id="histTxt">History</span></button>
+                <button id="refreshBtn" class="refresh-btn"><i class="fa-solid fa-rotate-right"></i> <span id="refTxt">Refresh</span></button>
+                <a href="incomeexp.html" id="incomeLink" class="nav-link-btn"><i class="fa-solid fa-file-invoice-dollar"></i> <span id="linkTxt">হিসাব</span></a>
+                <button id="viewBtn" class="view-btn"><i class="fa-solid fa-window-restore"></i> <span id="viewTxt">View</span></button>
+            </div>
+
+            <div id="historyContainer" class="history-container">
+                <div class="history-header">
+                    <h4 id="historyTitle">Recent History</h4>
+                    <button id="clearHistoryBtn" class="clear-history-btn"><i class="fa-solid fa-trash"></i> <span id="clearTxt">Clear All</span></button>
+                </div>
+                <ul id="historyList"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- PWA Setup for Standalone Desktop Mode (Runs even when browser is closed) ---
+        const manifestData = {
+            name: "Automatic Calculator",
+            short_name: "Calculator",
+            start_url: window.location.href,
+            display: "standalone",
+            background_color: "#e9ecef",
+            theme_color: "#ffffff",
+            icons: [{
+                src: "https://cdn-icons-png.flaticon.com/512/1086/1086098.png",
+                sizes: "512x512",
+                type: "image/png"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/manifest+json' });
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = URL.createObjectURL(manifestBlob);
+        document.head.appendChild(manifestLink);
+
+        const swCode = `
+            self.addEventListener('install', e => self.skipWaiting());
+            self.addEventListener('activate', e => e.waitUntil(clients.claim()));
+            self.addEventListener('fetch', e => {});
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        }
+        // --- PWA Setup End ---
+
+        const inputField = document.getElementById('mathInput');
+        const pasteBtn = document.getElementById('pasteBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const errorOutput = document.getElementById('errorOutput');
+        const langToggleBtn = document.getElementById('langToggleBtn');
+        const historyToggleBtn = document.getElementById('historyToggleBtn');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const mainTitle = document.getElementById('mainTitle');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+        const calcBox = document.getElementById('calcBox');
+        const calcContent = document.getElementById('calcContent');
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const viewBtn = document.getElementById('viewBtn');
+        
+        const historyContainer = document.getElementById('historyContainer');
+        const historyList = document.getElementById('historyList');
+        const historyTitle = document.getElementById('historyTitle');
+
+        let currentLang = 'en'; 
+        let calcHistory = []; 
+        let isMinimized = false;
+        let isViewActive = false; // View উইন্ডো খোলা আছে কিনা চেক করার জন্য
+
+        const EXPIRY_TIME = 12 * 60 * 60 * 1000;
+        const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+        const enDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+        // কম্পিউটার ডিভাইস চেক করে View বাটন নিয়ন্ত্রণ করার ফাংশন
+        function checkDevice() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || (window.innerWidth <= 768);
+            const headerControls = calcBox.querySelector('.header-controls');
+            
+            if (isMobile) {
+                viewBtn.style.display = 'none';
+                if (headerControls) headerControls.classList.add('mobile-grid');
+            } else {
+                viewBtn.style.display = 'flex';
+                if (headerControls) headerControls.classList.remove('mobile-grid');
+            }
+        }
+
+        function toBn(numStr) {
+            return String(numStr).replace(/[0-9]/g, w => bnDigits[enDigits.indexOf(w)]);
+        }
+
+        function toEn(numStr) {
+            return String(numStr).replace(/[০-৯]/g, w => enDigits[bnDigits.indexOf(w)]);
+        }
+
+        function formatNum(num) {
+            let formatter = new Intl.NumberFormat('en-IN', { 
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2 
+            });
+            let formatted = formatter.format(num);
+            return currentLang === 'bn' ? toBn(formatted) : formatted;
+        }
+
+        function loadSavedData() {
+            const savedData = JSON.parse(localStorage.getItem('calcData'));
+            if (savedData) {
+                const now = Date.now();
+                if (now - savedData.timestamp < EXPIRY_TIME) {
+                    inputField.value = savedData.expression || '';
+                    currentLang = savedData.lang || 'en';
+                    calcHistory = savedData.history || [];
+                    updateLangUI();
+                    calculate();
+                    renderHistory();
+                } else {
+                    localStorage.removeItem('calcData');
+                }
+            } else {
+                updateLangUI();
+            }
+        }
+
+        function saveData() {
+            const data = {
+                expression: inputField.value,
+                lang: currentLang,
+                history: calcHistory,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('calcData', JSON.stringify(data));
+        }
+
+        function updateLangUI() {
+            const doc = calcBox.ownerDocument;
+            if (currentLang === 'bn') {
+                doc.getElementById('langTxt').innerText = 'English';
+                doc.getElementById('refTxt').innerText = 'রিফ্রেশ';
+                mainTitle.innerText = 'অটোমেটিক হিসাব';
+                inputField.placeholder = 'যেমন: 100+200, 5%,20%=5000 বা Excel থেকে পেস্ট করুন';
+                historyTitle.innerText = 'সর্বশেষ হিসাব';
+                doc.getElementById('clearTxt').innerText = 'সব মুছুন';
+                doc.getElementById('linkTxt').innerText = 'হিসাব';
+                doc.getElementById('viewTxt').innerText = 'ভিউ';
+                doc.getElementById('histTxt').innerText = (historyContainer.style.display === 'block') ? 'লুকান' : 'হিস্ট্রি';
+            } else {
+                doc.getElementById('langTxt').innerText = 'বাংলা';
+                doc.getElementById('refTxt').innerText = 'Refresh';
+                mainTitle.innerText = 'Automatic Calculator';
+                inputField.placeholder = 'Example: 100+200, 5%,20%=5000 or Paste Excel Table';
+                historyTitle.innerText = 'Recent History';
+                doc.getElementById('clearTxt').innerText = 'Clear All';
+                doc.getElementById('linkTxt').innerText = 'Income/Exp';
+                doc.getElementById('viewTxt').innerText = 'View';
+                doc.getElementById('histTxt').innerText = (historyContainer.style.display === 'block') ? 'Hide' : 'History';
+            }
+            renderHistory();
+        }
+
+        // Window Controls (Exit / Close and Minimize)
+        closeBtn.addEventListener('click', () => {
+            calcBox.style.display = 'none';
+        });
+
+        minimizeBtn.addEventListener('click', () => {
+            isMinimized = !isMinimized;
+            if (isMinimized) {
+                calcContent.style.display = 'none';
+                minimizeBtn.innerHTML = '<i class="fa-regular fa-square"></i>';
+                minimizeBtn.title = 'Maximize';
+            } else {
+                calcContent.style.display = 'block';
+                minimizeBtn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+                minimizeBtn.title = 'Minimize';
+            }
+        });
+
+        // View Button Action (Desktop Floating Pop-out Window / Always-On-Top PIP to top screen)
+        viewBtn.addEventListener('click', async () => {
+            if ('documentPictureInPicture' in window) {
+                try {
+                    const pipWindow = await window.documentPictureInPicture.requestWindow({
+                        width: 420,
+                        height: 560,
+                        left: 0,
+                        top: 0
+                    });
+
+                    pipWindow.executeCopy = window.executeCopy;
+
+                    const fontAwesomeLink = document.createElement('link');
+                    fontAwesomeLink.rel = 'stylesheet';
+                    fontAwesomeLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+                    pipWindow.document.head.appendChild(fontAwesomeLink);
+
+                    [...document.styleSheets].forEach((styleSheet) => {
+                        try {
+                            const cssRules = [...styleSheet.cssRules].map((rule) => rule.cssText).join('');
+                            const style = document.createElement('style');
+                            style.textContent = cssRules;
+                            pipWindow.document.head.appendChild(style);
+                        } catch (e) {
+                            const link = document.createElement('link');
+                            link.rel = 'stylesheet';
+                            link.href = styleSheet.href;
+                            pipWindow.document.head.appendChild(link);
+                        }
+                    });
+
+                    pipWindow.document.body.style.backgroundColor = '#e9ecef';
+                    pipWindow.document.body.style.display = 'flex';
+                    pipWindow.document.body.style.justifyContent = 'center';
+                    pipWindow.document.body.style.alignItems = 'flex-start';
+                    pipWindow.document.body.style.paddingTop = '10px';
+                    pipWindow.document.body.style.margin = '0';
+                    pipWindow.document.body.style.minHeight = '100vh';
+
+                    pipWindow.document.body.appendChild(calcBox);
+                    pipWindow.focus();
+                    isViewActive = true;
+
+                    const checkPipClosed = setInterval(() => {
+                        if (pipWindow.closed) {
+                            clearInterval(checkPipClosed);
+                            isViewActive = false;
+                            if (!document.body.contains(calcBox)) {
+                                document.body.appendChild(calcBox);
+                                checkDevice();
+                            }
+                        }
+                    }, 300);
+
+                    pipWindow.addEventListener('pagehide', () => {
+                        clearInterval(checkPipClosed);
+                        isViewActive = false;
+                        if (!document.body.contains(calcBox)) {
+                            document.body.appendChild(calcBox);
+                            checkDevice();
+                        }
+                    });
+                } catch (err) {
+                    openPopupWindow();
+                }
+            } else {
+                openPopupWindow();
+            }
+        });
+
+        function openPopupWindow() {
+            const popupWindow = window.open('', 'CalcWindow', 'width=430,height=560,top=0,left=0,resizable=yes,scrollbars=yes');
+            if (popupWindow) {
+                popupWindow.executeCopy = window.executeCopy;
+                popupWindow.document.write('<html><head><title>Automatic Calculator</title>' + document.head.innerHTML + '</head><body style="background:#e9ecef; display:flex; justify-content:center; align-items:flex-start; padding-top:10px; min-height:100vh; margin:0;"></body></html>');
+                
+                popupWindow.document.body.appendChild(calcBox);
+                popupWindow.focus();
+                isViewActive = true;
+
+                const checkPopupClosed = setInterval(() => {
+                    if (popupWindow.closed) {
+                        clearInterval(checkPopupClosed);
+                        isViewActive = false;
+                        if (!document.body.contains(calcBox)) {
+                            document.body.appendChild(calcBox);
+                            checkDevice();
+                        }
+                    }
+                }, 300);
+
+                popupWindow.addEventListener('beforeunload', () => {
+                    clearInterval(checkPopupClosed);
+                    isViewActive = false;
+                    if (!document.body.contains(calcBox)) {
+                        document.body.appendChild(calcBox);
+                        checkDevice();
+                    }
+                });
+            }
+        }
+
+        historyToggleBtn.addEventListener('click', () => {
+            historyContainer.style.display = (historyContainer.style.display === 'none' || historyContainer.style.display === '') ? 'block' : 'none';
+            updateLangUI();
+        });
+
+        langToggleBtn.addEventListener('click', () => {
+            currentLang = (currentLang === 'en') ? 'bn' : 'en';
+            updateLangUI();
+            calculate();
+        });
+
+        function addToHistory(historyEntry) {
+            if (calcHistory.length === 0 || calcHistory[0] !== historyEntry) {
+                calcHistory.unshift(historyEntry);
+                if (calcHistory.length > 20) calcHistory.pop(); 
+                renderHistory();
+                saveData();
+            }
+        }
+
+        function renderHistory() {
+            historyList.innerHTML = '';
+            if (calcHistory.length === 0) {
+                let li = document.createElement('li');
+                li.innerText = (currentLang === 'bn') ? 'কোনো হিস্ট্রি নেই।' : 'No history found.';
+                li.style.textAlign = 'center';
+                li.style.color = '#888';
+                li.style.border = 'none';
+                historyList.appendChild(li);
+                return;
+            }
+
+            calcHistory.forEach(entry => {
+                let li = document.createElement('li');
+                li.innerText = (currentLang === 'bn') ? toBn(entry) : entry;
+                historyList.appendChild(li);
+            });
+        }
+
+        function formatMultiLineInput(str) {
+            if (!str) return '';
+            let enStr = toEn(str).trim();
+
+            let lines = enStr.split(/[\r\n\t]+/);
+            let items = [];
+
+            for (let line of lines) {
+                let cleanLine = line.trim();
+                if (!cleanLine) continue;
+
+                let parts = cleanLine.split(/\s+/);
+                for (let part of parts) {
+                    let p = part.replace(/,/g, '').trim();
+                    if (p) items.push(p);
+                }
+            }
+
+            let joined = items.join('+');
+            joined = joined.replace(/\++/g, '+').replace(/^\+|\+$/g, '');
+            return joined;
+        }
+
+        function calculate() {
+            let rawInput = inputField.value.trim();
+            saveData();
+
+            if(rawInput === '') {
+                resultContainer.innerHTML = `
+                    <div class="single-result-box">
+                        <div class="result-text-group">
+                            <span class="result-symbol">=</span>
+                            <span class="result">${currentLang === 'bn' ? '০.০০' : '0.00'}</span>
+                        </div>
+                    </div>`;
+                errorOutput.innerText = '';
+                return;
+            }
+
+            let normalizedInput = toEn(rawInput);
+
+            if (normalizedInput.includes('%') && normalizedInput.includes('=')) {
+                let parts = normalizedInput.replace(/\s+/g, '').split('=');
+                let pctsStr = parts[0];
+                let amountStr = parts[1];
+
+                let baseAmount = parseFloat(amountStr.replace(/,/g, ''));
+                let pcts = pctsStr.split(',').filter(p => p !== '');
+
+                if (!isNaN(baseAmount) && pcts.length > 0) {
+                    let totalPct = 0;
+                    let totalAmt = 0;
+                    let isValid = true;
+                    let html = '<div class="pct-table">';
+
+                    pcts.forEach(pStr => {
+                        let cleanP = pStr.replace('%', '');
+                        let pVal = parseFloat(cleanP);
+                        if (isNaN(pVal)) {
+                            isValid = false;
+                        } else {
+                            let amt = (baseAmount * pVal) / 100;
+                            totalPct += pVal;
+                            totalAmt += amt;
+
+                            let displayP = currentLang === 'bn' ? toBn(pVal) : pVal;
+                            let displayAmt = formatNum(amt);
+                            let copyHistoryData = `${baseAmount}×${pVal}%=${displayAmt}`;
+
+                            html += `
+                                <div class="pct-row">
+                                    <span class="pct-label">${displayP}% = <span class="pct-val">${displayAmt}</span></span>
+                                    <button class="copy-btn" onclick="executeCopy('${displayAmt}', '${copyHistoryData}', this)"><i class="fa-regular fa-copy"></i> ${currentLang === 'bn' ? 'কপি' : 'Copy'}</button>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    if (isValid) {
+                        let displayTotalP = currentLang === 'bn' ? toBn(totalPct) : totalPct;
+                        let displayTotalAmt = formatNum(totalAmt);
+                        let totalHistoryData = `${baseAmount}×${totalPct}%=${displayTotalAmt}`;
+
+                        html += `
+                            <div class="pct-row total-row">
+                                <span>${currentLang === 'bn' ? 'মোট %' : 'Total %'}: ${displayTotalP}%</span>
+                            </div>
+                            <div class="pct-row total-row">
+                                <span>${currentLang === 'bn' ? 'মোট টাকা' : 'Total Amount'}: <span class="pct-val">${displayTotalAmt}</span></span>
+                                <button class="copy-btn" onclick="executeCopy('${displayTotalAmt}', '${totalHistoryData}', this)"><i class="fa-regular fa-copy"></i> ${currentLang === 'bn' ? 'কপি' : 'Copy'}</button>
+                            </div>
+                        `;
+
+                        html += '</div>';
+                        resultContainer.innerHTML = html;
+                        errorOutput.innerText = '';
+                        return;
+                    }
+                }
+            }
+
+            let expr = normalizedInput
+                .replace(/"/g, '')               
+                .replace(/×/g, '*')
+                .replace(/÷/g, '/')
+                .replace(/[\t\r\n]+/g, '+')       
+                .replace(/,/g, '');
+
+            expr = expr.replace(/(\d)\s+(\d)/g, '$1+$2');
+            expr = expr.replace(/\++/g, '+').replace(/^\+|\+$/g, '');
+
+            const validExpression = /^[0-9+\-*/().\s]+$/;
+
+            if (validExpression.test(expr)) {
+                try {
+                    const result = new Function('return ' + expr)();
+                    
+                    if(isFinite(result)) {
+                        let formattedResult = formatNum(result);
+                        let displayExpr = expr.replace(/\*/g, '×').replace(/\//g, '÷');
+                        let historyText = `${displayExpr} = ${formattedResult}`;
+
+                        resultContainer.innerHTML = `
+                            <div class="single-result-box">
+                                <div class="result-text-group">
+                                    <span class="result-symbol">=</span>
+                                    <span class="result">${formattedResult}</span>
+                                </div>
+                                <button class="copy-btn" onclick="executeCopy('${formattedResult}', '${historyText}', this)"><i class="fa-regular fa-copy"></i> ${currentLang === 'bn' ? 'কপি' : 'Copy'}</button>
+                            </div>
+                        `;
+                        errorOutput.innerText = '';
+                    } else {
+                        throw new Error();
+                    }
+                } catch (e) {
+                    resultContainer.innerHTML = '';
+                    errorOutput.innerText = (currentLang === 'bn') ? 'অসম্পূর্ণ বা ভুল সমীকরণ' : 'Incomplete or Invalid Equation';
+                }
+            } else {
+                resultContainer.innerHTML = '';
+                errorOutput.innerText = (currentLang === 'bn') ? 'ভুল ফরমেট বা ক্যারেক্টার ব্যবহার করা হয়েছে।' : 'Invalid format or characters used.';
+            }
+        }
+
+        window.executeCopy = function(resultOnlyText, textToHistory, btnElem) {
+            const currentWin = calcBox.ownerDocument.defaultView || window;
+            const handleSuccess = () => {
+                const originalHTML = btnElem.innerHTML;
+                btnElem.innerHTML = `<i class="fa-solid fa-check"></i> ${currentLang === 'bn' ? 'কপি হয়েছে' : 'Copied'}`;
+                btnElem.style.backgroundColor = '#17a2b8';
+                
+                addToHistory(textToHistory);
+
+                setTimeout(() => {
+                    btnElem.innerHTML = originalHTML;
+                    btnElem.style.backgroundColor = '#28a745';
+                }, 1500);
+            };
+
+            if (currentWin.navigator.clipboard && currentWin.navigator.clipboard.writeText) {
+                currentWin.navigator.clipboard.writeText(resultOnlyText).then(handleSuccess).catch(() => {
+                    fallbackCopyText(resultOnlyText, handleSuccess);
+                });
+            } else {
+                fallbackCopyText(resultOnlyText, handleSuccess);
+            }
+        };
+
+        function fallbackCopyText(text, callback) {
+            const doc = calcBox.ownerDocument;
+            const textArea = doc.createElement("textarea");
+            textArea.value = text;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            doc.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                doc.execCommand('copy');
+                if (callback) callback();
+            } catch (err) {
+                console.error('Copy failed', err);
+            }
+            doc.body.removeChild(textArea);
+        }
+
+        inputField.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const currentWin = calcBox.ownerDocument.defaultView || window;
+            let pastedText = (e.clipboardData || currentWin.clipboardData).getData('text');
+            if (pastedText) {
+                let formatted = formatMultiLineInput(pastedText);
+                
+                const start = inputField.selectionStart || 0;
+                const end = inputField.selectionEnd || 0;
+                const val = inputField.value;
+                
+                inputField.value = val.substring(0, start) + formatted + val.substring(end);
+                inputField.selectionStart = inputField.selectionEnd = start + formatted.length;
+                
+                calculate();
+            }
+        });
+
+        pasteBtn.addEventListener('click', async () => {
+            const currentWin = calcBox.ownerDocument.defaultView || window;
+            try {
+                const text = await currentWin.navigator.clipboard.readText();
+                if (text) {
+                    inputField.value = formatMultiLineInput(text);
+                    calculate();
+                }
+            } catch (err) {
+                console.error('Clipboard paste error:', err);
+                let fallbackText = currentWin.prompt(currentLang === 'bn' ? 'এখানে ডেটা পেস্ট করুন:' : 'Paste data here:');
+                if (fallbackText) {
+                    inputField.value = formatMultiLineInput(fallbackText);
+                    calculate();
+                }
+            }
+        });
+
+        inputField.addEventListener('input', calculate);
+
+        inputField.addEventListener('focus', () => {
+            setTimeout(() => {
+                calcBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        });
+
+        clearHistoryBtn.addEventListener('click', () => {
+            calcHistory = []; 
+            saveData();
+            renderHistory();
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            inputField.value = '';
+            calculate();
+            saveData();
+        });
+
+        window.addEventListener('resize', checkDevice);
+
+        // View উইন্ডো খোলা থাকা অবস্থায় মূল ব্রাউজার কাটতে গেলে ওয়ার্নিং (সতর্কবার্তা) দেওয়া
+        window.addEventListener('beforeunload', (e) => {
+            if (isViewActive) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        checkDevice();
+        loadSavedData();
+    </script>
+</body>
+</html>
