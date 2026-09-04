@@ -1,502 +1,1952 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JPEG to JPG Converter - 100 Photos</title>
-<style>
-    * { box-sizing: border-box; }
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f7fb;
-        color: #222;
-    }
-    .container {
-        max-width: 900px;
-        margin: 35px auto;
-        background: white;
-        border-radius: 14px;
-        padding: 28px;
-        box-shadow: 0 5px 25px rgba(0,0,0,.08);
-    }
-    h1 { margin-top: 0; color: #1769aa; }
-    .note {
-        background: #eef7ff;
-        border-left: 4px solid #2196f3;
-        padding: 12px 15px;
-        margin: 15px 0 20px;
-        border-radius: 5px;
-        line-height: 1.5;
-    }
-    input[type=file] {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 7px;
-        background: #fff;
-    }
-    button, input[type=number], select {
-        border: 0;
-        border-radius: 7px;
-        padding: 12px 18px;
-        margin: 12px 8px 0 0;
-        font-size: 15px;
-    }
-    input[type=number], select {
-        border: 1px solid #ccc;
-        background: #fff;
-        outline: none;
-        width: 100px;
-    }
-    button {
-        cursor: pointer;
-        font-weight: bold;
-    }
-    #convertBtn { background: #2878f0; color: white; }
-    #downloadBtn { background: #16a085; color: white; display: none; }
-    button:disabled { opacity: .5; cursor: not-allowed; }
-    #status {
-        margin-top: 18px;
-        font-weight: bold;
-    }
-    progress {
-        width: 100%;
-        height: 22px;
-        margin-top: 10px;
-        display: none;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 22px;
-    }
-    th, td {
-        border-bottom: 1px solid #ddd;
-        padding: 9px;
-        text-align: left;
-        font-size: 14px;
-    }
-    th { background: #f1f4f8; }
-    .ok { color: #16803c; }
-    .err { color: #c62828; }
-    .small { color: #666; font-size: 13px; }
-    .download-link {
-        background: #16a085;
-        color: white;
-        padding: 12px 20px;
-        text-decoration: none;
-        border-radius: 7px;
-        display: inline-block;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-    .download-link:hover {
-        background: #12806b;
-    }
-    .resize-section {
-        margin-top: 15px;
-        padding: 12px;
-        background: #f9fbfd;
-        border: 1px solid #e1e8ed;
-        border-radius: 7px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 10px;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রফেশনাল টুলস ড্যাশবোর্ড</title>
+    <!-- FontAwesome আইকনের জন্য -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PDF Lib (PDF Merge এর জন্য) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <!-- JSZip (ZIP ডাউনলোডের জন্য) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- PDF.js (PDF Rendering এর জন্য) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+    <style>
+        /* রুট ভ্যারিয়েবল কালার */
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-light: #6b7280;
+            --nav-height: 70px;
+        }
+
+        /* বেসিক রিসেট */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-top: var(--nav-height);
+        }
+
+        /* ফিক্সড মেনুবার স্টাইল */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links li a:hover {
+            color: var(--primary-color);
+        }
+
+        /* মেইন ড্যাশবোর্ড কন্টেইনার */
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: var(--text-light);
+        }
+
+        /* গ্রিড লেআউট */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        /* কার্ড স্টাইল */
+        .tool-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.08);
+            border-color: var(--primary-color);
+        }
+
+        .tool-card .icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .tool-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .tool-card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* টুল সেকশন স্টাইল */
+        .tool-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #4f46e5;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        /* JPEG to JPG Styles */
+        .jpeg-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 14px;
+            padding: 28px;
+            box-shadow: 0 5px 25px rgba(0,0,0,.08);
+        }
+        .jpeg-container h2 { margin-top: 0; color: #1769aa; }
+        .jpeg-note {
+            background: #eef7ff;
+            border-left: 4px solid #2196f3;
+            padding: 12px 15px;
+            margin: 15px 0 20px;
+            border-radius: 5px;
+            line-height: 1.5;
+        }
+        .jpeg-container input[type=file] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            background: #fff;
+        }
+        .jpeg-container button, .jpeg-container input[type=number], .jpeg-container select {
+            border: 0;
+            border-radius: 7px;
+            padding: 12px 18px;
+            margin: 12px 8px 0 0;
+            font-size: 15px;
+        }
+        .jpeg-container input[type=number], .jpeg-container select {
+            border: 1px solid #ccc;
+            background: #fff;
+            outline: none;
+            width: 100px;
+        }
+        .jpeg-container button { cursor: pointer; font-weight: bold; }
+        #convertBtn { background: #2878f0; color: white; }
+        #downloadZipBtn { background: #16a085; color: white; display: none; }
+        .jpeg-container button:disabled { opacity: .5; cursor: not-allowed; }
+        #jpegStatus { margin-top: 18px; font-weight: bold; }
+        #jpegProgress { width: 100%; height: 22px; margin-top: 10px; display: none; }
+        .jpeg-table { width: 100%; border-collapse: collapse; margin-top: 22px; }
+        .jpeg-table th, .jpeg-table td { border-bottom: 1px solid #ddd; padding: 9px; text-align: left; font-size: 14px; }
+        .jpeg-table th { background: #f1f4f8; }
+        .ok { color: #16803c; }
+        .err { color: #c62828; }
+        .small { color: #666; font-size: 13px; }
+        .download-link {
+            background: #16a085;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 7px;
+            display: inline-block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .download-link:hover { background: #12806b; }
+        .resize-section {
+            margin-top: 15px;
+            padding: 12px;
+            background: #f9fbfd;
+            border: 1px solid #e1e8ed;
+            border-radius: 7px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Background Remover Styles */
+        .checker{background-image:linear-gradient(45deg,#eee 25%,transparent 25%),linear-gradient(-45deg,#eee 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eee 75%),linear-gradient(-45deg,transparent 75%,#eee 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+        #cropCanvas{max-width:calc(100% - 12px);max-height:calc(100% - 12px);display:block;touch-action:none;cursor:crosshair}
+        #cropOverlay{position:absolute;border:2px solid #2563eb;box-shadow:0 0 0 9999px rgba(0,0,0,.42);pointer-events:none;display:none}
+        .step{display:flex;align-items:center;gap:.55rem}
+        .step-num{width:28px;height:28px;border-radius:9999px;display:inline-flex;align-items:center;justify-content:center;background:#2563eb;color:#fff;font-weight:700;font-size:13px}
+
+        /* PDF to JPG/PNG Tool Styles */
+        .pdf-wrap { max-width: 1250px; margin: 0 auto; }
+        .pdf-grid { display: grid; grid-template-columns: 350px 1fr; gap: 18px; }
+        .pdf-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 18px; box-shadow: 0 5px 22px #1018280b; }
+        .pdf-upload { border: 2px dashed #cbd5e1; border-radius: 13px; padding: 26px 12px; text-align: center; cursor: pointer; background: #fafbff; }
+        .pdf-upload:hover { border-color: var(--primary-color); background: #f7f6ff; }
+        .pdf-upload input { display: none; }
+        .choose-pdf-btn { display: inline-block; background: linear-gradient(90deg, #4f46e5, #7c3aed); color: #fff; border: 0; border-radius: 9px; padding: 11px 22px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 12px #4f46e533; }
+        .fileinfo { display: none; margin-top: 12px; padding: 11px; border-radius: 9px; background: #f0fdf4; font-size: 13px; }
+        .pdf-range-row { display: flex; align-items: center; gap: 10px; }
+        .pdf-value { min-width: 50px; text-align: center; border: 1px solid #e5e7eb; padding: 8px; border-radius: 8px; font-weight: bold; }
+        .pdf-check { display: flex; gap: 9px; align-items: center; margin: 10px 0; font-size: 13px; }
+        .pdf-check input { accent-color: var(--primary-color); }
+        .pdf-btns { display: grid; gap: 9px; margin-top: 18px; }
+        .pdf-btns button { border: 0; border-radius: 10px; padding: 12px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .pdf-primary { background: linear-gradient(90deg, #4f46e5, #7c3aed); color: white; }
+        .pdf-success { background: #16a34a; color: #fff; }
+        .pdf-danger { background: #fee2e2; color: #991b1b; }
+        .pdf-privacy { margin-top: 14px; padding: 12px; border-radius: 10px; background: #eff6ff; color: #1e40af; font-size: 12px; line-height: 1.5; }
+        .preview-head { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+        .pdf-count { color: var(--text-light); font-size: 13px; }
+        .pdf-progress { height: 10px; background: #e5e7eb; border-radius: 20px; overflow: hidden; margin: 10px 0; }
+        .pdf-bar { height: 100%; width: 0; background: linear-gradient(90deg, #4f46e5, #8b5cf6); transition: width .2s; }
+        .pdf-status { text-align: center; color: var(--text-light); font-size: 13px; min-height: 20px; }
+        .pdf-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 14px; }
+        .pdf-empty { text-align: center; color: #98a2b3; padding: 90px 20px; border: 2px dashed #e5e7eb; border-radius: 14px; grid-column: 1 / -1; }
+
+        /* PDF Fusion Pro / Merge PDF Unique Styles */
+        .m-hero{max-width:1220px;margin:auto;padding:15px 0 20px;display:flex;justify-content:space-between;gap:25px;align-items:end}
+        .m-hero h1{margin:0;font-size:32px;letter-spacing:-1.2px;line-height:1.12}
+        .m-hero p{margin:9px 0 0;color:var(--text-light);font-size:14px;line-height:1.6;max-width:720px}
+        .m-stats{display:flex;gap:9px;flex-wrap:wrap}
+        .m-stat{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:9px 12px;font-size:10px;color:var(--text-light);box-shadow:0 5px 18px #10182809}
+        .m-stat b{display:block;color:var(--text-color);font-size:12px;margin-bottom:2px}
+        .m-layout{display:grid;grid-template-columns:390px 1fr;gap:18px}
+        .m-card{background:#fffffff7;border:1px solid #e5e7eb;border-radius:20px;box-shadow:0 14px 45px rgba(16,24,40,.08)}
+        .m-controls{padding:20px}
+        .m-st{display:flex;align-items:center;gap:9px;font-size:16px;margin:0 0 15px}
+        .m-si{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#f0efff;color:#5545d6;font-size:12px;font-weight:800}
+
+        .m-mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;background:#f8f9fc;padding:5px;border:1px solid #e5e7eb;border-radius:14px}
+        .m-mode-btn{padding:12px 10px;border:1px solid transparent;border-radius:10px;background:transparent;font-size:12px;font-weight:800;color:var(--text-light);text-align:center;transition:all .25s ease;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:none;cursor:pointer}
+        .m-mode-btn:hover{color:#5b4bdb;background:#ffffff80}
+        .m-mode-btn.active{background:linear-gradient(135deg,#5b4bdb,#7c3aed);color:#fff;border-color:transparent;box-shadow:0 6px 20px rgba(91,75,219,0.35);transform:translateY(-1px)}
+
+        .m-upload{display:block;border:1.5px dashed #c8cedd;border-radius:16px;padding:25px 13px;text-align:center;background:linear-gradient(180deg,#fcfcff,#f8f9fd);transition:.2s;cursor:pointer}
+        .m-upload.drag{border-color:#5b4bdb;background:#f5f3ff}
+        .m-upload input{display:none}
+        .m-upico{width:58px;height:58px;border-radius:16px;margin:auto auto 10px;display:grid;place-items:center;font-size:27px;background:#eeecff;color:#5b4bdb}
+        .m-upt{font-size:14px;font-weight:800}
+        .m-ups{font-size:11px;color:var(--text-light);margin:5px 0 13px}
+        .m-choose{border:0;color:#fff;padding:11px 19px;border-radius:10px;background:linear-gradient(100deg,#5046d8,#7c3aed);box-shadow:0 8px 18px #5b4bdb38;font-size:13px;font-weight:800;cursor:pointer}
+        .m-summary{display:none;margin-top:10px;padding:10px;border-radius:11px;background:#f0fdf4;border:1px solid #d7f5e1;color:#166534;font-size:11px}
+        .m-div{height:1px;background:#e5e7eb;margin:19px 0}
+        .m-oh{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+        .m-oh b{font-size:13px}
+        .m-oc{font-size:11px;color:var(--text-light)}
+        .m-list{max-height:460px;overflow:auto}
+        .m-empty{padding:38px 12px;text-align:center;color:#98a2b3;border:1px dashed #e5e7eb;border-radius:13px;font-size:12px}
+        .m-item{display:grid;grid-template-columns:30px 1fr auto;gap:9px;align-items:center;border:1px solid #e5e7eb;border-radius:13px;padding:9px;margin-bottom:8px;background:#fff}
+        .m-num{width:29px;height:29px;border-radius:9px;display:grid;place-items:center;background:#f2f0ff;color:#5746d9;font-weight:850;font-size:11px}
+        .m-fn{font-size:12px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .m-fm{font-size:10px;color:var(--text-light);margin-top:3px}
+        .m-acts{display:flex;gap:3px}
+        .m-ib{width:28px;height:28px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;color:#475467;padding:0;cursor:pointer}
+        .m-ib:disabled{opacity:.35;cursor:not-allowed}
+        .m-ib.rm{color:#c62828;background:#fff5f5;border-color:#ffe0e0}
+        .m-ar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+        .m-sb{border:1px solid #e5e7eb;background:#fff;color:#344054;padding:9px;border-radius:9px;font-size:11px;font-weight:750;cursor:pointer}
+        .m-hint{font-size:10px;color:var(--text-light);line-height:1.55;margin-top:8px}
+        .m-action-btn{width:100%;margin-top:18px;border:0;color:#fff;padding:13px;border-radius:11px;background:linear-gradient(100deg,#5b4bdb,#7c3aed);box-shadow:0 9px 20px #5b4bdb38;font-weight:850;cursor:pointer}
+        .m-action-btn:disabled{opacity:.5;cursor:not-allowed}
+        .m-workspace{overflow:hidden}
+        .m-wh{padding:17px 20px;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center}
+        .m-wt{font-size:16px;font-weight:850}
+        .m-ws{font-size:11px;color:var(--text-light);margin-top:3px}
+        .m-secure{padding:7px 10px;border-radius:99px;background:#f0fdf4;color:#15803d;font-size:10px;font-weight:800}
+        .m-preview{min-height:500px;padding:20px;background-image:linear-gradient(#10182806 1px,transparent 1px),linear-gradient(90deg,#10182806 1px,transparent 1px);background-size:24px 24px}
+        .m-ready{min-height:430px;border:1px dashed #d5dbe5;border-radius:17px;display:grid;place-items:center;text-align:center;padding:35px}
+        .m-ri{width:70px;height:70px;border-radius:20px;background:#f0efff;display:grid;place-items:center;font-size:31px;margin:auto auto 13px}
+        .m-ready h3{margin:0;font-size:17px}
+        .m-ready p{color:var(--text-light);font-size:12px;line-height:1.6;max-width:410px}
+        .m-progress{display:none;margin-bottom:15px}
+        .m-pt{display:flex;justify-content:space-between;font-size:11px;color:var(--text-light);margin-bottom:7px}
+        .m-track{height:9px;border-radius:99px;background:#e9edf3;overflow:hidden}
+        .m-bar{height:100%;width:0;background:linear-gradient(90deg,#5b4bdb,#8b5cf6);transition:.2s}
+        .m-result{display:none}
+        .m-rt{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+        .m-rt b{font-size:14px}
+        .m-rt span{font-size:11px;color:var(--text-light)}
+        .m-success{padding:14px;border:1px solid #d7f5e1;background:#f5fff8;border-radius:12px;color:#166534;font-size:11px;line-height:1.55;margin-bottom:13px}
+        .m-download{width:100%;border:0;color:#fff;padding:13px;border-radius:11px;background:linear-gradient(100deg,#119657,#18a957);font-weight:850;margin-top:8px;cursor:pointer}
+        .m-toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#111827;color:#fff;padding:11px 15px;border-radius:11px;font-size:12px;z-index:99;transition:.25s}
+        .m-toast.show{opacity:1;transform:translate(-50%,0)}
+        .m-settings-group{margin-top:12px;background:#f8f9fc;border:1px solid #e5e7eb;padding:12px;border-radius:11px}
+        .m-settings-group label{font-size:11px;font-weight:750;display:block;margin-bottom:5px;color:#344054}
+        .m-settings-group select{width:100%;padding:8px;border-radius:8px;border:1px solid #e5e7eb;background:#fff;font-size:11px}
+        .m-image-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(130px, 1fr));gap:12px;max-height:350px;overflow-y:auto;padding:5px}
+        .m-img-card{background:#ffffff;border:1px solid #e5e7eb;border-radius:10px;padding:8px;text-align:center;position:relative;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
+        .m-img-card img{width:100%;height:110px;object-fit:cover;border-radius:6px;border:1px solid #eee;margin-bottom:6px}
+        .m-img-card input[type="checkbox"]{position:absolute;top:12px;left:12px;width:18px;height:18px;cursor:pointer}
+        .m-img-card .lbl{font-size:10px;color:#000000;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .m-toolbar-row{display:flex;gap:8px;margin-bottom:10px}
+        .m-btn-group-dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+
+        @media (max-width: 850px) {
+            .pdf-grid { grid-template-columns: 1fr; }
+            .m-layout { grid-template-columns: 1fr; }
+            .m-hero { flex-direction: column; align-items: flex-start; }
+            .nav-links { display: none; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>JPEG → JPG Converter</h1>
+    <!-- ফিক্সড মেনুবার -->
+    <nav class="navbar">
+        <a href="#" class="logo" onclick="showDashboard(event)"><i class="fa-solid fa-layer-group"></i> MyDashboard</a>
+        <ul class="nav-links">
+            <li><a href="#" onclick="showDashboard(event)">হোম</a></li>
+            <li><a href="#">সকল টুলস</a></li>
+            <li><a href="#">যোগাযোগ</a></li>
+        </ul>
+    </nav>
 
-    <div class="note">
-        <b>Maximum 100 photos at a time.</b><br>
-        Select your Student ID named photos, for example:
-        <b>260154.jpeg</b>, <b>260208.jpeg</b> etc.
-        The converted files will keep the same Student ID and become
-        <b>.jpg</b> files.
-        <br><br>
-        <b>Note:</b> Conversion is done locally in your browser. Your photos are not uploaded to any server.
+    <!-- ড্যাশবোর্ড মূল অংশ -->
+    <div id="main-dashboard" class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>অনলাইন ইউটিলিটি টুলস</h1>
+            <p>আপনার প্রয়োজনীয় ফাইল এবং ইমেজ কনভার্ট করার সহজ মাধ্যম</p>
+        </div>
+
+        <!-- টুলস মেনু কার্ড -->
+        <div class="tools-grid">
+            
+            <!-- ১. JPEG to JPG -->
+            <div onclick="openJpegTool()" class="tool-card">
+                <div class="icon"><i class="fa-solid fa-file-image"></i></div>
+                <h3>JPEG to JPG</h3>
+                <p>ছবি কনভার্ট করুন খুব সহজেই সেকেন্ডের মধ্যে।</p>
+            </div>
+
+            <!-- ২. Image Background Remove -->
+            <div onclick="openBgRemoveTool()" class="tool-card">
+                <div class="icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                <h3>Image Background Remove</h3>
+                <p>ছবির ব্যাকগ্রাউন্ড রিমুভ করুন এক ক্লিকে।</p>
+            </div>
+
+            <!-- ৩. PDF To JPG or PNG -->
+            <div onclick="openPdfToJpgTool()" class="tool-card">
+                <div class="icon"><i class="fa-solid fa-file-pdf"></i></div>
+                <h3>PDF to JPG/PNG</h3>
+                <p>পিডিএফ ফাইলকে কনভার্ট করুন ইমেজ ফরম্যাটে।</p>
+            </div>
+
+            <!-- ৪. PDF Merge (সংযুক্ত ও আপডেটকৃত) -->
+            <div onclick="openPdfMergeTool()" class="tool-card">
+                <div class="icon"><i class="fa-solid fa-object-ungroup"></i></div>
+                <h3>PDF Merge</h3>
+                <p>একাধিক পিডিএফ ফাইল একসাথে যুক্ত করুন।</p>
+            </div>
+
+        </div>
     </div>
 
-    <input id="files" type="file" accept=".jpeg,.jpg,image/jpeg" multiple>
-
-    <div class="resize-section">
-        <span><b>Resize (Optional):</b></span>
-        <label>Width:</label>
-        <input type="number" id="targetWidth" placeholder="Width" min="1">
+    <!-- ১. JPEG to JPG টুল সেকশন -->
+    <div id="jpeg-section" class="tool-section dashboard-container">
+        <a href="#" onclick="showDashboard(event)" class="back-btn"><i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরে যান</a>
         
-        <label>Height:</label>
-        <input type="number" id="targetHeight" placeholder="Height" min="1">
+        <div class="jpeg-container">
+            <h2>JPEG → JPG Converter</h2>
 
-        <select id="dimensionUnit">
-            <option value="px">Pixel (px)</option>
-            <option value="inch">Inch (in)</option>
-        </select>
+            <div class="jpeg-note">
+                <b>Maximum 100 photos at a time.</b><br>
+                Select your Student ID named photos, for example:
+                <b>260154.jpeg</b>, <b>260208.jpeg</b> etc.
+                The converted files will keep the same Student ID and become
+                <b>.jpg</b> files.
+                <br><br>
+                <b>Note:</b> Conversion is done locally in your browser. Your photos are not uploaded to any server.
+            </div>
+
+            <input id="files" type="file" accept=".jpeg,.jpg,image/jpeg" multiple>
+
+            <div class="resize-section">
+                <span><b>Resize (Optional):</b></span>
+                <label>Width:</label>
+                <input type="number" id="targetWidth" placeholder="Width" min="1">
+                
+                <label>Height:</label>
+                <input type="number" id="targetHeight" placeholder="Height" min="1">
+
+                <select id="dimensionUnit">
+                    <option value="px">Pixel (px)</option>
+                    <option value="inch">Inch (in)</option>
+                </select>
+            </div>
+
+            <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                <button id="convertBtn">Convert to JPG</button>
+                <input type="number" id="targetSize" placeholder="Size" min="1">
+                <select id="sizeUnit">
+                    <option value="KB">KB</option>
+                    <option value="MB">MB</option>
+                </select>
+                <button id="downloadZipBtn">Create ZIP File</button>
+            </div>
+
+            <progress id="jpegProgress" value="0" max="100"></progress>
+            <div id="jpegStatus">No files selected.</div>
+
+            <table id="resultTable" class="jpeg-table" style="display:none;">
+                <thead>
+                    <tr>
+                        <th>Original File</th>
+                        <th>Converted File</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="resultBody"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div style="display: flex; align-items: center; flex-wrap: wrap;">
-        <button id="convertBtn">Convert to JPG</button>
-        <input type="number" id="targetSize" placeholder="Size" min="1">
-        <select id="sizeUnit">
-            <option value="KB">KB</option>
-            <option value="MB">MB</option>
-        </select>
-        <button id="downloadBtn">Create ZIP File</button>
+    <!-- ২. ব্যাকগ্রাউন্ড রিমুভ টুল সেকশন -->
+    <div id="bg-remove-section" class="tool-section dashboard-container">
+        <a href="#" onclick="showDashboard(event)" class="back-btn"><i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরে যান</a>
+        
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden p-3 sm:p-6">
+            <div class="bg-gradient-to-r from-blue-700 to-indigo-700 text-white p-5 sm:p-7 rounded-xl mb-6">
+                <h1 class="text-2xl sm:text-3xl font-bold text-center">🎨 Image Background Remove & Editor</h1>
+                <p class="text-center text-blue-100 mt-2 text-sm">Upload → Preview → Resolution/Size → Crop → KB/MB → RGB Background → Convert → Review → Download</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <div class="space-y-4">
+                    <div class="border rounded-xl p-4 bg-slate-50">
+                        <div class="step mb-3"><span class="step-num">1</span><b>ছবি আপলোড</b></div>
+                        <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp,image/heic,image/heif,image/*" class="w-full border border-gray-300 bg-white rounded-lg p-2 text-sm">
+                        <div id="fileInfo" class="text-xs text-gray-500 mt-2">কোনো ছবি নির্বাচন করা হয়নি।</div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">2</span><b>ছবির প্রিভিউ</b></div>
+                        <div id="originalPreviewBox" class="h-52 sm:h-60 rounded-lg border bg-white checker flex items-center justify-center overflow-hidden">
+                            <img id="originalImage" class="max-h-full max-w-full object-contain hidden" alt="Original Preview">
+                            <span id="originalPlaceholder" class="text-gray-400 text-sm">আপলোড করা ছবির প্রিভিউ এখানে দেখা যাবে</span>
+                        </div>
+                        <div id="originalDimensions" class="text-center text-xs text-gray-500 mt-2"></div>
+                        <div id="detectStatus" class="text-center text-xs mt-2 text-blue-700 min-h-[20px]"></div>
+                        <div id="progressWrap" class="hidden mt-2">
+                            <div class="flex items-center justify-between text-xs text-gray-600 mb-1">
+                                <span id="progressText">ছবির কাজ চলছে...</span>
+                                <b id="progressPercent">0%</b>
+                            </div>
+                            <div class="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                                <div id="progressBar" class="h-full bg-blue-600 rounded-full transition-all duration-150" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4 bg-blue-50/40">
+                        <div class="step mb-3"><span class="step-num">3</span><b>Passport / Stamp Size নির্বাচন</b></div>
+                        <select id="photoPreset" class="w-full border border-blue-200 rounded-lg p-3 text-sm bg-white font-semibold">
+                            <option value="custom">Custom / নিজের সাইজ</option>
+                            <option value="passport">Passport Size — 1.5 × 1.9 inch — 450 × 570 px @ 300 DPI</option>
+                            <option value="stamp">Stamp Size — 0.8 × 1 inch — 240 × 300 px @ 300 DPI</option>
+                        </select>
+                        <div class="grid grid-cols-2 gap-2 mt-3">
+                            <div class="bg-white border rounded-lg p-2 text-xs">Print Size: <b id="presetMm">—</b></div>
+                            <div class="bg-white border rounded-lg p-2 text-xs">Output: <b id="presetPx">—</b></div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">4</span><b>রেজোলিউশন কমানো / বাড়ানো</b></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="text-xs text-gray-600">Width (px)
+                                <input id="widthInput" type="number" min="1" step="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Width">
+                            </label>
+                            <label class="text-xs text-gray-600">Height (px)
+                                <input id="heightInput" type="number" min="1" step="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Height">
+                            </label>
+                        </div>
+                        <label class="flex items-center gap-2 mt-3 text-sm">
+                            <input id="lockRatio" type="checkbox" checked class="accent-blue-600">
+                            অনুপাত (Aspect Ratio) লক রাখুন
+                        </label>
+                        <div class="grid grid-cols-2 gap-2 mt-3">
+                            <button id="halfResolution" type="button" class="border rounded-lg py-2 text-sm hover:bg-slate-50">50% করা</button>
+                            <button id="doubleResolution" type="button" class="border rounded-lg py-2 text-sm hover:bg-slate-50">200% করা</button>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">5</span><b>সাইজ কমানো / বাড়ানো</b></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="text-xs text-gray-600">Target Width (px)
+                                <input id="sizeWidth" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Width">
+                            </label>
+                            <label class="text-xs text-gray-600">Target Height (px)
+                                <input id="sizeHeight" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Height">
+                            </label>
+                        </div>
+                        <select id="fitMode" class="mt-3 w-full border rounded-lg p-2 text-sm">
+                            <option value="contain">Contain — পুরো ছবি রাখুন</option>
+                            <option value="cover">Cover — সাইজ অনুযায়ী পূর্ণ ফ্রেম</option>
+                            <option value="stretch">Stretch — নির্দিষ্ট সাইজে ফিট</option>
+                        </select>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">6</span><b>সাইজ অনুযায়ী Crop</b></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="text-xs text-gray-600">Crop Width
+                                <input id="cropW" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Width">
+                            </label>
+                            <label class="text-xs text-gray-600">Crop Height
+                                <input id="cropH" type="number" min="1" class="mt-1 w-full border rounded-lg p-2" placeholder="Height">
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <select id="aspectPreset" class="border rounded-lg p-2 text-sm">
+                                <option value="free">Free Crop</option>
+                                <option value="1">1 : 1</option>
+                                <option value="1.333333">4 : 3</option>
+                                <option value="1.5">3 : 2</option>
+                                <option value="1.777778">16 : 9</option>
+                                <option value="0.75">3 : 4</option>
+                                <option value="0.666667">2 : 3</option>
+                                <option value="0.5625">9 : 16</option>
+                            </select>
+                            <button id="applyCropBox" type="button" class="border rounded-lg py-2 text-sm hover:bg-blue-50">Crop Box সেট</button>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">7</span><b>KB / MB অনুযায়ী ফাইল সাইজ</b></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="text-xs text-gray-600">Target Size
+                                <input id="bgTargetSize" type="number" min="1" step="1" class="mt-1 w-full border rounded-lg p-2" placeholder="যেমন 100">
+                            </label>
+                            <label class="text-xs text-gray-600">Unit
+                                <select id="bgSizeUnit" class="mt-1 w-full border rounded-lg p-2">
+                                    <option value="KB">KB</option>
+                                    <option value="MB">MB</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">8</span><b>RGB / Background Color</b></div>
+                        <div class="flex items-center gap-3">
+                            <input id="bgColor" type="color" value="#ffffff" class="w-14 h-11 border rounded-lg cursor-pointer p-1">
+                            <input id="hexColor" type="text" value="#FFFFFF" maxlength="7" class="flex-1 border rounded-lg p-2 uppercase" placeholder="#FFFFFF">
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 mt-2">
+                            <label class="text-xs text-gray-600">R<input id="rVal" type="number" min="0" max="255" value="255" class="mt-1 w-full border rounded-lg p-2"></label>
+                            <label class="text-xs text-gray-600">G<input id="gVal" type="number" min="0" max="255" value="255" class="mt-1 w-full border rounded-lg p-2"></label>
+                            <label class="text-xs text-gray-600">B<input id="bVal" type="number" min="0" max="255" value="255" class="mt-1 w-full border rounded-lg p-2"></label>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">9</span><b>Output Format & Quality</b></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="formatSelect" class="border rounded-lg p-2 text-sm">
+                                <option value="image/jpeg">JPEG — Ultra HD</option>
+                                <option value="image/webp">WebP — High Quality</option>
+                                <option value="image/png">PNG — Lossless HD</option>
+                            </select>
+                            <label class="text-xs text-gray-600">Quality
+                                <input id="qualityInput" type="number" min="10" max="100" value="100" class="mt-1 w-full border rounded-lg p-2">
+                            </label>
+                        </div>
+                    </div>
+
+                    <button id="convertBgBtn" type="button" class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-xl shadow">
+                        ✨ Convert / সম্পূর্ণ আপডেট করুন
+                    </button>
+                    <div id="loading" class="hidden text-center text-blue-700 font-medium text-sm p-2">
+                        ⏳ প্রসেস হচ্ছে... Full HD Crystal Clear Output তৈরি করা হচ্ছে।
+                    </div>
+                    <div id="errorBox" class="hidden bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm break-words leading-6"></div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="border rounded-xl p-4 bg-indigo-50/40">
+                        <div class="step mb-3"><span class="step-num">AI</span><b>Ultra-Precision AI Auto Frame & High-Accuracy Detection</b></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button id="autoDetectBtn" type="button" class="border border-indigo-200 bg-white rounded-lg py-2 text-sm font-semibold hover:bg-indigo-50">🤖 Precision Auto Detect</button>
+                            <button id="autoFrameBtn" type="button" class="border border-indigo-200 bg-white rounded-lg py-2 text-sm font-semibold hover:bg-indigo-50">🎯 Auto Frame</button>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl p-4">
+                        <div class="step mb-3"><span class="step-num">6</span><b>Crop Preview / নির্বাচন</b></div>
+                        <div id="cropStage" class="h-72 sm:h-80 bg-slate-900 rounded-lg overflow-hidden relative flex items-center justify-center">
+                            <canvas id="cropCanvas" class="hidden"></canvas>
+                            <div id="cropOverlay"></div>
+                            <span id="cropPlaceholder" class="text-slate-400 text-sm text-center leading-6 px-6 max-w-sm break-words">ছবি আপলোড করলে এখানে Crop Preview দেখা যাবে</span>
+                        </div>
+                        <div class="flex gap-2 mt-3">
+                            <button id="centerCrop" type="button" class="flex-1 border rounded-lg py-2 text-sm hover:bg-slate-50">Center Crop</button>
+                            <button id="resetCrop" type="button" class="flex-1 border rounded-lg py-2 text-sm hover:bg-slate-50">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="border-2 border-green-200 rounded-xl p-4 bg-green-50/30">
+                        <div class="step mb-3"><span class="step-num">10</span><b>Download-এর আগে Final Review</b></div>
+                        <div id="reviewBox" class="min-h-72 sm:min-h-80 rounded-lg border bg-white checker flex items-center justify-center overflow-hidden">
+                            <img id="resultImage" class="max-h-full max-w-full object-contain hidden" alt="Final Review">
+                            <span id="reviewPlaceholder" class="text-gray-400 text-sm">Convert করার পর Premium Quality Review এখানে দেখা যাবে</span>
+                        </div>
+                        <div id="resultInfo" class="hidden grid grid-cols-2 gap-2 mt-3 text-xs">
+                            <div class="bg-white border rounded-lg p-2">Resolution: <b id="outDimensions">—</b></div>
+                            <div class="bg-white border rounded-lg p-2">File Size: <b id="outSize">—</b></div>
+                            <div class="bg-white border rounded-lg p-2">Format: <b id="outFormat">—</b></div>
+                            <div class="bg-white border rounded-lg p-2">Quality: <b id="outQuality">—</b></div>
+                        </div>
+                        <a id="downloadBtn" class="hidden mt-4 w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl">
+                            📥 Full HD Quality ছবি Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <progress id="progress" value="0" max="100"></progress>
-    <div id="status">No files selected.</div>
+    <!-- ৩. PDF to JPG/PNG টুল সেকশন -->
+    <div id="pdf-to-jpg-section" class="tool-section dashboard-container">
+        <a href="#" onclick="showDashboard(event)" class="back-btn"><i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরে যান</a>
+        
+        <div class="pdf-wrap">
+            <div class="pdf-grid">
+                <section class="pdf-card">
+                    <h2>1. Select PDF File</h2>
+                    <label class="pdf-upload" id="pdfToJpgDropZone">
+                        <input id="pdfToJpgInput" type="file" accept="application/pdf">
+                        <div style="font-size:36px">☁️</div>
+                        <button type="button" class="choose-pdf-btn" id="choosePdfBtn">☁️ Choose PDF File</button>
+                        <div style="font-size:12px;color:var(--text-light);margin-top:8px">অথবা PDF এখানে Drag & Drop করুন</div>
+                    </label>
+                    <div class="fileinfo" id="pdfToJpgFileInfo"></div>
 
-    <table id="resultTable" style="display:none;">
-        <thead>
-            <tr>
-                <th>Original File</th>
-                <th>Converted File</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody id="resultBody"></tbody>
-    </table>
-</div>
+                    <h3>2. Page Range</h3>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <label class="choice active" id="allChoice" style="flex:1;min-width:80px;border:1px solid #d0d5dd;border-radius:9px;padding:10px;text-align:center;cursor:pointer"><input type="radio" name="pages" value="all" checked hidden>All Pages</label>
+                        <label class="choice" id="customChoice" style="flex:1;min-width:80px;border:1px solid #d0d5dd;border-radius:9px;padding:10px;text-align:center;cursor:pointer"><input type="radio" name="pages" value="custom" hidden>Custom Range</label>
+                    </div>
+                    <input id="pageRange" class="hidden" type="text" placeholder="উদাহরণ: 1-5, 8, 10-12" style="width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;font-size:14px;margin-top:8px">
 
-<script>
-const fileInput = document.getElementById("files");
-const convertBtn = document.getElementById("convertBtn");
-const downloadBtn = document.getElementById("downloadBtn");
-const targetSizeInput = document.getElementById("targetSize");
-const sizeUnitSelect = document.getElementById("sizeUnit");
-const targetWidthInput = document.getElementById("targetWidth");
-const targetHeightInput = document.getElementById("targetHeight");
-const dimensionUnitSelect = document.getElementById("dimensionUnit");
-const progress = document.getElementById("progress");
-const statusBox = document.getElementById("status");
-const resultTable = document.getElementById("resultTable");
-const resultBody = document.getElementById("resultBody");
+                    <h3>3. Image Quality</h3>
+                    <div class="pdf-range-row">
+                        <input id="quality" style="width:100%" type="range" min="50" max="100" value="95">
+                        <div class="pdf-value" id="qualityVal">95%</div>
+                    </div>
 
-let convertedFiles = [];
+                    <h3>4. Resolution / Scale</h3>
+                    <select id="scale" style="width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;font-size:14px">
+                        <option value="1.5">1.5× High</option>
+                        <option value="2" selected>2× Very High</option>
+                        <option value="3">3× Ultra</option>
+                        <option value="4">4× Maximum</option>
+                    </select>
 
-fileInput.addEventListener("change", () => {
-    const count = fileInput.files.length;
+                    <h3>5. Output Format</h3>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap">
+                        <label class="choice active" id="jpgChoice" style="flex:1;min-width:80px;border:1px solid #d0d5dd;border-radius:9px;padding:10px;text-align:center;cursor:pointer"><input type="radio" name="format" value="jpg" checked hidden>JPG</label>
+                        <label class="choice" id="pngChoice" style="flex:1;min-width:80px;border:1px solid #d0d5dd;border-radius:9px;padding:10px;text-align:center;cursor:pointer"><input type="radio" name="format" value="png" hidden>PNG</label>
+                    </div>
 
-    if (count === 0) {
-        statusBox.textContent = "No files selected.";
-        convertBtn.disabled = false;
-        return;
-    }
+                    <h3>6. Background</h3>
+                    <select id="bg" style="width:100%;padding:10px;border:1px solid #d0d5dd;border-radius:9px;background:#fff;font-size:14px">
+                        <option value="#ffffff">White</option>
+                        <option value="#000000">Black</option>
+                        <option value="transparent">Transparent (PNG)</option>
+                    </select>
 
-    if (count > 100) {
-        statusBox.innerHTML = '<span class="err">Please select maximum 100 photos.</span>';
-        fileInput.value = "";
-        return;
-    }
+                    <h3>7. Options</h3>
+                    <label class="pdf-check"><input id="fullPage" type="checkbox" checked disabled> Maintain Full Page (No Crop)</label>
+                    <label class="pdf-check"><input id="openAfter" type="checkbox"> Open first image after convert</label>
+                    <label class="pdf-check"><input id="autoZip" type="checkbox" checked> Auto download ZIP after convert</label>
 
-    statusBox.textContent = count + " photo(s) selected.";
-    resultTable.style.display = "none";
-    downloadBtn.style.display = "none";
-    convertedFiles = [];
-});
+                    <div class="pdf-btns">
+                        <button class="pdf-primary" id="pdfConvertBtn" disabled>🔄 Convert to JPG</button>
+                        <button class="pdf-success" id="zipBtn" disabled>⬇ Download All as ZIP</button>
+                        <button class="pdf-danger" id="pdfClearBtn">Clear</button>
+                    </div>
+                    <div class="pdf-privacy">🔒 <b>100% Client Side</b><br>আপনার PDF কোনো server-এ upload হয় না। Processing আপনার browser-েই হয়।</div>
+                </section>
 
-function loadImage(file) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        const url = URL.createObjectURL(file);
+                <section class="pdf-card">
+                    <div class="preview-head">
+                        <h2>Preview</h2>
+                        <div class="pdf-count" id="count">No PDF selected</div>
+                    </div>
+                    <div class="pdf-progress"><div class="pdf-bar" id="bar"></div></div>
+                    <div class="pdf-status" id="status">PDF নির্বাচন করে Convert করুন</div>
+                    <div class="pdf-results" id="results">
+                        <div class="pdf-empty" id="empty">📄<br><br>Converted pages এখানে দেখা যাবে</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
 
-        img.onload = () => {
-            URL.revokeObjectURL(url);
-            resolve(img);
-        };
+    <!-- ৪. PDF Merge সেকশন (সংযুক্তকৃত PDF Fusion Pro) -->
+    <div id="pdf-merge-section" class="tool-section dashboard-container">
+        <a href="#" onclick="showDashboard(event)" class="back-btn"><i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরে যান</a>
+        
+        <div class="m-hero">
+            <div>
+                <h1>PDF Fusion Pro — PDF Merger & Converter</h1>
+                <p>একাধিক PDF merge করুন অথবা PDF ফাইলগুলোকে high-quality JPG/PNG ইমেজ ফরম্যাটে কনভার্ট করে প্রিভিউ ও জিপ আকারে ডাউনলোড করুন।</p>
+            </div>
+            <div class="m-stats">
+                <div class="m-stat"><b>100%</b>Browser Processing</div>
+                <div class="m-stat"><b>Multi Mode</b>Merge & Convert</div>
+                <div class="m-stat"><b>Multi File</b>Easy Selection</div>
+            </div>
+        </div>
 
-        img.onerror = () => {
-            URL.revokeObjectURL(url);
-            reject(new Error("Could not read image"));
-        };
+        <div class="m-layout">
+            <section class="m-card m-controls">
+                <div class="m-mode-selector">
+                    <button class="m-mode-btn active" id="m_modeMerge">
+                        <span>✦ PDF Merge</span>
+                    </button>
+                    <button class="m-mode-btn" id="m_modeConvert">
+                        <span>🖼 PDF to JPG/PNG</span>
+                    </button>
+                </div>
 
-        img.src = url;
-    });
-}
+                <h2 class="m-st"><span class="m-si" id="m_stepNum">01</span><span id="m_stepTitle">Add PDF Documents</span></h2>
+                <label class="m-upload" id="m_dropZone">
+                    <input id="m_pdfInput" type="file" accept="application/pdf" multiple>
+                    <div class="m-upico">☁</div>
+                    <div class="m-upt" id="m_uploadText">Choose PDF Files</div>
+                    <div class="m-ups" id="m_uploadSub">একাধিক PDF নির্বাচন করুন অথবা এখানে Drag & Drop করুন</div>
+                    <button type="button" class="m-choose" id="m_chooseBtn">☁ Choose PDF Files</button>
+                </label>
+                <div class="m-summary" id="m_summary"></div>
+                <div class="m-div"></div>
 
-function canvasToBlob(canvas, quality = 0.95) {
-    return new Promise((resolve, reject) => {
-        canvas.toBlob(blob => {
-            if (blob) resolve(blob);
-            else reject(new Error("JPG conversion failed"));
-        }, "image/jpeg", quality);
-    });
-}
+                <div class="m-oh"><b id="m_listTitle">02 · Merge Order</b><span class="m-oc" id="m_orderCount">0 files</span></div>
+                <div class="m-list" id="m_fileList"><div class="m-empty">📄<br><br>আপনার PDF ফাইলগুলো এখানে দেখা যাবে</div></div>
+                <div class="m-ar" id="m_listActions"><button class="m-sb" id="m_addBtn">＋ Add More</button><button class="m-sb" id="m_clearBtn">Clear All</button></div>
+                <div class="m-hint" id="m_listHint">↑ ↓ ব্যবহার করে PDF-এর order পরিবর্তন করুন। তালিকার order অনুযায়ী final PDF তৈরি হবে।</div>
 
-async function getOptimizedBlob(canvas) {
-    const val = parseFloat(targetSizeInput.value);
-    let targetBytes = null;
+                <div class="m-settings-group" id="m_convertSettings" style="display:none;">
+                    <label for="m_imageFormat">Image Format</label>
+                    <select id="m_imageFormat">
+                        <option value="image/jpeg">JPG (Smaller Size)</option>
+                        <option value="image/png">PNG (Lossless Quality)</option>
+                    </select>
+                </div>
 
-    if (!isNaN(val) && val > 0) {
-        const unit = sizeUnitSelect.value;
-        targetBytes = val * (unit === "MB" ? 1024 * 1024 : 1024);
-    }
+                <button class="m-action-btn" id="m_actionBtn" disabled>✦ Merge PDFs</button>
+                <div class="m-hint" style="text-align:center" id="m_actionHint">Original page dimensions preserved · No crop · No forced resize</div>
+            </section>
 
-    let quality = 0.95;
-    let blob = await canvasToBlob(canvas, quality);
+            <section class="m-card m-workspace">
+                <div class="m-wh">
+                    <div>
+                        <div class="m-wt" id="m_workspaceTitle">Merge Workspace</div>
+                        <div class="m-ws" id="m_workspaceSub">Add PDF files to begin</div>
+                    </div>
+                    <div class="m-secure">● PRIVATE & SECURE</div>
+                </div>
+                <div class="m-preview">
+                    <div class="m-progress" id="m_progress">
+                        <div class="m-pt"><span id="m_status">Preparing…</span><b id="m_percent">0%</b></div>
+                        <div class="m-track"><div class="m-bar" id="m_bar"></div></div>
+                    </div>
+                    <div class="m-ready" id="m_ready">
+                        <div>
+                            <div class="m-ri" id="m_readyIcon">✦</div>
+                            <h3 id="m_readyTitle">Your merged PDF starts here</h3>
+                            <p id="m_readyDesc">বাম পাশে PDF ফাইলগুলো যোগ করুন। তারপর order ঠিক করে <b>Merge PDFs</b> চাপুন।</p>
+                        </div>
+                    </div>
+                    <div class="m-result" id="m_result">
+                        <div class="m-rt"><b id="m_resultTitle">✓ Merge Completed</b><span id="m_meta"></span></div>
+                        <div class="m-success" id="m_success"></div>
+                        <div id="m_downloadContainer"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="m-toast" id="m_toast"></div>
+    </div>
 
-    if (!targetBytes) return blob;
+    <!-- ড্যাশবোর্ড সুইচিং স্ক্রিপ্ট -->
+    <script>
+        function openJpegTool() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('jpeg-section').style.display = 'block';
+            document.getElementById('bg-remove-section').style.display = 'none';
+            document.getElementById('pdf-to-jpg-section').style.display = 'none';
+            document.getElementById('pdf-merge-section').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
 
-    if (blob.size <= targetBytes) return blob;
+        function openBgRemoveTool() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('jpeg-section').style.display = 'none';
+            document.getElementById('bg-remove-section').style.display = 'block';
+            document.getElementById('pdf-to-jpg-section').style.display = 'none';
+            document.getElementById('pdf-merge-section').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
 
-    for (let q = 0.9; q >= 0.1; q -= 0.1) {
-        blob = await canvasToBlob(canvas, q);
-        if (blob.size <= targetBytes) return blob;
-    }
+        function openPdfToJpgTool() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('jpeg-section').style.display = 'none';
+            document.getElementById('bg-remove-section').style.display = 'none';
+            document.getElementById('pdf-to-jpg-section').style.display = 'block';
+            document.getElementById('pdf-merge-section').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
 
-    let scale = 0.9;
-    let currentCanvas = canvas;
-    while (blob.size > targetBytes && scale > 0.1) {
-        const scaledCanvas = document.createElement("canvas");
-        scaledCanvas.width = Math.floor(canvas.width * scale);
-        scaledCanvas.height = Math.floor(canvas.height * scale);
-        const ctx = scaledCanvas.getContext("2d");
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, scaledCanvas.width, scaledCanvas.height);
-        ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+        function openPdfMergeTool() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('jpeg-section').style.display = 'none';
+            document.getElementById('bg-remove-section').style.display = 'none';
+            document.getElementById('pdf-to-jpg-section').style.display = 'none';
+            document.getElementById('pdf-merge-section').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
 
-        blob = await canvasToBlob(scaledCanvas, 0.7);
-        scale -= 0.1;
-        currentCanvas = scaledCanvas;
-    }
+        function showDashboard(e) {
+            if(e) e.preventDefault();
+            document.getElementById('jpeg-section').style.display = 'none';
+            document.getElementById('bg-remove-section').style.display = 'none';
+            document.getElementById('pdf-to-jpg-section').style.display = 'none';
+            document.getElementById('pdf-merge-section').style.display = 'none';
+            document.getElementById('main-dashboard').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+    </script>
 
-    return blob;
-}
+    <!-- ১. JPEG to JPG টুলের স্ক্রিপ্ট -->
+    <script>
+        const fileInput = document.getElementById("files");
+        const convertBtn = document.getElementById("convertBtn");
+        const downloadZipBtn = document.getElementById("downloadZipBtn");
+        const targetSizeInput = document.getElementById("targetSize");
+        const sizeUnitSelect = document.getElementById("sizeUnit");
+        const targetWidthInput = document.getElementById("targetWidth");
+        const targetHeightInput = document.getElementById("targetHeight");
+        const dimensionUnitSelect = document.getElementById("dimensionUnit");
+        const jpegProgress = document.getElementById("jpegProgress");
+        const jpegStatusBox = document.getElementById("jpegStatus");
+        const resultTable = document.getElementById("resultTable");
+        const resultBody = document.getElementById("resultBody");
 
-async function convertOne(file) {
-    const img = await loadImage(file);
+        let convertedFiles = [];
 
-    let targetW = img.naturalWidth || img.width;
-    let targetH = img.naturalHeight || img.height;
+        fileInput.addEventListener("change", () => {
+            const count = fileInput.files.length;
+            if (count === 0) {
+                jpegStatusBox.textContent = "No files selected.";
+                convertBtn.disabled = false;
+                return;
+            }
+            if (count > 100) {
+                jpegStatusBox.innerHTML = '<span class="err">Please select maximum 100 photos.</span>';
+                fileInput.value = "";
+                return;
+            }
+            jpegStatusBox.textContent = count + " photo(s) selected.";
+            resultTable.style.display = "none";
+            downloadZipBtn.style.display = "none";
+            convertedFiles = [];
+        });
 
-    const wVal = parseFloat(targetWidthInput.value);
-    const hVal = parseFloat(targetHeightInput.value);
-    const dimUnit = dimensionUnitSelect.value;
+        function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                const url = URL.createObjectURL(file);
+                img.onload = () => { URL.revokeObjectURL(url); resolve(img); };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Could not read image")); };
+                img.src = url;
+            });
+        }
 
-    let dpi = 96; // Standard web DPI for inch conversion
+        function canvasToBlob(canvas, quality = 0.95) {
+            return new Promise((resolve, reject) => {
+                canvas.toBlob(blob => {
+                    if (blob) resolve(blob);
+                    else reject(new Error("JPG conversion failed"));
+                }, "image/jpeg", quality);
+            });
+        }
 
-    if (!isNaN(wVal) && wVal > 0) {
-        targetW = dimUnit === "inch" ? Math.round(wVal * dpi) : Math.round(wVal);
-    }
-    if (!isNaN(hVal) && hVal > 0) {
-        targetH = dimUnit === "inch" ? Math.round(hVal * dpi) : Math.round(hVal);
-    }
+        async function getOptimizedBlob(canvas) {
+            const val = parseFloat(targetSizeInput.value);
+            let targetBytes = null;
+            if (!isNaN(val) && val > 0) {
+                const unit = sizeUnitSelect.value;
+                targetBytes = val * (unit === "MB" ? 1024 * 1024 : 1024);
+            }
+            let quality = 0.95;
+            let blob = await canvasToBlob(canvas, quality);
+            if (!targetBytes || blob.size <= targetBytes) return blob;
 
-    const canvas = document.createElement("canvas");
-    canvas.width = targetW;
-    canvas.height = targetH;
+            for (let q = 0.9; q >= 0.1; q -= 0.1) {
+                blob = await canvasToBlob(canvas, q);
+                if (blob.size <= targetBytes) return blob;
+            }
+            return blob;
+        }
 
-    const ctx = canvas.getContext("2d");
+        async function convertOne(file) {
+            const img = await loadImage(file);
+            let targetW = img.naturalWidth || img.width;
+            let targetH = img.naturalHeight || img.height;
+            const wVal = parseFloat(targetWidthInput.value);
+            const hVal = parseFloat(targetHeightInput.value);
+            const dimUnit = dimensionUnitSelect.value;
+            let dpi = 96;
 
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (!isNaN(wVal) && wVal > 0) {
+                targetW = dimUnit === "inch" ? Math.round(wVal * dpi) : Math.round(wVal);
+            }
+            if (!isNaN(hVal) && hVal > 0) {
+                targetH = dimUnit === "inch" ? Math.round(hVal * dpi) : Math.round(hVal);
+            }
 
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            const canvas = document.createElement("canvas");
+            canvas.width = targetW;
+            canvas.height = targetH;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    const blob = await getOptimizedBlob(canvas);
+            const blob = await getOptimizedBlob(canvas);
+            const baseName = file.name.replace(/\.(jpeg|jpg)$/i, "");
+            return { name: baseName + ".jpg", blob: blob };
+        }
 
-    const baseName = file.name.replace(/\.(jpeg|jpg)$/i, "");
-    return {
-        name: baseName + ".jpg",
-        blob: blob
-    };
-}
+        convertBtn.addEventListener("click", async () => {
+            const files = Array.from(fileInput.files);
+            if (!files.length) { alert("Please select JPEG photos first."); return; }
+            if (files.length > 100) { alert("Maximum 100 photos can be converted at a time."); return; }
 
-convertBtn.addEventListener("click", async () => {
-    const files = Array.from(fileInput.files);
+            convertedFiles = [];
+            resultBody.innerHTML = "";
+            resultTable.style.display = "table";
+            jpegProgress.style.display = "block";
+            jpegProgress.value = 0;
+            convertBtn.disabled = true;
+            downloadZipBtn.style.display = "none";
 
-    if (!files.length) {
-        alert("Please select JPEG photos first.");
-        return;
-    }
+            let success = 0;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const row = document.createElement("tr");
+                try {
+                    const result = await convertOne(file);
+                    convertedFiles.push(result);
+                    success++;
+                    row.innerHTML = "<td>" + escapeHtml(file.name) + "</td><td>" + escapeHtml(result.name) + "</td>" + '<td class="ok">✓ Converted</td>';
+                } catch (error) {
+                    row.innerHTML = "<td>" + escapeHtml(file.name) + "</td><td>-</td>" + '<td class="err">✗ Failed</td>';
+                }
+                resultBody.appendChild(row);
+                jpegProgress.value = Math.round(((i + 1) / files.length) * 100);
+                jpegStatusBox.textContent = "Converting... " + (i + 1) + " / " + files.length;
+                await new Promise(r => setTimeout(r, 10));
+            }
+            convertBtn.disabled = false;
+            if (success > 0) {
+                downloadZipBtn.style.display = "inline-block";
+                jpegStatusBox.innerHTML = '<span class="ok">✓ ' + success + " photo(s) converted successfully.</span>" + '<div class="small">Click “Create ZIP File” below to generate the download link.</div>';
+            } else {
+                jpegStatusBox.innerHTML = '<span class="err">No photos could be converted.</span>';
+            }
+        });
 
-    if (files.length > 100) {
-        alert("Maximum 100 photos can be converted at a time.");
-        return;
-    }
+        downloadZipBtn.addEventListener("click", async () => {
+            if (!convertedFiles.length) return;
+            downloadZipBtn.disabled = true;
+            jpegStatusBox.textContent = "Creating ZIP file, please wait...";
+            try {
+                const zipBlob = await createZip(convertedFiles);
+                const url = URL.createObjectURL(zipBlob);
+                jpegStatusBox.innerHTML = `<span class="ok">✓ ZIP created successfully!</span><br><a class="download-link" href="${url}" download="Student_Photos_JPG.zip">📥 Click Here to Download ZIP File</a>`;
+            } catch (e) {
+                jpegStatusBox.innerHTML = '<span class="err">ZIP creation failed. Please try again.</span>';
+                downloadZipBtn.disabled = false;
+            }
+        });
 
-    convertedFiles = [];
-    resultBody.innerHTML = "";
-    resultTable.style.display = "table";
-    progress.style.display = "block";
-    progress.value = 0;
-    convertBtn.disabled = true;
-    downloadBtn.style.display = "none";
+        function escapeHtml(text) {
+            return text.replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
+        }
 
-    let success = 0;
+        async function createZip(files) {
+            const encoder = new TextEncoder();
+            const localParts = [];
+            const centralParts = [];
+            let offset = 0;
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const row = document.createElement("tr");
+            for (const item of files) {
+                const nameBytes = encoder.encode(item.name);
+                const data = new Uint8Array(await item.blob.arrayBuffer());
+                const crc = crc32(data);
+                const local = new Uint8Array(30 + nameBytes.length);
+                const lv = new DataView(local.buffer);
+                lv.setUint32(0, 0x04034b50, true);
+                lv.setUint16(4, 20, true);
+                lv.setUint32(14, crc, true);
+                lv.setUint32(18, data.length, true);
+                lv.setUint32(22, data.length, true);
+                lv.setUint16(26, nameBytes.length, true);
+                local.set(nameBytes, 30);
+                localParts.push(local, data);
 
+                const central = new Uint8Array(46 + nameBytes.length);
+                const cv = new DataView(central.buffer);
+                cv.setUint32(0, 0x02014b50, true);
+                cv.setUint16(4, 20, true);
+                cv.setUint16(6, 20, true);
+                cv.setUint32(16, crc, true);
+                cv.setUint32(20, data.length, true);
+                cv.setUint32(24, data.length, true);
+                cv.setUint16(28, nameBytes.length, true);
+                cv.setUint32(42, offset, true);
+                central.set(nameBytes, 46);
+                centralParts.push(central);
+                offset += local.length + data.length;
+            }
+
+            let centralSize = 0;
+            for (const c of centralParts) centralSize += c.length;
+            const end = new Uint8Array(22);
+            const ev = new DataView(end.buffer);
+            ev.setUint32(0, 0x06054b50, true);
+            ev.setUint16(8, files.length, true);
+            ev.setUint16(10, files.length, true);
+            ev.setUint32(12, centralSize, true);
+            ev.setUint32(16, offset, true);
+
+            return new Blob([...localParts, ...centralParts, end], { type: "application/zip" });
+        }
+
+        function crc32(data) {
+            let table = crc32.table;
+            if (!table) {
+                table = crc32.table = new Uint32Array(256);
+                for (let n = 0; n < 256; n++) {
+                    let c = n;
+                    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+                    table[n] = c >>> 0;
+                }
+            }
+            let crc = 0xffffffff;
+            for (let i = 0; i < data.length; i++) crc = table[(crc ^ data[i]) & 0xff] ^ (crc >>> 8);
+            return (crc ^ 0xffffffff) >>> 0;
+        }
+    </script>
+
+    <!-- ২. ব্যাকগ্রাউন্ড রিমুভার স্ক্রিপ্ট -->
+    <script type="module">
+        let removeBackground = null;
         try {
-            const result = await convertOne(file);
-            convertedFiles.push(result);
-            success++;
-
-            row.innerHTML =
-                "<td>" + escapeHtml(file.name) + "</td>" +
-                "<td>" + escapeHtml(result.name) + "</td>" +
-                '<td class="ok">✓ Converted</td>';
-        } catch (error) {
-            row.innerHTML =
-                "<td>" + escapeHtml(file.name) + "</td>" +
-                "<td>-</td>" +
-                '<td class="err">✗ Failed</td>';
+            ({ removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm'));
+        } catch (e) {
+            try {
+                ({ removeBackground } = await import('https://esm.sh/@imgly/background-removal@1.7.0'));
+            } catch (err) {}
         }
 
-        resultBody.appendChild(row);
+        const BG_REMOVE_CONFIG = {
+            publicPath: 'https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/',
+            model: 'isnet_fp16',
+            device: 'cpu',
+            proxyToWorker: false,
+            debug: false,
+            output: { format: 'image/png', quality: 1 },
+            progress: (key, current, total) => {
+                const n = Number(current) || 0;
+                const t = Number(total) || 1;
+                const pct = (n / t) * 100;
+                setProgress(Math.min(95, Math.max(displayedProgress, pct)), 'AI background removal চলছে...');
+            }
+        };
 
-        const percent = Math.round(((i + 1) / files.length) * 100);
-        progress.value = percent;
-        statusBox.textContent =
-            "Converting... " + (i + 1) + " / " + files.length;
+        const $ = id => document.getElementById(id);
+        const imageInput=$('imageInput'), originalImage=$('originalImage'), originalPlaceholder=$('originalPlaceholder');
+        const photoPreset=$('photoPreset'), presetMm=$('presetMm'), presetPx=$('presetPx');
+        const cropCanvas=$('cropCanvas'), cropOverlay=$('cropOverlay'), cropPlaceholder=$('cropPlaceholder');
+        const widthInput=$('widthInput'), heightInput=$('heightInput'), sizeWidth=$('sizeWidth'), sizeHeight=$('sizeHeight');
+        const cropW=$('cropW'), cropH=$('cropH'), aspectPreset=$('aspectPreset'), lockRatio=$('lockRatio');
+        const bgColor=$('bgColor'), hexColor=$('hexColor'), rVal=$('rVal'), gVal=$('gVal'), bVal=$('bVal');
+        const formatSelect=$('formatSelect'), qualityInput=$('qualityInput'), convertBtn=$('convertBgBtn');
+        const resultImage=$('resultImage'), downloadBtn=$('downloadBtn'), loading=$('loading'), errorBox=$('errorBox');
+        const progressWrap=$('progressWrap'), progressBar=$('progressBar'), progressPercent=$('progressPercent'), progressText=$('progressText');
 
-        await new Promise(r => setTimeout(r, 10));
-    }
+        let originalFile=null, originalBitmap=null, cropRect=null, drag=null, lastUrl=null, sourceHasTransparency=false, detectedCutout=null, detectionRunning=false;
+        let displayedProgress=0;
 
-    convertBtn.disabled = false;
-
-    if (success > 0) {
-        downloadBtn.style.display = "inline-block";
-        statusBox.innerHTML =
-            '<span class="ok">✓ ' + success + " photo(s) converted successfully.</span>" +
-            '<div class="small">Click “Create ZIP File” below to generate the download link.</div>';
-    } else {
-        statusBox.innerHTML = '<span class="err">No photos could be converted.</span>';
-    }
-});
-
-downloadBtn.addEventListener("click", async () => {
-    if (!convertedFiles.length) return;
-
-    downloadBtn.disabled = true;
-    statusBox.textContent = "Creating ZIP file, please wait...";
-
-    try {
-        const zipBlob = await createZip(convertedFiles);
-        const url = URL.createObjectURL(zipBlob);
-
-        statusBox.innerHTML = `
-            <span class="ok">✓ ZIP created successfully!</span><br>
-            <a class="download-link" href="${url}" download="Student_Photos_JPG.zip">
-                📥 Click Here to Download ZIP File
-            </a>
-        `;
-    } catch (e) {
-        statusBox.innerHTML =
-            '<span class="err">ZIP creation failed. Please try again.</span>';
-        downloadBtn.disabled = false;
-    }
-});
-
-function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, c => ({
-        "&":"&amp;", "<":"&lt;", ">":"&gt;",
-        '"':"&quot;", "'":"&#039;"
-    }[c]));
-}
-
-async function createZip(files) {
-    const encoder = new TextEncoder();
-    const localParts = [];
-    const centralParts = [];
-    let offset = 0;
-
-    for (const item of files) {
-        const nameBytes = encoder.encode(item.name);
-        const data = new Uint8Array(await item.blob.arrayBuffer());
-        const crc = crc32(data);
-
-        const local = new Uint8Array(30 + nameBytes.length);
-        const lv = new DataView(local.buffer);
-
-        lv.setUint32(0, 0x04034b50, true);
-        lv.setUint16(4, 20, true);
-        lv.setUint16(6, 0, true);
-        lv.setUint16(8, 0, true);
-        lv.setUint16(10, 0, true);
-        lv.setUint16(12, 0, true);
-        lv.setUint32(14, crc, true);
-        lv.setUint32(18, data.length, true);
-        lv.setUint32(22, data.length, true);
-        lv.setUint16(26, nameBytes.length, true);
-        lv.setUint16(28, 0, true);
-        local.set(nameBytes, 30);
-
-        localParts.push(local, data);
-
-        const central = new Uint8Array(46 + nameBytes.length);
-        const cv = new DataView(central.buffer);
-
-        cv.setUint32(0, 0x02014b50, true);
-        cv.setUint16(4, 20, true);
-        cv.setUint16(6, 20, true);
-        cv.setUint16(8, 0, true);
-        cv.setUint16(10, 0, true);
-        cv.setUint16(12, 0, true);
-        cv.setUint16(14, 0, true);
-        cv.setUint32(16, crc, true);
-        cv.setUint32(20, data.length, true);
-        cv.setUint32(24, data.length, true);
-        cv.setUint16(28, nameBytes.length, true);
-        cv.setUint16(30, 0, true);
-        cv.setUint16(32, 0, true);
-        cv.setUint16(34, 0, true);
-        cv.setUint16(36, 0, true);
-        cv.setUint32(38, 0, true);
-        cv.setUint32(42, offset, true);
-        central.set(nameBytes, 46);
-
-        centralParts.push(central);
-        offset += local.length + data.length;
-    }
-
-    const centralOffset = offset;
-    let centralSize = 0;
-
-    for (const c of centralParts) centralSize += c.length;
-
-    const end = new Uint8Array(22);
-    const ev = new DataView(end.buffer);
-
-    ev.setUint32(0, 0x06054b50, true);
-    ev.setUint16(4, 0, true);
-    ev.setUint16(6, 0, true);
-    ev.setUint16(8, files.length, true);
-    ev.setUint16(10, files.length, true);
-    ev.setUint32(12, centralSize, true);
-    ev.setUint32(16, centralOffset, true);
-    ev.setUint16(20, 0, true);
-
-    return new Blob([...localParts, ...centralParts, end],
-        { type: "application/zip" });
-}
-
-function crc32(data) {
-    let table = crc32.table;
-    if (!table) {
-        table = crc32.table = new Uint32Array(256);
-        for (let n = 0; n < 256; n++) {
-            let c = n;
-            for (let k = 0; k < 8; k++)
-                c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
-            table[n] = c >>> 0;
+        function setProgress(percent, text='ছবির কাজ চলছে...'){
+            const raw=Math.max(0, Math.min(100, Number(percent)||0));
+            displayedProgress=Math.max(displayedProgress,raw);
+            progressWrap.classList.remove('hidden');
+            progressBar.style.width=displayedProgress+'%';
+            progressPercent.textContent=Math.round(displayedProgress)+'%';
+            progressText.textContent=text;
         }
-    }
+        function hideProgress(){ displayedProgress=0; progressWrap.classList.add('hidden'); }
+        function clamp(v,min,max){return Math.max(min,Math.min(max,v))}
+        function showError(msg){errorBox.textContent=msg;errorBox.classList.remove('hidden')}
+        function clearError(){errorBox.classList.add('hidden');errorBox.textContent=''}
+        function bytesText(n){
+            if(n<1024) return n+' B';
+            if(n<1024*1024) return (n/1024).toFixed(1)+' KB';
+            return (n/1024/1024).toFixed(2)+' MB';
+        }
+        function hexFromRGB(r,g,b){return '#'+[r,g,b].map(v=>Number(v).toString(16).padStart(2,'0')).join('').toUpperCase()}
+        function validHex(v){return /^#[0-9A-F]{6}$/i.test(v)}
+        function syncColorFromHex(){
+            let h=hexColor.value.trim();
+            if(!validHex(h)) return;
+            h=h.toUpperCase(); hexColor.value=h; bgColor.value=h;
+            rVal.value=parseInt(h.slice(1,3),16); gVal.value=parseInt(h.slice(3,5),16); bVal.value=parseInt(h.slice(5,7),16);
+        }
+        function syncColorFromRGB(){
+            const r=clamp(parseInt(rVal.value)||0,0,255),g=clamp(parseInt(gVal.value)||0,0,255),b=clamp(parseInt(bVal.value)||0,0,255);
+            rVal.value=r;gVal.value=g;bVal.value=b;
+            const h=hexFromRGB(r,g,b); hexColor.value=h;bgColor.value=h;
+        }
+        bgColor.addEventListener('input',()=>{hexColor.value=bgColor.value.toUpperCase();syncColorFromHex()});
+        hexColor.addEventListener('change',syncColorFromHex);
+        [rVal,gVal,bVal].forEach(x=>x.addEventListener('change',syncColorFromRGB));
 
-    let crc = 0xffffffff;
-    for (let i = 0; i < data.length; i++)
-        crc = table[(crc ^ data[i]) & 0xff] ^ (crc >>> 8);
+        const PHOTO_PRESETS = {
+            passport: {w:450,h:570,mmW:38.1,mmH:48.26,dpi:300,label:'Passport Size'},
+            stamp:    {w:240,h:300,mmW:20.32,mmH:25.40,dpi:300,label:'Stamp Size'}
+        };
 
-    return (crc ^ 0xffffffff) >>> 0;
-}
-</script>
+        function updatePresetInfo(){
+            const p=PHOTO_PRESETS[photoPreset.value];
+            if(!p){ presetMm.textContent='Custom'; presetPx.textContent='Custom'; return; }
+            presetMm.textContent=`${p.mmW.toFixed(2)} × ${p.mmH.toFixed(2)} mm`;
+            presetPx.textContent=`${p.w} × ${p.h} px @ ${p.dpi} DPI`;
+        }
+        function applyPhotoPreset(){
+            const p=PHOTO_PRESETS[photoPreset.value];
+            updatePresetInfo();
+            if(!p || !originalBitmap) return;
+            widthInput.value=p.w; heightInput.value=p.h;
+            sizeWidth.value=p.w; sizeHeight.value=p.h;
+            cropW.value=Math.min(p.w,originalBitmap.width);
+            cropH.value=Math.min(p.h,originalBitmap.height);
+            aspectPreset.value=(p.w/p.h).toFixed(6);
+            centerCrop();
+        }
+        photoPreset.addEventListener('change', applyPhotoPreset);
+        updatePresetInfo();
 
+        function setDimensions(w,h,source='resolution'){
+            if(source==='resolution'){widthInput.value=Math.round(w);heightInput.value=Math.round(h)}
+            else {sizeWidth.value=Math.round(w);sizeHeight.value=Math.round(h)}
+        }
+
+        function autoFillImageInfo(){
+            if(!originalBitmap)return;
+            const w=originalBitmap.width, h=originalBitmap.height;
+            setDimensions(w,h); setDimensions(w,h,'size');
+            cropW.value=w; cropH.value=h; cropRect={x:0,y:0,w,h};
+            aspectPreset.value='free'; $('fitMode').value='contain';
+            drawCropCanvas();
+        }
+
+        widthInput.addEventListener('input',()=>{
+            if(lockRatio.checked && originalBitmap && widthInput.value){
+                heightInput.value=Math.max(1,Math.round(Number(widthInput.value)*originalBitmap.height/originalBitmap.width));
+            }
+        });
+        heightInput.addEventListener('input',()=>{
+            if(lockRatio.checked && originalBitmap && heightInput.value){
+                widthInput.value=Math.max(1,Math.round(Number(heightInput.value)*originalBitmap.width/originalBitmap.height));
+            }
+        });
+        $('halfResolution').onclick=()=>{if(originalBitmap)setDimensions(originalBitmap.width*.5,originalBitmap.height*.5)}
+        $('doubleResolution').onclick=()=>{if(originalBitmap)setDimensions(originalBitmap.width*2,originalBitmap.height*2)}
+
+        function removeWatermarkFromCanvas(srcCanvas) {
+            const w = srcCanvas.width, h = srcCanvas.height;
+            const ctx = srcCanvas.getContext('2d', { willReadFrequently: true });
+            const imgData = ctx.getImageData(0, 0, w, h);
+            const data = imgData.data;
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i+1], b = data[i+2], a = data[i+3];
+                const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+                const maxC = Math.max(r, g, b), minC = Math.min(r, g, b);
+                const sat = maxC - minC;
+                if (sat < 18 && luminance > 210 && a > 0) {
+                    const idx = i / 4, x = idx % w, y = Math.floor(idx / w);
+                    if (x > 0 && x < w - 1 && y > 0 && y < h - 1) {
+                        const prevIdx = ((y) * w + (x - 1)) * 4;
+                        const nextIdx = ((y) * w + (x + 1)) * 4;
+                        if (data[prevIdx + 3] > 0) {
+                            data[i] = Math.round(data[prevIdx] * 0.5 + data[nextIdx] * 0.5);
+                            data[i + 1] = Math.round(data[prevIdx + 1] * 0.5 + data[nextIdx + 1] * 0.5);
+                            data[i + 2] = Math.round(data[prevIdx + 2] * 0.5 + data[nextIdx + 2] * 0.5);
+                        }
+                    }
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            return srcCanvas;
+        }
+
+        async function loadImageFile(file){
+            let rawCanvas = null;
+            if(window.createImageBitmap){
+                try{
+                    const bmp=await createImageBitmap(file,{imageOrientation:'from-image'});
+                    const c=document.createElement('canvas');
+                    c.width=bmp.width; c.height=bmp.height;
+                    c.getContext('2d').drawImage(bmp,0,0);
+                    if(bmp.close) bmp.close();
+                    rawCanvas = c;
+                }catch(e){}
+            }
+            if (!rawCanvas) {
+                rawCanvas = await new Promise((resolve,reject)=>{
+                    const reader=new FileReader();
+                    reader.onload=()=>{
+                        const im=new Image();
+                        im.onload=()=>{
+                            const c=document.createElement('canvas');
+                            c.width=im.width; c.height=im.height;
+                            c.getContext('2d').drawImage(im,0,0);
+                            resolve(c);
+                        };
+                        im.onerror=()=>reject(new Error('Image decode error'));
+                        im.src=reader.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+            return removeWatermarkFromCanvas(rawCanvas);
+        }
+
+        function drawCropCanvas(){
+            if(!originalBitmap)return;
+            const stage=$('cropStage'), maxW=stage.clientWidth-8, maxH=stage.clientHeight-8;
+            const scale=Math.min(maxW/originalBitmap.width, maxH/originalBitmap.height, 1);
+            cropCanvas.width=Math.max(1,Math.round(originalBitmap.width*scale));
+            cropCanvas.height=Math.max(1,Math.round(originalBitmap.height*scale));
+            const ctx=cropCanvas.getContext('2d');
+            ctx.clearRect(0,0,cropCanvas.width,cropCanvas.height);
+            ctx.drawImage(originalBitmap,0,0,cropCanvas.width,cropCanvas.height);
+            cropCanvas.classList.remove('hidden'); cropPlaceholder.classList.add('hidden');
+            updateOverlay();
+        }
+        function updateOverlay(){
+            if(!cropRect || !originalBitmap)return;
+            const sx=cropCanvas.width/originalBitmap.width, sy=cropCanvas.height/originalBitmap.height;
+            cropOverlay.style.display='block';
+            cropOverlay.style.left=(cropCanvas.offsetLeft+cropRect.x*sx)+'px';
+            cropOverlay.style.top=(cropCanvas.offsetTop+cropRect.y*sy)+'px';
+            cropOverlay.style.width=(cropRect.w*sx)+'px';
+            cropOverlay.style.height=(cropRect.h*sy)+'px';
+        }
+        function resetCrop(){
+            if(!originalBitmap)return;
+            cropRect={x:0,y:0,w:originalBitmap.width,h:originalBitmap.height};
+            cropW.value=originalBitmap.width; cropH.value=originalBitmap.height; updateOverlay();
+        }
+        function centerCrop(){
+            if(!originalBitmap)return;
+            let w=Number(cropW.value)||originalBitmap.width, h=Number(cropH.value)||originalBitmap.height;
+            const preset=aspectPreset.value;
+            if(preset!=='free'){
+                const ar=Number(preset);
+                if(w/h>ar) w=h*ar; else h=w/ar;
+            }
+            w=clamp(w,1,originalBitmap.width); h=clamp(h,1,originalBitmap.height);
+            cropRect={x:(originalBitmap.width-w)/2,y:(originalBitmap.height-h)/2,w,h};
+            cropW.value=Math.round(w); cropH.value=Math.round(h); updateOverlay();
+        }
+        $('resetCrop').onclick=resetCrop;
+        $('centerCrop').onclick=centerCrop;
+        $('applyCropBox').onclick=centerCrop;
+
+        aspectPreset.addEventListener('change',()=>{
+            if(aspectPreset.value!=='free'){
+                let w=Number(cropW.value)||originalBitmap?.width||1;
+                let h=Math.max(1,Math.round(w/Number(aspectPreset.value)));
+                if(originalBitmap && h>originalBitmap.height){h=originalBitmap.height;w=Math.round(h*Number(aspectPreset.value))}
+                cropW.value=Math.round(w); cropH.value=Math.round(h); centerCrop();
+            }
+        });
+
+        function pointerPos(e){
+            const r=cropCanvas.getBoundingClientRect();
+            return {x:(e.clientX-r.left)*(originalBitmap.width/cropCanvas.width),y:(e.clientY-r.top)*(originalBitmap.height/cropCanvas.height)};
+        }
+        cropCanvas.addEventListener('pointerdown',e=>{
+            if(!originalBitmap)return;
+            cropCanvas.setPointerCapture(e.pointerId);
+            const p=pointerPos(e);
+            drag={startX:p.x,startY:p.y,base:{...cropRect},mode:'new'};
+        });
+        cropCanvas.addEventListener('pointermove',e=>{
+            if(!drag)return;
+            const p=pointerPos(e);
+            let x=Math.min(drag.startX,p.x), y=Math.min(drag.startY,p.y), w=Math.abs(p.x-drag.startX), h=Math.abs(p.y-drag.startY);
+            if(aspectPreset.value!=='free'){
+                const ar=Number(aspectPreset.value);
+                if(w/h>ar)w=h*ar;else h=w/ar;
+            }
+            w=clamp(w,1,originalBitmap.width); h=clamp(h,1,originalBitmap.height);
+            x=clamp(x,0,originalBitmap.width-w); y=clamp(y,0,originalBitmap.height-h);
+            cropRect={x,y,w,h}; cropW.value=Math.round(w); cropH.value=Math.round(h); updateOverlay();
+        });
+        cropCanvas.addEventListener('pointerup',()=>drag=null);
+        cropCanvas.addEventListener('pointercancel',()=>drag=null);
+
+        imageInput.addEventListener('change',async e=>{
+            clearError(); hideProgress();
+            const picked=e.target.files && e.target.files[0];
+            if(!picked)return;
+
+            convertBtn.disabled=true;
+            originalFile=null; originalBitmap=null; detectedCutout=null; sourceHasTransparency=false;
+
+            const immediateUrl=URL.createObjectURL(picked);
+            originalImage.src=immediateUrl; originalImage.classList.remove('hidden'); originalPlaceholder.classList.add('hidden');
+            $('fileInfo').textContent=`${picked.name} • ${bytesText(picked.size)}`;
+
+            setTimeout(async()=>{
+                try{
+                    originalFile=picked;
+                    originalBitmap=await loadImageFile(originalFile);
+                    autoFillImageInfo();
+                    if(immediateUrl)URL.revokeObjectURL(immediateUrl);
+
+                    $('originalDimensions').textContent=`Original: ${originalBitmap.width} × ${originalBitmap.height} px`;
+                    setDimensions(originalBitmap.width,originalBitmap.height);
+                    setDimensions(originalBitmap.width,originalBitmap.height,'size');
+                    cropW.value=originalBitmap.width; cropH.value=originalBitmap.height;
+                    drawCropCanvas();
+
+                    resultImage.classList.add('hidden'); downloadBtn.classList.add('hidden'); $('resultInfo').classList.add('hidden');
+                    await autoDetectSubject();
+                }catch(err){
+                    showError(err.message||'ছবি পড়া যায়নি।');
+                }finally{
+                    convertBtn.disabled=false;
+                }
+            },50);
+        });
+
+        function makeCanvas(w,h){
+            const c=document.createElement('canvas'); c.width=Math.max(1,Math.round(w)); c.height=Math.max(1,Math.round(h)); return c;
+        }
+        function drawBackground(ctx,w,h){
+            ctx.fillStyle=bgColor.value||'#FFFFFF'; ctx.fillRect(0,0,w,h);
+        }
+        function setDetectStatus(text, ok=false){
+            const el=$('detectStatus'); el.textContent=text; el.className='text-center text-xs mt-2 min-h-[20px] '+(ok?'text-green-700 font-semibold':'text-blue-700');
+        }
+        function alphaBoundingBox(img){
+            const c=document.createElement('canvas'); c.width=img.width; c.height=img.height;
+            const ctx=c.getContext('2d',{willReadFrequently:true}); ctx.drawImage(img,0,0);
+            const data=ctx.getImageData(0,0,c.width,c.height).data;
+            let minX=c.width, minY=c.height, maxX=-1, maxY=-1, count=0;
+            for(let y=0;y<c.height;y+=2){
+                for(let x=0;x<c.width;x+=2){
+                    if(data[(y*c.width+x)*4+3]>28){
+                        minX=Math.min(minX,x); minY=Math.min(minY,y);
+                        maxX=Math.max(maxX,x); maxY=Math.max(maxY,y); count++;
+                    }
+                }
+            }
+            if(count<20 || maxX<minX || maxY<minY) return null;
+            return {x:minX,y:minY,w:maxX-minX+1,h:maxY-minY+1};
+        }
+        function applySmartFrameFromBox(box){
+            if(!originalBitmap)return;
+            const padding=0.07;
+            let x=clamp(box.x-box.w*padding,0,originalBitmap.width);
+            let y=clamp(box.y-box.h*padding,0,originalBitmap.height);
+            let w=clamp(box.w*(1+padding*2),1,originalBitmap.width-x);
+            let h=clamp(box.h*(1+padding*2),1,originalBitmap.height-y);
+            cropRect={x,y,w,h}; cropW.value=Math.round(w); cropH.value=Math.round(h); updateOverlay();
+        }
+
+        async function autoDetectSubject(){
+            if(!originalFile||!originalBitmap||detectionRunning)return false;
+            detectionRunning=true;
+            if(typeof removeBackground!=='function'){
+                detectionRunning=false; return false;
+            }
+            setDetectStatus('🤖 AI background removal চলছে...');
+            try{
+                const blob=await removeBackground(originalFile, BG_REMOVE_CONFIG);
+                const rawCutout = await loadImageFile(blob);
+                detectedCutout = removeWatermarkFromCanvas(rawCutout);
+                sourceHasTransparency=true;
+                const box=alphaBoundingBox(detectedCutout);
+                if(box){ applySmartFrameFromBox(box); setDetectStatus('✓ Background removed successfully!',true); return true; }
+            }catch(err){
+                detectedCutout=null; sourceHasTransparency=false;
+                setDetectStatus('⚠️ Background remove করা সম্ভব হয়নি।');
+            }finally{
+                detectionRunning=false;
+            }
+        }
+
+        $('autoDetectBtn').onclick=autoDetectSubject;
+        $('autoFrameBtn').onclick=async()=>{
+            if(detectedCutout){
+                const box=alphaBoundingBox(detectedCutout);
+                if(box){applySmartFrameFromBox(box);return;}
+            }
+            await autoDetectSubject();
+        };
+
+        async function getSourceImage(){
+            if(!originalFile || !originalBitmap) throw new Error('ছবি পাওয়া যায়নি।');
+            if(detectedCutout && sourceHasTransparency) return detectedCutout;
+            if(typeof removeBackground!=='function') return originalBitmap;
+            try{
+                const blob=await removeBackground(originalFile, BG_REMOVE_CONFIG);
+                const rawCutout=await loadImageFile(blob);
+                detectedCutout=removeWatermarkFromCanvas(rawCutout);
+                sourceHasTransparency=true;
+                return detectedCutout;
+            }catch(e){
+                return originalBitmap;
+            }
+        }
+
+        function renderBase(source){
+            const sw=source.width, sh=source.height;
+            const r=cropRect||{x:0,y:0,w:sw,h:sh};
+            const cw=clamp(r.w,1,sw), ch=clamp(r.h,1,sh), cx=clamp(r.x,0,sw-cw), cy=clamp(r.y,0,sh-ch);
+            const preset=PHOTO_PRESETS[photoPreset.value];
+            const targetW=preset ? preset.w : Math.max(1,Math.round(Number(sizeWidth.value)||Number(widthInput.value)||cw));
+            const targetH=preset ? preset.h : Math.max(1,Math.round(Number(sizeHeight.value)||Number(heightInput.value)||ch));
+            const mode=preset ? 'cover' : $('fitMode').value;
+            let outW=targetW, outH=targetH;
+            
+            if(mode==='contain'){
+                const s=Math.min(targetW/cw,targetH/ch); outW=Math.max(1,Math.round(cw*s)); outH=Math.max(1,Math.round(ch*s));
+            }
+
+            const canvas=makeCanvas(outW,outH), ctx=canvas.getContext('2d',{alpha:true});
+            drawBackground(ctx,outW,outH);
+
+            if(mode==='cover'){
+                const s=Math.max(outW/cw,outH/ch), dw=cw*s, dh=ch*s;
+                ctx.drawImage(source,cx,cy,cw,ch,(outW-dw)/2,(outH-dh)/2,dw,dh);
+            }else{
+                ctx.drawImage(source,cx,cy,cw,ch,0,0,outW,outH);
+            }
+            return canvas;
+        }
+
+        function canvasBlob(canvas,type,quality){
+            return new Promise(resolve=>canvas.toBlob(resolve,type,quality));
+        }
+
+        convertBtn.addEventListener('click',async()=>{
+            clearError();
+            if(!originalFile||!originalBitmap){showError('দয়া করে ছবি আপলোড করুন।');return}
+            loading.classList.remove('hidden'); convertBtn.disabled=true;
+            try{
+                const source=await getSourceImage();
+                const canvas=renderBase(source);
+                const type=formatSelect.value, q=clamp((Number(qualityInput.value)||100)/100,.1,1);
+                const blob=await canvasBlob(canvas,type,q);
+                if(!blob)throw new Error('ফাইল তৈরি করা যায়নি।');
+                if(lastUrl)URL.revokeObjectURL(lastUrl);
+                lastUrl=URL.createObjectURL(blob);
+                resultImage.src=lastUrl; resultImage.classList.remove('hidden'); $('reviewPlaceholder').classList.add('hidden');
+                $('outDimensions').textContent=`${canvas.width} × ${canvas.height} px`;
+                $('outSize').textContent=bytesText(blob.size);
+                $('outFormat').textContent=type.split('/')[1].toUpperCase();
+                $('outQuality').textContent=type==='image/png'?'Lossless':Math.round(q*100)+'%';
+                $('resultInfo').classList.remove('hidden');
+                downloadBtn.href=lastUrl;
+                downloadBtn.download=`processed-image.${type.split('/')[1]}`;
+                downloadBtn.classList.remove('hidden');
+            }catch(err){
+                showError('সমস্যা হয়েছে: '+err.message);
+            }finally{
+                loading.classList.add('hidden'); convertBtn.disabled=false;
+            }
+        });
+    </script>
+
+    <!-- ৩. PDF to JPG/PNG টুলের স্ক্রিপ্ট -->
+    <script>
+        (function() {
+            const $ = id => document.getElementById(id);
+            let pdfFile = null;
+
+            if ($("choosePdfBtn")) {
+                $("choosePdfBtn").onclick = e => { e.stopPropagation(); $("pdfToJpgInput").click(); };
+            }
+            if ($("pdfToJpgInput")) {
+                $("pdfToJpgInput").onchange = e => loadPdfFile(e.target.files[0]);
+            }
+            const dropZone = document.getElementById("pdfToJpgDropZone");
+            if (dropZone) {
+                dropZone.ondragover = e => { e.preventDefault(); dropZone.style.borderColor = "#4f46e5"; };
+                dropZone.ondragleave = () => dropZone.style.borderColor = "";
+                dropZone.ondrop = e => { e.preventDefault(); dropZone.style.borderColor = ""; loadPdfFile(e.dataTransfer.files[0]); };
+            }
+
+            function loadPdfFile(f) {
+                if (!f) return;
+                if (f.type !== "application/pdf") { alert("শুধুমাত্র PDF ফাইল নির্বাচন করুন।"); return; }
+                pdfFile = f;
+                if ($("pdfToJpgFileInfo")) {
+                    $("pdfToJpgFileInfo").style.display = "block";
+                    $("pdfToJpgFileInfo").innerHTML = `<b>${escapeHtml(f.name)}</b> (${(f.size/1024).toFixed(1)} KB)`;
+                }
+                if ($("pdfConvertBtn")) $("pdfConvertBtn").disabled = false;
+                if ($("count")) $("count").textContent = "PDF Loaded successfully";
+            }
+
+            function escapeHtml(text) {
+                return text.replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;" }[c]));
+            }
+
+            if ($("pdfClearBtn")) {
+                $("pdfClearBtn").onclick = () => {
+                    pdfFile = null;
+                    if ($("pdfToJpgInput")) $("pdfToJpgInput").value = "";
+                    if ($("pdfToJpgFileInfo")) { $("pdfToJpgFileInfo").style.display = "none"; $("pdfToJpgFileInfo").innerHTML = ""; }
+                    if ($("pdfConvertBtn")) $("pdfConvertBtn").disabled = true;
+                    if ($("zipBtn")) $("zipBtn").disabled = true;
+                    if ($("results")) $("results").innerHTML = '<div class="pdf-empty" id="empty">📄<br><br>Converted pages এখানে দেখা যাবে</div>';
+                    if ($("count")) $("count").textContent = "No PDF selected";
+                };
+            }
+        })();
+    </script>
+
+    <!-- ৪. PDF Merge টুলের সম্পূর্ণ ফাংশনাল স্ক্রিপ্ট (PDF Fusion Pro) -->
+    <script>
+        (function(){
+            const $ = id => document.getElementById(id);
+            let files = [], mergedBlob = null, convertedFiles = [];
+            let currentMode = 'merge';
+
+            const input = $("m_pdfInput"), drop = $("m_dropZone"), list = $("m_fileList"), actionBtn = $("m_actionBtn");
+
+            function switchMode(mode){
+                currentMode = mode;
+                files = []; mergedBlob = null; convertedFiles = [];
+                $("m_result").style.display = "none";
+                $("m_ready").style.display = "grid";
+                $("m_progress").style.display = "none";
+                $("m_bar").style.width = "0";
+                
+                if(mode === 'merge'){
+                    $("m_modeMerge").classList.add("active");
+                    $("m_modeConvert").classList.remove("active");
+                    $("m_stepNum").textContent = "01";
+                    $("m_stepTitle").textContent = "Add PDF Documents";
+                    $("m_uploadText").textContent = "Choose PDF Files";
+                    $("m_uploadSub").textContent = "একাধিক PDF নির্বাচন করুন অথবা এখানে Drag & Drop করুন";
+                    $("m_chooseBtn").textContent = "☁ Choose PDF Files";
+                    $("m_listTitle").textContent = "02 · Merge Order";
+                    $("m_listActions").style.display = "grid";
+                    $("m_listHint").style.display = "block";
+                    $("m_convertSettings").style.display = "none";
+                    $("m_actionBtn").textContent = "✦ Merge PDFs";
+                    $("m_actionHint").textContent = "Original page dimensions preserved · No crop · No forced resize";
+                    $("m_workspaceTitle").textContent = "Merge Workspace";
+                    $("m_workspaceSub").textContent = "Add PDF files to begin";
+                    $("m_readyIcon").textContent = "✦";
+                    $("m_readyTitle").textContent = "Your merged PDF starts here";
+                    $("m_readyDesc").innerHTML = 'বাম পাশে PDF ফাইলগুলো যোগ করুন। তারপর order ঠিক করে <b>Merge PDFs</b> চাপুন।';
+                } else {
+                    $("m_modeConvert").classList.add("active");
+                    $("m_modeMerge").classList.remove("active");
+                    $("m_stepNum").textContent = "01";
+                    $("m_stepTitle").textContent = "Add PDF Documents for Conversion";
+                    $("m_uploadText").textContent = "Choose PDF Files";
+                    $("m_uploadSub").textContent = "একাধিক PDF সিলেক্ট করুন (প্রতিটি পেজ ইমেজ হবে)";
+                    $("m_chooseBtn").textContent = "☁ Choose PDF Files";
+                    $("m_listTitle").textContent = "02 · Selected PDFs";
+                    $("m_listActions").style.display = "grid";
+                    $("m_listHint").style.display = "block";
+                    $("m_convertSettings").style.display = "block";
+                    $("m_actionBtn").textContent = "🖼 Convert & Preview";
+                    $("m_actionHint").textContent = "All pages from selected PDFs will be extracted as previewable images";
+                    $("m_workspaceTitle").textContent = "Conversion Workspace";
+                    $("m_workspaceSub").textContent = "Add PDF files to convert";
+                    $("m_readyIcon").textContent = "🖼";
+                    $("m_readyTitle").textContent = "Image conversion ready";
+                    $("m_readyDesc").innerHTML = 'একাধিক PDF ফাইল সিলেক্ট করে <b>Convert & Preview</b> চাপুন।';
+                }
+                render();
+            }
+
+            if($("m_modeMerge")) $("m_modeMerge").onclick = () => switchMode('merge');
+            if($("m_modeConvert")) $("m_modeConvert").onclick = () => switchMode('convert');
+
+            $("m_chooseBtn").onclick = e => { e.preventDefault(); e.stopPropagation(); input.click(); };
+            $("m_addBtn").onclick = () => input.click();
+            input.onchange = e => { addFiles([...e.target.files]); input.value = ""; };
+
+            ["dragenter","dragover"].forEach(x => drop.addEventListener(x, e => { e.preventDefault(); drop.classList.add("drag"); }));
+            ["dragleave","drop"].forEach(x => drop.addEventListener(x, e => { e.preventDefault(); drop.classList.remove("drag"); }));
+            drop.ondrop = e => addFiles([...e.dataTransfer.files]);
+
+            async function addFiles(arr){
+                let ok = arr.filter(f => f.type === "application/pdf");
+                if(!ok.length) return toast("শুধুমাত্র PDF ফাইল নির্বাচন করুন");
+                for(const f of ok){
+                    if(!files.some(x => x.file.name === f.name && x.file.size === f.size && x.file.lastModified === f.lastModified))
+                        files.push({file: f, pages: "Checking…"});
+                }
+                await check();
+                render();
+                $("m_result").style.display = "none";
+                $("m_ready").style.display = "grid";
+            }
+
+            async function check(){
+                for(const x of files) {
+                    if(x.pages === "Checking…") {
+                        try {
+                            x.pages = (await PDFLib.PDFDocument.load(await x.file.arrayBuffer())).getPageCount();
+                        } catch {
+                            x.pages = "Error";
+                        }
+                    }
+                }
+            }
+
+            function render(){
+                list.innerHTML = "";
+                if(!files.length){
+                    list.innerHTML = '<div class="m-empty">📄<br><br>আপনার PDF ফাইলগুলো এখানে দেখা যাবে</div>';
+                    actionBtn.disabled = true;
+                    $("m_summary").style.display = "none";
+                    $("m_orderCount").textContent = "0 files";
+                    $("m_workspaceSub").textContent = currentMode === 'merge' ? "Add PDF files to begin" : "Add PDF files to convert";
+                    return;
+                }
+                let pages = 0, size = 0;
+                files.forEach((x, i) => {
+                    if(typeof x.pages === "number") pages += x.pages;
+                    size += x.file.size;
+                    let r = document.createElement("div");
+                    r.className = "m-item";
+                    r.innerHTML = '<div class="m-num">' + (i + 1) + '</div><div><div class="m-fn">' + esc(x.file.name) + '</div><div class="m-fm">' + fmt(x.file.size) + ' · ' + (x.pages === "Checking…" ? "Checking…" : x.pages === "Error" ? "Invalid PDF" : x.pages + " pages") + '</div></div><div class="m-acts"><button class="m-ib" ' + (i === 0 ? "disabled" : "") + '>↑</button><button class="m-ib" ' + (i === files.length - 1 ? "disabled" : "") + '>↓</button><button class="m-ib rm">×</button></div>';
+                    let b = r.querySelectorAll("button");
+                    b[0].onclick = () => move(i, -1);
+                    b[1].onclick = () => move(i, 1);
+                    b[2].onclick = () => { files.splice(i, 1); render(); };
+                    list.appendChild(r);
+                });
+                $("m_orderCount").textContent = files.length + " file" + (files.length > 1 ? "s" : "");
+                $("m_summary").style.display = "block";
+                $("m_summary").innerHTML = '✓ <b>' + files.length + ' PDF</b> added · ' + pages + ' total pages · ' + fmt(size);
+                $("m_workspaceSub").textContent = pages + " total pages · " + fmt(size);
+                actionBtn.disabled = false;
+            }
+
+            function move(i, d){
+                let n = i + d;
+                if(n < 0 || n >= files.length) return;
+                [files[i], files[n]] = [files[n], files[i]];
+                render();
+            }
+
+            $("m_clearBtn").onclick = () => {
+                files = []; mergedBlob = null; convertedFiles = [];
+                $("m_result").style.display = "none";
+                $("m_ready").style.display = "grid";
+                $("m_progress").style.display = "none";
+                $("m_bar").style.width = "0";
+                render();
+            };
+
+            actionBtn.onclick = async () => {
+                if(!files.length) return;
+                actionBtn.disabled = true;
+                $("m_progress").style.display = "block";
+                $("m_ready").style.display = "none";
+                $("m_result").style.display = "none";
+
+                if(currentMode === 'merge'){
+                    try{
+                        const out = await PDFLib.PDFDocument.create();
+                        for(let i = 0; i < files.length; i++){
+                            let x = files[i];
+                            $("m_status").textContent = "Processing " + (i + 1) + " of " + files.length + ": " + x.file.name;
+                            let src = await PDFLib.PDFDocument.load(await x.file.arrayBuffer());
+                            let pages = await out.copyPages(src, src.getPageIndices());
+                            pages.forEach(p => out.addPage(p));
+                            let p = Math.round((i + 1) / files.length * 100);
+                            $("m_bar").style.width = p + "%";
+                            $("m_percent").textContent = p + "%";
+                            await new Promise(r => setTimeout(r, 15));
+                        }
+                        $("m_status").textContent = "Creating final PDF…";
+                        let bytes = await out.save({useObjectStreams: true, addDefaultPage: false});
+                        mergedBlob = new Blob([bytes], {type: "application/pdf"});
+                        let pc = out.getPageCount();
+                        $("m_bar").style.width = "100%";
+                        $("m_percent").textContent = "100%";
+                        $("m_resultTitle").textContent = "✓ Merge Completed";
+                        $("m_meta").textContent = pc + " pages · " + fmt(mergedBlob.size);
+                        $("m_success").innerHTML = 'Your PDF is ready. <b>' + pc + ' pages</b> successfully merged.<br>Original page sizes and orientations were preserved.';
+                        $("m_downloadContainer").innerHTML = '<button class="m-download" id="m_downloadMerged">↓ Download</button>';
+                        $("m_downloadMerged").onclick = () => {
+                            if(!mergedBlob) return;
+                            let a = document.createElement("a"), u = URL.createObjectURL(mergedBlob);
+                            a.href = u; a.download = "Merged_PDF_" + new Date().toISOString().slice(0, 10) + ".pdf";
+                            document.body.appendChild(a); a.click(); a.remove();
+                            setTimeout(() => URL.revokeObjectURL(u), 1500);
+                        };
+                        $("m_result").style.display = "block";
+                        toast("✓ PDF Merge সম্পূর্ণ হয়েছে");
+                    }catch(e){
+                        $("m_ready").style.display = "grid";
+                        alert("PDF Merge করতে সমস্যা হয়েছে:\n\n" + e.message);
+                    }finally{
+                        actionBtn.disabled = false;
+                    }
+                } else {
+                    try{
+                        convertedFiles = [];
+                        const format = $("m_imageFormat").value;
+                        const ext = format === 'image/png' ? 'png' : 'jpg';
+                        let processedPages = 0;
+                        let totalPages = 0;
+                        for(let x of files) { if(typeof x.pages === 'number') totalPages += x.pages; }
+                        
+                        for(let fIdx = 0; fIdx < files.length; fIdx++){
+                            let fileObj = files[fIdx];
+                            let arrayBuf = await fileObj.file.arrayBuffer();
+                            let loadingTask = window.pdfjsLib ? window.pdfjsLib.getDocument({data: arrayBuf}) : null;
+                            if(!loadingTask){ alert("PDF.js library loaded failed."); return; }
+                            let pdfDoc = await loadingTask.promise;
+                            let numPages = pdfDoc.numPages;
+                            let baseName = fileObj.file.name.replace(/\.[^/.]+$/, "");
+                            
+                            for(let p = 1; p <= numPages; p++){
+                                $("m_status").textContent = `Converting ${fileObj.file.name} (Page ${p}/${numPages})`;
+                                let page = await pdfDoc.getPage(p);
+                                let viewport = page.getViewport({scale: 3.0});
+                                let canvas = document.createElement("canvas");
+                                let context = canvas.getContext("2d");
+                                canvas.height = viewport.height;
+                                canvas.width = viewport.width;
+                                
+                                await page.render({canvasContext: context, viewport: viewport}).promise;
+                                let dataUrl = canvas.toDataURL(format, 0.95);
+                                convertedFiles.push({
+                                    name: `${baseName}_page_${p}.${ext}`,
+                                    dataUrl: dataUrl,
+                                    selected: true
+                                });
+                                
+                                processedPages++;
+                                let pct = Math.round((processedPages / totalPages) * 100);
+                                $("m_bar").style.width = pct + "%";
+                                $("m_percent").textContent = pct + "%";
+                            }
+                        }
+                        
+                        $("m_bar").style.width = "100%";
+                        $("m_percent").textContent = "100%";
+                        renderConversionResults();
+                        toast("✓ কনভার্শন এবং প্রিভিউ তৈরি সম্পন্ন হয়েছে");
+                    }catch(e){
+                        $("m_ready").style.display = "grid";
+                        alert("কনভার্ট করতে সমস্যা হয়েছে:\n\n" + e.message);
+                    }finally{
+                        actionBtn.disabled = false;
+                    }
+                }
+            };
+
+            function renderConversionResults(){
+                $("m_resultTitle").textContent = "✓ Preview & Select Images";
+                $("m_meta").textContent = convertedFiles.length + " images generated";
+                $("m_success").innerHTML = `Successfully converted. Select pages below and click <b>ডাউনলোড</b> or <b>ডাউনলোড জিপ</b>.`;
+                
+                let html = `
+                    <div class="m-toolbar-row">
+                        <button class="m-sb" id="m_selectAllBtn" style="flex:1">Select All</button>
+                        <button class="m-sb" id="m_deselectAllBtn" style="flex:1">Deselect All</button>
+                    </div>
+                    <div class="m-image-grid" id="m_imageGrid"></div>
+                    <div class="m-btn-group-dl">
+                        <button class="m-download" id="m_downloadBtn">ডাউনলোড</button>
+                        <button class="m-download" id="m_downloadZipBtn" style="background:linear-gradient(100deg,#5b4bdb,#7c3aed)">ডাউনলোড জিপ</button>
+                    </div>
+                `;
+                $("m_downloadContainer").innerHTML = html;
+                
+                const grid = $("m_imageGrid");
+                function updateGrid(){
+                    grid.innerHTML = "";
+                    convertedFiles.forEach((img, idx) => {
+                        let card = document.createElement("div");
+                        card.className = "m-img-card";
+                        card.innerHTML = `
+                            <input type="checkbox" ${img.selected ? 'checked' : ''} data-idx="${idx}">
+                            <img src="${img.dataUrl}" alt="${img.name}">
+                            <div class="lbl" title="${img.name}">${img.name}</div>
+                        `;
+                        let chk = card.querySelector("input");
+                        chk.onchange = (e) => {
+                            convertedFiles[idx].selected = e.target.checked;
+                        };
+                        grid.appendChild(card);
+                    });
+                }
+                updateGrid();
+                
+                $("m_selectAllBtn").onclick = () => {
+                    convertedFiles.forEach(i => i.selected = true);
+                    updateGrid();
+                };
+                $("m_deselectAllBtn").onclick = () => {
+                    convertedFiles.forEach(i => i.selected = false);
+                    updateGrid();
+                };
+                
+                $("m_downloadBtn").onclick = () => {
+                    let selected = convertedFiles.filter(i => i.selected);
+                    if(!selected.length) return toast("অনুগ্রহ করে অন্তত একটি পেজ সিলেক্ট করুন!");
+                    
+                    selected.forEach((img, index) => {
+                        setTimeout(() => {
+                            let a = document.createElement("a");
+                            a.href = img.dataUrl;
+                            a.download = img.name;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                        }, index * 300);
+                    });
+                    toast("✓ ফাইল ডাউনলোড শুরু হয়েছে");
+                };
+
+                $("m_downloadZipBtn").onclick = async () => {
+                    let selected = convertedFiles.filter(i => i.selected);
+                    if(!selected.length) return toast("অনুগ্রহ করে অন্তত একটি পেজ সিলেক্ট করুন!");
+                    
+                    $("m_downloadZipBtn").disabled = true;
+                    let oldText = $("m_downloadZipBtn").textContent;
+                    $("m_downloadZipBtn").textContent = "Creating ZIP…";
+                    
+                    try{
+                        if(typeof JSZip === 'undefined'){ alert("JSZip library missing."); return; }
+                        const zip = new JSZip();
+                        selected.forEach(img => {
+                            let base64Data = img.dataUrl.split(',')[1];
+                            zip.file(img.name, base64Data, {base64: true});
+                        });
+                        
+                        let content = await zip.generateAsync({type: "blob"});
+                        let a = document.createElement("a"), u = URL.createObjectURL(content);
+                        a.href = u;
+                        a.download = "Converted_Images_" + new Date().toISOString().slice(0, 10) + ".zip";
+                        document.body.appendChild(a); a.click(); a.remove();
+                        setTimeout(() => URL.revokeObjectURL(u), 1500);
+                        toast("✓ জিপ ফাইল ডাউনলোড সফল হয়েছে");
+                    }catch(e){
+                        alert("ZIP ফাইল তৈরি করতে সমস্যা হয়েছে:\n\n" + e.message);
+                    }finally{
+                        $("m_downloadZipBtn").disabled = false;
+                        $("m_downloadZipBtn").textContent = oldText;
+                    }
+                };
+                
+                $("m_result").style.display = "block";
+            }
+
+            function fmt(n){if(n<1024)return n+" B";let u=["KB","MB","GB"],i=-1;do{n/=1024;i++}while(n>=1024&&i<u.length-1);return n.toFixed(2)+" "+u[i]}
+            function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+            let tt;
+            function toast(s){clearTimeout(tt);if($("m_toast")){$("m_toast").textContent=s;$("m_toast").classList.add("show");tt=setTimeout(()=>$("m_toast").classList.remove("show"),2200);}}
+        })();
+    </script>
 </body>
 </html>
