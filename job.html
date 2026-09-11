@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>চাকরির খবর - জব পোর্টাল</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+        body { font-family: 'Hind Siliguri', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            <h1 class="text-2xl font-bold cursor-pointer flex items-center gap-2" onclick="goHome()">
+                <i class="fa-solid fa-briefcase"></i> চাকরির খবর
+            </h1>
+            <div class="flex items-center gap-2 flex-grow max-w-md">
+                <input type="text" id="searchInput" placeholder="চাকরি খুঁজুন..." onkeyup="searchJobs()" class="w-full px-4 py-2 rounded-lg text-gray-800 outline-none">
+            </div>
+            <button onclick="openLoginModal()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
+                <i class="fa-solid fa-lock"></i> অ্যাডমিন লগইন
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        
+        <!-- Home View: Job Grid -->
+        <section id="jobGridView">
+            <h2 class="text-2xl font-bold mb-6 border-b-2 border-blue-600 pb-2 inline-block">সাম্প্রতিক নিয়োগ বিজ্ঞপ্তি</h2>
+            <div id="loading" class="text-center py-10 text-gray-500 text-lg">লোড হচ্ছে... দয়া করে অপেক্ষা করুন।</div>
+            <div id="jobGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+        </section>
+
+        <!-- Details View: Single Job View -->
+        <section id="jobDetailsView" class="hidden">
+            <button onclick="goHome()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg mb-6 flex items-center gap-2 transition">
+                <i class="fa-solid fa-arrow-left"></i> সকল চাকরিতে ফিরে যান
+            </button>
+            <div id="jobDetailsContent" class="bg-white p-6 md:p-8 rounded-xl shadow-md"></div>
+            
+            <!-- Other Jobs Section -->
+            <div class="mt-12">
+                <h3 class="text-xl font-bold mb-6 border-b-2 border-blue-600 pb-2 inline-block">অন্যান্য নিয়োগ বিজ্ঞপ্তি</h3>
+                <div id="otherJobGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="fixed inset-0 bg-black/50 hidden justify-center items-center z-50 px-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-md relative shadow-xl">
+            <button onclick="closeLoginModal()" class="absolute right-4 top-3 text-2xl font-bold text-gray-500 hover:text-black">&times;</button>
+            <h3 class="text-xl font-bold mb-2">অ্যাডমিন লগইন</h3>
+            <p class="text-sm text-gray-600 mb-4">পোস্ট করতে পাসওয়ার্ড দিন (৫১০১)</p>
+            <input type="password" id="passwordInput" placeholder="পাসওয়ার্ড লিখুন" class="w-full border px-4 py-2 rounded-lg mb-4 outline-none focus:border-blue-500">
+            <button onclick="verifyPassword()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg font-medium transition">লগইন</button>
+        </div>
+    </div>
+
+    <!-- Admin Post Modal -->
+    <div id="adminModal" class="fixed inset-0 bg-black/50 hidden justify-center items-center z-50 px-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-lg relative shadow-xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAdminModal()" class="absolute right-4 top-3 text-2xl font-bold text-gray-500 hover:text-black">&times;</button>
+            <h3 class="text-xl font-bold mb-4">নতুন চাকরি পোস্ট করুন</h3>
+            <form id="jobForm" onsubmit="handleJobSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block font-medium mb-1">চাকরির টাইটেল:</label>
+                    <input type="text" id="jobTitle" required class="w-full border px-4 py-2 rounded-lg outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">ডেসক্রিপশন (* দিয়ে বোল্ড হবে):</label>
+                    <textarea id="jobDesc" rows="5" required class="w-full border px-4 py-2 rounded-lg outline-none focus:border-blue-500"></textarea>
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">ইমেজ ফাইল (ঐচ্ছিক):</label>
+                    <input type="file" id="jobImage" accept="image/*" class="w-full border p-1 rounded-lg">
+                </div>
+                <div>
+                    <label class="block font-medium mb-1">পিডিএফ ফাইল (ঐচ্ছিক):</label>
+                    <input type="file" id="jobPdf" accept="application/pdf" class="w-full border p-1 rounded-lg">
+                </div>
+                <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg font-medium transition">সাবমিট করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white text-center py-4 mt-10">
+        <p>&copy; ২০২৬ জব পোর্টাল - সর্বস্বত্ব সংরক্ষিত</p>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4qetls6bmIA5YWEkBiH2o9DCizzAPoYPjMMuZSaxnaQ2gtk-F08Dh2r-am_rB_4gb/exec"; 
+
+        let allJobs = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            fetchJobs();
+        });
+
+        function fetchJobs() {
+            if(WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
+                document.getElementById('loading').innerHTML = `<p class="text-red-500">দয়া করে index.html ফাইলের ভেতর সঠিক WEB_APP_URL সেট করুন।</p>`;
+                return;
+            }
+            
+            fetch(WEB_APP_URL)
+                .then(res => res.json())
+                .then(data => {
+                    allJobs = Array.isArray(data) ? data.reverse() : [];
+                    document.getElementById('loading').style.display = 'none';
+                    displayJobs(allJobs, 'jobGrid');
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('loading').innerHTML = "<p class='text-red-500'>ডেটা লোড করতে সমস্যা হয়েছে।</p>";
+                });
+        }
+
+        function displayJobs(jobs, elementId) {
+            const grid = document.getElementById(elementId);
+            grid.innerHTML = "";
+            
+            if(!jobs || jobs.length === 0) {
+                grid.innerHTML = "<p class='col-span-full text-center text-gray-500'>কোনো চাকরি পাওয়া যায়নি।</p>";
+                return;
+            }
+
+            jobs.forEach(job => {
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition cursor-pointer flex flex-col";
+                card.onclick = () => viewJobDetails(job.id);
+                
+                const imgSrc = job.image && job.image.trim() !== "" ? job.image : "https://via.placeholder.com/400x300?text=Job+Circular";
+
+                card.innerHTML = `
+                    <img src="${imgSrc}" alt="Job Image" class="w-full h-48 object-cover">
+                    <div class="p-4 flex flex-col flex-grow justify-between">
+                        <h3 class="font-bold text-lg text-blue-600 mb-2">${job.title}</h3>
+                        <span class="text-sm text-gray-500 flex items-center gap-1"><i class="fa-regular fa-clock"></i> বিস্তারিত দেখুন</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLoginModal() { 
+            document.getElementById('loginModal').style.display = 'none'; 
+            document.getElementById('passwordInput').value = ''; 
+        }
+        function verifyPassword() {
+            if(document.getElementById('passwordInput').value === "5101") {
+                closeLoginModal();
+                document.getElementById('adminModal').style.display = 'flex';
+            } else {
+                alert("ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন (৫১০১)।");
+            }
+        }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
+
+        function formatDescription(text) {
+            if(!text) return "";
+            
+            // ১. ইউআরএলগুলোকে হাইড করে Click here (বোল্ড ও আন্ডারলাইনযুক্ত) লিঙ্কে রূপান্তর করা
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            text = text.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" class="font-bold text-blue-600 underline hover:text-blue-800">Click here</a>`;
+            });
+
+            // ২. * দিয়ে কোনো টেক্সট লিখলে সেটি স্টার হাইড হয়ে বোল্ড হবে
+            text = text.replace(/\*(.*?)\*/g, '<strong class="font-bold text-black">$1</strong>');
+
+            return text;
+        }
+
+        function handleJobSubmit(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "আপলোড হচ্ছে...";
+            submitBtn.disabled = true;
+
+            const title = document.getElementById('jobTitle').value;
+            const desc = document.getElementById('jobDesc').value;
+            const imageFile = document.getElementById('jobImage').files[0];
+            const pdfFile = document.getElementById('jobPdf').files[0];
+
+            processFiles(imageFile, pdfFile, (imgBase64, pdfBase64) => {
+                const payload = {
+                    id: Date.now().toString(),
+                    title: title,
+                    desc: desc,
+                    image: imgBase64,
+                    pdf: pdfBase64
+                };
+
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(response => {
+                    alert("চাকরিটি সফলভাবে পোস্ট করা হয়েছে!");
+                    document.getElementById('jobForm').reset();
+                    closeAdminModal();
+                    submitBtn.innerText = "সাবমিট করুন";
+                    submitBtn.disabled = false;
+                    fetchJobs();
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("পোস্ট করতে সমস্যা হয়েছে।");
+                    submitBtn.innerText = "সাবমিট করুন";
+                    submitBtn.disabled = false;
+                });
+            });
+        }
+
+        function processFiles(imgFile, pdfFile, callback) {
+            let imgData = "";
+            let pdfData = "";
+
+            let checkDone = () => {
+                if ((!imgFile || imgData) && (!pdfFile || pdfData)) {
+                    callback(imgData, pdfData);
+                }
+            };
+
+            if (imgFile) {
+                const reader = new FileReader();
+                reader.readAsDataURL(imgFile);
+                reader.onload = () => {
+                    imgData = reader.result;
+                    checkDone();
+                };
+            } else {
+                checkDone();
+            }
+
+            if (pdfFile) {
+                const reader = new FileReader();
+                reader.readAsDataURL(pdfFile);
+                reader.onload = () => {
+                    pdfData = reader.result;
+                    checkDone();
+                };
+            } else {
+                checkDone();
+            }
+        }
+
+        function viewJobDetails(id) {
+            document.getElementById('jobGridView').style.display = 'none';
+            document.getElementById('jobDetailsView').style.display = 'block';
+
+            const selectedJob = allJobs.find(j => j.id == id);
+            if(!selectedJob) return;
+
+            const formattedDesc = formatDescription(selectedJob.desc).replace(/\n/g, '<br>');
+            const imgSrc = selectedJob.image && selectedJob.image.trim() !== "" ? selectedJob.image : "https://via.placeholder.com/600x400?text=No+Image";
+
+            let pdfSection = "";
+            if (selectedJob.pdf && selectedJob.pdf.trim() !== "") {
+                pdfSection = `
+                    <div class="mt-8 border-t pt-6">
+                        <h3 class="text-xl font-bold mb-4">নিয়োগ বিজ্ঞপ্তি পিডিএফ:</h3>
+                        <div class="mb-4">
+                            <iframe src="${selectedJob.pdf}" class="w-full h-[600px] border rounded-lg"></iframe>
+                        </div>
+                        <a href="${selectedJob.pdf}" download="job-circular.pdf" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-medium transition">
+                            <i class="fa-solid fa-download"></i> পিডিএফ ডাউনলোড করুন
+                        </a>
+                    </div>
+                `;
+            } else {
+                pdfSection = `<div class="mt-8 border-t pt-6 text-gray-500 italic">এই চাকরির কোনো পিডিএফ ফাইল সংযুক্ত করা হয়নি।</div>`;
+            }
+
+            document.getElementById('jobDetailsContent').innerHTML = `
+                <h2 class="text-2xl md:text-3xl font-bold text-blue-600 mb-4">${selectedJob.title}</h2>
+                <img src="${imgSrc}" alt="Job Image" class="max-h-96 mx-auto rounded-lg mb-6 object-contain">
+                <div class="text-gray-700 leading-relaxed text-lg mb-8 whitespace-pre-line">${formattedDesc}</div>
+                ${pdfSection}
+            `;
+
+            const otherJobs = allJobs.filter(j => j.id != id);
+            displayJobs(otherJobs, 'otherJobGrid');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function goHome() {
+            document.getElementById('jobDetailsView').style.display = 'none';
+            document.getElementById('jobGridView').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function searchJobs() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allJobs.filter(j => j.title.toLowerCase().includes(query) || j.desc.toLowerCase().includes(query));
+            document.getElementById('jobDetailsView').style.display = 'none';
+            document.getElementById('jobGridView').style.display = 'block';
+            displayJobs(filtered, 'jobGrid');
+        }
+    </script>
+</body>
+</html>
