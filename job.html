@@ -167,7 +167,7 @@
     </footer>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4qetls6bmIA5YWEkBiH2o9DCizzAPoYPjMMuZSaxnaQ2gtk-F08Dh2r-am_rB_4gb/exec"; 
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwgazCivyng2tt1Y3Ng3XUg1bWMg07jk9Xmi5bbCIK5ObCTyuwPAIpUQTycUkJtDzXg/exec"; 
 
         let allJobs = [];
         let uploadedMultiFilesData = []; 
@@ -187,15 +187,37 @@
             return str;
         }
 
-        function getRemainingDaysText(endDateStr) {
+        // আবেদনের সময় বাকি লজিক আপডেট এবং লাল রঙের বোল্ড টেক্সট
+        function getRemainingDaysText(startDateStr, endDateStr) {
             if (!endDateStr) return "";
-            const today = new Date(); today.setHours(0, 0, 0, 0); 
-            const endDate = new Date(endDateStr); endDate.setHours(0, 0, 0, 0); 
+            
+            const today = new Date(); 
+            today.setHours(0, 0, 0, 0); 
+            
+            const endDate = new Date(endDateStr); 
+            endDate.setHours(0, 0, 0, 0);
+
+            if (startDateStr) {
+                const startDate = new Date(startDateStr); 
+                startDate.setHours(0, 0, 0, 0);
+                
+                if (today < startDate) {
+                    const diffTime = startDate - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return `<span class="ml-auto font-bold" style="color: red;">আবেদন শুরু হতে বাকি ${toBengaliNum(diffDays)} দিন।</span>`;
+                }
+            }
+
             const diffTime = endDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays > 0) return `<span class="text-red-500 font-bold ml-auto">আবেদনের সময় বাকি ${toBengaliNum(diffDays)} দিন</span>`;
-            else if (diffDays === 0) return `<span class="text-red-500 font-bold ml-auto">আজই আবেদনের শেষ দিন</span>`;
-            else return `<span class="text-red-500 font-bold ml-auto">আবেদনের সময় শেষ</span>`;
+            
+            if (diffDays > 0) {
+                return `<span class="ml-auto font-bold" style="color: red;">আবেদনের সময় বাকি ${toBengaliNum(diffDays)} দিন।</span>`;
+            } else if (diffDays === 0) {
+                return `<span class="ml-auto font-bold" style="color: red;">আজই আবেদনের শেষ দিন।</span>`;
+            } else {
+                return `<span class="ml-auto font-bold" style="color: red;">আবেদনের সময় শেষ।</span>`;
+            }
         }
 
         function fetchJobs() {
@@ -236,7 +258,8 @@
                 card.className = "bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition cursor-pointer flex flex-col";
                 card.onclick = () => viewJobDetails(job.id);
                 const imgSrc = job.image && job.image.trim() !== "" ? job.image : "https://via.placeholder.com/400x300?text=Job+Circular";
-                const remainingText = getRemainingDaysText(job.endDate);
+                // কল করার সময় startDate ও endDate উভয়েই পাঠানো হয়েছে
+                const remainingText = getRemainingDaysText(job.startDate, job.endDate);
                 card.innerHTML = `
                     <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2">
                         <img src="${imgSrc}" alt="Job Image" class="w-full h-full object-contain">
@@ -493,7 +516,6 @@
             
             let finalPdfDataString = "";
             if (sortedMultiFiles.length > 0) {
-                // সমস্ত নির্বাচিত ছবিগুলো দিয়ে একটি একক পিডিএফ তৈরি করা হচ্ছে
                 finalPdfDataString = await createCombinedPdfDataUrl(sortedMultiFiles);
             }
 
@@ -562,7 +584,7 @@
 
             const formattedDesc = formatDescription(selectedJob.desc).replace(/\n/g, '<br>');
             const imgSrc = selectedJob.image && selectedJob.image.trim() !== "" ? selectedJob.image : "https://via.placeholder.com/600x400?text=No+Image";
-            const remainingText = getRemainingDaysText(selectedJob.endDate);
+            const remainingText = getRemainingDaysText(selectedJob.startDate, selectedJob.endDate);
             let pdfSection = "";
 
             if (selectedJob.pdf && selectedJob.pdf.trim() !== "") {
@@ -570,7 +592,6 @@
                     <div class="mt-8 border-t pt-6">
                         <h3 class="text-xl font-bold mb-4">নিয়োগ বিজ্ঞপ্তি ফাইলসমূহ (সিরিয়াল অনুযায়ী):</h3>
                         <div class="mb-6 border p-4 rounded-lg bg-gray-50">
-                            <!-- একটিমাত্র একক পিডিএফ বক্স, যা অরজিনাল পেজ সাইজ অনুযায়ী প্রিভিউ দেখাবে -->
                             <iframe src="${selectedJob.pdf}" class="w-full h-[950px] border rounded-lg bg-white"></iframe>
                             <div class="mt-4">
                                 <a href="${selectedJob.pdf}" download="job-circular.pdf" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow">
