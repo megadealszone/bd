@@ -187,9 +187,9 @@
             return str;
         }
 
-        // আবেদনের সময় বাকি লজিক আপডেট এবং লাল রঙের বোল্ড টেক্সট
+        // লাল রঙের টেক্সট এবং ডায়নামিক দিনের হিসাব (100% নির্ভুল)
         function getRemainingDaysText(startDateStr, endDateStr) {
-            if (!endDateStr) return "";
+            if (!endDateStr || endDateStr.trim() === "") return "";
             
             const today = new Date(); 
             today.setHours(0, 0, 0, 0); 
@@ -197,14 +197,14 @@
             const endDate = new Date(endDateStr); 
             endDate.setHours(0, 0, 0, 0);
 
-            if (startDateStr) {
+            if (startDateStr && startDateStr.trim() !== "") {
                 const startDate = new Date(startDateStr); 
                 startDate.setHours(0, 0, 0, 0);
                 
                 if (today < startDate) {
                     const diffTime = startDate - today;
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    return `<span class="ml-auto font-bold" style="color: red;">আবেদন শুরু হতে বাকি ${toBengaliNum(diffDays)} দিন।</span>`;
+                    return `<span class="ml-auto text-sm font-bold text-red-600">আবেদন শুরু হতে বাকি ${toBengaliNum(diffDays)} দিন</span>`;
                 }
             }
 
@@ -212,11 +212,11 @@
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             
             if (diffDays > 0) {
-                return `<span class="ml-auto font-bold" style="color: red;">আবেদনের সময় বাকি ${toBengaliNum(diffDays)} দিন।</span>`;
+                return `<span class="ml-auto text-sm font-bold text-red-600">আবেদনের সময় বাকি ${toBengaliNum(diffDays)} দিন</span>`;
             } else if (diffDays === 0) {
-                return `<span class="ml-auto font-bold" style="color: red;">আজই আবেদনের শেষ দিন।</span>`;
+                return `<span class="ml-auto text-sm font-bold text-red-600">আজই আবেদনের শেষ দিন</span>`;
             } else {
-                return `<span class="ml-auto font-bold" style="color: red;">আবেদনের সময় শেষ।</span>`;
+                return `<span class="ml-auto text-sm font-bold text-red-600">আবেদনের সময় শেষ</span>`;
             }
         }
 
@@ -232,6 +232,13 @@
                     else if (data && Array.isArray(data.data)) jobsArray = data.data;
                     else if (data && Array.isArray(data.jobs)) jobsArray = data.jobs;
                     
+                    // ডেটা না পেলে "কোনো চাকরি পাওয়া যায়নি" দেখাবে
+                    if (!jobsArray || jobsArray.length === 0) {
+                        document.getElementById('loading').innerHTML = "<p class='text-gray-500'>কোনো চাকরি পাওয়া যায়নি।</p>";
+                        document.getElementById('jobGrid').innerHTML = "";
+                        return;
+                    }
+
                     allJobs = jobsArray.reverse();
                     document.getElementById('loading').style.display = 'none';
                     displayJobs(allJobs, 'jobGrid');
@@ -242,7 +249,7 @@
                 })
                 .catch(err => {
                     console.error(err);
-                    document.getElementById('loading').innerHTML = "<p class='text-red-500'>ডেটা লোড করতে সমস্যা হয়েছে।</p>";
+                    document.getElementById('loading').innerHTML = "<p class='text-red-500'>ডেটা লোড করতে সমস্যা হয়েছে। দয়া করে পেজটি রিলোড করুন।</p>";
                 });
         }
 
@@ -258,7 +265,8 @@
                 card.className = "bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition cursor-pointer flex flex-col";
                 card.onclick = () => viewJobDetails(job.id);
                 const imgSrc = job.image && job.image.trim() !== "" ? job.image : "https://via.placeholder.com/400x300?text=Job+Circular";
-                // কল করার সময় startDate ও endDate উভয়েই পাঠানো হয়েছে
+                
+                // তারিখ হিসাব করার জন্য ফ্লেক্স লেআউট 
                 const remainingText = getRemainingDaysText(job.startDate, job.endDate);
                 card.innerHTML = `
                     <div class="w-full h-48 bg-gray-50 flex items-center justify-center overflow-hidden p-2">
@@ -266,9 +274,9 @@
                     </div>
                     <div class="p-4 flex flex-col flex-grow justify-between">
                         <h3 class="font-bold text-lg text-blue-600 mb-2">${job.title}</h3>
-                        <div class="flex items-center justify-between mt-auto pt-2 border-t border-gray-100">
+                        <div class="flex items-center mt-auto pt-2 border-t border-gray-100">
                             <span class="text-sm text-gray-500 flex items-center gap-1 whitespace-nowrap"><i class="fa-regular fa-clock"></i> বিস্তারিত দেখুন</span>
-                            ${remainingText ? `<div class="text-sm text-right pl-2">${remainingText}</div>` : ''}
+                            ${remainingText}
                         </div>
                     </div>
                 `;
@@ -412,9 +420,21 @@
             closeManageModal();
             document.getElementById('modalTitleText').innerText = "চাকরি এডিট ও আপডেট করুন";
             document.getElementById('editingJobId').value = job.id; 
+            
             document.getElementById('jobTitle').value = job.title;
-            document.getElementById('jobStartDate').value = job.startDate ? job.startDate.split('T')[0] : "";
-            document.getElementById('jobEndDate').value = job.endDate ? job.endDate.split('T')[0] : "";
+            // তারিখ সঠিকভাবে ফর্মে বসানোর লজিক
+            if (job.startDate) {
+                document.getElementById('jobStartDate').value = job.startDate.substring(0, 10);
+            } else {
+                document.getElementById('jobStartDate').value = "";
+            }
+            
+            if (job.endDate) {
+                document.getElementById('jobEndDate').value = job.endDate.substring(0, 10);
+            } else {
+                document.getElementById('jobEndDate').value = "";
+            }
+
             document.getElementById('jobDesc').value = job.desc;
             
             if(job.image) {
@@ -464,7 +484,6 @@
             return text;
         }
 
-        // একাধিক ইমেজকে ক্লায়েন্ট সাইডে একটি একক মাল্টি-পেইজ PDF (dataURL) তে রূপান্তর করার ফাংশন
         async function createCombinedPdfDataUrl(imageItems) {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
