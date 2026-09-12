@@ -6,6 +6,8 @@
     <title>চাকরির খবর - জব পোর্টাল</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF লাইব্রেরি একাধিক ইমেজকে একটি পিডিএফ এ রূপান্তর করার জন্য -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
         body { font-family: 'Hind Siliguri', sans-serif; }
@@ -124,9 +126,9 @@
                 </div>
 
                 <div class="border p-3 rounded-lg bg-gray-50">
-                    <label class="block font-medium mb-1">পিডিএফ বা একাধিক ইমেজ ফাইল (ঐচ্ছিক):</label>
+                    <label class="block font-medium mb-1">বিজ্ঞাপনের ছবি বা ফাইলসমূহ (একাধিক সিলেক্ট করুন):</label>
                     <input type="file" id="jobMultiFiles" accept="image/*,application/pdf" multiple onchange="handleMultiFiles(event)" class="w-full border p-1 rounded-lg bg-white mb-3">
-                    <p class="text-xs text-gray-500 mb-2">এডিট করার সময় নতুন ফাইল না দিলে আগেরগুলোই থাকবে।</p>
+                    <p class="text-xs text-gray-500 mb-2">চেকবক্স সিলেক্ট করে সিরিয়াল নির্ধারণ করুন।</p>
                     <div id="multiFilesPreviewList" class="space-y-2 max-h-60 overflow-y-auto"></div>
                 </div>
 
@@ -165,7 +167,6 @@
     </footer>
 
     <script>
-        // এখানে আপনার সঠিক Apps Script Web App URL দিন
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz4qetls6bmIA5YWEkBiH2o9DCizzAPoYPjMMuZSaxnaQ2gtk-F08Dh2r-am_rB_4gb/exec"; 
 
         let allJobs = [];
@@ -199,11 +200,20 @@
 
         function fetchJobs() {
             fetch(WEB_APP_URL)
-                .then(res => res.json())
-                .then(data => {
-                    allJobs = Array.isArray(data) ? data.reverse() : [];
+                .then(res => res.text())
+                .then(text => {
+                    let data = [];
+                    try { data = JSON.parse(text); } catch(e) {}
+                    
+                    let jobsArray = [];
+                    if (Array.isArray(data)) jobsArray = data;
+                    else if (data && Array.isArray(data.data)) jobsArray = data.data;
+                    else if (data && Array.isArray(data.jobs)) jobsArray = data.jobs;
+                    
+                    allJobs = jobsArray.reverse();
                     document.getElementById('loading').style.display = 'none';
                     displayJobs(allJobs, 'jobGrid');
+                    
                     if(document.getElementById('manageModal').style.display === 'flex'){
                         openManageModal(); 
                     }
@@ -274,11 +284,9 @@
 
         function handleMultiFiles(event) {
             const files = event.target.files;
-            const container = document.getElementById('multiFilesPreviewList');
-            container.innerHTML = "";
             uploadedMultiFilesData = [];
             if (!files || files.length === 0) return;
-            Array.from(files).forEach((file, index) => {
+            Array.from(files).forEach((file) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     uploadedMultiFilesData.push({ name: file.name, type: file.type, data: e.target.result, order: 0, selected: false });
@@ -296,11 +304,11 @@
                 div.className = "flex items-center justify-between border p-2 rounded bg-white gap-2";
                 div.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <input type="checkbox" id="chk_${index}" onchange="toggleFileOrder(${index}, this)" class="w-4 h-4 cursor-pointer">
+                        <input type="checkbox" id="chk_${index}" ${item.selected ? 'checked' : ''} onchange="toggleFileOrder(${index}, this)" class="w-4 h-4 cursor-pointer">
                         <label for="chk_${index}" class="text-sm font-medium cursor-pointer truncate max-w-xs">${item.name}</label>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span id="badge_${index}" class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded font-bold">সিরিয়ালহীন</span>
+                        <span id="badge_${index}" class="text-xs ${item.selected ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'} px-2 py-1 rounded font-bold">${item.selected ? 'সিরিয়াল: ' + item.order : 'সিরিয়ালহীন'}</span>
                     </div>
                 `;
                 container.appendChild(div);
@@ -308,27 +316,22 @@
         }
 
         function toggleFileOrder(index, checkbox) {
-            const badge = document.getElementById(`badge_${index}`);
             if (checkbox.checked) {
                 const currentSelectedCount = uploadedMultiFilesData.filter(i => i.selected).length + 1;
                 uploadedMultiFilesData[index].selected = true;
                 uploadedMultiFilesData[index].order = currentSelectedCount;
-                badge.innerText = `সিরিয়াল: ${currentSelectedCount}`;
-                badge.className = "text-xs bg-blue-600 text-white px-2 py-1 rounded font-bold";
             } else {
                 uploadedMultiFilesData[index].selected = false;
                 uploadedMultiFilesData[index].order = 0;
-                badge.innerText = "সিরিয়ালহীন";
-                badge.className = "text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded font-bold";
                 let count = 1;
-                uploadedMultiFilesData.forEach((item, idx) => {
+                uploadedMultiFilesData.forEach((item) => {
                     if (item.selected) {
                         item.order = count;
-                        document.getElementById(`badge_${idx}`).innerText = `সিরিয়াল: ${count}`;
                         count++;
                     }
                 });
             }
+            renderMultiFileUI();
         }
 
         function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
@@ -344,6 +347,7 @@
             document.getElementById('manageModal').style.display = 'none';
         }
         function closeAdminDashboard() { document.getElementById('adminDashboardModal').style.display = 'none'; }
+        
         function openAdminModalForCreate() {
             closeAdminDashboard(); 
             document.getElementById('modalTitleText').innerText = "নতুন চাকরি পোস্ট করুন";
@@ -384,7 +388,7 @@
             if(!job) return;
             closeManageModal();
             document.getElementById('modalTitleText').innerText = "চাকরি এডিট ও আপডেট করুন";
-            document.getElementById('editingJobId').value = job.id; // Edit ID Set
+            document.getElementById('editingJobId').value = job.id; 
             document.getElementById('jobTitle').value = job.title;
             document.getElementById('jobStartDate').value = job.startDate ? job.startDate.split('T')[0] : "";
             document.getElementById('jobEndDate').value = job.endDate ? job.endDate.split('T')[0] : "";
@@ -396,7 +400,7 @@
             } else {
                 document.getElementById('mainImagePreviewContainer').style.display = 'none';
             }
-            document.getElementById('multiFilesPreviewList').innerHTML = "<p class='text-sm text-gray-500'>পূর্বের আপলোড করা ফাইল বহাল থাকবে। নতুন ফাইল আপলোড করলে আগেরগুলো মুছে নতুনগুলো সেভ হবে।</p>";
+            document.getElementById('multiFilesPreviewList').innerHTML = "<p class='text-sm text-gray-500'>পূর্বের আপলোড করা ফাইল বহাল থাকবে। নতুন ফাইল আপলোড করলে আগেরগুলো বদলে যাবে।</p>";
             uploadedMultiFilesData = [];
             document.getElementById('adminModal').style.display = 'flex';
         }
@@ -408,16 +412,19 @@
             
             fetch(WEB_APP_URL, {
                 method: "POST",
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Header Added to Fix Issue
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(submitPayload)
             })
-            .then(res => res.json())
-            .then(response => {
-                if(response.status === "success") {
-                    alert("চাকরিটি সফলভাবে গুগল শিট থেকে ডিলিট করা হয়েছে!");
-                    fetchJobs(); // Update Data From Server Directly
+            .then(res => res.text())
+            .then(text => {
+                let response = {};
+                try { response = JSON.parse(text); } catch(e) {}
+                
+                if(response.status === "error") {
+                    alert("ডিলিট করতে সমস্যা হয়েছে: " + (response.message || ""));
                 } else {
-                    alert("ডিলিট করতে সমস্যা হয়েছে: " + response.message);
+                    alert("চাকরিটি সফলভাবে গুগল শিট থেকে ডিলিট করা হয়েছে!");
+                    fetchJobs(); 
                 }
             })
             .catch(err => {
@@ -434,7 +441,42 @@
             return text;
         }
 
-        function handleJobSubmit(e) {
+        // একাধিক ইমেজকে ক্লায়েন্ট সাইডে একটি একক মাল্টি-পেইজ PDF (dataURL) তে রূপান্তর করার ফাংশন
+        async function createCombinedPdfDataUrl(imageItems) {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+            
+            for (let i = 0; i < imageItems.length; i++) {
+                if (i > 0) doc.addPage();
+                const imgData = imageItems[i].data;
+                
+                await new Promise((resolve) => {
+                    const img = new Image();
+                    img.src = imgData;
+                    img.onload = function() {
+                        const pageWidth = doc.internal.pageSize.getWidth();
+                        const pageHeight = doc.internal.pageSize.getHeight();
+                        
+                        let width = pageWidth;
+                        let height = (img.height * pageWidth) / img.width;
+                        
+                        if (height > pageHeight) {
+                            height = pageHeight;
+                            width = (img.width * pageHeight) / img.height;
+                        }
+                        
+                        const x = (pageWidth - width) / 2;
+                        const y = (pageHeight - height) / 2;
+                        
+                        doc.addImage(imgData, 'JPEG', x, y, width, height);
+                        resolve();
+                    };
+                });
+            }
+            return doc.output('datauristring');
+        }
+
+        async function handleJobSubmit(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.innerText = "সংরক্ষণ হচ্ছে...";
@@ -448,11 +490,19 @@
             const imageFile = document.getElementById('jobImage').files[0];
 
             let sortedMultiFiles = [...uploadedMultiFilesData].filter(i => i.selected).sort((a, b) => a.order - b.order);
-            let multiFilesBase64Arr = sortedMultiFiles.map(i => ({ name: i.name, type: i.type, data: i.data }));
+            
+            let finalPdfDataString = "";
+            if (sortedMultiFiles.length > 0) {
+                // সমস্ত নির্বাচিত ছবিগুলো দিয়ে একটি একক পিডিএফ তৈরি করা হচ্ছে
+                finalPdfDataString = await createCombinedPdfDataUrl(sortedMultiFiles);
+            }
 
             const processAndSend = (imgBase64) => {
                 const finalImage = imgBase64 !== undefined ? imgBase64 : (editingId ? (allJobs.find(j=>j.id==editingId)?.image || "") : "");
                 
+                let existingPdf = editingId ? (allJobs.find(j=>j.id==editingId)?.pdf || "") : "";
+                let pdfToSave = finalPdfDataString !== "" ? finalPdfDataString : existingPdf;
+
                 const payload = {
                     action: editingId ? "update" : "create",
                     id: String(editingId || Date.now()),
@@ -461,29 +511,35 @@
                     endDate: endDate,
                     desc: desc,
                     image: finalImage,
-                    pdfList: multiFilesBase64Arr, 
-                    oldPdf: editingId ? (allJobs.find(j=>j.id==editingId)?.pdf || "") : "" 
+                    pdf: pdfToSave 
                 };
 
                 fetch(WEB_APP_URL, {
                     method: "POST",
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Header Added to Fix Issue
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify(payload)
                 })
-                .then(res => res.json())
-                .then(response => {
-                    alert(editingId ? "চাকরিটি গুগল শিটে সফলভাবে আপডেট করা হয়েছে!" : "নতুন চাকরি সফলভাবে পোস্ট করা হয়েছে!");
-                    document.getElementById('jobForm').reset();
-                    document.getElementById('editingJobId').value = ""; // Clear ID correctly
-                    closeAdminModal();
-                    openAdminDashboard(); 
-                    submitBtn.innerText = "সাবমিট করুন";
-                    submitBtn.disabled = false;
-                    fetchJobs();
+                .then(res => res.text())
+                .then(text => {
+                    let response = {};
+                    try { response = JSON.parse(text); } catch(e) {}
+                    
+                    if (response.status === "error") {
+                        alert("সংরক্ষণ করতে সমস্যা হয়েছে: " + (response.message || ""));
+                    } else {
+                        alert(editingId ? "চাকরিটি গুগল শিটে সফলভাবে আপডেট করা হয়েছে!" : "নতুন চাকরি সফলভাবে পোস্ট করা হয়েছে!");
+                        document.getElementById('jobForm').reset();
+                        document.getElementById('editingJobId').value = ""; 
+                        closeAdminModal();
+                        openAdminDashboard(); 
+                        fetchJobs();
+                    }
                 })
                 .catch(err => {
                     console.error(err);
-                    alert("সংরক্ষণ করতে সমস্যা হয়েছে।");
+                    alert("সংরক্ষণ করতে সমস্যা হয়েছে। সার্ভারের সাথে সংযোগ পরীক্ষা করুন।");
+                })
+                .finally(() => {
                     submitBtn.innerText = "সাবমিট করুন";
                     submitBtn.disabled = false;
                 });
@@ -508,30 +564,22 @@
             const imgSrc = selectedJob.image && selectedJob.image.trim() !== "" ? selectedJob.image : "https://via.placeholder.com/600x400?text=No+Image";
             const remainingText = getRemainingDaysText(selectedJob.endDate);
             let pdfSection = "";
-            let parsedPdfList = [];
-            
-            try {
-                if(selectedJob.pdf && selectedJob.pdf.trim() !== "") parsedPdfList = JSON.parse(selectedJob.pdf);
-            } catch(e) {
-                if(selectedJob.pdf) parsedPdfList = [{ data: selectedJob.pdf, name: "job-circular.pdf" }];
-            }
 
-            if (parsedPdfList.length > 0) {
-                let previewsHtml = "";
-                parsedPdfList.forEach((fileItem, idx) => {
-                    previewsHtml += `
+            if (selectedJob.pdf && selectedJob.pdf.trim() !== "") {
+                pdfSection = `
+                    <div class="mt-8 border-t pt-6">
+                        <h3 class="text-xl font-bold mb-4">নিয়োগ বিজ্ঞপ্তি ফাইলসমূহ (সিরিয়াল অনুযায়ী):</h3>
                         <div class="mb-6 border p-4 rounded-lg bg-gray-50">
-                            <h4 class="font-bold mb-2 text-gray-700">সিরিয়াল ${idx + 1}: ${fileItem.name || 'নথিপত্র'}</h4>
-                            <iframe src="${fileItem.data}" class="w-full h-[500px] border rounded-lg bg-white"></iframe>
-                            <div class="mt-2">
-                                <a href="${fileItem.data}" download="${fileItem.name || 'document'}" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-medium transition">
-                                    <i class="fa-solid fa-download"></i> ডাউনলোড করুন
+                            <!-- একটিমাত্র একক পিডিএফ বক্স, যা অরজিনাল পেজ সাইজ অনুযায়ী প্রিভিউ দেখাবে -->
+                            <iframe src="${selectedJob.pdf}" class="w-full h-[950px] border rounded-lg bg-white"></iframe>
+                            <div class="mt-4">
+                                <a href="${selectedJob.pdf}" download="job-circular.pdf" class="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow">
+                                    <i class="fa-solid fa-download"></i> সম্পূর্ণ পিডিএফ ডাউনলোড করুন
                                 </a>
                             </div>
                         </div>
-                    `;
-                });
-                pdfSection = `<div class="mt-8 border-t pt-6"><h3 class="text-xl font-bold mb-4">নিয়োগ বিজ্ঞপ্তি ফাইলসমূহ (সিরিয়াল অনুযায়ী):</h3>${previewsHtml}</div>`;
+                    </div>
+                `;
             } else {
                 pdfSection = `<div class="mt-8 border-t pt-6 text-gray-500 italic">এই চাকরির কোনো অতিরিক্ত ফাইল সংযুক্ত করা হয়নি।</div>`;
             }
