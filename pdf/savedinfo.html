@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saved Document and Text</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Universal text rendering:
+         English + Unicode Bengali + legacy Bengali font content.
+         IMPORTANT: no !important here, so pasted/included font-family styles remain intact. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Script-aware fallback: English uses Noto Sans; Bengali falls through to Noto Sans Bengali.
+           A child element's own font-family is NOT overridden. */
+        html, body, input, textarea, button, select, option, [contenteditable="true"] {
+            font-family: "Noto Sans", "Noto Sans Bengali", "Noto Serif", "Noto Serif Bengali", Arial, sans-serif;
+            font-synthesis: none;
+            font-variant-ligatures: normal;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+        body { -webkit-text-size-adjust: 100%; }
+        [contenteditable="true"], #dashboard-list, #modalBody {
+            line-height: 1.75;
+            word-break: normal;
+            overflow-wrap: anywhere;
+        }
+        .bangla-unicode-safe {
+            font-family: "Noto Sans", "Noto Sans Bengali", "Noto Serif", "Noto Serif Bengali", Arial, sans-serif;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
 
@@ -66,7 +92,7 @@
                 <h3 id="modalTitle" class="font-bold text-xl text-gray-800">ডেসক্রিপশন বিস্তারিত</h3>
                 <button onclick="closeModal()" class="text-gray-500 hover:text-red-600 font-bold text-lg">&times;</button>
             </div>
-            <div id="modalBody" class="overflow-y-auto p-4 border rounded bg-gray-50 text-gray-800" style="white-space: pre-wrap;"></div>
+            <div id="modalBody" class="bangla-unicode-safe overflow-y-auto p-4 border rounded bg-gray-50 text-gray-800" style="white-space: pre-wrap;"></div>
             <div class="flex justify-between items-center pt-2">
                 <button onclick="copyModalContent()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 flex items-center gap-2">
                     <span id="modalCopyBtnText">কপি করুন</span>
@@ -84,7 +110,7 @@
         window.onload = function() {
             renderDataEntryForm('public-form-container', 'public');
             renderDataEntryForm('admin-form-container', 'admin');
-            loadDashboard();
+            ensureBijoyEngine().finally(() => loadDashboard());
         };
 
         function renderDataEntryForm(containerId, prefix) {
@@ -97,7 +123,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">টাইটেল <span class="text-red-500">*</span></label>
-                            <input type="text" id="${prefix}-entryTitle" placeholder="টাইটেল লিখুন..." class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <input type="text" id="${prefix}-entryTitle" dir="auto" spellcheck="true" autocomplete="off" placeholder="টাইটেল লিখুন..." class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড <span class="text-red-500">*</span></label>
@@ -113,7 +139,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">ডেসক্রিপশন (ফরম্যাটেড টেক্সট)</label>
-                            <div id="${prefix}-entryDescription" contenteditable="true" class="w-full border rounded-lg px-3 py-2 min-h-[120px] bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto" style="white-space: pre-wrap;"></div>
+                            <div id="${prefix}-entryDescription" contenteditable="true" dir="auto" spellcheck="true" class="w-full border rounded-lg px-3 py-2 min-h-[120px] bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto" style="white-space: pre-wrap;"></div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">একাধিক ফাইল চুজ করুন (HTML, CSS, JS, Doc, PDF, Excel ইত্যাদি)</label>
@@ -192,7 +218,7 @@
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getAllRecords&_=${Date.now()}`);
                 const records = await res.json();
-                allDataCache = Array.isArray(records) ? records : [];
+                allDataCache = Array.isArray(records) ? records.map(normalizeRecordForDisplay) : [];
 
                 if (allDataCache.length === 0) {
                     container.innerHTML = `<p class="text-gray-500">কোনো ডাটা পাওয়া যায়নি।</p>`;
@@ -290,14 +316,15 @@
             try {
                 const res = await fetch(`${SCRIPT_URL}?action=getAllRecords&_=${Date.now()}`);
                 const records = await res.json();
+                const safeRecords = Array.isArray(records) ? records.map(normalizeRecordForDisplay) : [];
 
-                if (!records || records.length === 0) {
+                if (!safeRecords || safeRecords.length === 0) {
                     container.innerHTML = `<p class="text-gray-500">কোনো রেকর্ড নেই।</p>`;
                     return;
                 }
 
                 container.innerHTML = '';
-                records.forEach(item => {
+                safeRecords.forEach(item => {
                     container.innerHTML += `
                         <div class="border rounded-xl p-4 bg-gray-50 flex justify-between items-center">
                             <div>
@@ -317,9 +344,15 @@
         }
 
         async function submitData(prefix) {
+            // Title is plain text: never run ordinary English through a legacy converter.
+            // Legacy/Bijoy text pasted from a font-aware source is converted by the
+            // title paste handler only when the clipboard explicitly identifies a legacy font.
             const title = document.getElementById(`${prefix}-entryTitle`).value.trim();
             const password = document.getElementById(`${prefix}-entryPassword`).value.trim();
-            const description = document.getElementById(`${prefix}-entryDescription`).innerHTML;
+            // Always save Bengali content as real Unicode UTF-8.
+            const description = await normalizeHTMLToUnicode(
+                document.getElementById(`${prefix}-entryDescription`).innerHTML
+            );
             const fileInput = document.getElementById(`${prefix}-entryFiles`);
             const editId = document.getElementById(`${prefix}-editRecordId`).value;
 
@@ -397,7 +430,7 @@
                 document.getElementById(`${prefix}-editRecordId`).value = item.id;
                 document.getElementById(`${prefix}-entryTitle`).value = item.title || "";
                 document.getElementById(`${prefix}-entryPassword`).value = item.password || "";
-                document.getElementById(`${prefix}-entryDescription`).innerHTML = item.description || "";
+                document.getElementById(`${prefix}-entryDescription`).innerHTML = normalizeHTMLSync(item.description || "");
                 document.getElementById(`${prefix}-form-title`).innerText = "ডাটা এডিট করুন";
                 document.getElementById(`${prefix}-submitBtn`).innerText = "আপডেট করুন";
                 document.getElementById(`${prefix}-cancelBtn`).classList.remove('hidden');
@@ -419,9 +452,9 @@
 
         function openModal(index) {
             const item = allDataCache[index];
-            document.getElementById('modalTitle').innerText = item.title;
-            document.getElementById('modalBody').innerHTML = item.description;
-            currentModalDesc = item.description;
+            document.getElementById('modalTitle').innerText = item.title || "";
+            document.getElementById('modalBody').innerHTML = normalizeHTMLSync(item.description || "");
+            currentModalDesc = normalizeHTMLSync(item.description || "");
             document.getElementById('descModal').classList.remove('hidden');
         }
 
@@ -468,6 +501,285 @@
                 }, 2000);
             });
         }
+
+
+        /* ================================================================
+           UNIVERSAL TEXT / FONT FIDELITY ENGINE
+           - English is NEVER converted.
+           - Unicode Bengali is NEVER converted.
+           - Legacy Bijoy/SutonnyMJ is converted only when legacy-font evidence
+             exists in the pasted HTML, or when a strong legacy signature exists.
+           - Existing rich-text HTML/style/font-family is preserved.
+           - The same HTML is used for Dashboard + Preview.
+           ================================================================ */
+
+        let bijoyEngine = null;
+        let bijoyEnginePromise = null;
+
+        async function ensureBijoyEngine() {
+            if (bijoyEngine) return bijoyEngine;
+            if (!bijoyEnginePromise) {
+                bijoyEnginePromise = import("https://esm.sh/bijoy2unicode@1.0.2")
+                    .then(mod => {
+                        bijoyEngine = mod;
+                        return mod;
+                    })
+                    .catch(() => null);
+            }
+            return bijoyEnginePromise;
+        }
+
+        function hasBanglaUnicode(text) {
+            return /[\u0980-\u09FF]/u.test(text || "");
+        }
+
+        function isPureEnglishOrCommonLatin(text) {
+            if (!text) return false;
+            // If the text contains only ordinary Latin letters, digits, whitespace
+            // and common punctuation, it is English/Latin and MUST NOT be converted.
+            return /^[A-Za-z0-9\s.,!?;:'"(){}\[\]<>@#$%&*+=_\/\\|~`^°•\-–—]+$/.test(text);
+        }
+
+        function getLegacyFontEvidence(element) {
+            let el = element;
+            while (el) {
+                const styleFont = (el.getAttribute && el.getAttribute("style") || "").toLowerCase();
+                const faceFont = (el.getAttribute && el.getAttribute("face") || "").toLowerCase();
+                const className = (el.getAttribute && el.getAttribute("class") || "").toLowerCase();
+                const dataFont = (el.getAttribute && (
+                    el.getAttribute("data-font") ||
+                    el.getAttribute("data-font-family") ||
+                    el.getAttribute("data-original-font")
+                ) || "").toLowerCase();
+
+                const combined = `${styleFont} ${faceFont} ${className} ${dataFont}`;
+                if (/(sutonny|bijoy|boishakhi|suleka|sutonnybangla|bijoyekattor|bijoy\s*52|omj|mj\s*font|amar\s*bangla|bangsee|bangla\s*font)/i.test(combined)) {
+                    return true;
+                }
+                el = el.parentElement;
+            }
+            return false;
+        }
+
+        function legacyCharacterScore(text) {
+            if (!text || hasBanglaUnicode(text) || isPureEnglishOrCommonLatin(text)) return 0;
+
+            const chars = [...text];
+            if (!chars.length) return 0;
+
+            // These characters are especially common in Bijoy/SutonnyMJ ANSI text.
+            const strongLegacy = /[†‡ˆ‰Š„…ƒ‚˜™š›œŸ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòôõö÷øùúûüýþ]/;
+            const count = chars.filter(c => strongLegacy.test(c)).length;
+            return count / chars.length;
+        }
+
+        function looksLikeLegacyBijoy(text, element = null) {
+            if (!text || hasBanglaUnicode(text)) return false;
+
+            // Ordinary English must always pass through unchanged.
+            if (isPureEnglishOrCommonLatin(text)) return false;
+
+            // Strongest and safest signal: the source explicitly says it used a
+            // legacy Bengali font.
+            if (getLegacyFontEvidence(element)) return true;
+
+            // For plain-text clipboard data where font metadata was stripped,
+            // only convert when there are unmistakable legacy ANSI characters.
+            return legacyCharacterScore(text) >= 0.08;
+        }
+
+        const BIJOY_FALLBACK_MAP = {
+            "Av":"আ","A":"অ","B":"ই","C":"ঈ","D":"উ","E":"ঊ","F":"ঋ","G":"এ","H":"ঐ","I":"ও","J":"ঔ",
+            "K":"ক","L":"খ","M":"গ","N":"ঘ","O":"ঙ","P":"চ","Q":"ছ","R":"জ","S":"ঝ","T":"ঞ","U":"ট","V":"ঠ",
+            "W":"ড","X":"ঢ","Y":"ণ","Z":"ত","_":"থ","`":"দ","a":"ধ","b":"ন","c":"প","d":"ফ","e":"ব","f":"ভ",
+            "g":"ম","h":"য","i":"র","j":"ল","k":"শ","l":"ষ","m":"স","n":"হ","o":"ড়","p":"ঢ়","q":"য়","r":"ৎ",
+            "s":"ং","t":"ঃ","u":"ঁ","0":"০","1":"১","2":"২","3":"৩","4":"৪","5":"৫","6":"৬","7":"৭","8":"৮","9":"৯",
+            "•":"ঙ্","v":"া","w":"ি","x":"ী","y":"ু","z":"ু","“":"ু","–":"ু","~":"ূ","ƒ":"ূ","‚":"ূ","„":"ৃ","…":"ৃ",
+            "†":"ে","‡":"ে","ˆ":"ৈ","‰":"ৈ","Š":"ৗ","|":"।","\\|":"।","\\&":"্‌",
+            "°":"ক্ক","±":"ক্ট","²":"ক্ষ্ণ","³":"ক্ত","´":"ক্ম","µ":"ক্র","¶":"ক্ষ","·":"ক্স","¸":"গু","¹":"জ্ঞ",
+            "º":"গ্দ","»":"গ্ধ","¼":"ঙ্ক","½":"ঙ্গ","¾":"জ্জ","¿":"্ত্র","À":"জ্ঝ","Á":"জ্ঞ","Â":"ঞ্চ","Ã":"ঞ্ছ",
+            "Ä":"ঞ্জ","Å":"ঞ্ঝ","Æ":"ট্ট","Ç":"ড্ড","È":"ণ্ট","É":"ণ্ঠ","Ê":"ণ্ড","Ë":"ত্ত","Ì":"ত্থ","Í":"ত্ম",
+            "Î":"ত্র","Ï":"দ্দ","Ð":"ণ্ড","Ñ":"-","Ò":"\"","Ó":"\"","Ô":"'","Õ":"'","Ö":"্র","×":"দ্ধ","Ø":"দ্ব",
+            "Ù":"দ্ম","Ú":"ন্ঠ","Û":"ন্ড","Ü":"ন্ধ","Ý":"ন্স","Þ":"প্ট","ß":"প্ত","à":"প্প","á":"প্স","â":"ব্জ",
+            "ã":"ব্দ","ä":"ব্ধ","å":"ভ্র","æ":"ম্ন","ç":"ম্ফ","è":"্ন","é":"ল্ক","ê":"ল্গ","ë":"ল্ট","ì":"ল্ড",
+            "í":"ল্প","î":"ল্ফ","ï":"শু","ð":"শ্চ","ñ":"শ্ছ","ò":"ষ্ণ","ó":"ষ্ট","ô":"ষ্ঠ","õ":"ষ্ফ","ö":"স্খ",
+            "÷":"স্ট","ø":"স্ন","ù":"স্ফ","ú":"্প","û":"হু","ü":"হৃ","ý":"হ্ন","þ":"হ্ম",
+            "®":"ষ্","¯":"স্","”":"চ্","˜":"দ্","™":"দ্","š":"ন্","›":"ন্","œ":"্ন","Ÿ":"্ব","¡":"্ব","¢":"্ভ",
+            "£":"্ভ্র","¤":"ম্","¥":"্ম","¦":"্ব","§":"্ম","¨":"্য","©":"র্","ª":"্র","«":"্র","¬":"্ল","­":"্ল",
+            "^":"্ব","‘":"্তু","’":"্থ","‹":"্ক","Œ":"্ক্র","—":"্ত"
+        };
+
+        function fallbackBijoyToUnicode(input) {
+            if (!input || !looksLikeLegacyBijoy(input)) return input || "";
+            let s = input;
+            const pre = [
+                ["yy","y"],["vv","v"],["­­","­"],["y&","y"],["„&","„"],
+                ["‡u","u‡"],["wu","uw"],["uy","yu"],["u“","“u"],["u–","–u"],
+                ["uƒ","ƒu"],["u‚","‚u"],["uv","vu"],["u…","…u"],["u„","„u"],
+                ["uz","zu"],["ux","xu"],["u~","~u"]
+            ];
+            pre.forEach(([a,b]) => s = s.split(a).join(b));
+            Object.keys(BIJOY_FALLBACK_MAP).sort((a,b)=>b.length-a.length).forEach(k => {
+                s = s.split(k).join(BIJOY_FALLBACK_MAP[k]);
+            });
+            s = s.replace(/্+/g, "্");
+            for (let i = 1; i < 4; i++) {
+                s = s.replace(/([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])র্/g, "র্$1");
+            }
+            s = s.replace(/([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE](?:্[\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])*)([িীেৈ])/g, "$2$1");
+            s = s.replace(/ে([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])া/g, "$1ো");
+            s = s.replace(/ে([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])ৗ/g, "$1ৌ");
+            return s.normalize("NFC");
+        }
+
+        function convertBijoyTextIfNeeded(text, element = null) {
+            if (!text || hasBanglaUnicode(text)) return text || "";
+            if (!looksLikeLegacyBijoy(text, element)) return text;
+
+            if (bijoyEngine && typeof bijoyEngine.convertBijoyToUnicode === "function") {
+                try { return bijoyEngine.convertBijoyToUnicode(text); } catch(e) {}
+            }
+            return fallbackBijoyToUnicode(text);
+        }
+
+        async function convertBijoyText(text, element = null) {
+            if (!text || hasBanglaUnicode(text) || !looksLikeLegacyBijoy(text, element)) return text || "";
+            const engine = await ensureBijoyEngine();
+            if (engine && typeof engine.convertBijoyToUnicode === "function") {
+                try { return engine.convertBijoyToUnicode(text); } catch(e) {}
+            }
+            return fallbackBijoyToUnicode(text);
+        }
+
+        function normalizeHTMLSync(html) {
+            if (!html) return "";
+            const box = document.createElement("div");
+            box.innerHTML = html;
+            const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach(node => {
+                node.nodeValue = convertBijoyTextIfNeeded(node.nodeValue, node.parentElement);
+            });
+            return box.innerHTML;
+        }
+
+        async function normalizeHTMLToUnicode(html) {
+            if (!html) return "";
+            const box = document.createElement("div");
+            box.innerHTML = html;
+            const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            for (const node of nodes) {
+                node.nodeValue = await convertBijoyText(node.nodeValue, node.parentElement);
+            }
+            return box.innerHTML;
+        }
+
+        function normalizeRecordForDisplay(item) {
+            if (!item) return item;
+            return {
+                ...item,
+                // Keep title exactly as stored; do not reinterpret English as Bijoy.
+                title: item.title || "",
+                // Preserve the exact rich-text HTML so Dashboard/Preview use the
+                // same formatting/font information as the entry.
+                description: normalizeHTMLSync(item.description || "")
+            };
+        }
+
+        function clipboardHasLegacyFont(htmlText) {
+            return /(sutonny|bijoy|boishakhi|suleka|sutonnybangla|bijoyekattor|omj|mj\s*font|bangsee)/i.test(htmlText || "");
+        }
+
+        function insertRichClipboardIntoEditable(el, clipboardHTML, clipboardText) {
+            if (!el) return;
+
+            if (clipboardHTML && clipboardHasLegacyFont(clipboardHTML)) {
+                el.focus();
+                const range = document.getSelection();
+                if (range && range.rangeCount) {
+                    range.deleteFromDocument();
+                    const temp = document.createElement("div");
+                    temp.innerHTML = clipboardHTML;
+                    // Convert only text nodes whose source HTML identifies a legacy font.
+                    const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT);
+                    const nodes = [];
+                    while (walker.nextNode()) nodes.push(walker.currentNode);
+                    nodes.forEach(node => {
+                        if (getLegacyFontEvidence(node.parentElement)) {
+                            node.nodeValue = convertBijoyTextIfNeeded(node.nodeValue, node.parentElement);
+                        }
+                    });
+                    const frag = document.createDocumentFragment();
+                    while (temp.firstChild) frag.appendChild(temp.firstChild);
+                    range.insertNode(frag);
+                    range.collapse(false);
+                    return;
+                }
+            }
+
+            // Normal English/Unicode paste: browser inserts the original content,
+            // preserving HTML formatting. No conversion is applied.
+            document.execCommand("insertHTML", false, clipboardHTML || escapeHtml(clipboardText || ""));
+        }
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = value || "";
+            return div.innerHTML;
+        }
+
+        function attachBanglaAutoConverter() {
+            ["public-entryDescription","admin-entryDescription"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || el.dataset.universalFontAttached) return;
+                el.dataset.universalFontAttached = "1";
+
+                el.addEventListener("paste", (event) => {
+                    event.preventDefault();
+                    const htmlText = event.clipboardData ? event.clipboardData.getData("text/html") : "";
+                    const plainText = event.clipboardData ? event.clipboardData.getData("text/plain") : "";
+
+                    // Let the source font decide whether legacy conversion is needed.
+                    insertRichClipboardIntoEditable(el, htmlText, plainText);
+                });
+
+                // IMPORTANT: do not convert on blur. Blur conversion was the reason
+                // ordinary English could previously become Bengali-looking text.
+            });
+
+            ["public-entryTitle","admin-entryTitle"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || el.dataset.universalFontAttached) return;
+                el.dataset.universalFontAttached = "1";
+
+                el.addEventListener("paste", (event) => {
+                    const htmlText = event.clipboardData ? event.clipboardData.getData("text/html") : "";
+                    const plainText = event.clipboardData ? event.clipboardData.getData("text/plain") : "";
+
+                    // Input fields cannot retain per-character font-family. If the
+                    // clipboard explicitly identifies a legacy Bengali font, convert
+                    // that pasted text. Otherwise preserve it byte-for-byte.
+                    if (clipboardHasLegacyFont(htmlText) && plainText && !hasBanglaUnicode(plainText)) {
+                        event.preventDefault();
+                        const converted = convertBijoyTextIfNeeded(plainText);
+                        const start = el.selectionStart ?? el.value.length;
+                        const end = el.selectionEnd ?? el.value.length;
+                        el.value = el.value.slice(0, start) + converted + el.value.slice(end);
+                        const pos = start + converted.length;
+                        el.setSelectionRange(pos, pos);
+                    }
+                });
+            });
+        }
+
+        const originalRenderDataEntryForm = renderDataEntryForm;
+        renderDataEntryForm = function(containerId, prefix) {
+            originalRenderDataEntryForm(containerId, prefix);
+            attachBanglaAutoConverter();
+        };
 
         async function downloadRecordZip(id, event) {
             const btn = event.target;
