@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Document and Text</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-bold">ফাইল ও টেক্সট ম্যানেজমেন্ট সিস্টেম</h1>
+        <div class="space-x-2">
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 bg-blue-700 rounded transition font-medium">ড্যাশবোর্ড</button>
+            <button onclick="switchTab('dataentry')" id="btn-dataentry" class="px-4 py-2 bg-blue-800 rounded transition font-medium">ডাটা এন্ট্রি</button>
+            <button onclick="switchTab('admin')" id="btn-admin" class="px-4 py-2 bg-blue-800 rounded transition font-medium">অ্যাডমিন প্যানেল</button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6 max-w-5xl">
+        <!-- Dashboard Section -->
+        <div id="section-dashboard" class="bg-white rounded-xl shadow p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">ড্যাশবোর্ড (সংরক্ষিত টেক্সট ও ফাইলসমূহ)</h2>
+            <div id="dashboard-list" class="space-y-6">
+                <p class="text-gray-500">লোড হচ্ছে...</p>
+            </div>
+        </div>
+
+        <!-- Public Data Entry Section -->
+        <div id="section-dataentry" class="hidden">
+            <div id="public-form-container"></div>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="section-admin" class="hidden space-y-6">
+            <div id="admin-login-box" class="bg-white rounded-xl shadow p-6 max-w-md mx-auto">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">অ্যাডমিন লগইন</h2>
+                <div class="space-y-4">
+                    <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড দিন (5101)" class="w-full border rounded px-3 py-2">
+                    <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-2 rounded font-medium hover:bg-blue-700">লগইন</button>
+                </div>
+            </div>
+
+            <div id="admin-panel-content" class="hidden space-y-6">
+                <!-- Data Entry Box for Admin -->
+                <div id="admin-form-container"></div>
+
+                <!-- Summary Box -->
+                <div class="bg-white rounded-xl shadow p-6 border-2 border-indigo-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">সামারি ও ম্যানেজমেন্ট</h2>
+                    <div id="summary-list" class="space-y-4">
+                        <p class="text-gray-500">ডাটা লোড হচ্ছে...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Popup for Description View -->
+    <div id="descModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white rounded-xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] flex flex-col shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 id="modalTitle" class="font-bold text-xl text-gray-800">ডেসক্রিপশন বিস্তারিত</h3>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-red-600 font-bold text-lg">&times;</button>
+            </div>
+            <div id="modalBody" class="overflow-y-auto p-4 border rounded bg-gray-50 text-gray-800" style="white-space: pre-wrap;"></div>
+            <div class="flex justify-between items-center pt-2">
+                <button onclick="copyModalContent()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 flex items-center gap-2">
+                    <span id="modalCopyBtnText">কপি করুন</span>
+                </button>
+                <button onclick="closeModal()" class="bg-gray-500 text-white px-4 py-2 rounded text-sm font-medium hover:bg-gray-600">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynqJ-OX2bfmtdOx54OnUPsFO_oAuh7-18KJAhqsJ1ii329a2f6s_lBTM3dbMoyw5Jl/exec"; 
+
+        let allDataCache = [];
+
+        window.onload = function() {
+            renderDataEntryForm('public-form-container', 'public');
+            renderDataEntryForm('admin-form-container', 'admin');
+            loadDashboard();
+        };
+
+        function renderDataEntryForm(containerId, prefix) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md p-6 border-2 border-indigo-300">
+                    <h2 id="${prefix}-form-title" class="text-xl font-bold text-gray-800 mb-4">নতুন ডাটা এন্ট্রি</h2>
+                    <input type="hidden" id="${prefix}-editRecordId" value="">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">টাইটেল <span class="text-red-500">*</span></label>
+                            <input type="text" id="${prefix}-entryTitle" placeholder="টাইটেল লিখুন..." class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="${prefix}-entryPassword" placeholder="পাসওয়ার্ড লিখুন..." class="w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <button type="button" onclick="togglePasswordVisibility('${prefix}-entryPassword', '${prefix}-eyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-500 hover:text-gray-700">
+                                    <svg id="${prefix}-eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ডেসক্রিপশন (ফরম্যাটেড টেক্সট)</label>
+                            <div id="${prefix}-entryDescription" contenteditable="true" class="w-full border rounded-lg px-3 py-2 min-h-[120px] bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto" style="white-space: pre-wrap;"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">একাধিক ফাইল চুজ করুন (HTML, CSS, JS, Doc, PDF, Excel ইত্যাদি)</label>
+                            <input type="file" id="${prefix}-entryFiles" multiple class="w-full border rounded-lg px-3 py-2 bg-gray-50">
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="submitData('${prefix}')" id="${prefix}-submitBtn" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700 transition">সেভ করুন</button>
+                            <button onclick="resetForm('${prefix}')" id="${prefix}-cancelBtn" class="hidden bg-gray-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-gray-600 transition">ক্যান্সেল</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a10.018 10.018 0 0113.122 13.122m-1.563 3.029A9.97 9.97 0 0112 19c-1.558 0-3.04-.355-4.364-1.002M3 3l18 18" />`;
+            } else {
+                input.type = "password";
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+            }
+        }
+
+        function switchTab(tab) {
+            document.getElementById('section-dashboard').classList.add('hidden');
+            document.getElementById('section-dataentry').classList.add('hidden');
+            document.getElementById('section-admin').classList.add('hidden');
+
+            document.getElementById('btn-dashboard').className = "px-4 py-2 bg-blue-800 rounded transition font-medium";
+            document.getElementById('btn-dataentry').className = "px-4 py-2 bg-blue-800 rounded transition font-medium";
+            document.getElementById('btn-admin').className = "px-4 py-2 bg-blue-800 rounded transition font-medium";
+
+            if (tab === 'dashboard') {
+                document.getElementById('section-dashboard').classList.remove('hidden');
+                document.getElementById('btn-dashboard').className = "px-4 py-2 bg-blue-700 rounded transition font-medium";
+                loadDashboard();
+            } else if (tab === 'dataentry') {
+                document.getElementById('section-dataentry').classList.remove('hidden');
+                document.getElementById('btn-dataentry').className = "px-4 py-2 bg-blue-700 rounded transition font-medium";
+            } else if (tab === 'admin') {
+                document.getElementById('section-admin').classList.remove('hidden');
+                document.getElementById('btn-admin').className = "px-4 py-2 bg-blue-700 rounded transition font-medium";
+            }
+        }
+
+        async function apiPost(payload) {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            });
+            return await res.json();
+        }
+
+        async function handleLogin() {
+            const pass = document.getElementById('adminPassword').value;
+            const res = await apiPost({ action: 'adminLogin', password: pass });
+            if (res.success) {
+                document.getElementById('admin-login-box').classList.add('hidden');
+                document.getElementById('admin-panel-content').classList.remove('hidden');
+                loadSummary();
+            } else {
+                alert(res.error);
+            }
+        }
+
+        async function loadDashboard() {
+            const container = document.getElementById('dashboard-list');
+            container.innerHTML = `<p class="text-gray-500">লোড হচ্ছে...</p>`;
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getAllRecords&_=${Date.now()}`);
+                const records = await res.json();
+                allDataCache = Array.isArray(records) ? records : [];
+
+                if (allDataCache.length === 0) {
+                    container.innerHTML = `<p class="text-gray-500">কোনো ডাটা পাওয়া যায়নি।</p>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                allDataCache.forEach((item, index) => {
+                    let filesHtml = '';
+                    if (item.files && item.files.length > 0) {
+                        item.files.forEach(f => {
+                            filesHtml += `
+                                <div class="flex justify-between items-center bg-gray-50 p-2 rounded mb-2 border">
+                                    <span class="text-sm text-gray-700 truncate max-w-xs">${f.name}</span>
+                                    <div class="flex gap-2">
+                                        <a href="${f.downloadUrl}" target="_blank" class="bg-blue-500 text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-600">ডাউনলোড</a>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    const hasDesc = item.description && item.description.trim() !== "";
+                    const hasFiles = item.files && item.files.length > 0;
+                    
+                    container.innerHTML += `
+                        <div class="border-2 border-indigo-300 hover:border-indigo-500 rounded-xl p-5 bg-white shadow-sm space-y-4 transition-all duration-200">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <h3 class="font-bold text-lg text-gray-800">${item.title}</h3>
+                                
+                                <div class="flex items-center gap-2">
+                                    ${(hasFiles || hasDesc) ? `<button onclick="downloadRecordZip('${item.id}', event)" class="bg-purple-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-purple-700">সব ফাইল ZIP ডাউনলোড</button>` : ''}
+                                    
+                                    <div class="inline-flex items-center">
+                                        <input type="password" id="pass-input-${index}" placeholder="পাসওয়ার্ড..." oninput="verifyPassword(${index}, '${encodeURIComponent(item.password)}')" class="border border-gray-300 rounded px-2 py-1 text-xs w-28 focus:outline-none focus:border-red-500">
+                                        <button id="delete-btn-${index}" onclick="confirmDeleteRecord('${item.id}')" class="hidden bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-xs font-medium transition">🗑️ ডিলিট</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            ${hasDesc ? `
+                            <div class="border rounded p-3 bg-gray-50 relative group">
+                                <div class="cursor-pointer text-gray-700 text-sm line-clamp-3" onclick="openModal(${index})" style="white-space: pre-wrap;">${item.description}</div>
+                                <div class="mt-2 flex justify-between items-center border-t pt-2">
+                                    <button onclick="openModal(${index})" class="text-xs text-blue-600 font-medium hover:underline">সম্পূর্ণ ডেসক্রিপশন দেখুন...</button>
+                                    <button onclick="copyFormattedText(event, ${index})" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded text-xs font-medium flex items-center gap-1 transition">
+                                        <span id="copy-btn-${index}">📋 কপি টেক্সট</span>
+                                    </button>
+                                </div>
+                            </div>` : ''}
+
+                            ${filesHtml ? `<div class="pt-2">${filesHtml}</div>` : ''}
+                        </div>
+                    `;
+                });
+            } catch (err) {
+                container.innerHTML = `<p class="text-red-500">ডাটা লোড করতে সমস্যা হয়েছে।</p>`;
+            }
+        }
+
+        function verifyPassword(index, encodedPass) {
+            const inputVal = document.getElementById(`pass-input-${index}`).value;
+            const actualPass = decodeURIComponent(encodedPass);
+            const passInput = document.getElementById(`pass-input-${index}`);
+            const delBtn = document.getElementById(`delete-btn-${index}`);
+
+            if (inputVal === actualPass && inputVal !== "") {
+                passInput.classList.add('hidden');
+                delBtn.classList.remove('hidden');
+            } else {
+                passInput.classList.remove('hidden');
+                delBtn.classList.add('hidden');
+            }
+        }
+
+        async function confirmDeleteRecord(id) {
+            if (confirm('আপনি কি নিশ্চিত এই রেকর্ডটি গুগল শিট ও ড্রাইভ থেকে সম্পূর্ণ ডিলিট করতে চান?')) {
+                const res = await apiPost({ action: 'deleteRecord', id: id });
+                if (res.success) {
+                    alert('সফলভাবে ডিলিট করা হয়েছে!');
+                    loadDashboard();
+                    if (!document.getElementById('admin-panel-content').classList.contains('hidden')) {
+                        loadSummary();
+                    }
+                } else {
+                    alert(res.error);
+                }
+            }
+        }
+
+        async function loadSummary() {
+            const container = document.getElementById('summary-list');
+            container.innerHTML = `<p class="text-gray-500">লোড হচ্ছে...</p>`;
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getAllRecords&_=${Date.now()}`);
+                const records = await res.json();
+
+                if (!records || records.length === 0) {
+                    container.innerHTML = `<p class="text-gray-500">কোনো রেকর্ড নেই।</p>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                records.forEach(item => {
+                    container.innerHTML += `
+                        <div class="border rounded-xl p-4 bg-gray-50 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-gray-800">${item.title}</h4>
+                                <p class="text-xs text-gray-500">ফাইল সংখ্যা: ${item.files ? item.files.length : 0}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editRecord('${item.id}')" class="bg-yellow-500 text-white px-3 py-1 rounded text-xs font-medium hover:bg-yellow-600">Edit</button>
+                                <button onclick="confirmDeleteRecord('${item.id}')" class="bg-red-500 text-white px-3 py-1 rounded text-xs font-medium hover:bg-red-600">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                container.innerHTML = `<p class="text-red-500">ডাটা লোড করতে ব্যর্থ হয়েছে।</p>`;
+            }
+        }
+
+        async function submitData(prefix) {
+            const title = document.getElementById(`${prefix}-entryTitle`).value.trim();
+            const password = document.getElementById(`${prefix}-entryPassword`).value.trim();
+            const description = document.getElementById(`${prefix}-entryDescription`).innerHTML;
+            const fileInput = document.getElementById(`${prefix}-entryFiles`);
+            const editId = document.getElementById(`${prefix}-editRecordId`).value;
+
+            if (!title) {
+                alert('দয়া করে টাইটেল দিন।');
+                return;
+            }
+            if (!password) {
+                alert('পাসওয়ার্ড দেওয়া বাধ্যতামূলক! দয়া করে পাসওয়ার্ড দিন।');
+                return;
+            }
+
+            const submitBtn = document.getElementById(`${prefix}-submitBtn`);
+            submitBtn.innerText = "প্রসেসিং হচ্ছে...";
+            submitBtn.disabled = true;
+
+            const filesData = [];
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                const base64 = await toBase64(file);
+                filesData.push({
+                    name: file.name,
+                    mimeType: file.type,
+                    data: base64
+                });
+            }
+
+            let res;
+            if (editId) {
+                res = await apiPost({
+                    action: 'updateRecord',
+                    id: editId,
+                    title: title,
+                    password: password,
+                    description: description,
+                    filesData: filesData
+                });
+            } else {
+                res = await apiPost({
+                    action: 'uploadFiles',
+                    title: title,
+                    password: password,
+                    description: description,
+                    filesData: filesData
+                });
+            }
+
+            if (res.success) {
+                alert('সফলভাবে সেভ করা হয়েছে!');
+                resetForm(prefix);
+                await loadDashboard();
+                if (prefix === 'admin') {
+                    loadSummary();
+                }
+            } else {
+                alert(res.error || 'সেভ করতে সমস্যা হয়েছে।');
+            }
+            submitBtn.innerText = editId ? "আপডেট করুন" : "সেভ করুন";
+            submitBtn.disabled = false;
+        }
+
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function editRecord(id) {
+            const item = allDataCache.find(r => r.id === id);
+            if (item) {
+                const prefix = 'admin';
+                document.getElementById(`${prefix}-editRecordId`).value = item.id;
+                document.getElementById(`${prefix}-entryTitle`).value = item.title || "";
+                document.getElementById(`${prefix}-entryPassword`).value = item.password || "";
+                document.getElementById(`${prefix}-entryDescription`).innerHTML = item.description || "";
+                document.getElementById(`${prefix}-form-title`).innerText = "ডাটা এডিট করুন";
+                document.getElementById(`${prefix}-submitBtn`).innerText = "আপডেট করুন";
+                document.getElementById(`${prefix}-cancelBtn`).classList.remove('hidden');
+            }
+        }
+
+        function resetForm(prefix) {
+            document.getElementById(`${prefix}-editRecordId`).value = '';
+            document.getElementById(`${prefix}-entryTitle`).value = '';
+            document.getElementById(`${prefix}-entryPassword`).value = '';
+            document.getElementById(`${prefix}-entryDescription`).innerHTML = '';
+            document.getElementById(`${prefix}-entryFiles`).value = '';
+            document.getElementById(`${prefix}-form-title`).innerText = "নতুন ডাটা এন্ট্রি";
+            document.getElementById(`${prefix}-submitBtn`).innerText = "সেভ করুন";
+            document.getElementById(`${prefix}-cancelBtn`).classList.add('hidden');
+        }
+
+        let currentModalDesc = "";
+
+        function openModal(index) {
+            const item = allDataCache[index];
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalBody').innerHTML = item.description;
+            currentModalDesc = item.description;
+            document.getElementById('descModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('descModal').classList.add('hidden');
+        }
+
+        function copyFormattedText(event, index) {
+            event.stopPropagation();
+            const item = allDataCache[index];
+            copyToClipboard(item.description, `copy-btn-${index}`);
+        }
+
+        function copyModalContent() {
+            copyToClipboard(currentModalDesc, 'modalCopyBtnText');
+        }
+
+        function copyToClipboard(htmlContent, btnId) {
+            const blobHtml = new Blob([htmlContent], { type: 'text/html' });
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+            const plainText = tempDiv.innerText || tempDiv.textContent;
+            const blobText = new Blob([plainText], { type: 'text/plain' });
+
+            const data = [new ClipboardItem({
+                'text/html': blobHtml,
+                'text/plain': blobText
+            })];
+
+            navigator.clipboard.write(data).then(() => {
+                const btn = document.getElementById(btnId);
+                const originalText = btn.innerText;
+                btn.innerText = "Copied!";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            }).catch(() => {
+                navigator.clipboard.writeText(plainText);
+                const btn = document.getElementById(btnId);
+                const originalText = btn.innerText;
+                btn.innerText = "Copied!";
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            });
+        }
+
+        async function downloadRecordZip(id, event) {
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "ZIP তৈরি হচ্ছে...";
+            btn.disabled = true;
+
+            try {
+                const res = await apiPost({ action: 'downloadZip', id: id });
+
+                if (res.success && res.base64) {
+                    const byteCharacters = atob(res.base64);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'application/zip' });
+
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = res.filename || "files.zip";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                } else {
+                    alert(res.error || "ZIP তৈরিতে সমস্যা হয়েছে।");
+                }
+            } catch (err) {
+                alert("ZIP ডাউনলোড করতে সমস্যা হয়েছে: " + err.toString());
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
