@@ -399,12 +399,12 @@
                 <p>ছবির ব্যাকগ্রাউন্ড রিমুভ করুন এক ক্লিকে।</p>
             </div>
 
-            <!-- ৩. PDF To JPG or PNG -->
-            <div onclick="openPdfToJpgTool()" class="tool-card">
-                <div class="icon"><i class="fa-solid fa-file-pdf"></i></div>
-                <h3>PDF to JPG/PNG</h3>
-                <p>পিডিএফ ফাইলকে কনভার্ট করুন ইমেজ ফরম্যাটে।</p>
-            </div>
+             <!-- 3. save info বা টুলস যুক্ত করার টেমপ্লেট--------------------------------------------------------------- -->
+            <a href="pdf\savedinfo.html" class="tool-card">
+                <div class="icon"><i class="fa-solid fa-plus-circle"></i></div>
+                <h3>নতুন info/file যোগ করুন</h3>
+                <p>এখানে যে কোন তথ্য পাচওয়ার্ড দিয়ে Saved করে রাখুন।</p>
+            </a>
 
             <!-- ৪. PDF Merge (সংযুক্ত ও আপডেটকৃত) -->
             <div onclick="openPdfMergeTool()" class="tool-card">
@@ -862,7 +862,7 @@
         <div class="m-toast" id="m_toast"></div>
     </div>
 
-    <!-- ড্যাশবোর্ড সুইচিং স্ক্রিপ্ট -->
+    <!-- ড্যাশবোর্ড সুইচিং স্ক্রিপ্ট------------------------------------------------------------------------------stop section -->
     <script>
         function openJpegTool() {
             document.getElementById('main-dashboard').style.display = 'none';
