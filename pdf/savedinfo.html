@@ -12,7 +12,7 @@
     <nav class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-xl font-bold">ফাইল ও টেক্সট ম্যানেজমেন্ট সিস্টেম</h1>
         <div class="space-x-2">
-            <button onclick="switchTab('home')" id="btn-home" class="px-4 py-2 bg-blue-700 rounded transition font-medium">হোম</button>
+            <a href="../index.html" id="btn-home" class="px-4 py-2 bg-blue-700 text-white rounded transition font-medium inline-block">হোম</a>
             <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-4 py-2 bg-blue-700 rounded transition font-medium">ড্যাশবোর্ড</button>
             <button onclick="switchTab('dataentry')" id="btn-dataentry" class="px-4 py-2 bg-blue-800 rounded transition font-medium">ডাটা এন্ট্রি</button>
             <button onclick="switchTab('admin')" id="btn-admin" class="px-4 py-2 bg-blue-800 rounded transition font-medium">অ্যাডমিন প্যানেল</button>
@@ -33,10 +33,6 @@
             <div id="public-form-container"></div>
         </div>
 
- <!-- হোম Section--------------------------------------------------- -->
-        <div id="section-home" class="hidden">
-            <div id="public-form-container"></div>
-        </div>
 
         <!-- Admin Section -->
         <div id="section-admin" class="hidden space-y-6">
