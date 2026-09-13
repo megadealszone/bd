@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>বাংলা Unicode ⇄ Bijoy Converter</title>
+<style>
+:root{--bg:#f4f7f5;--card:#fff;--soft:#eef4ef;--line:#d4ddd6;--text:#172019;--muted:#68726c;--green:#285f35;--green2:#397a48}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text)}body{font-family:"Noto Sans Bengali","Noto Sans",Arial,sans-serif;line-height:1.55}
+.container{width:min(1100px,95%);margin:auto;padding:16px 0 35px}.header{background:linear-gradient(135deg,#20532d,#397a48);color:#fff;border-radius:16px;padding:19px 18px;margin-bottom:14px;box-shadow:0 7px 24px #183d2114}.header h1{margin:0;font-size:clamp(23px,5vw,32px)}.header p{margin:4px 0 0;font-size:13px;opacity:.9}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:14px;box-shadow:0 7px 24px #183d2110;min-width:0}.card h2{margin:0 0 7px;color:var(--green);font-size:20px}.sub{font-size:12px;color:var(--muted);margin-bottom:9px}
+textarea{width:100%;min-height:345px;border:1px solid #cbd5ce;border-radius:11px;background:#fbfcfb;padding:14px;font-size:17px;line-height:1.75;outline:0}.unicode-box{font-family:"Noto Sans Bengali","Noto Sans",Arial,sans-serif}.bijoy-box{font-family:"Noto Sans Bengali","Noto Serif Bengali",Arial,sans-serif;font-size:17px;line-height:1.75;white-space:pre-wrap;overflow:auto;background:#fff}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.toolbar button,.file-label{border:0;border-radius:8px;padding:9px 13px;font:700 14px inherit;cursor:pointer}.primary{background:var(--green);color:#fff}.secondary{background:#e5ece7;color:#22532e}.gray{background:#e0e2e1;color:#333}.danger{background:#f5dfdf;color:#8d2828}.toolbar button:active{transform:scale(.98)}
+.mini-badge{background:#e8f1e9;color:#24572f;border-radius:20px;padding:3px 7px;font-weight:700;font-size:10px}
+.status{min-height:20px;font-size:12px;color:var(--muted);margin-top:7px}.swap{text-align:center;margin:12px 0;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.note{font-size:12px;color:#59635d;background:var(--soft);border-radius:10px;padding:10px;margin-top:10px}.font-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px;background:var(--soft);padding:9px;border-radius:9px;font-size:11px;color:var(--muted)}.file-label{background:#fff;color:#275731;border:1px solid var(--line);padding:7px 10px}.file-label input{display:none}.footer{text-align:center;color:var(--muted);font-size:11px;margin-top:14px}
+@media(max-width:760px){.container{width:96%;padding-top:9px}.grid{grid-template-columns:1fr}.card{padding:11px}.header{border-radius:13px;padding:15px}.bijoy-box{min-height:345px}.toolbar button{flex:1;min-width:110px}}
+/* Professional Navigation */
+.top-nav{display:flex;gap:10px;margin:0 0 14px;align-items:center}
+.nav-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:10px 18px;font:700 14px inherit;color:#fff;background:linear-gradient(135deg,#245d32,#397a48);box-shadow:0 5px 14px #183d2118;transition:.2s}
+.nav-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px #183d2126}
+.nav-btn.dashboard{background:#fff;color:#24572f;border-color:#d4ddd6}
+.nav-icon{font-size:16px}
+@media(max-width:760px){.top-nav{gap:8px}.nav-btn{flex:1;padding:10px 8px;font-size:13px}}
+</style>
+</head>
+<body>
+<div class="container">
+<nav class="top-nav" aria-label="প্রধান মেনু"><a class="nav-btn" href="#" id="homeMenu"><span class="nav-icon">⌂</span> হোম মেনু</a><a class="nav-btn dashboard" href="#" id="dashboardMenu"><span class="nav-icon">▦</span> ড্যাশবোর্ড</a></nav>
+<header class="header"><h1>বাংলা Unicode ⇄ Bijoy Converter</h1></header>
+
+<div class="grid">
+<section class="card">
+<h2>ইউনিকোড</h2>
+<textarea id="unicodeText" class="unicode-box" lang="bn" spellcheck="false" placeholder="এখানে বাংলা Unicode লেখা লিখুন বা পেস্ট করুন..."></textarea>
+<div class="toolbar"><button class="primary" id="toBijoy">↓ বিজয়</button><button class="secondary" id="copyUnicode">কপি করুন</button><button class="gray" id="clearUnicode">মুছে ফেলুন</button></div><div class="status" id="uStatus"></div>
+</section>
+
+<section class="card">
+<h2>বিজয়</h2>
+<textarea id="bijoyText" class="bijoy-box" lang="bn" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="এখানে Bijoy লেখা Paste/Type করুন..."></textarea>
+<input type="hidden" id="bijoyRaw">
+<div class="toolbar"><button class="primary" id="toUnicode">↑ ইউনিকোড</button><button class="secondary" id="copyBijoy">কপি করুন</button><button class="gray" id="clearBijoy">মুছে ফেলুন</button></div>
+
+<div class="status" id="bStatus"></div>
+</section>
+</div>
+
+<div class="swap"><button class="secondary" id="swap">⇄ অদলবদল</button><button class="danger" id="clearAll">সব মুছুন</button></div>
+
+
+</div>
+
+<script type="module">
+import { unicodeToBijoy, bijoyToUnicode } from "https://cdn.jsdelivr.net/npm/@abdalgolabs/ansi-unicode-converter@1.0.5/+esm";
+const uni=document.getElementById('unicodeText'), bij=document.getElementById('bijoyText'), raw=document.getElementById('bijoyRaw');
+const us=document.getElementById('uStatus'), bs=document.getElementById('bStatus');
+function status(el,t,ok=true){el.textContent=t;el.style.color=ok?'#68726c':'#9d2d2d';clearTimeout(el._t);el._t=setTimeout(()=>el.textContent='',2400)}
+function norm(s){return (s||'').normalize('NFC')}
+function u2b(s){return unicodeToBijoy(norm(s))}
+function b2u(s){return norm(bijoyToUnicode(s||''))}
+
+// Visible Bijoy box = readable Unicode rendering; hidden field = exact Bijoy ANSI.
+function setBijoyRaw(s){
+  raw.value=s||'';
+  try{ bij.value=b2u(raw.value); }catch(e){ bij.value=''; console.error(e); }
+}
+
+// When the user pastes/types Bijoy ANSI into the visible box, keep the entered text as raw
+// and immediately render its Unicode form in the SAME box.
+bij.addEventListener('paste',e=>{
+  e.preventDefault();
+  const text=(e.clipboardData||window.clipboardData).getData('text')||'';
+  const before=bij.value.slice(0,bij.selectionStart), after=bij.value.slice(bij.selectionEnd);
+  const existingRaw=raw.value;
+  // The visible box contains Unicode after rendering, so use the selected visible text only
+  // when it is already Unicode; pasted Bijoy is converted directly.
+  try{
+    const converted=b2u(text);
+    const pos=bij.selectionStart;
+    bij.value=before+converted+after;
+    raw.value=u2b(bij.value);
+    bij.selectionStart=bij.selectionEnd=pos+converted.length;
+  }catch(err){ console.error(err); }
+});
+
+bij.addEventListener('input',()=>{
+  // If text was typed manually into the visible box, treat it as Unicode display text and
+  // regenerate the corresponding Bijoy raw value. This keeps one visible box without a second preview.
+  try{ raw.value=u2b(bij.value); }catch(e){ console.error(e); }
+});
+
+document.getElementById('toBijoy').onclick=()=>{
+  try{
+    const out=u2b(uni.value);
+    raw.value=out;
+    bij.value=b2u(out);
+    status(us,'Unicode → Bijoy সম্পন্ন ✓');
+    bij.focus();
+  }catch(e){console.error(e);status(us,'Conversion error',false)}
+};
+
+document.getElementById('toUnicode').onclick=()=>{
+  try{
+    const source=raw.value || u2b(bij.value);
+    const out=b2u(source);
+    uni.value=out;
+    bij.value=out;
+    raw.value=source;
+    status(bs,'Bijoy → Unicode সম্পন্ন ✓');
+    uni.focus();
+  }catch(e){console.error(e);status(bs,'Bijoy লেখা সঠিক নয় বা unsupported format',false)}
+};
+
+async function copyText(t,el){
+  if(!t){status(el,'কপি করার মতো লেখা নেই',false);return}
+  try{await navigator.clipboard.writeText(t)}catch(e){const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove()}
+  status(el,'কপি হয়েছে ✓')
+}
+
+document.getElementById('copyUnicode').onclick=()=>copyText(uni.value,us);
+document.getElementById('copyBijoy').onclick=()=>copyText(raw.value||u2b(bij.value),bs);
+document.getElementById('clearUnicode').onclick=()=>{uni.value='';status(us,'Unicode বক্স পরিষ্কার')};
+document.getElementById('clearBijoy').onclick=()=>{bij.value='';raw.value='';status(bs,'Bijoy বক্স পরিষ্কার')};
+document.getElementById('clearAll').onclick=()=>{uni.value='';bij.value='';raw.value='';status(us,'সব লেখা মুছে দেওয়া হয়েছে')};
+document.getElementById('swap').onclick=()=>{
+  const oldUni=uni.value;
+  const oldRaw=raw.value||u2b(bij.value);
+  const oldBijUnicode=b2u(oldRaw);
+  uni.value=oldBijUnicode;
+  raw.value=u2b(oldUni);
+  bij.value=b2u(raw.value);
+  status(us,'দুই বক্স অদলবদল হয়েছে');
+};
+
+
+
+// মেনুর লিংক এখানে পরিবর্তন করুন
+const HOME_MENU_LINK = '#';
+const DASHBOARD_MENU_LINK = '#';
+document.getElementById('homeMenu').href = HOME_MENU_LINK;
+document.getElementById('dashboardMenu').href = DASHBOARD_MENU_LINK;
+
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();(document.activeElement===bij?document.getElementById('toUnicode'):document.getElementById('toBijoy')).click()}
+});
+</script>
+</body>
+</html>
