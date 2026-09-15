@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#173b7a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>PDF to Unicode Text Converter</title>
+
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs"
+        type="module"></script>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:"Noto Sans Bengali","Noto Sans",Arial,sans-serif;
+  background:linear-gradient(135deg,#eef4ff,#f8fbff);
+  color:#172033;
+}
+.container{max-width:1050px;margin:auto;padding:22px}
+.card{
+  background:#fff;border:1px solid #e4eaf4;border-radius:22px;
+  box-shadow:0 15px 45px rgba(20,40,80,.10);overflow:hidden;
+}
+.header{
+  padding:28px 24px;text-align:center;
+  background:linear-gradient(135deg,#173b7a,#2563b8);
+  color:#fff;
+}
+.header h1{margin:0;font-size:28px}
+.header p{margin:8px 0 0;opacity:.9;font-size:14px}
+.main{padding:24px}
+.drop{
+  border:2px dashed #7d9dcc;border-radius:18px;padding:35px 18px;
+  text-align:center;background:#f7faff;cursor:pointer;transition:.2s;
+}
+.drop:hover,.drop.drag{background:#edf5ff;border-color:#2563b8}
+.drop .icon{font-size:42px}
+.drop h2{margin:10px 0 6px;font-size:20px}
+.drop p{margin:0;color:#68758b}
+button{
+  border:0;border-radius:11px;padding:12px 18px;font-weight:700;
+  cursor:pointer;font-family:inherit;
+}
+.primary{background:#2563b8;color:#fff}
+.secondary{background:#edf2f8;color:#24344d}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.status{
+  background:#f4f7fb;border-radius:12px;padding:12px 14px;
+  margin:12px 0;font-size:14px;display:none;
+}
+.progress{height:8px;background:#e6ebf3;border-radius:10px;overflow:hidden;margin-top:10px}
+.bar{height:100%;width:0;background:#2563b8;transition:.2s}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.panel{
+  border:1px solid #e1e7ef;border-radius:16px;overflow:hidden;
+}
+.panel h3{
+  margin:0;padding:13px 15px;background:#f5f7fa;font-size:16px;
+}
+textarea{
+  width:100%;min-height:430px;border:0;outline:0;resize:vertical;
+  padding:16px;font-family:"Noto Sans Bengali","Noto Sans",Arial,sans-serif;
+  font-size:16px;line-height:1.8;color:#182235;background:#fff;
+}
+.meta{padding:10px 14px;border-top:1px solid #e7ebf1;color:#6b778c;font-size:13px}
+.note{
+  margin-top:18px;padding:14px;border-radius:12px;
+  background:#fff8e6;border:1px solid #f1dfaa;color:#674f13;
+  font-size:13px;line-height:1.7;
+}
+.footer{text-align:center;color:#7a8494;font-size:12px;padding:18px}
+@media(max-width:750px){
+  .container{padding:10px}
+  .main{padding:14px}
+  .grid{grid-template-columns:1fr}
+  textarea{min-height:300px}
+  .header h1{font-size:23px}
+}
+</style>
+
+<style>
+*{box-sizing:border-box}
+:root{--primary:#2563b8;--dark:#173b7a;--text:#172033;--muted:#68758b;--line:#dfe7f1}
+body{margin:0;font-family:"Noto Sans Bengali","Noto Sans",Arial,sans-serif;background:linear-gradient(135deg,#eef4ff,#f8fbff);color:var(--text)}
+.container{max-width:1080px;margin:auto;padding:18px}
+.card{background:#fff;border:1px solid #e4eaf4;border-radius:24px;box-shadow:0 18px 55px rgba(20,40,80,.11);overflow:hidden}
+.header{padding:30px 22px;text-align:center;background:linear-gradient(135deg,#122f62,#2563b8);color:#fff}
+.header-badge{display:inline-block;padding:6px 10px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:rgba(255,255,255,.10);font-size:11px;font-weight:800;letter-spacing:.7px;margin-bottom:10px}
+.header h1{margin:0;font-size:29px;font-weight:800}
+.header p{margin:8px 0 0;opacity:.92;font-size:14px}
+.main{padding:24px}
+.drop{border:2px dashed #7d9dcc;border-radius:20px;padding:34px 18px;text-align:center;background:#f7faff;cursor:pointer;transition:.2s}
+.drop:hover,.drop.drag{background:#edf5ff;border-color:var(--primary)}
+.drop .icon{font-size:40px}.drop h2{margin:8px 0 5px;font-size:20px}.drop p{margin:0 0 14px;color:var(--muted);font-size:14px}
+button{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;font-family:inherit;transition:.18s}
+button:disabled{opacity:.48;cursor:not-allowed}
+button:not(:disabled):active{transform:translateY(1px)}
+.primary{background:var(--primary);color:#fff}.primary:hover:not(:disabled){filter:brightness(.96)}
+.secondary{background:#edf2f8;color:#24344d}.secondary:hover:not(:disabled){background:#e4ebf4}
+.choose{box-shadow:0 7px 18px rgba(37,99,184,.2)}
+.card-inset,.accuracy-box{margin-top:18px;padding:18px;border:1px solid #dbe4f0;border-radius:17px;background:#f8fbff}
+.section-title{font-size:18px;font-weight:800}
+.secure{float:right;font-size:10px;letter-spacing:.7px;padding:5px 8px;border-radius:999px;background:#e7f6ed;color:#287044}
+.helper{margin:7px 0 12px;color:#5d6b80;font-size:13px;line-height:1.65}
+.accuracy-box{display:flex;justify-content:space-between;gap:14px;align-items:center;background:linear-gradient(135deg,#f8fbff,#f2f7ff)}
+.mode-pill{white-space:nowrap;padding:7px 10px;border-radius:999px;background:#eaf2ff;color:#20569b;font-size:11px;font-weight:800}
+.actions{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:18px 0}
+.big{min-height:50px;font-size:15px}
+.status{background:#f4f7fb;border-radius:14px;padding:12px 14px;margin:12px 0;font-size:14px}
+.status-line{display:flex;justify-content:space-between;gap:10px}.status-line span:last-child{font-weight:800;color:#3568a8}
+.progress{height:8px;background:#e6ebf3;border-radius:10px;overflow:hidden;margin-top:9px}.bar{height:100%;width:0;background:linear-gradient(90deg,#2563b8,#4f8ed8);transition:.2s}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.panel{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.panel h3{margin:0;padding:13px 15px;background:#f5f7fa;font-size:16px}
+.info-body{padding:15px;min-height:105px;color:#526078}.metric{display:flex;justify-content:space-between;padding:6px 0}.metric b{color:#173b7a}
+.output-panel{margin-top:18px}.output-head{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;background:#f5f7fa;border-bottom:1px solid var(--line)}.output-head h3{padding:0;background:none}.output-head small{display:block;color:#77849a;font-size:11px;margin-top:3px}.icon-btn{width:42px;height:42px;padding:0;border-radius:11px;background:#fff;border:1px solid #e1e7ef;font-size:19px}
+textarea{display:block;width:100%;min-height:440px;border:0;outline:0;resize:vertical;padding:18px;font-family:"Noto Sans Bengali","Noto Sans",Arial,sans-serif;font-size:17px;line-height:1.9;letter-spacing:0;color:#182235;background:#fff;white-space:pre-wrap;overflow-wrap:normal;word-break:normal;unicode-bidi:plaintext;text-rendering:optimizeLegibility;font-variant-ligatures:normal}
+.note{margin-top:18px;padding:14px;border-radius:12px;background:#fff8e6;border:1px solid #f1dfaa;color:#674f13;font-size:12px;line-height:1.75}
+.footer{text-align:center;color:#7a8494;font-size:12px;padding:18px}
+@media(max-width:750px){.container{padding:9px}.main{padding:13px}.header{padding:25px 16px}.header h1{font-size:23px}.actions{grid-template-columns:1fr 1fr}.actions .big{grid-column:1/-1}.info-grid{grid-template-columns:1fr}.accuracy-box{align-items:flex-start;flex-direction:column}.mode-pill{align-self:flex-start}.secure{float:none;display:inline-block;margin-left:6px}textarea{min-height:340px;font-size:17px}}
+
+
+/* Bijoy ANSI font support: load a matching glyph-mapped font so legacy
+   Bijoy output remains readable even when SutonnyMJ is not installed. */
+@font-face{
+  font-family:"SutonnyMJWeb";
+  src:url("https://raw.githubusercontent.com/tazihad/bangla-fonts/main/SutonnyMJ.ttf") format("truetype");
+  font-weight:400;
+  font-style:normal;
+  font-display:block;
+}
+/* Unicode → Bijoy section — added only below Extracted Unicode Text */
+.unicode-bijoy-wrap{margin-top:14px}
+.unicode-bijoy-btn{
+  width:100%;min-height:50px;font-size:15px;font-weight:800;
+  border:1px solid #cfdbea;background:linear-gradient(135deg,#edf4ff,#e8f0fb);
+  color:#173b7a;box-shadow:0 5px 16px rgba(37,99,184,.10);
+}
+.unicode-bijoy-btn:hover:not(:disabled){background:linear-gradient(135deg,#e5efff,#dfeafb)}
+.unicode-bijoy-box{
+  display:none;margin-top:12px;border:1px solid #dfe7f1;
+  border-radius:16px;overflow:hidden;background:#fff;
+  box-shadow:0 8px 24px rgba(20,40,80,.06);
+}
+.unicode-bijoy-box.open{display:block}
+.unicode-bijoy-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:13px 15px;background:#f5f7fa;border-bottom:1px solid #dfe7f1;
+}
+.unicode-bijoy-head h3{margin:0;font-size:16px;color:#173b7a}
+.unicode-bijoy-head small{display:block;color:#77849a;font-size:11px;margin-top:3px}
+.unicode-bijoy-copy{
+  width:42px;height:42px;padding:0;border-radius:11px;
+  background:#fff;border:1px solid #e1e7ef;font-size:19px;flex:0 0 auto;
+}
+.unicode-bijoy-output{
+  display:block;width:100%;min-height:360px;max-height:520px;overflow:auto;
+  padding:18px;background:#fff;color:#182235;outline:0;
+  font-size:18px;line-height:1.9;letter-spacing:0;
+  white-space:pre-wrap;overflow-wrap:normal;word-break:normal;
+  unicode-bidi:plaintext;text-rendering:optimizeLegibility;
+}
+.unicode-bijoy-bn{
+  font-family:"SutonnyMJWeb","SutonnyMJ","SutonnyMJ Regular","SutonnyMJ-Bold","SutonnyMJ Bold",Arial,sans-serif;
+}
+.unicode-bijoy-en{
+  font-family:"Noto Sans","Noto Sans Bengali",Arial,sans-serif;
+  unicode-bidi:isolate;
+}
+.unicode-bijoy-output:empty::before{
+  content:attr(data-placeholder);
+  color:#9aa5b5;
+}
+@media(max-width:750px){
+  .unicode-bijoy-output{min-height:300px;max-height:440px;font-size:17px}
+}
+
+</style>
+
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="header">
+      <div class="header-badge">UNICODE • SMART PDF READER</div>
+      <h1>📄 PDF → Unicode Text Converter</h1>
+      <p>বাংলা • English • Mixed PDF | যুক্তবর্ণ ও Unicode sequence সুরক্ষিত</p>
+    </div>
+
+    <div class="main">
+      <div class="drop" id="dropZone">
+        <div class="icon">☁️</div>
+        <h2>PDF ফাইল নির্বাচন করুন</h2>
+        <p>PDF এখানে Drag & Drop করুন অথবা Choose PDF File চাপুন</p>
+        <button class="primary choose" type="button" id="chooseBtn">☁ Choose PDF File</button>
+        <input type="file" id="fileInput" accept="application/pdf,.pdf" hidden>
+      </div>
+
+      <div class="accuracy-box">
+        <div>
+          <div class="section-title">🎯 High-Accuracy Unicode Mode</div>
+          <div class="helper">আগে দ্রুত Unicode text layer যাচাই হবে। Unicode layer নির্ভরযোগ্য না হলে Gemini PDF vision ব্যবহার করে পুরো page দেখে text তৈরি করবে।</div>
+        </div>
+        <div class="mode-pill" id="modePill">AUTO • SMART</div>
+      </div>
+
+      <div class="actions">
+        <button class="primary big" id="convertBtn" disabled>✨ Convert PDF → Unicode</button>
+        <button class="secondary" id="copyBtn" disabled>📋 Copy Text</button>
+        <button class="secondary" id="downloadBtn" disabled>⬇ Download TXT</button>
+        <button class="secondary" id="clearBtn">✕ Clear</button>
+      </div>
+
+      <div class="status" id="status" hidden>
+        <div class="status-line">
+          <span id="statusText">প্রস্তুত...</span>
+          <span id="statusPercent">0%</span>
+        </div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+      </div>
+
+      <div class="info-grid">
+        <div class="panel">
+          <h3>📄 PDF তথ্য</h3>
+          <div id="pdfInfo" class="info-body">কোনো PDF নির্বাচন করা হয়নি।</div>
+        </div>
+        <div class="panel">
+          <h3>🧩 Conversion</h3>
+          <div class="info-body">
+            <div class="metric"><span>Mode</span><b id="conversionMode">—</b></div>
+            <div class="metric"><span>Characters</span><b id="textMeta">0</b></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel output-panel">
+        <div class="output-head">
+          <div>
+            <h3>Extracted Unicode Text</h3>
+            <small id="outputHint">বাংলা যুক্তবর্ণ, কার, ফলা ও হসন্ত ভাঙা না রাখার জন্য normalized output</small>
+          </div>
+          <button class="icon-btn" id="copyIconBtn" type="button" disabled title="Copy Unicode Text">📋</button>
+        </div>
+        <textarea id="output" spellcheck="false" placeholder="PDF থেকে পাওয়া Unicode text এখানে দেখা যাবে..."></textarea>
+      </div>
+
+
+      <div class="unicode-bijoy-wrap">
+        <button class="secondary unicode-bijoy-btn" id="unicodeBijoyBtn"
+                type="button" disabled aria-expanded="false" aria-controls="unicodeBijoyBox">
+          🔄 Unicode to Bijoy
+        </button>
+
+        <div class="unicode-bijoy-box" id="unicodeBijoyBox" aria-hidden="true">
+          <div class="unicode-bijoy-head">
+            <div>
+              <h3>Extracted Bijoy Text</h3>
+              <small>Extracted Unicode Text → Bijoy / SutonnyMJ</small>
+            </div>
+            <button class="unicode-bijoy-copy" id="unicodeBijoyCopy"
+                    type="button" disabled title="Copy Bijoy Text" aria-label="Copy Bijoy Text">📋</button>
+          </div>
+          <div id="unicodeBijoyOutput" class="unicode-bijoy-output"
+               role="textbox" aria-readonly="true"
+               aria-label="Bijoy Text"
+               data-placeholder="Unicode text থেকে তৈরি Bijoy text এখানে দেখা যাবে..."></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <b>Accuracy note:</b> Unicode text layer থাকলে browser সেটি সরাসরি ব্যবহার করবে। পুরোনো font/encoding বা scanned PDF হলে Gemini visual transcription ব্যবহার হবে।
+        বাংলা যুক্তবর্ণ, কার, ফলা, হসন্ত, রেফ ও combining marks-এর মাঝে অপ্রয়োজনীয় space/line-break সরানো হবে। তবে অস্পষ্ট বা ক্ষতিগ্রস্ত PDF-এর ক্ষেত্রে কোনো OCR/AI সিস্টেমই সত্যিকারের 100% নিশ্চয়তা দিতে পারে না।
+      </div>
+    </div>
+
+    <div class="footer">PDF → Unicode Text Converter • Smart Unicode Protection</div>
+  </div>
+</div>
+<script type="module">
+import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+
+const $=id=>document.getElementById(id);
+const fileInput=$('fileInput'), chooseBtn=$('chooseBtn'), dropZone=$('dropZone');
+const convertBtn=$('convertBtn'), copyBtn=$('copyBtn'), copyIconBtn=$('copyIconBtn');
+const downloadBtn=$('downloadBtn'), clearBtn=$('clearBtn'), output=$('output');
+const status=$('status'), statusText=$('statusText'), statusPercent=$('statusPercent'), bar=$('bar');
+const pdfInfo=$('pdfInfo'), textMeta=$('textMeta'), conversionMode=$('conversionMode'), modePill=$('modePill');
+
+let selectedFile=null, extractedText='';
+const unicodeBijoyBtn=$('unicodeBijoyBtn'), unicodeBijoyBox=$('unicodeBijoyBox');
+const unicodeBijoyOutput=$('unicodeBijoyOutput'), unicodeBijoyCopy=$('unicodeBijoyCopy');
+let unicodeBijoyText='';
+
+const MODELS=['gemini-3.8-flash','gemini-3.7-flash','gemini-3.6-flash'];
+// Gemini requests use the same-origin /api/gemini endpoint; the API key remains server-side.
+const MAX_PDF=50*1024*1024;
+
+function showStatus(message,percent=0){
+  status.hidden=false; statusText.textContent=message;
+  const p=Math.max(0,Math.min(100,percent));
+  statusPercent.textContent=p+'%'; bar.style.width=p+'%';
+}
+function setButtons(busy=false){
+  convertBtn.disabled=busy||!selectedFile;
+  copyBtn.disabled=busy||!extractedText;
+  copyIconBtn.disabled=busy||!extractedText;
+  downloadBtn.disabled=busy||!extractedText;
+}
+function normalizeUnicode(s){return (s||'').normalize('NFC');}
+
+/* Never alter Bengali grapheme structure. Only remove whitespace that is
+   provably inside a combining sequence / after virama. */
+function protectBengaliClusters(text){
+  let s=normalizeUnicode(text).replace(/\uFEFF/g,'').replace(/\u00A0/g,' ');
+  s=s.replace(/\r\n?/g,'\n');
+  // Remove whitespace before/after Bengali combining marks.
+  s=s.replace(/(\p{Script=Bengali})[ \t\r\n]+(?=\p{M})/gu,'$1');
+  s=s.replace(/(\u09CD)[ \t\r\n]+/gu,'$1');
+  s=s.replace(/[ \t\r\n]+(?=\u09CD)/gu,'');
+  // Remove accidental line breaks between a Bengali base and a mark.
+  s=s.replace(/([\u0980-\u09FF])\n(?=[\u09BE-\u09C3\u09C7-\u09CC\u09D7\u09E2-\u09E3\u09CD\u09BC\u09FE])/gu,'$1');
+  // Normalize spaces at line edges, but NEVER collapse ordinary word spaces.
+  s=s.replace(/[ \t]+\n/g,'\n').replace(/\n[ \t]+/g,'\n');
+  s=s.replace(/\n{4,}/g,'\n\n\n');
+  return s.trim();
+}
+function cleanAIText(text){
+  let s=String(text ?? '');
+  // Convert accidental HTML line-break tags to real line breaks.
+  // The extracted result must stay plain text; tags such as <br>, <br/>
+  // and <br /> should never appear in the Unicode/Bijoy output.
+  s=s.replace(/<br\s*\/?>/gi,'\n');
+  s=protectBengaliClusters(s);
+  // Remove accidental code fences / model chatter.
+  s=s.replace(/^```(?:text|plaintext|unicode)?\s*/i,'').replace(/\s*```$/,'').trim();
+  return protectBengaliClusters(s);
+}
+function hasBengali(s){return /[\u0980-\u09FF]/u.test(s||'');}
+function looksGarbled(s){
+  if(!s||s.length<8)return true;
+  const bad=/(?:cÖ|c‡|cŠ|Dc|Av|GÖ|†|‡|ˆ|‰|Š|œ|¤|­|˜)/g;
+  const suspicious=(s.match(bad)||[]).length;
+  return suspicious>=2;
+}
+function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function formatBytes(bytes){if(!bytes)return '0 Bytes';const u=['Bytes','KB','MB','GB'],i=Math.floor(Math.log(bytes)/Math.log(1024));return (bytes/Math.pow(1024,i)).toFixed(i?2:0)+' '+u[i];}
+
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Unicode → Bijoy engine
+   Based on a tested Unicode→Bijoy mapping approach:
+   - longest-match complex conjuncts
+   - reph positioning
+   - i-kar/e-kar/oi-kar reordering
+   - o-kar/ou-kar decomposition
+   - mixed English/numbers preserved exactly
+   ───────────────────────────────────────────────────────────────────────────── */
+
+const U2B_SINGLE = {
+  "অ":"A","আ":"Av","ই":"B","ঈ":"C","উ":"D","ঊ":"E","ঋ":"F","এ":"G","ঐ":"H","ও":"I","ঔ":"J",
+  "ক":"K","খ":"L","গ":"M","ঘ":"N","ঙ":"O","চ":"P","ছ":"Q","জ":"R","ঝ":"S","ঞ":"T",
+  "ট":"U","ঠ":"V","ড":"W","ঢ":"X","ণ":"Y","ত":"Z","থ":"_","দ":"`","ধ":"a","ন":"b",
+  "প":"c","ফ":"d","ব":"e","ভ":"f","ম":"g","য":"h","র":"i","ল":"j","শ":"k","ষ":"l",
+  "স":"m","হ":"n","ড়":"o","ঢ়":"p","য়":"q","ৎ":"r",
+  "\u09DC":"o","\u09DD":"p","\u09DF":"q",
+  "০":"0","১":"1","২":"2","৩":"3","৪":"4","৫":"5","৬":"6","৭":"7","৮":"8","৯":"9",
+  "া":"v","ি":"w","ী":"x","ু":"y","ূ":"~","ৃ":"„",
+  "ে":"‡","ৈ":"‰","ং":"s","ঃ":"t","ঁ":"u","।":"|","॥":"\\","্":"&"
+};
+
+const U2B_MULTI = [
+  ["য়","q"],["য়","q"],["ড়","o"],["ড়","o"],["ঢ়","p"],["ঢ়","p"],
+  ["ক্ষ্ম","²"],["ন্ত্ব","š—¡"],["ম্প্র","¤cÖ"],["ন্দ্ব","›Ø"],
+  ["স্ক্র","¯Œ"],["ন্ত্র","š¿"],["স্ত্র","¯¿"],["ম্ভ্র","¤£"],
+  ["ক্ক","°"],["ক্ট","±"],["ক্ত","³"],["ক্ব","K¡"],["ক্র","µ"],
+  ["ক্ল","K¬"],["ক্ষ","¶"],["ক্স","·"],["গ্ধ","»"],["গ্ন","Mœ"],
+  ["গ্ম","M¥"],["গ্ল","Mø"],["ঙ্ক্ষ","•¶"],["ঙ্ক","¼"],["ঙ্খ","•L"],
+  ["ঙ্গ","½"],["ঙ্ঘ","•N"],["চ্ছ্ব","“Q¡"],["চ্চ","“P"],
+  ["চ্ছ","“Q"],["চ্ঞ","“T"],["জ্জ্ব","¾¡"],["জ্জ","¾"],
+  ["জ্ঝ","À"],["জ্ঞ","Á"],["জ্ব","R¡"],["ঞ্চ","Â"],["ঞ্ছ","Ã"],
+  ["ঞ্জ","Ä"],["ঞ্ঝ","Å"],["ট্ট","Æ"],["ট্ব","U¡"],["ট্ম","U¥"],
+  ["ড্ড","Ç"],["ণ্ট","È"],["ণ্ঠ","É"],["ণ্ড","Ê"],["ণ্ব","Y&e"],
+  ["ত্ত্ব","Ë¡"],["ত্ত","Ë"],["ত্থ","Ì"],["ত্ম","Z¥"],["ত্ব","Z¡"],
+  ["ত্র","Î"],["থ্ব","_¡"],["দ্গ","˜ M"],["দ্ঘ","`N"],["দ্দ","Ï"],
+  ["দ্ধ","×"],["দ্ব","Ø"],["দ্ভ","™¢"],["দ্ম","Ù"],["ধ্ব","aŸ"],
+  ["ধ্ম","a¥"],["ন্ট","›U"],["ন্ঠ","Ú"],["ন্ড","Û"],["ন্ত","šÍ"],
+  ["ন্থ","š‘"],["ন্দ","›`"],["ন্ধ","Ü"],["ন্ন","bœ"],["ন্ব","š\\"],
+  ["ন্ম","b¥"],["ন্স","Ý"],["প্ট","Þ"],["প্ত","ß"],["প্ন","cœ"],
+  ["প্প","à"],["প্ল","cø"],["প্স","á"],["ফ্ল","d¬"],["ব্জ","â"],
+  ["ব্দ","ã"],["ব্ধ","ä"],["ব্ব","eŸ"],["ব্ল","eø"],["ভ্র","å"],
+  ["ম্ন","gœ"],["ম্প","¤ú"],["ম্ফ","ç"],["ম্ব","¤b"],["ম্ভ","¤¢"],
+  ["ম্ম","¤§"],["ম্ল","¤ø"],["ল্ক","é"],["ল্গ","ê"],["ল্ট","ë"],
+  ["ল্ড","ì"],["ল্প","í"],["ল্ফ","î"],["ল্ব","j¦"],["ল্ম","j¥"],
+  ["ল্ল","jø"],["শ্চ","ð"],["শ্ন","kœ"],["শ্ব","k¦"],["শ্ম","k¥"],
+  ["শ্ল","kø"],["ষ্ক্র","®Œ"],["ষ্ক","®‹"],["ষ্ট","ó"],["ষ্ঠ","ô"],
+  ["ষ্ণ","ò"],["ষ্প","®ú"],["ষ্ফ","õ"],["ষ্ম","®§"],["স্ক","¯‹"],
+  ["স্ট","÷"],["স্খ","ö"],["স্ত","¯Í"],["স্থ","¯‘"],["স্ন","mœ"],
+  ["স্প","¯ú"],["স্ফ","ù"],["স্ব","m^"],["স্ম","¯§"],["স্ল","¯ø"],
+  ["হ্ণ","nè"],["হ্ব","nŸ"],["হ্ন","ý"],["হ্ম","þ"],["হ্ল","n¬"],
+  ["্র","ª"],["্য","¨"],["র্","©"],["আ","Av"]
+].sort((a,b)=>b[0].length-a[0].length);
+
+const U2B_VOWEL_LEFT = {"ি":"w","ে":"‡","ৈ":"‰"};
+const U2B_CLUSTER =
+  "(?:[\\u0995-\\u09B9\\u09CE\\u09DC-\\u09DF](?:\\u09CD[\\u0995-\\u09B9\\u09CE\\u09DC-\\u09DF])*(?:\\u09CD[রয])?)";
+
+function u2bReplaceAll(str,find,repl){
+  let out="",from=0,p;
+  while((p=str.indexOf(find,from))!==-1){
+    out+=str.slice(from,p)+repl;
+    from=p+find.length;
+  }
+  return out+str.slice(from);
+}
+
+/* Protect all existing ASCII/Latin text so words such as "PDF", "English",
+   numbers, URLs and punctuation are never interpreted as Bijoy input. */
+function u2bProtectLatin(text){
+  const map=[];
+  /*
+    Keep every English/Latin run completely outside the Bijoy conversion.
+    The old one-character private-use index worked only for a limited number
+    of protected runs. Decimal markers remove that limit and keep long mixed
+    Bangla + English documents lossless.
+  */
+  const protectedText=text.replace(/[A-Za-z0-9][A-Za-z0-9._%+@#:/?=&-]*/g,m=>{
+    const i=map.length;
+    map.push(m);
+    return "\uE001"+i+"\uE002";
+  });
+  return {text:protectedText,map};
+}
+function u2bRestoreLatin(text,map){
+  return text.replace(/\uE001(\d+)\uE002/g,
+    (_,n)=>map[Number(n)] ?? "");
+}
+
+function unicodeToBijoyLine(line){
+  if(!line)return "";
+  let r=line.normalize("NFC")
+    .replace(/[\u09AF]\u09BC/g,"\u09DF")
+    .replace(/[\u09A1]\u09BC/g,"\u09DC")
+    .replace(/[\u09A2]\u09BC/g,"\u09DD");
+
+  const protectedLatin=u2bProtectLatin(r);
+  r=protectedLatin.text;
+
+  /* Reph + cluster + left vowel */
+  r=r.replace(new RegExp("\u09B0\u09CD("+U2B_CLUSTER+")([\u09BF\u09C7\u09C8])","g"),
+    (_,cl,v)=>(U2B_VOWEL_LEFT[v]||v)+cl+"©");
+  r=r.replace(new RegExp("\u09B0\u09CD("+U2B_CLUSTER+")\u09CB","g"),
+    (_,cl)=>"‡"+cl+"©v");
+  r=r.replace(new RegExp("\u09B0\u09CD("+U2B_CLUSTER+")\u09CC","g"),
+    (_,cl)=>"‡"+cl+"©Š");
+  r=r.replace(new RegExp("\u09B0\u09CD("+U2B_CLUSTER+")","g"),
+    (_,cl)=>cl+"©");
+
+  /* O-kar / OU-kar */
+  r=r.replace(new RegExp("("+U2B_CLUSTER+")\u09CB","g"),
+    (_,cl)=>"‡"+cl+"v");
+  r=r.replace(new RegExp("("+U2B_CLUSTER+")\u09CC","g"),
+    (_,cl)=>"‡"+cl+"Š");
+
+  /* Left-side vowels */
+  r=r.replace(new RegExp("("+U2B_CLUSTER+")([\u09BF\u09C7\u09C8])","g"),
+    (_,cl,v)=>(U2B_VOWEL_LEFT[v]||v)+cl);
+
+  /* Longest complex conjuncts first */
+  for(const [u,b] of U2B_MULTI) r=u2bReplaceAll(r,u,b);
+
+  let out="";
+  for(const ch of r){
+    out += U2B_SINGLE[ch] !== undefined ? U2B_SINGLE[ch] : ch;
+  }
+  out=out.replace(/\u09D7/g,"Š");
+  return u2bRestoreLatin(out,protectedLatin.map);
+}
+
+function unicodeToBijoy(text){
+  if(!text)return "";
+  return text.normalize("NFC")
+    .replace(/\r\n?/g,"\n")
+    .split("\n")
+    .map(unicodeToBijoyLine)
+    .join("\n");
+}
+
+function escapeTextHtml(str){
+  return String(str).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+/*
+  Display mixed Bijoy correctly:
+  - Bengali source portions are converted to Bijoy and rendered with SutonnyMJ.
+  - English/Latin portions are kept byte-for-byte and rendered with a normal
+    Unicode Latin font, so English never gets visually remapped by the Bijoy font.
+  The actual copied value remains unicodeBijoyText, i.e. real Bijoy/ANSI text.
+*/
+function renderMixedBijoy(sourceText){
+  const parts=String(sourceText||"").split(/([A-Za-z0-9][A-Za-z0-9._%+@#:/?=&-]*)/g);
+  let html="";
+  for(const part of parts){
+    if(!part)continue;
+    if(/^[A-Za-z0-9][A-Za-z0-9._%+@#:/?=&-]*$/.test(part)){
+      html+='<span class="unicode-bijoy-en">'+escapeTextHtml(part)+'</span>';
+    }else{
+      html+='<span class="unicode-bijoy-bn">'+escapeTextHtml(unicodeToBijoy(part))+'</span>';
+    }
+  }
+  unicodeBijoyOutput.innerHTML=html;
+}
+
+function updateUnicodeBijoy(){
+  if(!extractedText){
+    unicodeBijoyText="";
+    unicodeBijoyOutput.innerHTML="";
+    unicodeBijoyCopy.disabled=true;
+    return;
+  }
+  unicodeBijoyText=unicodeToBijoy(extractedText);
+  renderMixedBijoy(extractedText);
+  unicodeBijoyCopy.disabled=!unicodeBijoyText;
+}
+
+function setResult(text,mode){
+  extractedText=cleanAIText(text);
+  output.value=extractedText;
+  textMeta.textContent=[...extractedText].length.toLocaleString();
+  conversionMode.textContent=mode;
+  modePill.textContent=mode==='Direct Unicode'?'DIRECT • FAST':'AI VISION • HIGH ACCURACY';
+  copyBtn.disabled=!extractedText; copyIconBtn.disabled=!extractedText; downloadBtn.disabled=!extractedText;
+  unicodeBijoyText='';
+  unicodeBijoyOutput.innerHTML='';
+  unicodeBijoyCopy.disabled=true;
+  unicodeBijoyBtn.disabled=!extractedText;
+  unicodeBijoyBox.classList.remove('open');
+  unicodeBijoyBtn.setAttribute('aria-expanded','false');
+  unicodeBijoyBox.setAttribute('aria-hidden','true');
+}
+
+function pageTextFromItems(items){
+  // Fast O(n log n) geometry pass. The old version searched every existing
+  // row for every item, which became slow on large PDFs.
+  const arr=[];
+  for(const item of items||[]){
+    if(!item.str)continue;
+    const x=item.transform?.[4]||0, y=item.transform?.[5]||0;
+    arr.push({x,y,w:item.width||0,str:item.str});
+  }
+  if(!arr.length)return '';
+
+  arr.sort((a,b)=>b.y-a.y || a.x-b.x);
+  const rows=[];
+  for(const it of arr){
+    let row=rows[rows.length-1];
+    if(!row || Math.abs(row.y-it.y)>=3){
+      row={y:it.y,items:[]};
+      rows.push(row);
+    }
+    row.items.push(it);
+  }
+
+  const lines=[];
+  for(const row of rows){
+    let line='',prev=null;
+    for(const it of row.items){
+      if(prev){
+        const gap=it.x-(prev.x+prev.w);
+        const beginsMark=/^[\u09BE-\u09C3\u09C7-\u09CC\u09D7\u09E2-\u09E3\u09CD\u09BC\u09FE\u200C\u200D]/u.test(it.str);
+        const endsVirama=/\u09CD$/u.test(line);
+        if(gap>2.2 && !beginsMark && !endsVirama && !line.endsWith(' '))line+=' ';
+      }
+      line+=it.str;
+      prev=it;
+    }
+    if(line.trim())lines.push(line);
+  }
+  return protectBengaliClusters(lines.join('\n'));
+}
+
+async function directExtract(file){
+  const data=new Uint8Array(await file.arrayBuffer());
+  const pdf=await pdfjsLib.getDocument({
+    data,
+    useSystemFonts:true,
+    disableFontFace:false,
+    isEvalSupported:true
+  }).promise;
+
+  const total=pdf.numPages;
+  pdfInfo.innerHTML='<b>File:</b> '+escapeHtml(file.name)+'<br><b>Size:</b> '+formatBytes(file.size)+'<br><b>Pages:</b> '+total;
+
+  const readPage=async n=>{
+    const page=await pdf.getPage(n);
+    const content=await page.getTextContent({
+      normalizeWhitespace:false,
+      disableCombineTextItems:false
+    });
+    return pageTextFromItems(content.items||[]);
+  };
+
+  // Quick sample. For scanned/image-only PDFs, do not extract every page
+  // before switching to the visual AI path.
+  const sampleCount=Math.min(3,total);
+  const sample=[];
+  for(let n=1;n<=sampleCount;n++){
+    showStatus('PDF text layer দ্রুত পরীক্ষা হচ্ছে — Page '+n+' / '+total,
+      Math.round((n/sampleCount)*12));
+    sample.push(await readPage(n));
+  }
+
+  const sampleText=protectBengaliClusters(sample.join('\n\n'));
+  const sampleHasUsefulText=sampleText.trim().length>=8 &&
+    (hasBengali(sampleText)||/[A-Za-z]/.test(sampleText));
+
+  if(!sampleHasUsefulText || looksGarbled(sampleText)){
+    return {text:'',pages:total,needsAI:true};
+  }
+
+  // Parallel batches reduce total wait time while keeping mobile memory
+  // usage reasonable.
+  const pages=new Array(total);
+  for(let i=0;i<sampleCount;i++)pages[i]=sample[i];
+
+  const batchSize=4;
+  for(let start=sampleCount;start<total;start+=batchSize){
+    const end=Math.min(total,start+batchSize);
+    showStatus('দ্রুত Unicode text layer পড়া হচ্ছে — Page '+start+'–'+end+' / '+total,
+      12+Math.round((start/Math.max(1,total))*23));
+
+    const batch=await Promise.all(
+      Array.from({length:end-start},(_,k)=>readPage(start+k+1))
+    );
+    batch.forEach((txt,k)=>pages[start+k]=txt);
+  }
+
+  return {
+    text:protectBengaliClusters(pages.join('\n\n')),
+    pages:total,
+    needsAI:false
+  };
+}
+
+function base64FromBytes(bytes){
+  let out='',chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk)out+=String.fromCharCode(...bytes.subarray(i,i+chunk));
+  return btoa(out);
+}
+function geminiText(data){return (data?.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('');}
+
+async function callGemini(model,pdf64){
+  const prompt=`You are a meticulous Bengali and English PDF transcription engine.
+
+TASK
+Transcribe the uploaded PDF into plain UTF-8 Unicode text. This is transcription, NOT summarization.
+
+ABSOLUTE RULES
+1. Read the visible page as the source of truth. If the embedded PDF text layer is legacy, broken, Bijoy/ANSI, garbled, or meaningless, IGNORE that layer and read the rendered page visually.
+2. Bengali must remain Bengali. English must remain English. Never translate, transliterate, romanize, paraphrase, or modernize spelling.
+3. Output standard Unicode Bengali only. NEVER output Bijoy/Sutonny/ANSI-looking garbage such as cÖ..., Dc..., Av..., GÖ..., †, ‡, ˆ, ‰.
+4. Preserve Bengali grapheme clusters exactly: NEVER insert a space or line break inside a conjunct (যুক্তবর্ণ), কার, ফলা, হসন্ত/virama, রেফ, র-ফলা, য-ফলা, ব-ফলা, ি/ী/ু/ূ/ৃ/ে/ৈ/ো/ৌ or other combining marks.
+5. Do not separate a Bengali word into artificial chunks. Preserve actual word spaces from the document.
+6. Preserve headings, paragraphs, lists, numbering, dates, punctuation and reading order as faithfully as possible.
+7. Do not invent missing text. If a small part is genuinely unreadable, write [অস্পষ্ট] rather than guessing.
+8. Do not output explanations, Markdown fences, HTML tags (including <br>), JSON, or commentary. Output ONLY the final transcription as plain text with real line breaks.
+9. Before finalizing, self-check every Bengali word for broken conjuncts/marks and remove any accidental spaces inside grapheme clusters.
+10. For scanned pages, use visual OCR-like reading. For digitally generated pages, use both native text and visual appearance to resolve legacy encoding.
+`;
+  const body={
+    model,
+    prompt,
+    pdfBase64:pdf64,
+    mimeType:'application/pdf'
+  };
+  const r=await fetch('/api/gemini',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(data?.error?.message||data?.message||('HTTP '+r.status));
+  const txt=geminiText(data)||data?.text||data?.output||'';
+  if(!String(txt).trim())throw new Error('AI কোনো text ফেরত দেয়নি।');
+  return txt;
+}
+
+async function aiExtract(file){
+  if(file.size>MAX_PDF)throw new Error('Gemini PDF input সর্বোচ্চ 50 MB বা 1000 pages পর্যন্ত সমর্থিত।');
+  const bytes=new Uint8Array(await file.arrayBuffer()), pdf64=base64FromBytes(bytes);
+  let lastErr=null;
+  for(let i=0;i<MODELS.length;i++){
+    const model=MODELS[i];
+    showStatus('Gemini '+model+' দিয়ে visual Unicode conversion চলছে... ('+(i+1)+'/'+MODELS.length+')',40+i*18);
+    try{
+      const text=await callGemini(model,pdf64);
+      const cleaned=cleanAIText(text);
+      if(looksGarbled(cleaned))throw new Error('AI output Unicode-safe নয়; অন্য model দিয়ে পুনরায় চেষ্টা করা হচ্ছে।');
+      return {text:cleaned,model};
+    }catch(e){lastErr=e;console.warn(model,e);}
+  }
+  throw lastErr||new Error('সব AI model ব্যর্থ হয়েছে।');
+}
+
+
+
+chooseBtn.addEventListener('click',()=>fileInput.click());
+fileInput.addEventListener('change',e=>{if(e.target.files?.[0])setFile(e.target.files[0]);});
+['dragenter','dragover'].forEach(t=>dropZone.addEventListener(t,e=>{e.preventDefault();dropZone.classList.add('drag');}));
+['dragleave','drop'].forEach(t=>dropZone.addEventListener(t,e=>{e.preventDefault();dropZone.classList.remove('drag');}));
+dropZone.addEventListener('drop',e=>{
+  const f=e.dataTransfer.files?.[0];
+  if(f && (f.type==='application/pdf'||/\.pdf$/i.test(f.name)))setFile(f);else alert('অনুগ্রহ করে একটি PDF ফাইল নির্বাচন করুন।');
+});
+
+function setFile(file){
+  if(!(file.type==='application/pdf'||/\.pdf$/i.test(file.name))){alert('শুধুমাত্র PDF ফাইল নির্বাচন করুন।');return;}
+  selectedFile=file; extractedText=''; output.value='';
+  unicodeBijoyText=''; unicodeBijoyOutput.innerHTML=''; unicodeBijoyCopy.disabled=true;
+  unicodeBijoyBtn.disabled=true; unicodeBijoyBox.classList.remove('open');
+  unicodeBijoyBtn.setAttribute('aria-expanded','false'); unicodeBijoyBox.setAttribute('aria-hidden','true');
+  pdfInfo.innerHTML='<b>File:</b> '+escapeHtml(file.name)+'<br><b>Size:</b> '+formatBytes(file.size)+'<br><b>Status:</b> Ready';
+  textMeta.textContent='0'; conversionMode.textContent='—'; modePill.textContent='AUTO • SMART';
+  setButtons(false); showStatus('PDF প্রস্তুত। Convert PDF → Unicode চাপুন।',0);
+}
+
+convertBtn.addEventListener('click',async()=>{
+  if(!selectedFile)return;
+  setButtons(true); output.value=''; extractedText='';
+  try{
+    if(selectedFile.size>MAX_PDF)throw new Error('PDF সর্বোচ্চ 50 MB হতে হবে।');
+    const direct=await directExtract(selectedFile);
+    // Fast path: trusted Unicode text layer.
+    if(direct.text && !looksGarbled(direct.text) && (hasBengali(direct.text)||/[A-Za-z]/.test(direct.text))){
+      setResult(direct.text,'Direct Unicode');
+      showStatus('✓ Direct Unicode conversion সম্পন্ন — '+direct.pages+' page.',100);
+      return;
+    }
+    // AI fallback for legacy/scanned/garbled PDFs.
+    const ai=await aiExtract(selectedFile);
+    setResult(ai.text,'AI Vision • '+ai.model);
+    showStatus('✓ High-Accuracy Unicode conversion সম্পন্ন।',100);
+  }catch(e){
+    console.error(e);
+    showStatus('Conversion failed: '+(e.message||e),0);
+    output.value='Conversion করা যায়নি। PDF এবং Internet connection পরীক্ষা করুন।';
+    extractedText='';
+  }finally{setButtons(false);}
+});
+
+
+unicodeBijoyBtn.addEventListener('click',async()=>{
+  if(!extractedText)return;
+  if(!unicodeBijoyText) updateUnicodeBijoy();
+  const open=!unicodeBijoyBox.classList.contains('open');
+  unicodeBijoyBox.classList.toggle('open',open);
+  unicodeBijoyBtn.setAttribute('aria-expanded',String(open));
+  unicodeBijoyBox.setAttribute('aria-hidden',String(!open));
+  if(open){
+    try{
+      await document.fonts.load('18px "SutonnyMJWeb"');
+    }catch(_){}
+    unicodeBijoyOutput.focus();
+  }
+});
+
+async function copyUnicodeBijoy(){
+  if(!unicodeBijoyText)return;
+  try{
+    await navigator.clipboard.writeText(unicodeBijoyText);
+    showStatus('✓ Bijoy text clipboard-এ copy হয়েছে।',100);
+  }catch{
+    const range=document.createRange();
+    range.selectNodeContents(unicodeBijoyOutput);
+    const selection=window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    document.execCommand('copy');
+    selection.removeAllRanges();
+    showStatus('✓ Bijoy text copy হয়েছে।',100);
+  }
+}
+unicodeBijoyCopy.addEventListener('click',copyUnicodeBijoy);
+
+async function copyText(){
+  if(!extractedText)return;
+  try{await navigator.clipboard.writeText(extractedText);showStatus('✓ Unicode text clipboard-এ copy হয়েছে।',100);}
+  catch{output.focus();output.select();document.execCommand('copy');showStatus('✓ Text copy হয়েছে।',100);}
+}
+copyBtn.addEventListener('click',copyText); copyIconBtn.addEventListener('click',copyText);
+
+downloadBtn.addEventListener('click',()=>{
+  if(!extractedText)return;
+  const blob=new Blob(['\uFEFF'+extractedText],{type:'text/plain;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=(selectedFile?.name||'PDF').replace(/\.pdf$/i,'')+'_Unicode.txt';
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+});
+
+clearBtn.addEventListener('click',()=>{
+  selectedFile=null;extractedText='';fileInput.value='';output.value='';
+  unicodeBijoyText='';unicodeBijoyOutput.innerHTML='';unicodeBijoyCopy.disabled=true;
+  unicodeBijoyBtn.disabled=true;unicodeBijoyBox.classList.remove('open');
+  unicodeBijoyBtn.setAttribute('aria-expanded','false');unicodeBijoyBox.setAttribute('aria-hidden','true');
+  pdfInfo.textContent='কোনো PDF নির্বাচন করা হয়নি।';textMeta.textContent='0';
+  conversionMode.textContent='—';modePill.textContent='AUTO • SMART';
+  status.hidden=true;bar.style.width='0%';setButtons(false);
+});
+</script>
+</body>
+</html>
