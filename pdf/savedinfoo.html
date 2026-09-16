@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="dashboard-update" content="password-protected-file-download-fix">
+    <title>Saved Document and Text</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Universal text rendering:
+         English + Unicode Bengali + legacy Bengali font content.
+         IMPORTANT: no !important here, so pasted/included font-family styles remain intact. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Noto+Serif:wght@400;600;700&family=Noto+Serif+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Script-aware fallback: English uses Noto Sans; Bengali falls through to Noto Sans Bengali.
+           A child element's own font-family is NOT overridden. */
+        html, body, input, textarea, button, select, option, [contenteditable="true"] {
+            font-family: "Noto Sans", "Noto Sans Bengali", "Noto Serif", "Noto Serif Bengali", Arial, sans-serif;
+            font-synthesis: none;
+            font-variant-ligatures: normal;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+        body { -webkit-text-size-adjust: 100%; }
+        [contenteditable="true"], #dashboard-list, #modalBody {
+            line-height: 1.75;
+            word-break: normal;
+            overflow-wrap: anywhere;
+        }
+        .bangla-unicode-safe {
+            font-family: "Noto Sans", "Noto Sans Bengali", "Noto Serif", "Noto Serif Bengali", Arial, sans-serif;
+        }
+        /* Custom smooth transition for content box reveal */
+        .content-reveal {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 relative pb-12">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center sticky top-0 z-40">
+        <h1 class="text-xl font-bold tracking-wide flex items-center gap-2">
+            <span>📁</span> MD. ROMAN ISLAM HABIB
+        </h1>
+        <div class="space-x-1 sm:space-x-2 flex items-center text-xs sm:text-sm">
+            <a href="../jpegtojpg.html" id="btn-home" class="px-3 sm:px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition font-medium inline-block shadow-sm">হোম</a>
+            <button onclick="switchTab('dashboard')" id="btn-dashboard" class="px-3 sm:px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition font-medium shadow-sm">ড্যাশবোর্ড</button>
+            <button onclick="switchTab('dataentry')" id="btn-dataentry" class="px-3 sm:px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm">ডাটা এন্ট্রি</button>
+            <button onclick="switchTab('admin')" id="btn-admin" class="px-3 sm:px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm">অ্যাডমিন প্যানেল</button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-4 sm:p-6 max-w-5xl">
+        <!-- Dashboard Section -->
+        <div id="section-dashboard" class="bg-white rounded-xl shadow-lg p-5 sm:p-7 border border-gray-100">
+            <!-- Top Bar with Dashboard Title & All Password Input -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5 pb-4 border-b border-gray-100">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <span>📊</span> ড্যাশবোর্ড (সংরক্ষিত টেক্সট ও ফাইলসমূহ)
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-1">পাসওয়ার্ড দিয়ে কন্টেন্ট আনলক করুন এবং ব্রাউজ করুন</p>
+                </div>
+                
+                <!-- Top Right: All Password Input Box -->
+                <div class="flex items-center gap-2 w-full md:w-auto bg-indigo-50/80 p-2.5 rounded-xl border border-indigo-200 shadow-sm">
+                    <label for="dashboard-all-pass" class="text-xs font-bold text-indigo-900 whitespace-nowrap flex items-center gap-1">
+                        <span>🔑</span>
+                    </label>
+                    <div class="relative w-full md:w-48">
+                        <input type="password" id="dashboard-all-pass" oninput="handleAllPasswordInput(this.value)" placeholder="সব পাসওয়ার্ড একসাথে..." class="border border-indigo-300 focus:border-indigo-600 rounded-lg pl-2.5 pr-8 py-1.5 text-xs w-full focus:ring-2 focus:ring-indigo-400 focus:outline-none transition bg-white">
+                        <button type="button" onclick="togglePasswordVisibility('dashboard-all-pass', 'allPassEyeIcon')" class="absolute inset-y-0 right-0 pr-2 flex items-center text-indigo-400 hover:text-indigo-700">
+                            <svg id="allPassEyeIcon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Option directly below the title -->
+            <div class="mb-6 space-y-2">
+                <div class="relative">
+                    <input type="text" id="dashboard-search-input" oninput="filterDashboardRecords()" placeholder="টাইটেল লিখে সার্চ করুন..." class="w-full border border-gray-300 rounded-xl pl-10 pr-10 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition bg-gray-50 hover:bg-white shadow-sm">
+                    <span class="absolute left-3.5 top-3.5 text-gray-400 pointer-events-none">🔍</span>
+                    <button id="clear-search-btn" onclick="clearSearchInput()" class="hidden absolute right-3.5 top-3 text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
+                </div>
+                <div id="search-count-badge" class="text-xs text-gray-500 font-medium px-1 hidden flex justify-between items-center">
+                    <span id="search-count-text"></span>
+                </div>
+            </div>
+
+            <div id="dashboard-list" class="space-y-6">
+                <div class="flex items-center justify-center py-12 text-gray-500 space-x-2">
+                    <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                    <span>তথ্য লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Public Data Entry Section -->
+        <div id="section-dataentry" class="hidden">
+            <div id="public-form-container"></div>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="section-admin" class="hidden space-y-6">
+            <div id="admin-login-box" class="bg-white rounded-xl shadow-md p-6 max-w-md mx-auto border border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 text-center flex items-center justify-center gap-2">
+                    <span>🔒</span> অ্যাডমিন লগইন
+                </h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">অ্যাডমিন পাসওয়ার্ড</label>
+                        <input type="password" id="adminPassword" placeholder="পাসওয়ার্ড দিন (5101)" class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-2.5 rounded-lg font-medium hover:bg-blue-700 transition shadow">লগইন করুন</button>
+                </div>
+            </div>
+
+            <div id="admin-panel-content" class="hidden space-y-6">
+                <!-- Data Entry Box for Admin -->
+                <div id="admin-form-container"></div>
+
+                <!-- Summary Box -->
+                <div class="bg-white rounded-xl shadow p-6 border-2 border-indigo-200">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span>📝</span> সামারি ও ম্যানেজমেন্ট
+                    </h2>
+                    <div id="summary-list" class="space-y-4">
+                        <p class="text-gray-500">ডাটা লোড হচ্ছে...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Popup for Description View -->
+    <div id="descModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex justify-center items-center p-4 z-50 transition-opacity">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 max-h-[85vh] flex flex-col shadow-2xl border border-gray-100 transform transition-all scale-100">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modalTitle" class="font-bold text-xl text-gray-800 truncate pr-4">ডেসক্রিপশন বিস্তারিত</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-600 font-bold text-2xl transition">&times;</button>
+            </div>
+            <div id="modalBody" class="bangla-unicode-safe overflow-y-auto p-4 border rounded-xl bg-gray-50 text-gray-800 text-sm leading-relaxed" style="white-space: pre-wrap;"></div>
+            <div class="flex justify-between items-center pt-2 border-t">
+                <button onclick="copyModalContent()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
+                    <span id="modalCopyBtnText">📋 কপি করুন</span>
+                </button>
+                <button onclick="closeModal()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">বন্ধ করুন</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-gray-100">
+            <div class="flex items-center gap-3 text-amber-600">
+                <span class="text-2xl">⚠️</span>
+                <h4 class="font-bold text-lg text-gray-800">নিশ্চিতকরণ</h4>
+            </div>
+            <p id="confirmModalText" class="text-sm text-gray-600 leading-relaxed"></p>
+            <div class="flex justify-end gap-3 pt-2">
+                <button id="confirmModalCancelBtn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm rounded-lg font-medium transition">বাতিল</button>
+                <button id="confirmModalOkBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg font-medium transition shadow-sm">হ্যাঁ, কনফার্ম</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbynqJ-OX2bfmtdOx54OnUPsFO_oAuh7-18KJAhqsJ1ii329a2f6s_lBTM3dbMoyw5Jl/exec"; 
+
+        let allDataCache = [];
+        // Dashboard-only password unlock state tracking
+        const dashboardUnlockState = {};
+
+        window.onload = function() {
+            renderDataEntryForm('public-form-container', 'public');
+            renderDataEntryForm('admin-form-container', 'admin');
+            loadDashboard();
+            ensureBijoyEngine();
+        };
+
+        function switchTab(tab) {
+            document.getElementById('section-dashboard').classList.add('hidden');
+            document.getElementById('section-dataentry').classList.add('hidden');
+            document.getElementById('section-admin').classList.add('hidden');
+
+            document.getElementById('btn-dashboard').className = "px-3 sm:px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm";
+            document.getElementById('btn-dataentry').className = "px-3 sm:px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm";
+            document.getElementById('btn-admin').className = "px-3 sm:px-4 py-2 bg-blue-800 hover:bg-blue-700 rounded-lg transition font-medium shadow-sm";
+
+            if (tab === 'dashboard') {
+                document.getElementById('section-dashboard').classList.remove('hidden');
+                document.getElementById('btn-dashboard').className = "px-3 sm:px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition font-medium shadow-sm";
+                loadDashboard();
+            } else if (tab === 'dataentry') {
+                document.getElementById('section-dataentry').classList.remove('hidden');
+                document.getElementById('btn-dataentry').className = "px-3 sm:px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition font-medium shadow-sm";
+            } else if (tab === 'admin') {
+                document.getElementById('section-admin').classList.remove('hidden');
+                document.getElementById('btn-admin').className = "px-3 sm:px-4 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg transition font-medium shadow-sm";
+            }
+        }
+
+        function renderDataEntryForm(containerId, prefix) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            container.innerHTML = `
+                <div class="bg-white rounded-xl shadow-md p-6 border-2 border-indigo-200">
+                    <h2 id="${prefix}-form-title" class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <span>➕</span> নতুন ডাটা এন্ট্রি
+                    </h2>
+                    <input type="hidden" id="${prefix}-editRecordId" value="">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">টাইটেল <span class="text-red-500">*</span></label>
+                            <input type="text" id="${prefix}-entryTitle" dir="auto" spellcheck="true" autocomplete="off" placeholder="টাইটেল লিখুন..." class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড <span class="text-red-500">*</span></label>
+                            <div class="relative">
+                                <input type="password" id="${prefix}-entryPassword" placeholder="পাসওয়ার্ড লিখুন..." class="w-full border rounded-lg px-3 py-2 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <button type="button" onclick="togglePasswordVisibility('${prefix}-entryPassword', '${prefix}-eyeIcon')" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-600">
+                                    <svg id="${prefix}-eyeIcon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">ডেসক্রিপশন (ফরম্যাটেড টেক্সট)</label>
+                            <div id="${prefix}-entryDescription" contenteditable="true" dir="auto" spellcheck="true" class="w-full border rounded-lg px-3 py-2 min-h-[120px] bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 overflow-y-auto" style="white-space: pre-wrap;"></div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">একাধিক ফাইল চুজ করুন (HTML, CSS, JS, Doc, PDF, Excel ইত্যাদি)</label>
+                            <input type="file" id="${prefix}-entryFiles" multiple class="w-full border rounded-lg px-3 py-1.5 text-xs bg-gray-50 text-gray-600">
+                        </div>
+                        <div class="flex gap-2 pt-2">
+                            <button onclick="submitData('${prefix}')" id="${prefix}-submitBtn" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition text-sm shadow">সেভ করুন</button>
+                            <button onclick="resetForm('${prefix}')" id="${prefix}-cancelBtn" class="hidden bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg font-medium transition text-sm">ক্যান্সেল</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (!input) return;
+            if (input.type === "password") {
+                input.type = "text";
+                if (icon) icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858-5.908a10.018 10.018 0 0113.122 13.122m-1.563 3.029A9.97 9.97 0 0112 19c-1.558 0-3.04-.355-4.364-1.002M3 3l18 18" />`;
+            } else {
+                input.type = "password";
+                if (icon) icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />`;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = "bg-gray-800 text-white";
+            if (type === 'success') bgClass = "bg-emerald-600 text-white";
+            if (type === 'error') bgClass = "bg-rose-600 text-white";
+
+            toast.className = `${bgClass} px-4 py-2.5 rounded-xl shadow-xl text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto max-w-sm`;
+            toast.innerHTML = `<span>${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}</span><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showConfirmModal(message, onConfirm) {
+            const modal = document.getElementById('confirmModal');
+            const textEl = document.getElementById('confirmModalText');
+            const okBtn = document.getElementById('confirmModalOkBtn');
+            const cancelBtn = document.getElementById('confirmModalCancelBtn');
+
+            textEl.innerText = message;
+            modal.classList.remove('hidden');
+
+            const handleOk = () => {
+                modal.classList.add('hidden');
+                cleanup();
+                onConfirm();
+            };
+
+            const handleCancel = () => {
+                modal.classList.add('hidden');
+                cleanup();
+            };
+
+            const cleanup = () => {
+                okBtn.removeEventListener('click', handleOk);
+                cancelBtn.removeEventListener('click', handleCancel);
+            };
+
+            okBtn.addEventListener('click', handleOk);
+            cancelBtn.addEventListener('click', handleCancel);
+        }
+
+        async function apiPost(payload) {
+            const res = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            return await res.json();
+        }
+
+        async function handleLogin() {
+            const pass = document.getElementById('adminPassword').value;
+            if (!pass) {
+                showToast('অ্যাডমিন পাসওয়ার্ড টাইপ করুন।', 'error');
+                return;
+            }
+            const res = await apiPost({ action: 'adminLogin', password: pass });
+            if (res.success) {
+                document.getElementById('admin-login-box').classList.add('hidden');
+                document.getElementById('admin-panel-content').classList.remove('hidden');
+                loadSummary();
+                showToast('অ্যাডমিন প্যানেলে সফলভাবে লগইন হয়েছে!', 'success');
+            } else {
+                showToast(res.error || 'পাসওয়ার্ড ভুল হয়েছে!', 'error');
+            }
+        }
+
+        async function loadDashboard() {
+            const container = document.getElementById('dashboard-list');
+            if (allDataCache.length === 0) {
+                container.innerHTML = `
+                    <div class="flex items-center justify-center py-12 text-gray-500 space-x-2">
+                        <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        <span>ডাটা লোড হচ্ছে...</span>
+                    </div>`;
+            }
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getAllRecords&_=${Date.now()}`);
+                const records = await res.json();
+                
+                // Fast cache mapping without running heavy upfront DOM TreeWalker on descriptions
+                allDataCache = Array.isArray(records) ? records.map(normalizeRecordForDisplay) : [];
+
+                // Reset unlock states
+                Object.keys(dashboardUnlockState).forEach(key => delete dashboardUnlockState[key]);
+
+                if (allDataCache.length === 0) {
+                    container.innerHTML = `<p class="text-gray-500 text-center py-8">কোনো সংরক্ষিত ডাটা পাওয়া যায়নি।</p>`;
+                    updateSearchBadge(0, 0);
+                    return;
+                }
+
+                let cardsHtml = '';
+                allDataCache.forEach((item, index) => {
+                    let filesHtml = '';
+                    if (item.files && item.files.length > 0) {
+                        item.files.forEach((f, fileIndex) => {
+                            filesHtml += `
+                                <div class="flex justify-between items-center bg-gray-50 p-2.5 rounded-lg mb-2 border border-gray-200 hover:bg-white transition">
+                                    <span class="text-xs font-medium text-gray-700 truncate max-w-xs flex items-center gap-1.5">
+                                        <span>📄</span> ${escapeHtml(f.name)}
+                                    </span>
+                                    <div class="flex gap-2">
+                                        <a
+                                            id="download-file-btn-${index}-${fileIndex}"
+                                            href="#"
+                                            onclick="return downloadDashboardFile(${index}, ${fileIndex}, event)"
+                                            aria-disabled="true"
+                                            class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium opacity-50 cursor-not-allowed pointer-events-none transition shadow-sm">
+                                            ডাউনলোড
+                                        </a>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    const hasDesc = item.description && item.description.trim() !== "";
+                    const hasFiles = item.files && item.files.length > 0;
+
+                    cardsHtml += `
+                        <div id="record-card-${index}" class="border-2 border-indigo-200 hover:border-indigo-400 rounded-xl p-5 bg-white shadow-sm space-y-4 transition-all duration-200">
+                            <!-- Header: Title and Password Input Box -->
+                            <div class="flex flex-wrap justify-between items-center gap-3">
+                                <h3 class="font-bold text-base sm:text-lg text-gray-800 flex-1 min-w-[200px] flex items-center gap-2">
+                                    <span class="text-indigo-500">📌</span> ${escapeHtml(item.title)}
+                                </h3>
+
+                                <div class="flex items-center gap-2">
+                                    <div class="relative">
+                                        <input
+                                            type="password"
+                                            id="pass-input-${index}"
+                                            placeholder="পাসওয়ার্ড..."
+                                            oninput="verifyPassword(${index})"
+                                            autocomplete="off"
+                                            class="border border-gray-300 rounded-lg pl-2.5 pr-7 py-1 text-xs w-32 sm:w-36 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+                                        <button type="button" onclick="togglePasswordVisibility('pass-input-${index}', 'itemPassEye-${index}')" class="absolute inset-y-0 right-0 pr-2 flex items-center text-gray-400 hover:text-gray-600">
+                                            <svg id="itemPassEye-${index}" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Content Box (Initially HIDDEN until correct password is given) -->
+                            <div id="content-box-${index}" class="hidden space-y-4 pt-3 border-t border-gray-100 content-reveal">
+                                <div class="flex flex-wrap justify-end items-center gap-2">
+                                    ${(hasFiles || hasDesc) ? `
+                                        <button
+                                            id="zip-btn-${index}"
+                                            type="button"
+                                            onclick="downloadRecordZip('${item.id}', event, ${index})"
+                                            disabled
+                                            class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg text-xs font-medium opacity-50 cursor-not-allowed transition shadow-sm">
+                                            📦 সব ফাইল ZIP ডাউনলোড
+                                        </button>
+                                    ` : ''}
+
+                                    <button
+                                        id="delete-btn-${index}"
+                                        type="button"
+                                        onclick="confirmDeleteRecord('${item.id}', ${index})"
+                                        disabled
+                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition opacity-50 cursor-not-allowed shadow-sm">
+                                        🗑️ ডিলিট
+                                    </button>
+                                </div>
+
+                                ${hasDesc ? `
+                                <div class="border rounded-xl p-3 bg-gray-50/70 relative group">
+                                    <div
+                                        id="description-preview-${index}"
+                                        class="text-gray-700 text-xs sm:text-sm line-clamp-3 leading-relaxed"
+                                        onclick="openModal(${index})"
+                                        style="white-space: pre-wrap; cursor: not-allowed; opacity: 0.65;">
+                                        ${item.description}
+                                    </div>
+
+                                    <div class="mt-2.5 flex justify-between items-center border-t border-gray-200 pt-2">
+                                        <button
+                                            id="description-btn-${index}"
+                                            type="button"
+                                            onclick="openModal(${index})"
+                                            disabled
+                                            class="text-xs text-blue-600 hover:text-blue-800 font-medium opacity-50 cursor-not-allowed transition">
+                                            🔍 সম্পূর্ণ ডেসক্রিপশন দেখুন...
+                                        </button>
+
+                                        <button
+                                            id="copy-btn-action-${index}"
+                                            type="button"
+                                            onclick="copyFormattedText(event, ${index})"
+                                            disabled
+                                            class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition opacity-50 cursor-not-allowed">
+                                            <span id="copy-btn-${index}">📋 কপি টেক্সট</span>
+                                        </button>
+                                    </div>
+                                </div>` : ''}
+
+                                ${filesHtml ? `<div class="pt-1">${filesHtml}</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = cardsHtml;
+
+                // Re-apply filter and password state if inputs already contain values
+                const searchVal = document.getElementById('dashboard-search-input')?.value;
+                if (searchVal) {
+                    filterDashboardRecords();
+                } else {
+                    updateSearchBadge(allDataCache.length, allDataCache.length);
+                }
+
+                const allPassVal = document.getElementById('dashboard-all-pass')?.value;
+                if (allPassVal) handleAllPasswordInput(allPassVal);
+
+            } catch (err) {
+                container.innerHTML = `<p class="text-red-500 text-center py-8">ডাটা লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে রিফ্রেশ করুন।</p>`;
+            }
+        }
+
+        function filterDashboardRecords() {
+            const searchInput = document.getElementById('dashboard-search-input');
+            const clearBtn = document.getElementById('clear-search-btn');
+            const query = (searchInput?.value || '').toLowerCase().trim();
+
+            if (clearBtn) {
+                if (query.length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+
+            let foundCount = 0;
+
+            allDataCache.forEach((item, index) => {
+                const card = document.getElementById(`record-card-${index}`);
+                if (!card) return;
+
+                const titleText = (item.title || '').toLowerCase();
+                if (titleText.includes(query)) {
+                    card.classList.remove('hidden');
+                    foundCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            updateSearchBadge(foundCount, allDataCache.length);
+
+            const container = document.getElementById('dashboard-list');
+            let noResultEl = document.getElementById('no-search-results-msg');
+            if (foundCount === 0 && allDataCache.length > 0) {
+                if (!noResultEl) {
+                    noResultEl = document.createElement('div');
+                    noResultEl.id = 'no-search-results-msg';
+                    noResultEl.className = 'text-gray-500 py-10 text-center bg-gray-50 rounded-xl border border-dashed border-gray-300';
+                    noResultEl.innerText = '🔍 সার্চের সাথে মিল রেখে কোনো টাইটেল পাওয়া যায়নি।';
+                    container.appendChild(noResultEl);
+                } else {
+                    noResultEl.classList.remove('hidden');
+                }
+            } else if (noResultEl) {
+                noResultEl.classList.add('hidden');
+            }
+        }
+
+        function clearSearchInput() {
+            const input = document.getElementById('dashboard-search-input');
+            if (input) {
+                input.value = '';
+                filterDashboardRecords();
+                input.focus();
+            }
+        }
+
+        function updateSearchBadge(visible, total) {
+            const badge = document.getElementById('search-count-badge');
+            const text = document.getElementById('search-count-text');
+            if (!badge || !text) return;
+
+            if (total > 0) {
+                badge.classList.remove('hidden');
+                text.innerText = `প্রদর্শিত হচ্ছে: ${visible} টি / মোট ${total} টি আইটেম`;
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function handleAllPasswordInput(val) {
+            allDataCache.forEach((item, index) => {
+                verifyPassword(index);
+            });
+        }
+
+        function setDashboardActionState(index, unlocked) {
+            const passInput = document.getElementById(`pass-input-${index}`);
+            const delBtn = document.getElementById(`delete-btn-${index}`);
+            const zipBtn = document.getElementById(`zip-btn-${index}`);
+            const descBtn = document.getElementById(`description-btn-${index}`);
+            const copyBtn = document.getElementById(`copy-btn-action-${index}`);
+            const descPreview = document.getElementById(`description-preview-${index}`);
+            const contentBox = document.getElementById(`content-box-${index}`);
+
+            dashboardUnlockState[index] = !!unlocked;
+
+            if (contentBox) {
+                if (unlocked) {
+                    contentBox.classList.remove('hidden');
+                } else {
+                    contentBox.classList.add('hidden');
+                }
+            }
+
+            if (passInput) {
+                if (unlocked) {
+                    passInput.classList.add('border-green-500', 'bg-green-50');
+                    passInput.classList.remove('border-gray-300', 'border-red-500');
+                } else {
+                    passInput.classList.remove('border-green-500', 'bg-green-50');
+                    if (passInput.value.trim() !== '') {
+                        passInput.classList.add('border-red-500');
+                    } else {
+                        passInput.classList.remove('border-red-500');
+                    }
+                }
+            }
+
+            if (unlocked) {
+                [delBtn, zipBtn, descBtn, copyBtn].forEach(btn => {
+                    if (!btn) return;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                });
+
+                // Enable attached files download links
+                const item = allDataCache[index];
+                if (item && Array.isArray(item.files)) {
+                    item.files.forEach((file, fileIndex) => {
+                        const fileBtn = document.getElementById(`download-file-btn-${index}-${fileIndex}`);
+                        if (!fileBtn || !file || !file.downloadUrl) return;
+                        fileBtn.href = file.downloadUrl;
+                        fileBtn.target = '_blank';
+                        fileBtn.rel = 'noopener noreferrer';
+                        fileBtn.setAttribute('aria-disabled', 'false');
+                        fileBtn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                    });
+                }
+
+                if (descPreview) {
+                    // Lazy-normalize description upon unlocking for fast performance
+                    if (!descPreview.dataset.normalized && item) {
+                        descPreview.innerHTML = normalizeHTMLSync(item.description || "");
+                        descPreview.dataset.normalized = "true";
+                    }
+                    descPreview.style.cursor = 'pointer';
+                    descPreview.style.opacity = '1';
+                }
+            } else {
+                [delBtn, zipBtn, descBtn, copyBtn].forEach(btn => {
+                    if (!btn) return;
+                    btn.disabled = true;
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                });
+
+                // Disable attached files download links
+                const item = allDataCache[index];
+                if (item && Array.isArray(item.files)) {
+                    item.files.forEach((file, fileIndex) => {
+                        const fileBtn = document.getElementById(`download-file-btn-${index}-${fileIndex}`);
+                        if (!fileBtn) return;
+                        fileBtn.href = '#';
+                        fileBtn.removeAttribute('target');
+                        fileBtn.removeAttribute('rel');
+                        fileBtn.setAttribute('aria-disabled', 'true');
+                        fileBtn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+                    });
+                }
+
+                if (descPreview) {
+                    descPreview.style.cursor = 'not-allowed';
+                    descPreview.style.opacity = '0.65';
+                }
+            }
+        }
+
+        function verifyPassword(index) {
+            const item = allDataCache[index];
+            if (!item) return false;
+
+            const passInput = document.getElementById(`pass-input-${index}`);
+            const allPassInput = document.getElementById('dashboard-all-pass');
+
+            const itemVal = passInput ? passInput.value.trim() : "";
+            const allVal = allPassInput ? allPassInput.value.trim() : "";
+            const actualPass = String(item.password ?? "").trim();
+
+            const isUnlocked = (itemVal !== "" && itemVal === actualPass) ||
+                               (allVal !== "" && allVal === actualPass);
+
+            setDashboardActionState(index, isUnlocked);
+            return isUnlocked;
+        }
+
+        function isDashboardUnlocked(index) {
+            return dashboardUnlockState[index] === true;
+        }
+
+        function requireDashboardPassword(index) {
+            if (isDashboardUnlocked(index)) return true;
+
+            const passInput = document.getElementById(`pass-input-${index}`);
+            if (passInput) passInput.focus();
+            showToast('সঠিক পাসওয়ার্ড টাইপ করুন।', 'error');
+            return false;
+        }
+
+        function downloadDashboardFile(index, fileIndex, event) {
+            if (event) event.stopPropagation();
+
+            if (!requireDashboardPassword(index)) {
+                if (event) event.preventDefault();
+                return false;
+            }
+
+            const item = allDataCache[index];
+            const file = item && item.files ? item.files[fileIndex] : null;
+            if (!file || !file.downloadUrl) {
+                if (event) event.preventDefault();
+                showToast('ফাইল ডাউনলোড লিংক পাওয়া যায়নি।', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        function confirmDeleteRecord(id, index = null) {
+            if (index !== null && !requireDashboardPassword(index)) return;
+
+            showConfirmModal('আপনি কি নিশ্চিত এই রেকর্ডটি গুগল শিট ও ড্রাইভ থেকে সম্পূর্ণ ডিলিট করতে চান?', async () => {
+                const res = await apiPost({ action: 'deleteRecord', id: id });
+                if (res.success) {
+                    showToast('সফলভাবে ডিলিট করা হয়েছে!', 'success');
+                    loadDashboard();
+                    if (!document.getElementById('admin-panel-content').classList.contains('hidden')) {
+                        loadSummary();
+                    }
+                } else {
+                    showToast(res.error || 'ডিলিট করতে ব্যর্থ হয়েছে।', 'error');
+                }
+            });
+        }
+
+        async function loadSummary() {
+            const container = document.getElementById('summary-list');
+            container.innerHTML = `<p class="text-gray-500">লোড হচ্ছে...</p>`;
+
+            try {
+                const res = await fetch(`${SCRIPT_URL}?action=getAllRecords&_=${Date.now()}`);
+                const records = await res.json();
+                const safeRecords = Array.isArray(records) ? records.map(normalizeRecordForDisplay) : [];
+
+                if (!safeRecords || safeRecords.length === 0) {
+                    container.innerHTML = `<p class="text-gray-500">কোনো রেকর্ড নেই।</p>`;
+                    return;
+                }
+
+                container.innerHTML = '';
+                safeRecords.forEach(item => {
+                    container.innerHTML += `
+                        <div class="border rounded-xl p-4 bg-gray-50 flex justify-between items-center shadow-sm">
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-sm">${escapeHtml(item.title)}</h4>
+                                <p class="text-xs text-gray-500">ফাইল সংখ্যা: ${item.files ? item.files.length : 0}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="editRecord('${item.id}')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-sm">Edit</button>
+                                <button onclick="confirmDeleteRecord('${item.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition shadow-sm">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                container.innerHTML = `<p class="text-red-500">ডাটা লোড করতে ব্যর্থ হয়েছে।</p>`;
+            }
+        }
+
+        async function submitData(prefix) {
+            const title = document.getElementById(`${prefix}-entryTitle`).value.trim();
+            const password = document.getElementById(`${prefix}-entryPassword`).value.trim();
+            const description = await normalizeHTMLToUnicode(
+                document.getElementById(`${prefix}-entryDescription`).innerHTML
+            );
+            const fileInput = document.getElementById(`${prefix}-entryFiles`);
+            const editId = document.getElementById(`${prefix}-editRecordId`).value;
+
+            if (!title) {
+                showToast('দয়া করে টাইটেল দিন।', 'error');
+                return;
+            }
+            if (!password) {
+                showToast('পাসওয়ার্ড দেওয়া বাধ্যতামূলক! দয়া করে পাসওয়ার্ড দিন।', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById(`${prefix}-submitBtn`);
+            submitBtn.innerText = "প্রসেসিং হচ্ছে...";
+            submitBtn.disabled = true;
+
+            const filesData = [];
+            for (let i = 0; i < fileInput.files.length; i++) {
+                const file = fileInput.files[i];
+                const base64 = await toBase64(file);
+                filesData.push({
+                    name: file.name,
+                    mimeType: file.type,
+                    data: base64
+                });
+            }
+
+            let res;
+            if (editId) {
+                res = await apiPost({
+                    action: 'updateRecord',
+                    id: editId,
+                    title: title,
+                    password: password,
+                    description: description,
+                    filesData: filesData
+                });
+            } else {
+                res = await apiPost({
+                    action: 'uploadFiles',
+                    title: title,
+                    password: password,
+                    description: description,
+                    filesData: filesData
+                });
+            }
+
+            if (res.success) {
+                showToast('সফলভাবে সেভ করা হয়েছে!', 'success');
+                resetForm(prefix);
+                await loadDashboard();
+                if (prefix === 'admin') {
+                    loadSummary();
+                }
+            } else {
+                showToast(res.error || 'সেভ করতে সমস্যা হয়েছে।', 'error');
+            }
+            submitBtn.innerText = editId ? "আপডেট করুন" : "সেভ করুন";
+            submitBtn.disabled = false;
+        }
+
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function editRecord(id) {
+            const item = allDataCache.find(r => r.id === id);
+            if (item) {
+                const prefix = 'admin';
+                document.getElementById(`${prefix}-editRecordId`).value = item.id;
+                document.getElementById(`${prefix}-entryTitle`).value = item.title || "";
+                document.getElementById(`${prefix}-entryPassword`).value = item.password || "";
+                document.getElementById(`${prefix}-entryDescription`).innerHTML = normalizeHTMLSync(item.description || "");
+                document.getElementById(`${prefix}-form-title`).innerText = "ডাটা এডিট করুন";
+                document.getElementById(`${prefix}-submitBtn`).innerText = "আপডেট করুন";
+                document.getElementById(`${prefix}-cancelBtn`).classList.remove('hidden');
+            }
+        }
+
+        function resetForm(prefix) {
+            document.getElementById(`${prefix}-editRecordId`).value = '';
+            document.getElementById(`${prefix}-entryTitle`).value = '';
+            document.getElementById(`${prefix}-entryPassword`).value = '';
+            document.getElementById(`${prefix}-entryDescription`).innerHTML = '';
+            document.getElementById(`${prefix}-entryFiles`).value = '';
+            document.getElementById(`${prefix}-form-title`).innerText = "নতুন ডাটা এন্ট্রি";
+            document.getElementById(`${prefix}-submitBtn`).innerText = "সেভ করুন";
+            document.getElementById(`${prefix}-cancelBtn`).classList.add('hidden');
+        }
+
+        let currentModalDesc = "";
+
+        function openModal(index) {
+            if (!requireDashboardPassword(index)) return;
+
+            const item = allDataCache[index];
+            const normalizedDesc = normalizeHTMLSync(item.description || "");
+            document.getElementById('modalTitle').innerText = item.title || "";
+            document.getElementById('modalBody').innerHTML = normalizedDesc;
+            currentModalDesc = normalizedDesc;
+            document.getElementById('descModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('descModal').classList.add('hidden');
+        }
+
+        function copyFormattedText(event, index) {
+            event.stopPropagation();
+            if (!requireDashboardPassword(index)) return;
+
+            const item = allDataCache[index];
+            copyToClipboard(item.description, `copy-btn-${index}`);
+        }
+
+        function copyModalContent() {
+            copyToClipboard(currentModalDesc, 'modalCopyBtnText');
+        }
+
+        async function copyToClipboard(htmlContent, btnId) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent || "";
+            const plainText = tempDiv.innerText || tempDiv.textContent || "";
+
+            const showCopied = () => {
+                const btn = document.getElementById(btnId);
+                if (!btn) return;
+                const originalText = btn.innerText;
+                btn.innerText = "কপি হয়েছে!";
+                showToast("টেক্সট ক্লিপবোর্ডে কপি করা হয়েছে!", "success");
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                }, 2000);
+            };
+
+            try {
+                if (navigator.clipboard && window.isSecureContext && typeof ClipboardItem !== "undefined") {
+                    const blobHtml = new Blob([htmlContent || ""], { type: "text/html" });
+                    const blobText = new Blob([plainText], { type: "text/plain" });
+                    await navigator.clipboard.write([
+                        new ClipboardItem({
+                            "text/html": blobHtml,
+                            "text/plain": blobText
+                        })
+                    ]);
+                    showCopied();
+                    return true;
+                }
+            } catch (e) {}
+
+            try {
+                if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+                    await navigator.clipboard.writeText(plainText);
+                    showCopied();
+                    return true;
+                }
+            } catch (e) {}
+
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = plainText;
+                textarea.setAttribute("readonly", "");
+                textarea.style.position = "fixed";
+                textarea.style.left = "-9999px";
+                textarea.style.top = "0";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+
+                const copied = document.execCommand("copy");
+                textarea.remove();
+
+                if (copied) {
+                    showCopied();
+                    return true;
+                }
+            } catch (e) {}
+
+            showToast("কপি করা যায়নি। অনুগ্রহ করে ম্যানুয়ালি কপি করুন।", "error");
+            return false;
+        }
+
+        let bijoyEngine = null;
+        let bijoyEnginePromise = null;
+
+        async function ensureBijoyEngine() {
+            if (bijoyEngine) return bijoyEngine;
+            if (!bijoyEnginePromise) {
+                bijoyEnginePromise = import("https://esm.sh/bijoy2unicode@1.0.2")
+                    .then(mod => {
+                        bijoyEngine = mod;
+                        return mod;
+                    })
+                    .catch(() => null);
+            }
+            return bijoyEnginePromise;
+        }
+
+        function hasBanglaUnicode(text) {
+            return /[\u0980-\u09FF]/u.test(text || "");
+        }
+
+        function isPureEnglishOrCommonLatin(text) {
+            if (!text) return false;
+            return /^[A-Za-z0-9\s.,!?;:'"(){}\[\]<>@#$%&*+=_\/\\|~`^°•\-–—]+$/.test(text);
+        }
+
+        function getLegacyFontEvidence(element) {
+            let el = element;
+            while (el) {
+                const styleFont = (el.getAttribute && el.getAttribute("style") || "").toLowerCase();
+                const faceFont = (el.getAttribute && el.getAttribute("face") || "").toLowerCase();
+                const className = (el.getAttribute && el.getAttribute("class") || "").toLowerCase();
+                const dataFont = (el.getAttribute && (
+                    el.getAttribute("data-font") ||
+                    el.getAttribute("data-font-family") ||
+                    el.getAttribute("data-original-font")
+                ) || "").toLowerCase();
+
+                const combined = `${styleFont} ${faceFont} ${className} ${dataFont}`;
+                if (/(sutonny|bijoy|boishakhi|suleka|sutonnybangla|bijoyekattor|bijoy\s*52|omj|mj\s*font|amar\s*bangla|bangsee|bangla\s*font)/i.test(combined)) {
+                    return true;
+                }
+                el = el.parentElement;
+            }
+            return false;
+        }
+
+        function legacyCharacterScore(text) {
+            if (!text || hasBanglaUnicode(text) || isPureEnglishOrCommonLatin(text)) return 0;
+
+            const chars = [...text];
+            if (!chars.length) return 0;
+
+            const strongLegacy = /[†‡ˆ‰Š„…ƒ‚˜™š›œŸ¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòôõö÷øùúûüýþ]/;
+            const count = chars.filter(c => strongLegacy.test(c)).length;
+            return count / chars.length;
+        }
+
+        function looksLikeLegacyBijoy(text, element = null) {
+            if (!text || hasBanglaUnicode(text)) return false;
+            if (isPureEnglishOrCommonLatin(text)) return false;
+            if (getLegacyFontEvidence(element)) return true;
+            return legacyCharacterScore(text) >= 0.08;
+        }
+
+        const BIJOY_FALLBACK_MAP = {
+            "Av":"আ","A":"অ","B":"ই","C":"ঈ","D":"উ","E":"ঊ","F":"ঋ","G":"এ","H":"ঐ","I":"ও","J":"ঔ",
+            "K":"ক","L":"খ","M":"গ","N":"ঘ","O":"ঙ","P":"চ","Q":"ছ","R":"জ","S":"ঝ","T":"ঞ","U":"ট","V":"ঠ",
+            "W":"ড","X":"ঢ","Y":"ণ","Z":"ত","_":"থ","`":"দ","a":"ধ","b":"ন","c":"প","d":"ফ","e":"ব","f":"ভ",
+            "g":"ম","h":"য","i":"র","j":"ল","k":"শ","l":"ষ","m":"স","n":"হ","o":"ড়","p":"ঢ়","q":"য়","r":"ৎ",
+            "s":"ং","t":"ঃ","u":"ঁ","0":"০","1":"১","2":"২","3":"৩","4":"৪","5":"৫","6":"৬","7":"৭","8":"৮","9":"৯",
+            "•":"ঙ্","v":"া","w":"ি","x":"ী","y":"ু","z":"ু","“":"ু","–":"ু","~":"ূ","ƒ":"ূ","‚":"ূ","„":"ৃ","…":"ৃ",
+            "†":"ে","‡":"ে","ˆ":"ৈ","‰":"ৈ","Š":"ৗ","|":"।","\\|":"।","\\&":"্‌",
+            "°":"ক্ক","±":"ক্ট","²":"ক্ষ্ণ","³":"ক্ত","´":"ক্ম","µ":"ক্র","¶":"ক্ষ","·":"ক্স","¸":"গু","¹":"জ্ঞ",
+            "º":"গ্দ","»":"গ্ধ","¼":"ঙ্ক","½":"ঙ্গ","¾":"জ্জ","¿":"্ত্র","À":"জ্ঝ","Á":"জ্ঞ","Â":"ঞ্চ","Ã":"ঞ্ছ",
+            "Ä":"ঞ্জ","Å":"ঞ্ঝ","Æ":"ট্ট","Ç":"ড্ড","È":"ণ্ট","É":"ণ্ঠ","Ê":"ণ্ড","Ë":"ত্ত","Ì":"ত্থ","Í":"ত্ম",
+            "Î":"ত্র","Ï":"দ্দ","Ð":"ণ্ড","Ñ":"-","Ò":"\"","Ó":"\"","Ô":"'","Õ":"'","Ö":"্র","×":"দ্ধ","Ø":"দ্ব",
+            "Ù":"দ্ম","Ú":"ন্ঠ","Û":"ন্ড","Ü":"ন্ধ","Ý":"ন্স","Þ":"প্ট","ß":"প্ত","à":"প্প","á":"প্স","â":"ব্জ",
+            "ã":"ব্দ","ä":"ব্ধ","å":"ভ্র","æ":"ম্ন","ç":"ম্ফ","è":"্ন","é":"ল্ক","ê":"ল্গ","ë":"ল্ট","ì":"ল্ড",
+            "í":"ল্প","î":"ল্ফ","ï":"শু","ð":"শ্চ","ñ":"শ্ছ","ò":"ষ্ণ","ó":"ষ্ট","ô":"ষ্ঠ","õ":"ষ্ফ","ö":"স্খ",
+            "÷":"স্ট","ø":"স্ন","ù":"স্ফ","ú":"্প","û":"হু","ü":"হৃ","ý":"হ্ন","þ":"হ্ম",
+            "®":"ষ্","¯":"স্","”":"চ্","˜":"দ্","™":"দ্","š":"ন্","›":"ন্","œ":"্ন","Ÿ":"্ব","¡":"্ব","¢":"্ভ",
+            "£":"্ভ্র","¤":"ম্","¥":"্ম","¦":"্ব","§":"্ম","¨":"্য","©":"র্","ª":"্র","«":"্র","¬":"্ল","­":"্ল",
+            "^":"্ব","‘":"্তু","’":"্থ","‹":"্ক","Œ":"্ক্র","—":"্ত"
+        };
+
+        function fallbackBijoyToUnicode(input) {
+            if (!input || !looksLikeLegacyBijoy(input)) return input || "";
+            let s = input;
+            const pre = [
+                ["yy","y"],["vv","v"],["­­","­"],["y&","y"],["„&","„"],
+                ["‡u","u‡"],["wu","uw"],["uy","yu"],["u“","“u"],["u–","–u"],
+                ["uƒ","ƒu"],["u‚","‚u"],["uv","vu"],["u…","…u"],["u„","„u"],
+                ["uz","zu"],["ux","xu"],["u~","~u"]
+            ];
+            pre.forEach(([a,b]) => s = s.split(a).join(b));
+            Object.keys(BIJOY_FALLBACK_MAP).sort((a,b)=>b.length-a.length).forEach(k => {
+                s = s.split(k).join(BIJOY_FALLBACK_MAP[k]);
+            });
+            s = s.replace(/্+/g, "্");
+            for (let i = 1; i < 4; i++) {
+                s = s.replace(/([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])র্/g, "র্$1");
+            }
+            s = s.replace(/([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE](?:্[\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])*)([িীেৈ])/g, "$2$1");
+            s = s.replace(/ে([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])া/g, "$1ো");
+            s = s.replace(/ে([\u0995-\u09B9\u09DC\u09DD\u09DF\u09CE])ৗ/g, "$1ৌ");
+            return s.normalize("NFC");
+        }
+
+        function convertBijoyTextIfNeeded(text, element = null) {
+            if (!text || hasBanglaUnicode(text)) return text || "";
+            if (!looksLikeLegacyBijoy(text, element)) return text;
+
+            if (bijoyEngine && typeof bijoyEngine.convertBijoyToUnicode === "function") {
+                try { return bijoyEngine.convertBijoyToUnicode(text); } catch(e) {}
+            }
+            return fallbackBijoyToUnicode(text);
+        }
+
+        async function convertBijoyText(text, element = null) {
+            if (!text || hasBanglaUnicode(text) || !looksLikeLegacyBijoy(text, element)) return text || "";
+            const engine = await ensureBijoyEngine();
+            if (engine && typeof engine.convertBijoyToUnicode === "function") {
+                try { return engine.convertBijoyToUnicode(text); } catch(e) {}
+            }
+            return fallbackBijoyToUnicode(text);
+        }
+
+        function normalizeHTMLSync(html) {
+            if (!html) return "";
+            const box = document.createElement("div");
+            box.innerHTML = html;
+            const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach(node => {
+                node.nodeValue = convertBijoyTextIfNeeded(node.nodeValue, node.parentElement);
+            });
+            return box.innerHTML;
+        }
+
+        async function normalizeHTMLToUnicode(html) {
+            if (!html) return "";
+            const box = document.createElement("div");
+            box.innerHTML = html;
+            const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            for (const node of nodes) {
+                node.nodeValue = await convertBijoyText(node.nodeValue, node.parentElement);
+            }
+            return box.innerHTML;
+        }
+
+        function normalizeRecordForDisplay(item) {
+            if (!item) return item;
+            return {
+                ...item,
+                title: item.title || "",
+                description: item.description || ""
+            };
+        }
+
+        function clipboardHasLegacyFont(htmlText) {
+            return /(sutonny|bijoy|boishakhi|suleka|sutonnybangla|bijoyekattor|omj|mj\s*font|bangsee)/i.test(htmlText || "");
+        }
+
+        function insertRichClipboardIntoEditable(el, clipboardHTML, clipboardText) {
+            if (!el) return;
+
+            if (clipboardHTML && clipboardHasLegacyFont(clipboardHTML)) {
+                el.focus();
+                const range = document.getSelection();
+                if (range && range.rangeCount) {
+                    range.deleteFromDocument();
+                    const temp = document.createElement("div");
+                    temp.innerHTML = clipboardHTML;
+                    const walker = document.createTreeWalker(temp, NodeFilter.SHOW_TEXT);
+                    const nodes = [];
+                    while (walker.nextNode()) nodes.push(walker.currentNode);
+                    nodes.forEach(node => {
+                        if (getLegacyFontEvidence(node.parentElement)) {
+                            node.nodeValue = convertBijoyTextIfNeeded(node.nodeValue, node.parentElement);
+                        }
+                    });
+                    const frag = document.createDocumentFragment();
+                    while (temp.firstChild) frag.appendChild(temp.firstChild);
+                    range.insertNode(frag);
+                    range.collapse(false);
+                    return;
+                }
+            }
+
+            document.execCommand("insertHTML", false, clipboardHTML || escapeHtml(clipboardText || ""));
+        }
+
+        function escapeHtml(value) {
+            const div = document.createElement("div");
+            div.textContent = value || "";
+            return div.innerHTML;
+        }
+
+        function attachBanglaAutoConverter() {
+            ["public-entryDescription","admin-entryDescription"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || el.dataset.universalFontAttached) return;
+                el.dataset.universalFontAttached = "1";
+
+                el.addEventListener("paste", (event) => {
+                    event.preventDefault();
+                    const htmlText = event.clipboardData ? event.clipboardData.getData("text/html") : "";
+                    const plainText = event.clipboardData ? event.clipboardData.getData("text/plain") : "";
+                    insertRichClipboardIntoEditable(el, htmlText, plainText);
+                });
+            });
+
+            ["public-entryTitle","admin-entryTitle"].forEach(id => {
+                const el = document.getElementById(id);
+                if (!el || el.dataset.universalFontAttached) return;
+                el.dataset.universalFontAttached = "1";
+
+                el.addEventListener("paste", (event) => {
+                    const htmlText = event.clipboardData ? event.clipboardData.getData("text/html") : "";
+                    const plainText = event.clipboardData ? event.clipboardData.getData("text/plain") : "";
+
+                    if (clipboardHasLegacyFont(htmlText) && plainText && !hasBanglaUnicode(plainText)) {
+                        event.preventDefault();
+                        const converted = convertBijoyTextIfNeeded(plainText);
+                        const start = el.selectionStart ?? el.value.length;
+                        const end = el.selectionEnd ?? el.value.length;
+                        el.value = el.value.slice(0, start) + converted + el.value.slice(end);
+                        const pos = start + converted.length;
+                        el.setSelectionRange(pos, pos);
+                    }
+                });
+            });
+        }
+
+        const originalRenderDataEntryForm = renderDataEntryForm;
+        renderDataEntryForm = function(containerId, prefix) {
+            originalRenderDataEntryForm(containerId, prefix);
+            attachBanglaAutoConverter();
+        };
+
+        async function downloadRecordZip(id, event, index = null) {
+            if (index !== null && !requireDashboardPassword(index)) return;
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "ZIP তৈরি হচ্ছে...";
+            btn.disabled = true;
+
+            try {
+                const res = await apiPost({ action: 'downloadZip', id: id });
+
+                if (res.success && res.base64) {
+                    const byteCharacters = atob(res.base64);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    const blob = new Blob([byteArray], { type: 'application/zip' });
+
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = res.filename || "files.zip";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    showToast("ZIP ফাইল সফলভাবে ডাউনলোড হয়েছে!", "success");
+                } else {
+                    showToast(res.error || "ZIP তৈরিতে সমস্যা হয়েছে।", "error");
+                }
+            } catch (err) {
+                showToast("ZIP ডাউনলোড করতে সমস্যা হয়েছে: " + err.toString(), "error");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
