@@ -16,2060 +16,702 @@
 
     <title>PDF Page Selector</title>
 
-
     <!-- =====================================================
          PDF.JS
     ====================================================== -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
 
+</script>
 
     <!-- =====================================================
          PDF-LIB
     ====================================================== -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js">
 
+</script>
 
     <style>
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-
-        :root {
-
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --primary-light: #eef2ff;
-
-            --green: #16a34a;
-            --green-dark: #15803d;
-
-            --text: #111827;
-            --muted: #6b7280;
-
-            --border: #e5e7eb;
-
-            --bg: #f5f7fb;
-
-            --white: #ffffff;
-
-            --shadow:
-                0 10px 30px rgba(
-                    15,
-                    23,
-                    42,
-                    0.07
-                );
-        }
-
-
-        body {
-
-            font-family:
-                Inter,
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Arial,
-                sans-serif;
-
-            background:
-                var(--bg);
-
-            color:
-                var(--text);
-
-            min-height:
-                100vh;
-
-            -webkit-font-smoothing:
-                antialiased;
-        }
-
-
-        button,
-        input {
-
-            font-family:
-                inherit;
-        }
-
-
-        button,
-        a {
-
-            -webkit-tap-highlight-color:
-                transparent;
-        }
-
-
-        /* =====================================================
-           HEADER
-        ====================================================== */
-
-        .header {
-
-            background:
-                rgba(255,255,255,0.97);
-
-            border-bottom:
-                1px solid var(--border);
-
-            position:
-                sticky;
-
-            top:
-                0;
-
-            z-index:
-                1000;
-
-            backdrop-filter:
-                blur(12px);
-
-            -webkit-backdrop-filter:
-                blur(12px);
-        }
-
-
-        .header-inner {
-
-            width:
-                100%;
-
-            max-width:
-                1450px;
-
-            margin:
-                auto;
-
-            padding:
-                12px 24px;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                space-between;
-
-            gap:
-                20px;
-        }
-
-
-        /* =====================================================
-           BRAND
-        ====================================================== */
-
-        .brand {
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            gap:
-                12px;
-
-            min-width:
-                0;
-        }
-
-
-        .brand-icon {
-
-            width:
-                43px;
-
-            height:
-                43px;
-
-            flex-shrink:
-                0;
-
-            border-radius:
-                11px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #6366f1,
-                    #4338ca
-                );
-
-            color:
-                white;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            font-size:
-                11px;
-
-            font-weight:
-                900;
-
-            box-shadow:
-                0 5px 14px
-                rgba(79,70,229,.20);
-        }
-
-
-        .brand-text {
-
-            min-width:
-                0;
-        }
-
-
-        .brand-text h1 {
-
-            font-size:
-                17px;
-
-            line-height:
-                1.2;
-
-            font-weight:
-                800;
-        }
-
-
-        .brand-text span {
-
-            display:
-                block;
-
-            color:
-                var(--muted);
-
-            font-size:
-                11px;
-
-            margin-top:
-                3px;
-        }
-
-
-        /* =====================================================
-           HEADER NAV
-        ====================================================== */
-
-        .header-nav {
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            gap:
-                8px;
-
-            flex-shrink:
-                0;
-        }
-
-
-        .nav-btn {
-
-            display:
-                inline-flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            gap:
-                7px;
-
-            min-height:
-                40px;
-
-            padding:
-                0 15px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius:
-                10px;
-
-            background:
-                #ffffff;
-
-            color:
-                #374151;
-
-            text-decoration:
-                none;
-
-            font-size:
-                12px;
-
-            font-weight:
-                750;
-
-            white-space:
-                nowrap;
-
-            transition:
-                all .2s ease;
-
-            box-shadow:
-                0 1px 2px
-                rgba(15,23,42,.03);
-        }
-
-
-        .nav-btn:hover {
-
-            border-color:
-                #c7c9d9;
-
-            background:
-                #f8f8ff;
-
-            color:
-                var(--primary);
-
-            transform:
-                translateY(-1px);
-
-            box-shadow:
-                0 4px 12px
-                rgba(15,23,42,.06);
-        }
-
-
-        .nav-btn:active {
-
-            transform:
-                scale(.97);
-        }
-
-
-        .nav-btn.dashboard {
-
-            background:
-                var(--primary);
-
-            border-color:
-                var(--primary);
-
-            color:
-                #ffffff;
-
-            box-shadow:
-                0 5px 14px
-                rgba(79,70,229,.20);
-        }
-
-
-        .nav-btn.dashboard:hover {
-
-            background:
-                var(--primary-dark);
-
-            border-color:
-                var(--primary-dark);
-
-            color:
-                #ffffff;
-        }
-
-
-        .nav-icon {
-
-            font-size:
-                14px;
-
-            line-height:
-                1;
-        }
-
-
-        /* =====================================================
-           MAIN CONTAINER
-        ====================================================== */
-
-        .container {
-
-            width:
-                100%;
-
-            max-width:
-                1450px;
-
-            margin:
-                auto;
-
-            padding:
-                40px 24px 70px;
-        }
-
-
-        /* =====================================================
-           HERO
-        ====================================================== */
-
-        .hero {
-
-            max-width:
-                800px;
-
-            margin:
-                0 auto 30px;
-
-            text-align:
-                center;
-        }
-
-
-        .hero h2 {
-
-            font-size:
-                clamp(
-                    30px,
-                    5vw,
-                    46px
-                );
-
-            line-height:
-                1.1;
-
-            letter-spacing:
-                -1.7px;
-
-            font-weight:
-                850;
-
-            margin-bottom:
-                12px;
-        }
-
-
-        .hero p {
-
-            color:
-                var(--muted);
-
-            font-size:
-                14px;
-
-            line-height:
-                1.7;
-
-            max-width:
-                680px;
-
-            margin:
-                auto;
-        }
-
-
-        /* =====================================================
-           UPLOAD CARD
-        ====================================================== */
-
-        .upload-card {
-
-            background:
-                var(--white);
-
-            border:
-                1px solid var(--border);
-
-            border-radius:
-                20px;
-
-            padding:
-                24px;
-
-            box-shadow:
-                var(--shadow);
-
-            margin-bottom:
-                20px;
-        }
-
-
-        .drop-zone {
-
-            min-height:
-                225px;
-
-            border:
-                2px dashed #c7cad8;
-
-            border-radius:
-                16px;
-
-            background:
-                #fafaff;
-
-            padding:
-                30px 20px;
-
-            display:
-                flex;
-
-            flex-direction:
-                column;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            text-align:
-                center;
-
-            cursor:
-                pointer;
-
-            transition:
-                background .2s,
-                border-color .2s,
-                transform .2s;
-        }
-
-
-        .drop-zone:hover {
-
-            border-color:
-                var(--primary);
-
-            background:
-                #f7f6ff;
-        }
-
-
-        .drop-zone.dragover {
-
-            border-color:
-                var(--primary);
-
-            background:
-                #f0efff;
-
-            transform:
-                scale(.995);
-        }
-
-
-        .upload-icon {
-
-            width:
-                62px;
-
-            height:
-                62px;
-
-            border-radius:
-                17px;
-
-            background:
-                var(--primary-light);
-
-            color:
-                var(--primary);
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            font-size:
-                28px;
-
-            font-weight:
-                800;
-
-            margin-bottom:
-                14px;
-        }
-
-
-        .drop-zone h3 {
-
-            font-size:
-                18px;
-
-            margin-bottom:
-                6px;
-        }
-
-
-        .drop-zone p {
-
-            color:
-                var(--muted);
-
-            font-size:
-                13px;
-
-            margin-bottom:
-                17px;
-        }
-
-
-        .browse-btn {
-
-            border:
-                0;
-
-            background:
-                var(--primary);
-
-            color:
-                white;
-
-            padding:
-                11px 21px;
-
-            border-radius:
-                10px;
-
-            font-size:
-                13px;
-
-            font-weight:
-                700;
-
-            cursor:
-                pointer;
-
-            transition:
-                .2s;
-
-            box-shadow:
-                0 5px 12px
-                rgba(79,70,229,.16);
-        }
-
-
-        .browse-btn:hover {
-
-            background:
-                var(--primary-dark);
-
-            transform:
-                translateY(-1px);
-        }
-
-
-        .browse-btn:active {
-
-            transform:
-                scale(.97);
-        }
-
-
-        #fileInput {
-
-            display:
-                none;
-        }
-
-
-        /* =====================================================
-           TOOLBAR
-        ====================================================== */
-
-        .toolbar {
-
-            display:
-                none;
-
-            background:
-                white;
-
-            border:
-                1px solid var(--border);
-
-            border-radius:
-                16px;
-
-            padding:
-                13px 15px;
-
-            margin-bottom:
-                15px;
-
-            align-items:
-                center;
-
-            justify-content:
-                space-between;
-
-            gap:
-                15px;
-
-            flex-wrap:
-                wrap;
-
-            box-shadow:
-                0 5px 18px
-                rgba(15,23,42,.04);
-        }
-
-
-        .file-info {
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            gap:
-                10px;
-
-            min-width:
-                0;
-        }
-
-
-        .pdf-badge {
-
-            width:
-                42px;
-
-            height:
-                42px;
-
-            flex-shrink:
-                0;
-
-            border-radius:
-                10px;
-
-            background:
-                #fee2e2;
-
-            color:
-                #dc2626;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            font-size:
-                10px;
-
-            font-weight:
-                900;
-        }
-
-
-        .file-details {
-
-            min-width:
-                0;
-        }
-
-
-        .file-details strong {
-
-            display:
-                block;
-
-            max-width:
-                350px;
-
-            overflow:
-                hidden;
-
-            white-space:
-                nowrap;
-
-            text-overflow:
-                ellipsis;
-
-            font-size:
-                14px;
-        }
-
-
-        .file-details small {
-
-            display:
-                block;
-
-            color:
-                var(--muted);
-
-            font-size:
-                11px;
-
-            margin-top:
-                3px;
-        }
-
-
-        .toolbar-actions {
-
-            display:
-                flex;
-
-            gap:
-                7px;
-
-            flex-wrap:
-                wrap;
-        }
-
-
-        /* =====================================================
-           GENERAL TOOL BUTTON
-        ====================================================== */
-
-        .tool-btn {
-
-            border:
-                1px solid var(--border);
-
-            background:
-                white;
-
-            color:
-                #374151;
-
-            border-radius:
-                9px;
-
-            padding:
-                9px 12px;
-
-            font-size:
-                12px;
-
-            font-weight:
-                700;
-
-            cursor:
-                pointer;
-
-            transition:
-                all .2s ease;
-
-            text-decoration:
-                none;
-
-            display:
-                inline-flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-
-            min-height:
-                38px;
-        }
-
-
-        .tool-btn:hover {
-
-            border-color:
-                var(--primary);
-
-            color:
-                var(--primary);
-
-            background:
-                #fafaff;
-        }
-
-
-        .tool-btn:active {
-
-            transform:
-                scale(.97);
-        }
-
-
-        /* =====================================================
-           PROFESSIONAL CREATE PDF BUTTON
-        ====================================================== */
-
-        .tool-btn.primary {
-
-            position:
-                relative;
-
-            overflow:
-                hidden;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #5b55e8,
-                    #4338ca
-                );
-
-            color:
-                white;
-
-            border:
-                1px solid #4f46e5;
-
-            min-width:
-                125px;
-
-            padding:
-                9px 16px;
-
-            font-weight:
-                800;
-
-            letter-spacing:
-                .05px;
-
-            box-shadow:
-                0 5px 14px
-                rgba(79,70,229,.22);
-        }
-
-
-        .tool-btn.primary::before {
-
-            content:
-                "";
-
-            position:
-                absolute;
-
-            top:
-                0;
-
-            left:
-                -100%;
-
-            width:
-                60%;
-
-            height:
-                100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(255,255,255,.16),
-                    transparent
-                );
-
-            transform:
-                skewX(-20deg);
-
-            transition:
-                left .5s ease;
-        }
-
-
-        .tool-btn.primary:hover::before {
-
-            left:
-                140%;
-        }
-
-
-        .tool-btn.primary:hover {
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #514be0,
-                    #3730a3
-                );
-
-            color:
-                white;
-
-            border-color:
-                #4338ca;
-
-            transform:
-                translateY(-1px);
-
-            box-shadow:
-                0 8px 18px
-                rgba(79,70,229,.27);
-        }
-
-
-        .tool-btn.primary:disabled {
-
-            opacity:
-                .5;
-
-            cursor:
-                not-allowed;
-
-            transform:
-                none;
-
-            box-shadow:
-                none;
-        }
-
-
-        /* =====================================================
-           PROFESSIONAL DOWNLOAD BUTTON
-        ====================================================== */
-
-        .download-btn {
-
-            position:
-                relative;
-
-            overflow:
-                hidden;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #22a854,
-                    #15803d
-                ) !important;
-
-            color:
-                white !important;
-
-            border:
-                1px solid #16a34a !important;
-
-            min-width:
-                155px;
-
-            padding:
-                9px 17px;
-
-            font-weight:
-                800;
-
-            letter-spacing:
-                .05px;
-
-            box-shadow:
-                0 5px 14px
-                rgba(22,163,74,.20);
-
-            transition:
-                all .2s ease;
-        }
-
-
-        .download-btn::before {
-
-            content:
-                "";
-
-            position:
-                absolute;
-
-            top:
-                0;
-
-            left:
-                -100%;
-
-            width:
-                60%;
-
-            height:
-                100%;
-
-            background:
-                linear-gradient(
-                    90deg,
-                    transparent,
-                    rgba(255,255,255,.17),
-                    transparent
-                );
-
-            transform:
-                skewX(-20deg);
-
-            transition:
-                left .5s ease;
-        }
-
-
-        .download-btn:hover::before {
-
-            left:
-                140%;
-        }
-
-
-        .download-btn:hover {
-
-            background:
-                linear-gradient(
-                    135deg,
-                    #1f984c,
-                    #166534
-                ) !important;
-
-            border-color:
-                #15803d !important;
-
-            color:
-                white !important;
-
-            transform:
-                translateY(-1px);
-
-            box-shadow:
-                0 8px 18px
-                rgba(22,163,74,.27);
-        }
-
-
-        .download-btn:active {
-
-            transform:
-                scale(.97);
-        }
-
-
-        .download-btn.disabled {
-
-            opacity:
-                .45;
-
-            pointer-events:
-                none;
-
-            cursor:
-                not-allowed;
-
-            background:
-                #9ca3af !important;
-
-            border-color:
-                #9ca3af !important;
-
-            box-shadow:
-                none;
-        }
-
-
-        /* =====================================================
-           SELECTION BAR
-        ====================================================== */
-
-        .selection-bar {
-
-            display:
-                none;
-
-            background:
-                white;
-
-            border:
-                1px solid var(--border);
-
-            border-radius:
-                13px;
-
-            padding:
-                10px 13px;
-
-            margin-bottom:
-                16px;
-
-            align-items:
-                center;
-
-            justify-content:
-                space-between;
-
-            gap:
-                12px;
-        }
-
-
-        .selection-count {
-
-            color:
-                var(--muted);
-
-            font-size:
-                12px;
-        }
-
-
-        .selection-count strong {
-
-            color:
-                var(--text);
-
-            font-size:
-                14px;
-        }
-
-
-        .selection-actions {
-
-            display:
-                flex;
-
-            gap:
-                7px;
-        }
-
-
-        /* =====================================================
-           PAGE GRID
-        ====================================================== */
-
-        .pages-grid {
-
-            display:
-                none;
-
-            grid-template-columns:
-                repeat(
-                    auto-fill,
-                    minmax(
-                        170px,
-                        1fr
-                    )
-                );
-
-            gap:
-                18px;
-        }
-
-
-        /* =====================================================
-           PAGE CARD
-        ====================================================== */
-
-        .page-card {
-
-            position:
-                relative;
-
-            background:
-                white;
-
-            border:
-                2px solid transparent;
-
-            border-radius:
-                14px;
-
-            padding:
-                9px;
-
-            box-shadow:
-                0 5px 18px
-                rgba(15,23,42,.06);
-
-            cursor:
-                pointer;
-
-            transition:
-                transform .2s,
-                border-color .2s,
-                box-shadow .2s;
-
-            user-select:
-                none;
-        }
-
-
-        .page-card:hover {
-
-            transform:
-                translateY(-3px);
-
-            box-shadow:
-                0 12px 28px
-                rgba(15,23,42,.10);
-        }
-
-
-        .page-card.selected {
-
-            border-color:
-                var(--primary);
-
-            background:
-                #f8f7ff;
-        }
-
-
-        .page-preview {
-
-            width:
-                100%;
-
-            aspect-ratio:
-                .707;
-
-            background:
-                #f1f3f5;
-
-            border-radius:
-                8px;
-
-            overflow:
-                hidden;
-
-            display:
-                flex;
-
-            align-items:
-                center;
-
-            justify-content:
-                center;
-        }
-
-
-        .page-preview canvas {
-
-            width:
-                100%;
-
-            height:
-                100%;
-
-            display:
-                block;
-
-            object-fit:
-                contain;
-        }
-
-
-        .page-number {
-
-            text-align:
-                center;
-
-            color:
-                #4b5563;
-
-            font-size:
-                12px;
-
-            font-weight:
-                700;
-
-            padding:
-                9px 2px 3px;
-        }
-
-
-        /* =====================================================
-           CHECKBOX
-        ====================================================== */
-
-        .check-wrap {
-
-            position:
-                absolute;
-
-            top:
-                14px;
-
-            left:
-                14px;
-
-            z-index:
-                10;
-        }
-
-
-        .check-wrap input {
-
-            width:
-                22px;
-
-            height:
-                22px;
-
-            margin:
-                0;
-
-            accent-color:
-                var(--primary);
-
-            cursor:
-                pointer;
-        }
-
-
-        /* =====================================================
-           LOADING
-        ====================================================== */
-
-        .loading {
-
-            display:
-                none;
-
-            background:
-                white;
-
-            border:
-                1px solid var(--border);
-
-            border-radius:
-                15px;
-
-            padding:
-                35px 20px;
-
-            margin-bottom:
-                20px;
-
-            text-align:
-                center;
-        }
-
-
-        .spinner {
-
-            width:
-                40px;
-
-            height:
-                40px;
-
-            margin:
-                0 auto 14px;
-
-            border:
-                4px solid #e5e7eb;
-
-            border-top-color:
-                var(--primary);
-
-            border-radius:
-                50%;
-
-            animation:
-                spin .8s linear infinite;
-        }
-
-
-        @keyframes spin {
-
-            to {
-                transform:
-                    rotate(360deg);
-            }
-
-        }
-
-
-        .loading p {
-
-            color:
-                #374151;
-
-            font-size:
-                13px;
-
-            font-weight:
-                600;
-        }
-
-
-        .progress-box {
-
-            max-width:
-                420px;
-
-            margin:
-                15px auto 0;
-        }
-
-
-        .progress-track {
-
-            width:
-                100%;
-
-            height:
-                6px;
-
-            border-radius:
-                99px;
-
-            background:
-                #e5e7eb;
-
-            overflow:
-                hidden;
-        }
-
-
-        .progress-bar {
-
-            width:
-                0%;
-
-            height:
-                100%;
-
-            border-radius:
-                99px;
-
-            background:
-                var(--primary);
-
-            transition:
-                width .2s;
-        }
-
-
-        /* =====================================================
-           TOAST
-        ====================================================== */
-
-        .toast {
-
-            position:
-                fixed;
-
-            left:
-                50%;
-
-            bottom:
-                20px;
-
-            transform:
-                translate(
-                    -50%,
-                    20px
-                );
-
-            background:
-                #111827;
-
-            color:
-                white;
-
-            padding:
-                12px 17px;
-
-            border-radius:
-                10px;
-
-            font-size:
-                12px;
-
-            font-weight:
-                600;
-
-            opacity:
-                0;
-
-            pointer-events:
-                none;
-
-            transition:
-                .25s;
-
-            z-index:
-                99999;
-
-            max-width:
-                calc(
-                    100% - 30px
-                );
-
-            text-align:
-                center;
-        }
-
-
-        .toast.show {
-
-            opacity:
-                1;
-
-            transform:
-                translate(
-                    -50%,
-                    0
-                );
-        }
-
-
-        /* =====================================================
-           FOOTER
-        ====================================================== */
-
-        footer {
-
-            text-align:
-                center;
-
-            color:
-                var(--muted);
-
-            font-size:
-                11px;
-
-            padding:
-                20px 15px 35px;
-        }
-
-
-        /* =====================================================
-           TABLET
-        ====================================================== */
-
-        @media (
-            min-width: 701px
-        )
-        and (
-            max-width: 1050px
-        ) {
-
-            .pages-grid {
-
-                grid-template-columns:
-                    repeat(
-                        3,
-                        minmax(
-                            0,
-                            1fr
-                        )
-                    );
-            }
-
-        }
-
-
-        /* =====================================================
-           MOBILE
-        ====================================================== */
-
-        @media (
-            max-width: 700px
-        ) {
-
-            .header-inner {
-
-                padding:
-                    10px 12px;
-
-                gap:
-                    8px;
-            }
-
-
-            .brand {
-
-                gap:
-                    8px;
-            }
-
-
-            .brand-icon {
-
-                width:
-                    38px;
-
-                height:
-                    38px;
-
-                border-radius:
-                    10px;
-
-                font-size:
-                    10px;
-            }
-
-
-            .brand-text h1 {
-
-                font-size:
-                    14px;
-            }
-
-
-            .brand-text span {
-
-                font-size:
-                    9px;
-            }
-
-
-            .header-nav {
-
-                gap:
-                    5px;
-            }
-
-
-            .nav-btn {
-
-                min-height:
-                    36px;
-
-                padding:
-                    0 9px;
-
-                border-radius:
-                    9px;
-
-                font-size:
-                    10px;
-
-                gap:
-                    4px;
-            }
-
-
-            .nav-icon {
-
-                font-size:
-                    12px;
-            }
-
-
-            .container {
-
-                padding:
-                    25px 12px 55px;
-            }
-
-
-            .hero {
-
-                margin-bottom:
-                    22px;
-            }
-
-
-            .hero h2 {
-
-                font-size:
-                    30px;
-
-                letter-spacing:
-                    -1px;
-            }
-
-
-            .hero p {
-
-                font-size:
-                    12px;
-
-                line-height:
-                    1.65;
-            }
-
-
-            .upload-card {
-
-                padding:
-                    15px;
-
-                border-radius:
-                    16px;
-            }
-
-
-            .drop-zone {
-
-                min-height:
-                    205px;
-
-                padding:
-                    25px 15px;
-            }
-
-
-            .upload-icon {
-
-                width:
-                    55px;
-
-                height:
-                    55px;
-
-                font-size:
-                    24px;
-
-                margin-bottom:
-                    12px;
-            }
-
-
-            .drop-zone h3 {
-
-                font-size:
-                    16px;
-            }
-
-
-            .drop-zone p {
-
-                font-size:
-                    11px;
-            }
-
-
-            .toolbar {
-
-                position:
-                    sticky;
-
-                top:
-                    60px;
-
-                z-index:
-                    100;
-
-                padding:
-                    10px;
-
-                border-radius:
-                    12px;
-            }
-
-
-            .file-info {
-
-                width:
-                    100%;
-            }
-
-
-            .file-details strong {
-
-                max-width:
-                    calc(
-                        100vw - 100px
-                    );
-            }
-
-
-            .toolbar-actions {
-
-                width:
-                    100%;
-
-                display:
-                    grid;
-
-                grid-template-columns:
-                    repeat(
-                        2,
-                        1fr
-                    );
-
-                gap:
-                    7px;
-            }
-
-
-            .toolbar-actions .tool-btn {
-
-                width:
-                    100%;
-
-                min-width:
-                    0;
-
-                font-size:
-                    10px;
-
-                padding:
-                    10px 5px;
-            }
-
-
-            .toolbar-actions .primary,
-            .toolbar-actions .download-btn {
-
-                min-width:
-                    0;
-            }
-
-
-            .selection-bar {
-
-                padding:
-                    9px 10px;
-
-                flex-direction:
-                    column;
-
-                align-items:
-                    stretch;
-            }
-
-
-            .selection-actions {
-
-                width:
-                    100%;
-            }
-
-
-            .selection-actions .tool-btn {
-
-                flex:
-                    1;
-            }
-
-
-            .pages-grid {
-
-                grid-template-columns:
-                    repeat(
-                        2,
-                        minmax(
-                            0,
-                            1fr
-                        )
-                    );
-
-                gap:
-                    10px;
-            }
-
-
-            .page-card {
-
-                padding:
-                    7px;
-
-                border-radius:
-                    11px;
-            }
-
-
-            .check-wrap {
-
-                top:
-                    10px;
-
-                left:
-                    10px;
-            }
-
-
-            .check-wrap input {
-
-                width:
-                    20px;
-
-                height:
-                    20px;
-            }
-
-
-            .page-number {
-
-                font-size:
-                    10px;
-
-                padding:
-                    7px 2px 2px;
-            }
-
-        }
-
-
-        /* =====================================================
-           VERY SMALL PHONE
-        ====================================================== */
-
-        @media (
-            max-width: 380px
-        ) {
-
-            .brand-text span {
-
-                display:
-                    none;
-            }
-
-
-            .brand-text h1 {
-
-                font-size:
-                    13px;
-            }
-
-
-            .nav-btn {
-
-                padding:
-                    0 7px;
-
-                font-size:
-                    9px;
-            }
-
-
-            .pages-grid {
-
-                gap:
-                    7px;
-            }
-
-
-            .tool-btn {
-
-                font-size:
-                    9px;
-            }
-
-        }
-
-    </style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --primary-light: #eef2ff;
+    --green: #16a34a;
+    --green-dark: #15803d;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --bg: #f5f7fb;
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba( 15, 23, 42, 0.07 );
+}
+body {
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+button, input {
+    font-family: inherit;
+}
+button, a {
+    -webkit-tap-highlight-color: transparent;
+}
+/* =====================================================
+HEADER
+====================================================== */
+.header {
+    background: rgba(255,255,255,0.97);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+} .header-inner {
+    width: 100%;
+    max-width: 1450px;
+    margin: auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+/* =====================================================
+BRAND
+====================================================== */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+} .brand-icon {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    border-radius: 11px;
+    background: linear-gradient( 135deg, #6366f1, #4338ca );
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 900;
+    box-shadow: 0 5px 14px rgba(79,70,229,.20);
+} .brand-text {
+    min-width: 0;
+} .brand-text h1 {
+    font-size: 17px;
+    line-height: 1.2;
+    font-weight: 800;
+} .brand-text span {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 3px;
+}
+/* =====================================================
+HEADER NAV
+====================================================== */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+} .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 0 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: #374151;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 750;
+    white-space: nowrap;
+    transition: all .2s ease;
+    box-shadow: 0 1px 2px rgba(15,23,42,.03);
+} .nav-btn:hover {
+    border-color: #c7c9d9;
+    background: #f8f8ff;
+    color: var(--primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(15,23,42,.06);
+} .nav-btn:active {
+    transform: scale(.97);
+} .nav-btn.dashboard {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 5px 14px rgba(79,70,229,.20);
+} .nav-btn.dashboard:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #ffffff;
+} .nav-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+/* =====================================================
+MAIN CONTAINER
+====================================================== */
+.container {
+    width: 100%;
+    max-width: 1450px;
+    margin: auto;
+    padding: 40px 24px 70px;
+}
+/* =====================================================
+HERO
+====================================================== */
+.hero {
+    max-width: 800px;
+    margin: 0 auto 30px;
+    text-align: center;
+} .hero h2 {
+    font-size: clamp( 30px, 5vw, 46px );
+    line-height: 1.1;
+    letter-spacing: -1.7px;
+    font-weight: 850;
+    margin-bottom: 12px;
+} .hero p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 680px;
+    margin: auto;
+}
+/* =====================================================
+UPLOAD CARD
+====================================================== */
+.upload-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+} .drop-zone {
+    min-height: 225px;
+    border: 2px dashed #c7cad8;
+    border-radius: 16px;
+    background: #fafaff;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: background .2s, border-color .2s, transform .2s;
+} .drop-zone:hover {
+    border-color: var(--primary);
+    background: #f7f6ff;
+} .drop-zone.dragover {
+    border-color: var(--primary);
+    background: #f0efff;
+    transform: scale(.995);
+} .upload-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 17px;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 14px;
+} .drop-zone h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+} .drop-zone p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 17px;
+} .browse-btn {
+    border: 0;
+    background: var(--primary);
+    color: white;
+    padding: 11px 21px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+    box-shadow: 0 5px 12px rgba(79,70,229,.16);
+} .browse-btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+} .browse-btn:active {
+    transform: scale(.97);
+}
+#fileInput {
+    display: none;
+}
+/* =====================================================
+TOOLBAR
+====================================================== */
+.toolbar {
+    display: none;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 13px 15px;
+    margin-bottom: 15px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    box-shadow: 0 5px 18px rgba(15,23,42,.04);
+} .file-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+} .pdf-badge {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 900;
+} .file-details {
+    min-width: 0;
+} .file-details strong {
+    display: block;
+    max-width: 350px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+} .file-details small {
+    display: block;
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 3px;
+} .toolbar-actions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+/* =====================================================
+GENERAL TOOL BUTTON
+====================================================== */
+.tool-btn {
+    border: 1px solid var(--border);
+    background: white;
+    color: #374151;
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+} .tool-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: #fafaff;
+} .tool-btn:active {
+    transform: scale(.97);
+}
+/* =====================================================
+PROFESSIONAL CREATE PDF BUTTON
+====================================================== */
+.tool-btn.primary {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient( 135deg, #5b55e8, #4338ca );
+    color: white;
+    border: 1px solid #4f46e5;
+    min-width: 125px;
+    padding: 9px 16px;
+    font-weight: 800;
+    letter-spacing: .05px;
+    box-shadow: 0 5px 14px rgba(79,70,229,.22);
+} .tool-btn.primary::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient( 90deg, transparent, rgba(255,255,255,.16), transparent );
+    transform: skewX(-20deg);
+    transition: left .5s ease;
+} .tool-btn.primary:hover::before {
+    left: 140%;
+} .tool-btn.primary:hover {
+    background: linear-gradient( 135deg, #514be0, #3730a3 );
+    color: white;
+    border-color: #4338ca;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(79,70,229,.27);
+} .tool-btn.primary:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+/* =====================================================
+PROFESSIONAL DOWNLOAD BUTTON
+====================================================== */
+.download-btn {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient( 135deg, #22a854, #15803d ) !important;
+    color: white !important;
+    border: 1px solid #16a34a !important;
+    min-width: 155px;
+    padding: 9px 17px;
+    font-weight: 800;
+    letter-spacing: .05px;
+    box-shadow: 0 5px 14px rgba(22,163,74,.20);
+    transition: all .2s ease;
+} .download-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient( 90deg, transparent, rgba(255,255,255,.17), transparent );
+    transform: skewX(-20deg);
+    transition: left .5s ease;
+} .download-btn:hover::before {
+    left: 140%;
+} .download-btn:hover {
+    background: linear-gradient( 135deg, #1f984c, #166534 ) !important;
+    border-color: #15803d !important;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(22,163,74,.27);
+} .download-btn:active {
+    transform: scale(.97);
+} .download-btn.disabled {
+    opacity: .45;
+    pointer-events: none;
+    cursor: not-allowed;
+    background: #9ca3af !important;
+    border-color: #9ca3af !important;
+    box-shadow: none;
+}
+/* =====================================================
+SELECTION BAR
+====================================================== */
+.selection-bar {
+    display: none;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 10px 13px;
+    margin-bottom: 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+} .selection-count {
+    color: var(--muted);
+    font-size: 12px;
+} .selection-count strong {
+    color: var(--text);
+    font-size: 14px;
+} .selection-actions {
+    display: flex;
+    gap: 7px;
+}
+/* =====================================================
+PAGE GRID
+====================================================== */
+.pages-grid {
+    display: none;
+    grid-template-columns: repeat( auto-fill, minmax( 170px, 1fr ) );
+    gap: 18px;
+}
+/* =====================================================
+PAGE CARD
+====================================================== */
+.page-card {
+    position: relative;
+    background: white;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 9px;
+    box-shadow: 0 5px 18px rgba(15,23,42,.06);
+    cursor: pointer;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    user-select: none;
+} .page-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(15,23,42,.10);
+} .page-card.selected {
+    border-color: var(--primary);
+    background: #f8f7ff;
+} .page-preview {
+    width: 100%;
+    aspect-ratio: .707;
+    background: #f1f3f5;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} .page-preview canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+} .page-number {
+    text-align: center;
+    color: #4b5563;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 9px 2px 3px;
+}
+/* =====================================================
+CHECKBOX
+====================================================== */
+.check-wrap {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 10;
+} .check-wrap input {
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+/* =====================================================
+LOADING
+====================================================== */
+.loading {
+    display: none;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 35px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+} .spinner {
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 14px;
+    border: 4px solid #e5e7eb;
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+} .loading p {
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+} .progress-box {
+    max-width: 420px;
+    margin: 15px auto 0;
+} .progress-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 99px;
+    background: #e5e7eb;
+    overflow: hidden;
+} .progress-bar {
+    width: 0%;
+    height: 100%;
+    border-radius: 99px;
+    background: var(--primary);
+    transition: width .2s;
+}
+/* =====================================================
+TOAST
+====================================================== */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 20px;
+    transform: translate( -50%, 20px );
+    background: #111827;
+    color: white;
+    padding: 12px 17px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: .25s;
+    z-index: 99999;
+    max-width: calc( 100% - 30px );
+    text-align: center;
+} .toast.show {
+    opacity: 1;
+    transform: translate( -50%, 0 );
+}
+/* =====================================================
+FOOTER
+====================================================== */
+footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 20px 15px 35px;
+}
+/* =====================================================
+TABLET
+====================================================== */
+@media ( min-width: 701px ) and ( max-width: 1050px ) {
+    .pages-grid {
+        grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+    }
+}
+/* =====================================================
+MOBILE
+====================================================== */
+@media ( max-width: 700px ) {
+    .header-inner {
+        padding: 10px 12px;
+        gap: 8px;
+    } .brand {
+        gap: 8px;
+    } .brand-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        font-size: 10px;
+    } .brand-text h1 {
+        font-size: 14px;
+    } .brand-text span {
+        font-size: 9px;
+    } .header-nav {
+        gap: 5px;
+    } .nav-btn {
+        min-height: 36px;
+        padding: 0 9px;
+        border-radius: 9px;
+        font-size: 10px;
+        gap: 4px;
+    } .nav-icon {
+        font-size: 12px;
+    } .container {
+        padding: 25px 12px 55px;
+    } .hero {
+        margin-bottom: 22px;
+    } .hero h2 {
+        font-size: 30px;
+        letter-spacing: -1px;
+    } .hero p {
+        font-size: 12px;
+        line-height: 1.65;
+    } .upload-card {
+        padding: 15px;
+        border-radius: 16px;
+    } .drop-zone {
+        min-height: 205px;
+        padding: 25px 15px;
+    } .upload-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 24px;
+        margin-bottom: 12px;
+    } .drop-zone h3 {
+        font-size: 16px;
+    } .drop-zone p {
+        font-size: 11px;
+    } .toolbar {
+        position: sticky;
+        top: 60px;
+        z-index: 100;
+        padding: 10px;
+        border-radius: 12px;
+    } .file-info {
+        width: 100%;
+    } .file-details strong {
+        max-width: calc( 100vw - 100px );
+    } .toolbar-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat( 2, 1fr );
+        gap: 7px;
+    } .toolbar-actions .tool-btn {
+        width: 100%;
+        min-width: 0;
+        font-size: 10px;
+        padding: 10px 5px;
+    } .toolbar-actions .primary, .toolbar-actions .download-btn {
+        min-width: 0;
+    } .selection-bar {
+        padding: 9px 10px;
+        flex-direction: column;
+        align-items: stretch;
+    } .selection-actions {
+        width: 100%;
+    } .selection-actions .tool-btn {
+        flex: 1;
+    } .pages-grid {
+        grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+        gap: 10px;
+    } .page-card {
+        padding: 7px;
+        border-radius: 11px;
+    } .check-wrap {
+        top: 10px;
+        left: 10px;
+    } .check-wrap input {
+        width: 20px;
+        height: 20px;
+    } .page-number {
+        font-size: 10px;
+        padding: 7px 2px 2px;
+    }
+}
+/* =====================================================
+VERY SMALL PHONE
+====================================================== */
+@media ( max-width: 380px ) {
+    .brand-text span {
+        display: none;
+    } .brand-text h1 {
+        font-size: 13px;
+    } .nav-btn {
+        padding: 0 7px;
+        font-size: 9px;
+    } .pages-grid {
+        gap: 7px;
+    } .tool-btn {
+        font-size: 9px;
+    }
+}
+</style>
 
 </head>
 
-
 <body>
-
 
 <!-- =========================================================
      HEADER
@@ -2079,7 +721,6 @@
 
     <div class="header-inner">
 
-
         <!-- BRAND -->
 
         <div class="brand">
@@ -2087,7 +728,6 @@
             <div class="brand-icon">
                 PDF
             </div>
-
 
             <div class="brand-text">
 
@@ -2103,17 +743,16 @@
 
         </div>
 
-
         <!-- =================================================
              MAIN MENU + DASHBOARD
-             
+
              Change href="#" to your own links
         ================================================== -->
 
         <nav class="header-nav">
 
             <a
-                href="#"
+                href="../index.html"
                 class="nav-btn"
                 id="mainMenuBtn"
             >
@@ -2128,9 +767,8 @@
 
             </a>
 
-
             <a
-                href="#"
+                href="pdf/jpegtojpg.html"
                 class="nav-btn dashboard"
                 id="dashboardBtn"
             >
@@ -2151,13 +789,11 @@
 
 </header>
 
-
 <!-- =========================================================
      MAIN
 ========================================================== -->
 
 <main class="container">
-
 
     <!-- =====================================================
          HERO
@@ -2169,7 +805,6 @@
             Select PDF Pages
         </h2>
 
-
         <p>
             Upload your PDF, select the pages you need,
             and create a new PDF without converting pages
@@ -2177,7 +812,6 @@
         </p>
 
     </section>
-
 
     <!-- =====================================================
          UPLOAD CARD
@@ -2194,16 +828,13 @@
                 ↑
             </div>
 
-
             <h3>
                 Upload your PDF
             </h3>
 
-
             <p>
                 Drag & drop your PDF here or choose a file
             </p>
-
 
             <button
                 type="button"
@@ -2212,7 +843,6 @@
             >
                 Choose PDF
             </button>
-
 
             <input
                 type="file"
@@ -2224,10 +854,9 @@
 
     </section>
 
-
     <!-- =====================================================
          TOOLBAR
-         
+
          CREATE PDF + DOWNLOAD PDF SAME PLACE
     ====================================================== -->
 
@@ -2235,7 +864,6 @@
         class="toolbar"
         id="toolbar"
     >
-
 
         <!-- FILE INFORMATION -->
 
@@ -2245,13 +873,11 @@
                 PDF
             </div>
 
-
             <div class="file-details">
 
                 <strong id="fileName">
                     document.pdf
                 </strong>
-
 
                 <small id="fileDetails">
                     0 pages
@@ -2261,11 +887,9 @@
 
         </div>
 
-
         <!-- ACTION BUTTONS -->
 
         <div class="toolbar-actions">
-
 
             <!-- SELECT ALL -->
 
@@ -2277,7 +901,6 @@
                 Select All
             </button>
 
-
             <!-- DESELECT ALL -->
 
             <button
@@ -2287,7 +910,6 @@
             >
                 Deselect All
             </button>
-
 
             <!-- CREATE PDF -->
 
@@ -2299,7 +921,6 @@
             >
                 Create PDF
             </button>
-
 
             <!-- DOWNLOAD PDF -->
 
@@ -2317,7 +938,6 @@
 
     </div>
 
-
     <!-- =====================================================
          SELECTION BAR
     ====================================================== -->
@@ -2326,7 +946,6 @@
         class="selection-bar"
         id="selectionBar"
     >
-
 
         <div class="selection-count">
 
@@ -2338,7 +957,6 @@
 
         </div>
 
-
         <div class="selection-actions">
 
             <button
@@ -2348,7 +966,6 @@
             >
                 Odd Pages
             </button>
-
 
             <button
                 type="button"
@@ -2362,7 +979,6 @@
 
     </div>
 
-
     <!-- =====================================================
          LOADING
     ====================================================== -->
@@ -2374,11 +990,9 @@
 
         <div class="spinner"></div>
 
-
         <p id="loadingText">
             Processing PDF...
         </p>
-
 
         <div class="progress-box">
 
@@ -2395,7 +1009,6 @@
 
     </div>
 
-
     <!-- =====================================================
          PAGE GRID
     ====================================================== -->
@@ -2405,9 +1018,7 @@
         id="pagesGrid"
     ></div>
 
-
 </main>
-
 
 <!-- =========================================================
      FOOTER
@@ -2420,7 +1031,6 @@
 
 </footer>
 
-
 <!-- =========================================================
      TOAST
 ========================================================== -->
@@ -2430,212 +1040,69 @@
     id="toast"
 ></div>
 
-
 <script>
-
-
 /* =========================================================
-   PDF.JS WORKER
+PDF.JS WORKER
 ========================================================== */
-
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 /* =========================================================
-   DOM ELEMENTS
+DOM ELEMENTS
 ========================================================== */
-
-const fileInput =
-    document.getElementById("fileInput");
-
-
-const browseBtn =
-    document.getElementById("browseBtn");
-
-
-const dropZone =
-    document.getElementById("dropZone");
-
-
-const toolbar =
-    document.getElementById("toolbar");
-
-
-const pagesGrid =
-    document.getElementById("pagesGrid");
-
-
-const selectionBar =
-    document.getElementById("selectionBar");
-
-
-const selectedCount =
-    document.getElementById("selectedCount");
-
-
-const selectAllBtn =
-    document.getElementById("selectAllBtn");
-
-
-const deselectAllBtn =
-    document.getElementById("deselectAllBtn");
-
-
-const selectOddBtn =
-    document.getElementById("selectOddBtn");
-
-
-const selectEvenBtn =
-    document.getElementById("selectEvenBtn");
-
-
-const createPdfBtn =
-    document.getElementById("createPdfBtn");
-
-
-const downloadBtn =
-    document.getElementById("downloadBtn");
-
-
-const loading =
-    document.getElementById("loading");
-
-
-const loadingText =
-    document.getElementById("loadingText");
-
-
-const progressBar =
-    document.getElementById("progressBar");
-
-
-const fileName =
-    document.getElementById("fileName");
-
-
-const fileDetails =
-    document.getElementById("fileDetails");
-
-
-const toast =
-    document.getElementById("toast");
-
-
+const fileInput = document.getElementById("fileInput");
+const browseBtn = document.getElementById("browseBtn");
+const dropZone = document.getElementById("dropZone");
+const toolbar = document.getElementById("toolbar");
+const pagesGrid = document.getElementById("pagesGrid");
+const selectionBar = document.getElementById("selectionBar");
+const selectedCount = document.getElementById("selectedCount");
+const selectAllBtn = document.getElementById("selectAllBtn");
+const deselectAllBtn = document.getElementById("deselectAllBtn");
+const selectOddBtn = document.getElementById("selectOddBtn");
+const selectEvenBtn = document.getElementById("selectEvenBtn");
+const createPdfBtn = document.getElementById("createPdfBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const loading = document.getElementById("loading");
+const loadingText = document.getElementById("loadingText");
+const progressBar = document.getElementById("progressBar");
+const fileName = document.getElementById("fileName");
+const fileDetails = document.getElementById("fileDetails");
+const toast = document.getElementById("toast");
 /* =========================================================
-   VARIABLES
+VARIABLES
 ========================================================== */
-
 let currentFile = null;
-
 let originalPdfBytes = null;
-
 let totalPages = 0;
-
 let selectedPages = new Set();
-
 let generatedPdfUrl = null;
-
-
 /* =========================================================
-   TOAST
+TOAST
 ========================================================== */
-
 let toastTimer = null;
-
-
 function showToast(message) {
-
-    clearTimeout(
-        toastTimer
-    );
-
-
-    toast.textContent =
-        message;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    toastTimer =
-        setTimeout(
-            function() {
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            2800
-        );
-
+    clearTimeout( toastTimer );
+    toast.textContent = message;
+    toast.classList.add( "show" );
+    toastTimer = setTimeout( function() {
+        toast.classList.remove( "show" );
+    }, 2800 );
 }
-
-
 /* =========================================================
-   FILE SIZE
+FILE SIZE
 ========================================================== */
-
 function formatBytes(bytes) {
-
     if (!bytes) {
-
         return "0 Bytes";
-
     }
-
-
-    const units = [
-        "Bytes",
-        "KB",
-        "MB",
-        "GB"
-    ];
-
-
-    const index =
-        Math.floor(
-            Math.log(bytes) /
-            Math.log(1024)
-        );
-
-
-    return (
-        parseFloat(
-            (
-                bytes /
-                Math.pow(
-                    1024,
-                    index
-                )
-            ).toFixed(2)
-        )
-        +
-        " " +
-        units[index]
-    );
-
+    const units = [ "Bytes", "KB", "MB", "GB" ];
+    const index = Math.floor( Math.log(bytes) / Math.log(1024) );
+    return ( parseFloat( ( bytes / Math.pow( 1024, index ) ).toFixed(2) ) + " " + units[index] );
 }
-
-
 /* =========================================================
-   SAFE FILE NAME
+SAFE FILE NAME
 ========================================================== */
-
 function getSafeFileName(name) {
-
-    return name
-
-        .replace(
-            /\.pdf$/i,
-            ""
-        )
-
-        .replace(
-            /[<>:"/\\|?*]/g,
+    return name .replace( /\.pdf$/i, "" ) .replace( /[<>:"/\\|?*]/g,
             "_"
         )
 
@@ -2650,7 +1117,6 @@ function getSafeFileName(name) {
         "selected_pages";
 
 }
-
 
 /* =========================================================
    BROWSE
@@ -2667,7 +1133,6 @@ browseBtn.addEventListener(
     }
 );
 
-
 dropZone.addEventListener(
     "click",
     function(event) {
@@ -2683,12 +1148,10 @@ dropZone.addEventListener(
 
         }
 
-
         fileInput.click();
 
     }
 );
-
 
 fileInput.addEventListener(
     "change",
@@ -2697,7 +1160,6 @@ fileInput.addEventListener(
         const file =
             this.files &&
             this.files[0];
-
 
         if (file) {
 
@@ -2709,7 +1171,6 @@ fileInput.addEventListener(
 
     }
 );
-
 
 /* =========================================================
    DRAG & DROP
@@ -2739,7 +1200,6 @@ fileInput.addEventListener(
     }
 );
 
-
 [
     "dragleave",
     "drop"
@@ -2764,14 +1224,12 @@ fileInput.addEventListener(
     }
 );
 
-
 dropZone.addEventListener(
     "drop",
     function(event) {
 
         const files =
             event.dataTransfer.files;
-
 
         if (
             !files ||
@@ -2782,14 +1240,12 @@ dropZone.addEventListener(
 
         }
 
-
         handleFile(
             files[0]
         );
 
     }
 );
-
 
 /* =========================================================
    HANDLE PDF FILE
@@ -2805,7 +1261,6 @@ async function handleFile(file) {
             .toLowerCase()
             .endsWith(".pdf");
 
-
     if (!isPdf) {
 
         showToast(
@@ -2815,7 +1270,6 @@ async function handleFile(file) {
         return;
 
     }
-
 
     /* Revoke previous PDF URL */
 
@@ -2829,7 +1283,6 @@ async function handleFile(file) {
             null;
 
     }
-
 
     /* Reset */
 
@@ -2851,7 +1304,6 @@ async function handleFile(file) {
     progressBar.style.width =
         "0%";
 
-
     /* Disable download */
 
     downloadBtn.href =
@@ -2869,20 +1321,16 @@ async function handleFile(file) {
         "true"
     );
 
-
     /* Disable create */
 
     createPdfBtn.disabled =
         true;
 
-
     loading.style.display =
         "block";
 
-
     loadingText.textContent =
         "Reading PDF...";
-
 
     try {
 
@@ -2891,12 +1339,10 @@ async function handleFile(file) {
         const buffer =
             await file.arrayBuffer();
 
-
         originalPdfBytes =
             new Uint8Array(
                 buffer
             );
-
 
         /* Load PDF */
 
@@ -2908,16 +1354,13 @@ async function handleFile(file) {
                 })
                 .promise;
 
-
         totalPages =
             pdf.numPages;
-
 
         /* File information */
 
         fileName.textContent =
             file.name;
-
 
         fileDetails.textContent =
             totalPages +
@@ -2932,20 +1375,16 @@ async function handleFile(file) {
                 file.size
             );
 
-
         /* Show UI */
 
         toolbar.style.display =
             "flex";
 
-
         selectionBar.style.display =
             "flex";
 
-
         pagesGrid.style.display =
             "grid";
-
 
         /* Render pages */
 
@@ -2962,7 +1401,6 @@ async function handleFile(file) {
                 totalPages +
                 "...";
 
-
             const percent =
                 Math.round(
                     (
@@ -2972,10 +1410,8 @@ async function handleFile(file) {
                     100
                 );
 
-
             progressBar.style.width =
                 percent + "%";
-
 
             await renderPage(
                 pdf,
@@ -2984,19 +1420,15 @@ async function handleFile(file) {
 
         }
 
-
         loading.style.display =
             "none";
 
-
         updateSelectionUI();
-
 
         showToast(
             totalPages +
             " pages loaded successfully."
         );
-
 
     } catch (error) {
 
@@ -3005,22 +1437,17 @@ async function handleFile(file) {
             error
         );
 
-
         loading.style.display =
             "none";
-
 
         toolbar.style.display =
             "none";
 
-
         selectionBar.style.display =
             "none";
 
-
         pagesGrid.style.display =
             "none";
-
 
         showToast(
             "Could not open this PDF."
@@ -3029,7 +1456,6 @@ async function handleFile(file) {
     }
 
 }
-
 
 /* =========================================================
    RENDER PAGE THUMBNAIL
@@ -3045,7 +1471,6 @@ async function renderPage(
             pageNumber
         );
 
-
     /*
      * Canvas is ONLY used
      * for page preview.
@@ -3060,12 +1485,10 @@ async function renderPage(
                 0.55
         });
 
-
     const canvas =
         document.createElement(
             "canvas"
         );
-
 
     const context =
         canvas.getContext(
@@ -3076,18 +1499,15 @@ async function renderPage(
             }
         );
 
-
     canvas.width =
         Math.ceil(
             viewport.width
         );
 
-
     canvas.height =
         Math.ceil(
             viewport.height
         );
-
 
     await page.render({
 
@@ -3099,7 +1519,6 @@ async function renderPage(
 
     }).promise;
 
-
     /* Card */
 
     const card =
@@ -3107,14 +1526,11 @@ async function renderPage(
             "div"
         );
 
-
     card.className =
         "page-card";
 
-
     card.dataset.page =
         pageNumber;
-
 
     /* Checkbox wrapper */
 
@@ -3123,10 +1539,8 @@ async function renderPage(
             "div"
         );
 
-
     checkWrap.className =
         "check-wrap";
-
 
     /* Checkbox */
 
@@ -3135,21 +1549,17 @@ async function renderPage(
             "input"
         );
 
-
     checkbox.type =
         "checkbox";
 
-
     checkbox.dataset.page =
         pageNumber;
-
 
     checkbox.setAttribute(
         "aria-label",
         "Select page " +
         pageNumber
     );
-
 
     checkbox.addEventListener(
         "click",
@@ -3159,7 +1569,6 @@ async function renderPage(
 
         }
     );
-
 
     checkbox.addEventListener(
         "change",
@@ -3173,11 +1582,9 @@ async function renderPage(
         }
     );
 
-
     checkWrap.appendChild(
         checkbox
     );
-
 
     /* Preview */
 
@@ -3186,15 +1593,12 @@ async function renderPage(
             "div"
         );
 
-
     preview.className =
         "page-preview";
-
 
     preview.appendChild(
         canvas
     );
-
 
     /* Page number */
 
@@ -3203,15 +1607,12 @@ async function renderPage(
             "div"
         );
 
-
     pageNumberElement.className =
         "page-number";
-
 
     pageNumberElement.textContent =
         "Page " +
         pageNumber;
-
 
     /* Assemble */
 
@@ -3219,16 +1620,13 @@ async function renderPage(
         checkWrap
     );
 
-
     card.appendChild(
         preview
     );
 
-
     card.appendChild(
         pageNumberElement
     );
-
 
     /* Card click */
 
@@ -3247,16 +1645,13 @@ async function renderPage(
 
             }
 
-
             const checked =
                 !selectedPages.has(
                     pageNumber
                 );
 
-
             checkbox.checked =
                 checked;
-
 
             togglePage(
                 pageNumber,
@@ -3266,13 +1661,11 @@ async function renderPage(
         }
     );
 
-
     pagesGrid.appendChild(
         card
     );
 
 }
-
 
 /* =========================================================
    TOGGLE PAGE
@@ -3297,12 +1690,13 @@ function togglePage(
 
     }
 
-
     const card =
         document.querySelector(
-            `.page-card[data-page="${pageNumber}"]`
+            `.page-card[data-page="$ {
+        pageNumber
+    }
+    "]`
         );
-
 
     if (card) {
 
@@ -3313,11 +1707,9 @@ function togglePage(
 
     }
 
-
     updateSelectionUI();
 
 }
-
 
 /* =========================================================
    UPDATE SELECTION
@@ -3327,7 +1719,6 @@ function updateSelectionUI() {
 
     selectedCount.textContent =
         selectedPages.size;
-
 
     if (
         totalPages > 0 &&
@@ -3345,12 +1736,10 @@ function updateSelectionUI() {
 
     }
 
-
     createPdfBtn.disabled =
         selectedPages.size === 0;
 
 }
-
 
 /* =========================================================
    SELECT ALL
@@ -3361,7 +1750,6 @@ selectAllBtn.addEventListener(
     function() {
 
         selectedPages.clear();
-
 
         for (
             let i = 1;
@@ -3375,9 +1763,7 @@ selectAllBtn.addEventListener(
 
         }
 
-
         syncPageCards();
-
 
         showToast(
             "All pages selected."
@@ -3385,7 +1771,6 @@ selectAllBtn.addEventListener(
 
     }
 );
-
 
 /* =========================================================
    DESELECT ALL
@@ -3406,7 +1791,6 @@ deselectAllBtn.addEventListener(
     }
 );
 
-
 /* =========================================================
    ODD PAGES
 ========================================================== */
@@ -3416,7 +1800,6 @@ selectOddBtn.addEventListener(
     function() {
 
         selectedPages.clear();
-
 
         for (
             let i = 1;
@@ -3436,12 +1819,10 @@ selectOddBtn.addEventListener(
 
         }
 
-
         syncPageCards();
 
     }
 );
-
 
 /* =========================================================
    EVEN PAGES
@@ -3452,7 +1833,6 @@ selectEvenBtn.addEventListener(
     function() {
 
         selectedPages.clear();
-
 
         for (
             let i = 1;
@@ -3472,12 +1852,10 @@ selectEvenBtn.addEventListener(
 
         }
 
-
         syncPageCards();
 
     }
 );
-
 
 /* =========================================================
    SYNC PAGE CARDS
@@ -3497,22 +1875,18 @@ function syncPageCards() {
                         card.dataset.page
                     );
 
-
                 const checkbox =
                     card.querySelector(
                         "input[type='checkbox']"
                     );
-
 
                 const selected =
                     selectedPages.has(
                         page
                     );
 
-
                 checkbox.checked =
                     selected;
-
 
                 card.classList.toggle(
                     "selected",
@@ -3522,11 +1896,9 @@ function syncPageCards() {
             }
         );
 
-
     updateSelectionUI();
 
 }
-
 
 /* =========================================================
    CREATE PDF
@@ -3550,7 +1922,6 @@ createPdfBtn.addEventListener(
 
         }
 
-
         if (
             !originalPdfBytes
         ) {
@@ -3563,24 +1934,19 @@ createPdfBtn.addEventListener(
 
         }
 
-
         /* Disable create */
 
         createPdfBtn.disabled =
             true;
 
-
         loading.style.display =
             "block";
-
 
         progressBar.style.width =
             "10%";
 
-
         loadingText.textContent =
             "Preparing selected pages...";
-
 
         try {
 
@@ -3604,14 +1970,11 @@ createPdfBtn.addEventListener(
                         }
                     );
 
-
             progressBar.style.width =
                 "25%";
 
-
             loadingText.textContent =
                 "Creating new PDF...";
-
 
             /*
              * Create destination PDF
@@ -3621,7 +1984,6 @@ createPdfBtn.addEventListener(
                 await PDFLib
                     .PDFDocument
                     .create();
-
 
             /*
              * Sort selected pages
@@ -3638,7 +2000,6 @@ createPdfBtn.addEventListener(
                     }
                 );
 
-
             /*
              * Convert page number
              * to zero-based index
@@ -3652,7 +2013,6 @@ createPdfBtn.addEventListener(
 
                     }
                 );
-
 
             /*
              * COPY ORIGINAL PDF PAGES
@@ -3668,14 +2028,11 @@ createPdfBtn.addEventListener(
                     pageIndexes
                 );
 
-
             progressBar.style.width =
                 "65%";
 
-
             loadingText.textContent =
                 "Finalizing PDF...";
-
 
             /*
              * Add copied pages
@@ -3691,7 +2048,6 @@ createPdfBtn.addEventListener(
                 }
             );
 
-
             /*
              * Save PDF
              */
@@ -3705,10 +2061,8 @@ createPdfBtn.addEventListener(
                         false
                 });
 
-
             progressBar.style.width =
                 "90%";
-
 
             /*
              * Create PDF Blob
@@ -3723,7 +2077,6 @@ createPdfBtn.addEventListener(
                     }
                 );
 
-
             /*
              * Remove old URL
              */
@@ -3736,7 +2089,6 @@ createPdfBtn.addEventListener(
 
             }
 
-
             /*
              * Create new URL
              */
@@ -3745,7 +2097,6 @@ createPdfBtn.addEventListener(
                 URL.createObjectURL(
                     blob
                 );
-
 
             /*
              * Create filename
@@ -3758,11 +2109,9 @@ createPdfBtn.addEventListener(
                         : "document.pdf"
                 );
 
-
             const finalName =
                 safeName +
                 "_selected.pdf";
-
 
             /*
              * =================================================
@@ -3773,21 +2122,17 @@ createPdfBtn.addEventListener(
             downloadBtn.href =
                 generatedPdfUrl;
 
-
             downloadBtn.download =
                 finalName;
-
 
             downloadBtn.classList.remove(
                 "disabled"
             );
 
-
             downloadBtn.setAttribute(
                 "aria-disabled",
                 "false"
             );
-
 
             /*
              * Finish
@@ -3796,19 +2141,15 @@ createPdfBtn.addEventListener(
             progressBar.style.width =
                 "100%";
 
-
             loading.style.display =
                 "none";
-
 
             createPdfBtn.disabled =
                 false;
 
-
             showToast(
                 "PDF created. Click Download PDF."
             );
-
 
             /*
              * Bring toolbar into view
@@ -3829,7 +2170,6 @@ createPdfBtn.addEventListener(
                 100
             );
 
-
         } catch (error) {
 
             console.error(
@@ -3837,14 +2177,11 @@ createPdfBtn.addEventListener(
                 error
             );
 
-
             loading.style.display =
                 "none";
 
-
             createPdfBtn.disabled =
                 false;
-
 
             showToast(
                 "Failed to create PDF: " +
@@ -3858,7 +2195,6 @@ createPdfBtn.addEventListener(
 
     }
 );
-
 
 /* =========================================================
    DOWNLOAD PDF
@@ -3879,16 +2215,13 @@ downloadBtn.addEventListener(
 
             event.preventDefault();
 
-
             showToast(
                 "Please create the PDF first."
             );
 
-
             return;
 
         }
-
 
         /*
          * IMPORTANT:
@@ -3916,7 +2249,6 @@ downloadBtn.addEventListener(
     }
 );
 
-
 /* =========================================================
    CLEANUP
 ========================================================== */
@@ -3935,10 +2267,7 @@ window.addEventListener(
 
     }
 );
-
-
 </script>
-
 
 </body>
 
