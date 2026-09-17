@@ -1,1 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Date Calculator</title>
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .calculator-card {
+            width: 100%;
+            max-width: 750px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: #ffffff;
+            padding: 20px 30px 24px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Top Right Navigation / Dashboard Menu */
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .dropdown-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background-color: #ffffff;
+            min-width: 190px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            z-index: 1000;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-item {
+            color: #334155;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8fafc;
+            color: #2563eb;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Tab Navigation */
+        .tab-menu {
+            display: flex;
+            background: #f1f5f9;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 14px 10px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+        }
+
+        .content-section {
+            padding: 30px;
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            background-color: #ffffff;
+        }
+
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 15px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #2563eb;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #16a34a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #15803d;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        /* Result Card Layout */
+        .result-card {
+            margin-top: 25px;
+            background: #ffffff;
+            border: 1px solid #16a34a;
+            border-radius: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .result-card-header {
+            background-color: #16a34a;
+            color: #ffffff;
+            padding: 10px 18px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-card-body {
+            padding: 20px;
+            background-color: #f0fdf4;
+        }
+
+        .result-title {
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .result-primary {
+            font-size: 22px;
+            font-weight: 700;
+            color: #15803d;
+            margin-bottom: 10px;
+        }
+
+        .result-list {
+            font-size: 15px;
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .content-section {
+                padding: 20px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-card">
+        <div class="header">
+            <!-- Top Right Navigation / Dashboard Menu -->
+            <div class="top-nav">
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown(event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        Dashboard
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="dropdown-menu" id="dashboardDropdown">
+                        <a href="../jpegtojpg.html" class="dropdown-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            JPEG to JPG
+                        </a>
+                        
+                        <!-- ADD FUTURE MENU ITEMS HERE / ভবিষ্যতে নতুন মেনু যোগ করতে নিচের লাইনটি কপি করে ব্যবহার করুন -->
+                        <!-- 
+                        <a href="../your-page.html" class="dropdown-item">
+                            New Tool Name
+                        </a> 
+                        -->
+                    </div>
+                </div>
+            </div>
+
+            <h1>Date Calculator</h1>
+            <p>Calculate the difference between two dates or add/subtract time from a date</p>
+        </div>
+
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="switchTab(event, 'tab1')">Days Between Dates</button>
+            <button class="tab-btn" onclick="switchTab(event, 'tab2')">Add / Subtract Days</button>
+        </div>
+
+        <!-- Section 1: Days Between Two Dates -->
+        <div id="tab1" class="content-section active">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" class="form-control">
+                </div>
+            </div>
+
+            <label class="checkbox-container">
+                <input type="checkbox" id="includeEndDay">
+                <span>Include end day (add 1 day)</span>
+            </label>
+
+            <button class="btn-submit" onclick="calculateDifference()">Calculate</button>
+
+            <div id="resultDiff" class="result-card">
+                <div class="result-card-header">
+                    <span>Result</span>
+                </div>
+                <div class="result-card-body" id="resultDiffBody">
+                    <!-- Dynamic JS content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Add or Subtract from a Date -->
+        <div id="tab2" class="content-section">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="baseDate">Start Date</label>
+                    <input type="date" id="baseDate" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="operation">Operation</label>
+                    <select id="operation" class="form-control">
+                        <option value="add">Add (+)</option>
+                        <option value="subtract">Subtract (-)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="form-group">
+                    <label for="years">Years</label>
+                    <input type="number" id="years" class="form-control" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="months">Months</label>
+                    <input type="number" id="months" class="form-control" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="weeks">Weeks</label>
+                    <input type="number" id="weeks" class="form-control" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="days">Days</label>
+                    <input type="number" id="days" class="form-control" value="0" min="0">
+                </div>
+            </div>
+
+            <button class="btn-submit" onclick="calculateAddSubtract()">Calculate</button>
+
+            <div id="resultAddSub" class="result-card">
+                <div class="result-card-header">
+                    <span>Result</span>
+                </div>
+                <div class="result-card-body">
+                    <div id="addSubText" class="result-primary"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').value = today;
+        document.getElementById('endDate').value = today;
+        document.getElementById('baseDate').value = today;
+
+        // Toggle Dashboard Dropdown Menu
+        function toggleDropdown(event) {
+            event.stopPropagation();
+            document.getElementById('dashboardDropdown').classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.closest('.dropdown')) {
+                const dropdowns = document.getElementsByClassName('dropdown-menu');
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+
+        function switchTab(event, tabId) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function formatUnit(val, singular) {
+            return `${val} ${singular}${val === 1 ? '' : 's'}`;
+        }
+
+        function calculateDifference() {
+            const startVal = document.getElementById('startDate').value;
+            const endVal = document.getElementById('endDate').value;
+            const includeEnd = document.getElementById('includeEndDay').checked;
+
+            if (!startVal || !endVal) {
+                alert('Please select both dates.');
+                return;
+            }
+
+            let d1 = new Date(startVal);
+            let d2 = new Date(endVal);
+
+            if (d1 > d2) {
+                let temp = d1;
+                d1 = d2;
+                d2 = temp;
+            }
+
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            const startStr = d1.toLocaleDateString('en-US', options);
+            const endStr = d2.toLocaleDateString('en-US', options);
+
+            const oneDay = 24 * 60 * 60 * 1000;
+            const diffDays = Math.round(Math.abs((d2 - d1) / oneDay));
+            const totalDays = includeEnd ? diffDays + 1 : diffDays;
+
+            let y1 = d1.getFullYear(), m1 = d1.getMonth(), day1 = d1.getDate();
+            let y2 = d2.getFullYear(), m2 = d2.getMonth(), day2 = d2.getDate();
+
+            if (includeEnd) {
+                let nextDay = new Date(d2);
+                nextDay.setDate(nextDay.getDate() + 1);
+                y2 = nextDay.getFullYear();
+                m2 = nextDay.getMonth();
+                day2 = nextDay.getDate();
+            }
+
+            let years = y2 - y1;
+            let months = m2 - m1;
+            let days = day2 - day1;
+
+            if (days < 0) {
+                months--;
+                let prevMonthDays = new Date(y2, m2, 0).getDate();
+                days += prevMonthDays;
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            const totalMonths = (years * 12) + months;
+            const weeks = Math.floor(totalDays / 7);
+            const remDays = totalDays % 7;
+
+            const incText = includeEnd ? 'including both days' : 'excluding end day';
+
+            let mainParts = [];
+            if (years > 0) mainParts.push(formatUnit(years, 'year'));
+            if (months > 0) mainParts.push(formatUnit(months, 'month'));
+            if (days > 0 || mainParts.length === 0) mainParts.push(formatUnit(days, 'day'));
+            let mainString = mainParts.join(' ');
+
+            const htmlOutput = `
+                <div class="result-title">Difference between ${startStr} and ${endStr} (${incText}):</div>
+                <div class="result-primary">${mainString}</div>
+                <div class="result-list">
+                    or <strong>${formatUnit(totalMonths, 'month')} ${formatUnit(days, 'day')}</strong><br>
+                    or <strong>${formatUnit(weeks, 'week')} ${formatUnit(remDays, 'day')}</strong><br>
+                    or <strong>${formatUnit(totalDays, 'calendar day')}</strong>
+                </div>
+            `;
+
+            document.getElementById('resultDiffBody').innerHTML = htmlOutput;
+            document.getElementById('resultDiff').style.display = 'block';
+        }
+
+        function calculateAddSubtract() {
+            const baseVal = document.getElementById('baseDate').value;
+            const op = document.getElementById('operation').value;
+            
+            const yrs = parseInt(document.getElementById('years').value) || 0;
+            const mos = parseInt(document.getElementById('months').value) || 0;
+            const wks = parseInt(document.getElementById('weeks').value) || 0;
+            const dys = parseInt(document.getElementById('days').value) || 0;
+
+            if (!baseVal) {
+                alert('Please select a date.');
+                return;
+            }
+
+            let resultDate = new Date(baseVal);
+            let multiplier = (op === 'add') ? 1 : -1;
+
+            resultDate.setFullYear(resultDate.getFullYear() + (yrs * multiplier));
+            resultDate.setMonth(resultDate.getMonth() + (mos * multiplier));
+            
+            let totalDaysToAdd = (wks * 7) + dys;
+            resultDate.setDate(resultDate.getDate() + (totalDaysToAdd * multiplier));
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = resultDate.toLocaleDateString('en-US', options);
+
+            document.getElementById('addSubText').innerText = formattedDate;
+            document.getElementById('resultAddSub').style.display = 'block';
+        }
+    </script>
+
+</body>
+</html>
