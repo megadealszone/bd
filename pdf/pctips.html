@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PC Master Tips & Tricks Dashboard</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Galada&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Zip & Download Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+    <style>
+        :root {
+            --bg-dark: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --accent-color: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --panel-bg: #f1f5f9;
+            --code-bg: #0f172a;
+            --code-text: #38bdf8;
+            --note-bg: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(239, 68, 68, 0.03));
+            --note-border: #fd0000;                     
+            --note-text: #a01010;                       
+            --note-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.08), 0 8px 10px -6px rgba(245, 158, 11, 0.05);
+        }
+
+        .dark-theme {
+            --bg-dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --panel-bg: #0b0f19;
+            --code-bg: #090d16;
+            --code-text: #38bdf8;
+            --note-bg: linear-gradient(135deg, rgba(239, 68, 68, 0.07), rgba(245, 158, 11, 0.04));
+            --note-border: #f87171;                     
+            --note-text: #fecaa3;                       
+            --note-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+            text-align: justify;
+        }
+
+        p { text-align: justify; }
+
+        body {
+            font-family: 'Noto Serif Bengali', 'Lora', 'Georgia', serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header {
+            background: var(--sidebar-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            flex-shrink: 0;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area i {
+            font-size: 24px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-area h1 {
+            font-family: 'Galada', 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .external-home-btn, .admin-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+        }
+
+        .admin-btn.logout {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.25);
+        }
+
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 26px;
+            position: relative;
+            width: 50px;
+        }
+
+        .theme-switch input { display: none; }
+
+        .slider {
+            background-color: #cbd5e1;
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: white;
+            bottom: 4px;
+            content: "";
+            height: 18px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 18px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider { background: var(--accent-gradient); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .stats-badge {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .workspace {
+            display: flex;
+            height: calc(100vh - 70px);
+            width: 100%;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        .search-box {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-wrapper { position: relative; }
+        .search-wrapper i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 10px 10px 10px 36px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 13px;
+        }
+
+        .menu-list {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: var(--text-muted);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--text-main);
+            border-left-color: var(--accent-color);
+        }
+
+        .menu-item .tip-id {
+            font-size: 11px;
+            font-weight: bold;
+            background: var(--border-color);
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: var(--text-main);
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .details-panel {
+            flex-grow: 1;
+            background: var(--panel-bg);
+            padding: 35px 45px;
+            overflow-y: auto;
+            height: 100%;
+        }
+
+        .tip-content-section {
+            display: none;
+            max-width: 1050px;
+            margin: 0 auto 60px auto;
+        }
+
+        .tip-content-section.active { display: block; }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(139, 92, 246, 0.15);
+            color: #8b5cf6;
+            margin-bottom: 15px;
+        }
+
+        .tip-detail-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .instruction-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .step-list { list-style: none; }
+        .step-list li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+            line-height: 1.8;
+        }
+        .step-list li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #10b981;
+        }
+
+        .custom-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #2563eb;
+            font-weight: 700;
+            text-decoration: underline;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .note-box {
+            background: var(--note-bg);
+            border-left: 5px solid var(--note-border);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+
+        .code-box {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .code-text { color: var(--code-text); font-family: monospace; word-break: break-all; }
+
+        .copy-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+
+        .media-container {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 10px;
+        }
+
+        .media-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .media-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            object-fit: cover;
+            max-height: 180px;
+            transition: transform 0.3s ease;
+        }
+
+        .media-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .preview-overlay-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .media-card:hover .preview-overlay-icon {
+            opacity: 1;
+        }
+
+        .serial-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideInRight 0.3s ease, fadeOutDown 0.4s ease 2.6s forwards;
+        }
+
+        .toast.success { border-left-color: #10b981; }
+        .toast.error { border-left-color: #ef4444; }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOutDown {
+            to { opacity: 0; transform: translateY(10px); }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(15, 23, 42, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(6px);
+        }
+
+        .login-modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 35px 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            position: relative;
+        }
+
+        .login-input-group {
+            position: relative;
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .login-input-group i.input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .login-input-group input {
+            width: 100%;
+            padding: 12px 40px 12px 42px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            outline: none;
+            font-size: 14px;
+        }
+
+        .password-toggle-eye {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            cursor: pointer;
+            z-index: 5;
+            padding: 4px;
+        }
+
+        .password-toggle-eye:hover {
+            color: var(--accent-color);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .modal-form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .modal-form-group input, .modal-form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .dynamic-input-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            align-items: center;
+        }
+
+        .add-more-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-row-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 15px;
+        }
+
+        .preview-modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 950px;
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .preview-modal-body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+            max-height: 75vh;
+            margin-top: 15px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .pdf-list { display: flex; flex-direction: column; gap: 10px; }
+        .pdf-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 12px 18px; border-radius: 8px; gap: 10px; flex-wrap: wrap;
+        }
+        .pdf-item-title { display: flex; align-items: center; gap: 10px; font-weight: 600; color: #ef4444; }
+        .pdf-actions { display: flex; gap: 8px; }
+        .pdf-view-btn, .pdf-preview-btn {
+            background: #ef4444; color: white; padding: 6px 14px; border-radius: 6px;
+            text-decoration: none; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 6px; border: none; cursor: pointer;
+        }
+        .pdf-preview-btn { background: #3b82f6; }
+
+        .admin-action-bar {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            background: rgba(59, 130, 246, 0.1); padding: 10px 15px;
+            border-radius: 8px; border: 1px dashed var(--accent-color);
+        }
+        .admin-action-btn {
+            padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer;
+            font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 6px;
+        }
+        .edit-btn { background: #f59e0b; color: white; }
+        .delete-btn { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- টোস্ট নোটিফিকেশন কনটেইনার -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <header>
+        <div class="logo-area">
+            <i class="fa-solid fa-laptop-code"></i>
+            <h1>PC Tips & Tricks Hub</h1>
+        </div>
+        <div class="header-controls">
+            <a href="../jpegtojpg.html" class="external-home-btn" onclick="showTip(event, 'home-section')">
+                <i class="fa-solid fa-gauge-high"></i> ড্যাশবোর্ড
+            </a>
+
+            <a href="../index.html" class="external-home-btn">
+                <i class="fa-solid fa-house-laptop"></i> হোম
+            </a>
+            
+            <button id="addTipBtn" class="admin-btn" style="display:none;" onclick="openTipModal()">
+                <i class="fa-solid fa-plus"></i> নতুন টিপস
+            </button>
+
+            <button id="logoutNavBtn" class="admin-btn logout" style="display:none;" onclick="handleLogout()">
+                <i class="fa-solid fa-right-from-bracket"></i> লগআউট
+            </button>
+
+            <button id="loginNavBtn" class="admin-btn" onclick="openLoginModal()">
+                <i class="fa-solid fa-lock"></i> লগইন
+            </button>
+
+            <div class="theme-switch-wrapper">
+                <i class="fa-solid fa-sun theme-icon"></i>
+                <label class="theme-switch">
+                    <input type="checkbox" id="checkbox" onchange="toggleTheme(this)">
+                    <div class="slider"></div>
+                </label>
+                <i class="fa-solid fa-moon theme-icon"></i>
+            </div>
+            
+            <div class="stats-badge" id="statsBadge">
+                <i class="fa-solid fa-user"></i> Md. Roman Islam Habib
+            </div>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <aside class="sidebar">
+            <div class="search-box">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="tipSearch" placeholder="টিপস খুঁজুন..." onkeyup="filterTips()">
+                </div>
+            </div>
+            
+            <div class="menu-list" id="menuList">
+                <a href="#home-section" id="homeMenuItem" class="menu-item active" onclick="showTip(event, 'home-section')">
+                    <span class="tip-id"><i class="fa-solid fa-house"></i></span>
+                    <span class="tip-title">ড্যাশবোর্ড / হোম মেনু</span>
+                </a>
+                
+                <div id="subMenuContainer"></div>
+            </div>
+        </aside>
+
+        <main class="details-panel" id="detailsPanel">
+            <section id="home-section" class="tip-content-section active">
+                <span class="category-tag">All-in-One Guide</span>
+                <h2 class="tip-detail-title">প্রযুক্তিগত সমস্যার সহজ সমাধান ও মাস্টার ড্যাশবোর্ড!</h2>
+                <div class="instruction-card">
+                    <h3><i class="fa-solid fa-wand-magic-sparkles"></i> এখানে আপনি কী কী টিপস ও ট্রিকস পাবেন?</h3>
+                    <p>আমাদের এই ড্যাশবোর্ডে প্রাত্যহিক জীবনের সকল ডিজিটাল ডিভাইস ও প্রযুক্তির জটিল সমস্যাগুলোর সমাধান দেওয়া হয়েছে। বাঁপাশের মেনু থেকে আপনার কাঙ্ক্ষিত টিপসটি বেছে নিন অথবা নতুন টিপস যোগ করতে লগইন করুন।</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- অ্যাডমিন লগইন মোডাল -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-modal-card">
+            <span style="position: absolute; right: 20px; top: 18px; cursor: pointer; font-size: 20px; color: var(--text-muted);" onclick="closeModal('loginModal')">&times;</span>
+            <div class="login-modal-header" style="margin-bottom: 20px;">
+                <div style="width: 55px; height: 55px; background: var(--accent-gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin: 0 auto 12px auto;">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h3 style="font-size: 20px;">অ্যাডমিন লগইন</h3>
+                <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">ড্যাশবোর্ড প্যানেল এক্সেস করতে লগইন করুন</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="login-input-group">
+                    <i class="fa-solid fa-user input-icon"></i>
+                    <input type="text" id="loginUser" placeholder="ইউজার আইডি (Roman)" required>
+                </div>
+                <div class="login-input-group">
+                    <i class="fa-solid fa-key input-icon"></i>
+                    <input type="password" id="loginPass" placeholder="পাসওয়ার্ড" required>
+                    <i class="fa-solid fa-eye password-toggle-eye" id="passEyeIcon" onclick="togglePasswordVisibility('loginPass', 'passEyeIcon')"></i>
+                </div>
+                <button type="submit" class="submit-btn"><i class="fa-solid fa-right-to-bracket"></i> প্রবেশ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add / Edit Tip Modal -->
+    <div class="modal-overlay" id="tipModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">টিপস সম্পাদনা / যুক্ত করুন</h3>
+                <span style="cursor:pointer; font-size:22px;" onclick="closeModal('tipModal')">&times;</span>
+            </div>
+            <form onsubmit="handleSaveTip(event)">
+                <input type="hidden" id="editTipSlug">
+                
+                <div class="modal-form-group">
+                    <label>টিপস আইডি (যেমন: TIP 01):</label>
+                    <input type="text" id="tipIdInput" required>
+                </div>
+
+                <div class="modal-form-group">
+                    <label>ক্যাটাগরি:</label>
+                    <input type="text" id="tipCatInput" placeholder="Hardware / Networking" required>
+                </div>
+
+                <div class="modal-form-group">
+                    <label>শিরোনাম (Title):</label>
+                    <input type="text" id="tipTitleInput" required>
+                </div>
+
+                <div class="modal-form-group">
+                    <label>বিস্তারিত নির্দেশিকা (Steps / Details):</label>
+                    <textarea id="tipContentInput" rows="5" placeholder="এন্টার দিয়ে নতুন লাইন শুরু করুন..." required></textarea>
+                </div>
+
+                <div class="modal-form-group">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <label style="margin:0;">কমান্ড / কোড (Code Box):</label>
+                        <button type="button" class="add-more-btn" onclick="addCodeInputField('')"><i class="fa-solid fa-plus"></i> কোড যোগ করুন</button>
+                    </div>
+                    <div id="codeInputsContainer"></div>
+                </div>
+
+                <div class="modal-form-group">
+                    <label>সতর্কবার্তা / নোট (Note Box):</label>
+                    <input type="text" id="tipNoteInput" placeholder="জরুরি নোট থাকলে তা এখানে লিখুন...">
+                </div>
+
+                <div class="modal-form-group" style="border-top:1px dashed var(--border-color); padding-top:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <label style="margin:0;"><i class="fa-solid fa-image"></i> ছবি যুক্ত করুন (সিরিয়াল অনুযায়ী):</label>
+                        <button type="button" class="add-more-btn" onclick="addImageInputField('')"><i class="fa-solid fa-plus"></i> ছবি যোগ করুন</button>
+                    </div>
+                    <div id="imageInputsContainer"></div>
+                </div>
+
+                <div class="modal-form-group" style="border-top:1px dashed var(--border-color); padding-top:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                        <label style="margin:0;"><i class="fa-solid fa-file-pdf"></i> পিডিএফ ফাইল / লিংক যুক্ত করুন:</label>
+                        <button type="button" class="add-more-btn" onclick="addPdfInputField('')"><i class="fa-solid fa-plus"></i> পিডিএফ যোগ করুন</button>
+                    </div>
+                    <div id="pdfInputsContainer"></div>
+                </div>
+
+                <button type="submit" class="submit-btn"><i class="fa-solid fa-cloud-arrow-up"></i> গুগোল শিটে সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Media Preview Modal (With Full Image Zoom Controls) -->
+    <div class="modal-overlay" id="previewModal">
+        <div class="preview-modal-content">
+            <div class="modal-header">
+                <h3 id="previewTitle"><i class="fa-solid fa-eye"></i> মিডিয়া প্রিভিউ</h3>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <div id="imageZoomControls" style="display: none; gap: 6px;">
+                        <button class="add-more-btn" style="background: #3b82f6;" onclick="zoomImage(0.25)"><i class="fa-solid fa-magnifying-glass-plus"></i> জুম ইন</button>
+                        <button class="add-more-btn" style="background: #3b82f6;" onclick="zoomImage(-0.25)"><i class="fa-solid fa-magnifying-glass-minus"></i> জুম আউট</button>
+                        <button class="add-more-btn" style="background: #64748b;" onclick="resetImageZoom()"><i class="fa-solid fa-rotate-left"></i> রিসেট</button>
+                    </div>
+                    <span style="cursor:pointer; font-size:24px; margin-left: 10px;" onclick="closeModal('previewModal')">&times;</span>
+                </div>
+            </div>
+            <div class="preview-modal-body" id="previewContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1BABVGDT37LqMgRofoX26c3mS5JSpb5e14CuRrBejkykLxeQORVhtq-5SA3jUTce5/exec";
+
+        let isLoggedIn = false;
+        let totalTipsCount = 0;
+        let currentZoomScale = 1;
+
+        // পেজ লোড হলে গুগল শিট থেকে অটোমেটিক ডাটা ফ্যাচ হবে
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchCloudTipsData();
+        });
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'}"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function copyText(id, btnElement) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const text = el.innerText || el.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                if (btnElement) {
+                    const originalHtml = btnElement.innerHTML;
+                    btnElement.innerHTML = '<i class="fa-solid fa-check"></i> কপি হয়েছে';
+                    btnElement.style.background = '#10b981';
+                    
+                    setTimeout(() => {
+                        btnElement.innerHTML = originalHtml;
+                        btnElement.style.background = '';
+                    }, 2000);
+                }
+                showToast("কপি করা হয়েছে: " + text, 'success');
+            }).catch(() => {
+                showToast("কপি করতে সমস্যা হয়েছে!", 'error');
+            });
+        }
+
+        function togglePasswordVisibility(inputId, eyeIconId) {
+            const input = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(eyeIconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        function toggleTheme(checkbox) {
+            if(checkbox.checked) {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        function showTip(e, id) {
+            if(e) e.preventDefault();
+            document.querySelectorAll('.tip-content-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            
+            const target = document.getElementById(id);
+            if(target) target.classList.add('active');
+            
+            const activeMenu = document.querySelector(`.menu-item[href="#${id}"]`) || document.getElementById('homeMenuItem');
+            if(activeMenu) activeMenu.classList.add('active');
+        }
+
+        function filterTips() {
+            let input = document.getElementById('tipSearch').value.toLowerCase();
+            let items = document.querySelectorAll('#subMenuContainer .menu-item');
+            items.forEach(item => {
+                let text = item.innerText.toLowerCase();
+                item.style.display = text.includes(input) ? 'flex' : 'none';
+            });
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+
+            if(user === 'Roman' && pass === '209516') {
+                isLoggedIn = true;
+                showToast("স্বাগতম Roman! ড্যাশবোর্ড মোড চালু হয়েছে।", "success");
+                closeModal('loginModal');
+                
+                document.getElementById('loginNavBtn').style.display = 'none';
+                document.getElementById('addTipBtn').style.display = 'inline-flex';
+                document.getElementById('logoutNavBtn').style.display = 'inline-flex';
+                document.querySelectorAll('.admin-action-bar').forEach(bar => bar.style.display = 'flex');
+                
+                document.getElementById('statsBadge').innerHTML = '<i class="fa-solid fa-user-check"></i> Admin: Roman (Logged In)';
+            } else {
+                showToast("ভুল লগইন আইডি অথবা পাসওয়ার্ড!", "error");
+            }
+        }
+
+        function handleLogout() {
+            if(confirm("আপনি কি নিশ্চিত যে আপনি লগআউট করতে চান?")) {
+                isLoggedIn = false;
+                document.getElementById('loginNavBtn').style.display = 'inline-flex';
+                document.getElementById('addTipBtn').style.display = 'none';
+                document.getElementById('logoutNavBtn').style.display = 'none';
+                document.querySelectorAll('.admin-action-bar').forEach(bar => bar.style.display = 'none');
+                
+                document.getElementById('statsBadge').innerHTML = '<i class="fa-solid fa-user"></i> Md. Roman Islam Habib';
+                showToast("আপনি সফলভাবে লগআউট হয়েছেন।", "success");
+            }
+        }
+
+        function addCodeInputField(val = '') {
+            const container = document.getElementById('codeInputsContainer');
+            const row = document.createElement('div');
+            row.className = 'dynamic-input-row';
+            row.innerHTML = `
+                <input type="text" class="code-input-item" value="${val}" placeholder="কমান্ড / কোড টাইপ করুন...">
+                <button type="button" class="remove-row-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        function addImageInputField(val = '') {
+            const container = document.getElementById('imageInputsContainer');
+            const index = container.children.length + 1;
+            const row = document.createElement('div');
+            row.className = 'dynamic-input-row';
+            row.innerHTML = `
+                <span style="font-weight:bold; min-width:25px;">#${index}</span>
+                <input type="text" class="image-input-item" value="${val}" placeholder="ছবি URL অথবা ফাইল আপলোড করুন">
+                <input type="file" accept="image/*" style="display:none;" onchange="handleFileUpload(this, 'image')">
+                <button type="button" class="add-more-btn" style="background:#6366f1;" onclick="this.previousElementSibling.click()"><i class="fa-solid fa-upload"></i></button>
+                <button type="button" class="remove-row-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        function addPdfInputField(val = '', title = '') {
+            const container = document.getElementById('pdfInputsContainer');
+            const index = container.children.length + 1;
+            const row = document.createElement('div');
+            row.className = 'dynamic-input-row';
+            row.innerHTML = `
+                <span style="font-weight:bold; min-width:25px;">#${index}</span>
+                <input type="text" class="pdf-title-item" value="${title}" placeholder="পিডিএফ শিরোনাম" style="width:35%;">
+                <input type="text" class="pdf-input-item" value="${val}" placeholder="পিডিএফ URL">
+                <input type="file" accept="application/pdf" style="display:none;" onchange="handleFileUpload(this, 'pdf')">
+                <button type="button" class="add-more-btn" style="background:#ef4444;" onclick="this.previousElementSibling.click()"><i class="fa-solid fa-file-arrow-up"></i></button>
+                <button type="button" class="remove-row-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(row);
+        }
+
+        function handleFileUpload(fileInput, type) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Str = e.target.result;
+                const row = fileInput.parentElement;
+                if(type === 'image') {
+                    row.querySelector('.image-input-item').value = base64Str;
+                } else if(type === 'pdf') {
+                    row.querySelector('.pdf-input-item').value = base64Str;
+                    if(!row.querySelector('.pdf-title-item').value) {
+                        row.querySelector('.pdf-title-item').value = file.name;
+                    }
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ---------------- 이미지 জুম ও প্রিভিউ ফাংশন ---------------- */
+        function openImagePreview(src, title = 'ছবি প্রিভিউ') {
+            const container = document.getElementById('previewContainer');
+            document.getElementById('previewTitle').innerHTML = `<i class="fa-solid fa-image"></i> ${title}`;
+            document.getElementById('imageZoomControls').style.display = 'flex';
+            currentZoomScale = 1;
+            container.innerHTML = `<img id="previewImg" src="${src}" alt="Preview" style="max-width: 100%; height: auto; transform: scale(1); transform-origin: center center; transition: transform 0.2s ease; cursor: zoom-in;" onclick="toggleImageZoom(this)">`;
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+
+        function zoomImage(amount) {
+            const img = document.getElementById('previewImg');
+            if(!img) return;
+            currentZoomScale += amount;
+            if(currentZoomScale < 0.2) currentZoomScale = 0.2;
+            if(currentZoomScale > 4) currentZoomScale = 4;
+            img.style.transform = `scale(${currentZoomScale})`;
+        }
+
+        function resetImageZoom() {
+            const img = document.getElementById('previewImg');
+            if(!img) return;
+            currentZoomScale = 1;
+            img.style.transform = `scale(1)`;
+        }
+
+        function toggleImageZoom(img) {
+            if(currentZoomScale === 1) {
+                currentZoomScale = 1.8;
+            } else {
+                currentZoomScale = 1;
+            }
+            img.style.transform = `scale(${currentZoomScale})`;
+        }
+
+        function openPdfPreview(url, title = 'পিডিএফ প্রিভিউ') {
+            const container = document.getElementById('previewContainer');
+            document.getElementById('previewTitle').innerHTML = `<i class="fa-solid fa-file-pdf"></i> ${title}`;
+            document.getElementById('imageZoomControls').style.display = 'none';
+            container.innerHTML = `<iframe src="${url}" style="width:100%; height:75vh; border:none; border-radius:8px;"></iframe>`;
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+
+        /* ---------------- সকল ফাইল জিপ (ZIP) আকারে ডাউনলোড ফাংশন ---------------- */
+        async function downloadAllFilesAsZip(slug, title) {
+            showToast("জিপ ফাইল তৈরি করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", "success");
+            const zip = new JSZip();
+            const folder = zip.folder("Files");
+
+            const section = document.getElementById(slug);
+            if(!section) return;
+
+            // ছবিসমূহ জিপে যুক্তকরণ
+            const images = section.querySelectorAll('.media-card img');
+            for(let i = 0; i < images.length; i++) {
+                const src = images[i].src;
+                try {
+                    const response = await fetch(src);
+                    const blob = await response.blob();
+                    let ext = 'jpg';
+                    if(blob.type.includes('png')) ext = 'png';
+                    if(blob.type.includes('webp')) ext = 'webp';
+                    folder.file(`Image_${i + 1}.${ext}`, blob);
+                } catch(e) {
+                    console.error("Zip add image error:", e);
+                }
+            }
+
+            // পিডিএফসমূহ জিপে যুক্তকরণ
+            const pdfs = section.querySelectorAll('.pdf-item');
+            for(let i = 0; i < pdfs.length; i++) {
+                const link = pdfs[i].querySelector('.pdf-view-btn').href;
+                const pdfTitle = pdfs[i].querySelector('.pdf-title-text').innerText.replace(/^#\d+\s*/, '').replace(/[^\w\s-]/gi, '_') || `PDF_Doc_${i+1}`;
+                try {
+                    const response = await fetch(link);
+                    const blob = await response.blob();
+                    folder.file(`${pdfTitle}.pdf`, blob);
+                } catch(e) {
+                    console.error("Zip add pdf error:", e);
+                }
+            }
+
+            zip.generateAsync({type:"blob"}).then(function(content) {
+                saveAs(content, `${title || 'Download'}_All_Files.zip`);
+                showToast("সকল ফাইল জিপ (.ZIP) আকারে ডাউনলোড হয়েছে!", "success");
+            }).catch(err => {
+                showToast("জিপ ফাইল তৈরি করতে ব্যর্থ হয়েছে!", "error");
+            });
+        }
+
+        /* ---------------- Formatting & Cloud Sync ---------------- */
+        function formatDetailsText(text) {
+            if(!text) return '';
+            const lines = text.split('\n');
+            let resultHtml = '<ul class="step-list">';
+            
+            lines.forEach(line => {
+                let trimmed = line.trim();
+                if(!trimmed) return;
+
+                const urlRegex = /(https?:\/\/[^\s]+)/g;
+                trimmed = trimmed.replace(urlRegex, function(url) {
+                    return `<a href="${url}" target="_blank" class="custom-link-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> এখানে ক্লিক করুন</a>`;
+                });
+
+                if(trimmed.startsWith('///')) {
+                    const codePart = trimmed.substring(3).trim();
+                    const codeId = 'code_gen_' + Math.random().toString(36).substr(2, 7);
+                    resultHtml += `</ul>
+                    <div class="code-box" style="margin: 12px 0;">
+                        <span class="code-text" id="${codeId}">${codePart}</span>
+                        <button class="copy-btn" onclick="copyText('${codeId}', this)"><i class="fa-solid fa-copy"></i> কপি করুন</button>
+                    </div>
+                    <ul class="step-list">`;
+                } else {
+                    resultHtml += `<li>${trimmed}</li>`;
+                }
+            });
+
+            resultHtml += '</ul>';
+            return resultHtml;
+        }
+
+        function openTipModal() {
+            document.getElementById('modalTitle').innerText = 'নতুন টিপস যুক্ত করুন';
+            document.getElementById('editTipSlug').value = '';
+            totalTipsCount++;
+            document.getElementById('tipIdInput').value = 'TIP ' + (totalTipsCount < 10 ? '0' + totalTipsCount : totalTipsCount);
+            document.getElementById('tipCatInput').value = 'General';
+            document.getElementById('tipTitleInput').value = '';
+            document.getElementById('tipContentInput').value = '';
+            document.getElementById('tipNoteInput').value = '';
+            
+            document.getElementById('codeInputsContainer').innerHTML = '';
+            document.getElementById('imageInputsContainer').innerHTML = '';
+            document.getElementById('pdfInputsContainer').innerHTML = '';
+            addCodeInputField('');
+            
+            document.getElementById('tipModal').style.display = 'flex';
+        }
+
+        function openEditModal(slug) {
+            const section = document.getElementById(slug);
+            document.getElementById('modalTitle').innerText = 'টিপস তথ্য আপডেট করুন';
+            document.getElementById('editTipSlug').value = slug;
+            document.getElementById('tipIdInput').value = section.getAttribute('data-tip-id') || slug.toUpperCase();
+            document.getElementById('tipCatInput').value = section.querySelector('.category-tag').innerText;
+            document.getElementById('tipTitleInput').value = section.querySelector('.tip-detail-title').innerText;
+            
+            const rawContent = section.getAttribute('data-raw-content') || section.querySelector('.instruction-card').innerText;
+            document.getElementById('tipContentInput').value = rawContent;
+            
+            const noteEl = section.querySelector('.note-box p');
+            document.getElementById('tipNoteInput').value = noteEl ? noteEl.innerText : '';
+
+            document.getElementById('codeInputsContainer').innerHTML = '';
+            const codeBoxes = section.querySelectorAll('.code-text');
+            if(codeBoxes.length > 0) {
+                codeBoxes.forEach(box => addCodeInputField(box.innerText));
+            } else {
+                addCodeInputField('');
+            }
+
+            document.getElementById('imageInputsContainer').innerHTML = '';
+            const images = section.querySelectorAll('.media-card img');
+            images.forEach(img => addImageInputField(img.src));
+
+            document.getElementById('pdfInputsContainer').innerHTML = '';
+            const pdfs = section.querySelectorAll('.pdf-item');
+            pdfs.forEach(pdf => {
+                const title = pdf.querySelector('.pdf-title-text').innerText.replace(/^#\d+\s*/, '');
+                const link = pdf.querySelector('.pdf-view-btn').href;
+                addPdfInputField(link, title);
+            });
+
+            document.getElementById('tipModal').style.display = 'flex';
+        }
+
+        function renderTipDataToUI(tipItem) {
+            // TIP 53 ফিল্টার ও রিমুভ
+            if (tipItem.tipId && (tipItem.tipId.trim().toUpperCase() === 'TIP 53' || tipItem.tipId.trim().toUpperCase() === 'TIP-53')) {
+                const existingSection = document.getElementById('tip-tip-53') || document.getElementById('tip-53');
+                if (existingSection) existingSection.remove();
+                const existingMenu = document.querySelector(`a[href="#tip-tip-53"]`) || document.querySelector(`a[href="#tip-53"]`);
+                if (existingMenu) existingMenu.remove();
+                return;
+            }
+
+            const slug = tipItem.slug || 'tip-' + tipItem.tipId.toLowerCase().replace(/\s+/g, '-');
+            let section = document.getElementById(slug);
+            
+            if(!section) {
+                const newMenu = document.createElement('a');
+                newMenu.href = '#' + slug;
+                newMenu.className = 'menu-item';
+                newMenu.onclick = (event) => showTip(event, slug);
+                newMenu.innerHTML = `<span class="tip-id">${tipItem.tipId}</span><span class="tip-title">${tipItem.title}</span>`;
+                document.getElementById('subMenuContainer').appendChild(newMenu);
+
+                section = document.createElement('section');
+                section.id = slug;
+                section.className = 'tip-content-section';
+                document.getElementById('detailsPanel').appendChild(section);
+            } else {
+                const menu = document.querySelector(`a[href="#${slug}"]`);
+                if(menu) {
+                    menu.innerHTML = `<span class="tip-id">${tipItem.tipId}</span><span class="tip-title">${tipItem.title}</span>`;
+                }
+            }
+
+            section.setAttribute('data-raw-content', tipItem.content);
+            section.setAttribute('data-tip-id', tipItem.tipId);
+
+            const formattedContent = formatDetailsText(tipItem.content);
+
+            let codesArr = typeof tipItem.code === 'string' ? JSON.parse(tipItem.code || '[]') : tipItem.code;
+            let imagesArr = typeof tipItem.images === 'string' ? JSON.parse(tipItem.images || '[]') : tipItem.images;
+            let pdfsArr = typeof tipItem.pdfs === 'string' ? JSON.parse(tipItem.pdfs || '[]') : tipItem.pdfs;
+
+            let codesHtml = '';
+            if(codesArr && codesArr.length > 0) {
+                codesArr.forEach((code, idx) => {
+                    const codeId = `c_${slug}_${idx}`;
+                    codesHtml += `
+                        <div class="code-box" style="margin-top:10px;">
+                            <span class="code-text" id="${codeId}">${code}</span>
+                            <button class="copy-btn" onclick="copyText('${codeId}', this)"><i class="fa-solid fa-copy"></i> কপি করুন</button>
+                        </div>`;
+                });
+            }
+
+            let imagesHtml = '';
+            if(imagesArr && imagesArr.length > 0) {
+                imagesHtml = '<div class="media-container"><h4 style="font-size:15px;"><i class="fa-solid fa-images"></i> সংযুক্ত ছবিসমূহ (ক্লিক করে জুম ও প্রিভিউ করুন):</h4><div class="image-gallery">';
+                imagesArr.forEach((imgUrl, i) => {
+                    imagesHtml += `
+                        <div class="media-card" onclick="openImagePreview('${imgUrl}', '${tipItem.title} - ছবি #${i + 1}')">
+                            <span class="serial-tag">#${i + 1}</span>
+                            <img src="${imgUrl}" alt="Tip Image ${i + 1}">
+                            <div class="preview-overlay-icon"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                        </div>`;
+                });
+                imagesHtml += '</div></div>';
+            }
+
+            let pdfsHtml = '';
+            if(pdfsArr && pdfsArr.length > 0) {
+                pdfsHtml = '<div class="media-container"><h4 style="font-size:15px;"><i class="fa-solid fa-file-pdf"></i> সংযুক্ত পিডিএফ সমূহ:</h4><div class="pdf-list">';
+                pdfsArr.forEach((pdfObj, i) => {
+                    pdfsHtml += `
+                        <div class="pdf-item">
+                            <div class="pdf-item-title">
+                                <i class="fa-solid fa-file-pdf fa-2x"></i>
+                                <span class="pdf-title-text">#${i + 1} ${pdfObj.title || 'PDF Document'}</span>
+                            </div>
+                            <div class="pdf-actions">
+                                <button class="pdf-preview-btn" onclick="openPdfPreview('${pdfObj.url}', '${pdfObj.title}')"><i class="fa-solid fa-eye"></i> প্রিভিউ</button>
+                                <a href="${pdfObj.url}" download target="_blank" class="pdf-view-btn"><i class="fa-solid fa-download"></i> ওপেন / ডাউনলোড</a>
+                            </div>
+                        </div>`;
+                });
+                pdfsHtml += '</div></div>';
+            }
+
+            // সকল ফাইল জিপ (ZIP) আকারে ডাউনলোডের বাটন
+            let zipBtnHtml = '';
+            if((imagesArr && imagesArr.length > 0) || (pdfsArr && pdfsArr.length > 0)) {
+                zipBtnHtml = `
+                    <div style="margin-top:20px; text-align:right;">
+                        <button class="add-more-btn" style="background: linear-gradient(135deg, #10b981, #059669); padding: 10px 18px; font-size: 14px;" onclick="downloadAllFilesAsZip('${slug}', '${tipItem.title.replace(/'/g, "\\'")}')">
+                            <i class="fa-solid fa-file-zipper"></i> সকল ফাইল জিপ (.ZIP) আকারে ডাউনলোড করুন
+                        </button>
+                    </div>
+                `;
+            }
+
+            section.innerHTML = `
+                <div class="admin-action-bar" style="${isLoggedIn ? 'display:flex;' : 'display:none;'}">
+                    <button class="admin-action-btn edit-btn" onclick="openEditModal('${slug}')"><i class="fa-solid fa-pen"></i> সম্পাদনা</button>
+                    <button class="admin-action-btn delete-btn" onclick="deleteTip('${slug}')"><i class="fa-solid fa-trash"></i> মুছুন</button>
+                </div>
+                <span class="category-tag">${tipItem.category || 'General'}</span>
+                <h2 class="tip-detail-title">${tipItem.title}</h2>
+                <div class="instruction-card">
+                    ${formattedContent}
+                    ${codesHtml}
+                </div>
+                ${tipItem.note ? `<div class="note-box"><h4><i class="fa-solid fa-triangle-exclamation"></i> নোট:</h4><p>${tipItem.note}</p></div>` : ''}
+                ${imagesHtml}
+                ${pdfsHtml}
+                ${zipBtnHtml}
+            `;
+        }
+
+        function handleSaveTip(e) {
+            e.preventDefault();
+            const slug = document.getElementById('editTipSlug').value || 'tip-' + Date.now();
+            const tipId = document.getElementById('tipIdInput').value;
+            const cat = document.getElementById('tipCatInput').value;
+            const title = document.getElementById('tipTitleInput').value;
+            const rawContent = document.getElementById('tipContentInput').value;
+            const note = document.getElementById('tipNoteInput').value;
+
+            const codeInputs = document.querySelectorAll('.code-input-item');
+            let codesArr = [];
+            codeInputs.forEach(input => {
+                if(input.value.trim()) codesArr.push(input.value.trim());
+            });
+
+            const imageInputs = document.querySelectorAll('.image-input-item');
+            let imagesArr = [];
+            imageInputs.forEach(input => {
+                if(input.value.trim()) imagesArr.push(input.value.trim());
+            });
+
+            const pdfRows = document.querySelectorAll('#pdfInputsContainer .dynamic-input-row');
+            let pdfsArr = [];
+            pdfRows.forEach(row => {
+                const pTitle = row.querySelector('.pdf-title-item').value.trim() || 'PDF Document';
+                const pLink = row.querySelector('.pdf-input-item').value.trim();
+                if(pLink) pdfsArr.push({ title: pTitle, url: pLink });
+            });
+
+            const tipPayload = {
+                slug: slug,
+                tipId: tipId,
+                title: title,
+                category: cat,
+                content: rawContent,
+                code: codesArr,
+                note: note,
+                images: imagesArr,
+                pdfs: pdfsArr
+            };
+
+            renderTipDataToUI(tipPayload);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'save',
+                    tipId: tipId,
+                    title: title,
+                    category: cat,
+                    content: rawContent,
+                    code: JSON.stringify(codesArr),
+                    note: note,
+                    images: JSON.stringify(imagesArr),
+                    pdfs: JSON.stringify(pdfsArr)
+                })
+            });
+
+            showToast("সফলভাবে তথ্য সেভ ও গুগল শিটে আপডেট করা হয়েছে!", "success");
+            closeModal('tipModal');
+            showTip(null, slug);
+        }
+
+        function deleteTip(slug) {
+            if(confirm("আপনি কি নিশ্চিত যে এই টিপসটি ডিলিট করতে চান?")) {
+                const section = document.getElementById(slug);
+                const tipId = section ? section.getAttribute('data-tip-id') : slug;
+                
+                if(section) section.remove();
+                const menu = document.querySelector(`a[href="#${slug}"]`);
+                if(menu) menu.remove();
+
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'delete', tipId: tipId })
+                });
+
+                showToast("টিপস ডিলিট করা হয়েছে!", "success");
+                showTip(null, 'home-section');
+            }
+        }
+
+        function fetchCloudTipsData() {
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(res => {
+                    if(res.status === 'success' && res.data && res.data.length > 0) {
+                        res.data.forEach(item => {
+                            // TIP 53 স্কিপ
+                            if(item.tipId && (item.tipId.trim().toUpperCase() === 'TIP 53' || item.tipId.trim().toUpperCase() === 'TIP-53')) {
+                                return;
+                            }
+                            renderTipDataToUI(item);
+                        });
+                        totalTipsCount = res.data.length;
+                    }
+                })
+                .catch(err => console.log("Cloud Fetch Note:", err));
+        }
+    </script>
+</body>
+</html>
