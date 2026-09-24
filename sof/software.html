@@ -120,8 +120,8 @@
                 <input type="text" id="swVersion" required placeholder="Enter Version (e.g. CS8, 2020)">
             </div>
             <div class="form-group">
-                <label>Google Share URL:</label>
-                <input type="url" id="swUrl" required placeholder="https://drive.google.com/...">
+                <label>Google Share URL or File ID:</label>
+                <input type="text" id="swUrl" required placeholder="Paste Link or File ID (e.g. 1jrltgOtbAbIVLj_nVxJTxUvb0RkXocKN)">
             </div>
             <button type="submit" class="btn" id="submitBtn">Save Software</button>
             <button type="button" class="btn btn-danger" id="cancelEditBtn" style="display:none;" onclick="resetForm()">Cancel Edit</button>
@@ -135,7 +135,7 @@
         <div class="table-container">
             <table id="adminTable">
                 <thead>
-                    <tr><th>Serial</th><th>Software Name</th><th>Version</th><th>URL</th><th>Action</th></tr>
+                    <tr><th>Serial</th><th>Software Name</th><th>Version</th><th>URL / ID</th><th>Action</th></tr>
                 </thead>
                 <tbody id="adminTableBody">
                     <tr><td colspan="5">Loading data...</td></tr>
@@ -238,22 +238,20 @@
         }
     }
 
-    // Convert Google Share Folder / File Link to Direct Download Format
-    function convertToDirectDownloadLink(url) {
-        let fileId = "";
-        const idMatch = url.match(/[-\w]{25,}/);
-        if (idMatch) fileId = idMatch[0];
-        
-        if (fileId) {
-            return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    // Convert full Google Drive URL or File ID into Direct Download Format
+    function convertToDirectDownloadLink(input) {
+        let fileId = input.trim();
+        const idMatch = input.match(/[-\w]{25,}/);
+        if (idMatch) {
+            fileId = idMatch[0];
         }
-        return url;
+        return `https://drive.google.com/uc?export=download&id=${fileId}`;
     }
 
     function renderPublicTable(data) {
         let html = "";
         data.forEach(row => {
-            // row: [Serial, Name, Version, DownloadURL]
+            // row: [Serial, Name, Version, FileID_Or_URL]
             let downloadLink = convertToDirectDownloadLink(row[3]);
             html += `<tr>
                 <td>${row[0]}</td>
@@ -268,11 +266,12 @@
     function renderAdminTable(data) {
         let html = "";
         data.forEach(row => {
+            let downloadLink = convertToDirectDownloadLink(row[3]);
             html += `<tr>
                 <td>${row[0]}</td>
                 <td>${row[1]}</td>
                 <td>${row[2]}</td>
-                <td><a href="${row[3]}" target="_blank">Link</a></td>
+                <td><a href="${downloadLink}" target="_blank">View Direct Link</a></td>
                 <td>
                     <button class="btn btn-edit" onclick="editRow('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}')">Edit</button>
                     <button class="btn btn-danger" onclick="deleteRow('${row[0]}')">Delete</button>
