@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Software Download List</title>
+    <!-- FontAwesome for Password Eye Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#113f2c; color: #333; }
+        
+        header {
+            background:#0d6efd; color:white; padding:0 20px;
+            position:fixed; top:0; left:0; right:0; z-index:1000; height:60px;
+        }
+        .top-nav { display:flex; justify-content:space-between; align-items:center; height:100%; }
+        .nav-logo { color:white; text-decoration:none; font-weight:700; padding:8px 12px; border:1px solid rgba(255,255,255,.6); border-radius:8px; }
+        .nav-links { display:flex; gap:10px; align-items:center; }
+        .nav-links a, .nav-btn { color:white; text-decoration:none; padding:8px 12px; border-radius:6px; cursor:pointer; background:transparent; border:none; font-size:14px; font-weight:600; }
+        .nav-links a:hover, .nav-btn:hover { background:rgba(255,255,255,.2); }
+        .admin-btn { background:#ffc107 !important; color:#000 !important; font-weight:bold; }
+        
+        .container { width:90%; margin:80px auto 30px auto; }
+        .card { background:white; padding:25px; border-radius:10px; margin-bottom:20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        
+        .search-box { width:100%; padding:12px; margin-bottom:15px; border:1px solid #ccc; border-radius:6px; outline:none; font-size:15px; }
+        .table-container { max-height:450px; overflow-y:auto; border:1px solid #2bf5c9; border-radius:8px; background:#fff; }
+        table { width:100%; border-collapse:collapse; min-width:600px; }
+        th { background:#0d6efd; color:white; position:sticky; top:0; padding:12px; font-size:15px; }
+        td { border:1px solid #ddd; padding:12px; text-align:center; }
+        tr:nth-child(even) { background:#f9f9f9; }
+        
+        .btn { background:#198754; color:white; border:none; padding:9px 16px; cursor:pointer; border-radius:5px; font-weight:bold; transition: 0.3s; }
+        .btn:hover { background:#157347; }
+        .btn-edit { background:#ffc107; color:#000; margin-right:5px; }
+        .btn-danger { background:#dc3545; }
+        .btn-danger:hover { background:#bb2d3b; }
+        
+        .form-group { margin-bottom:15px; text-align:left; }
+        .form-group label { display:block; margin-bottom:6px; font-weight:600; }
+        .form-group input { width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; outline:none; }
+        .form-group input[readonly] { background:#e9ecef; }
+
+        /* Modal Style */
+        .modal { display:none; position:fixed; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.5); justify-content:center; align-items:center; z-index:9999; }
+        .modal-box { background:white; width:340px; padding:25px; text-align:center; border-radius:10px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+
+        /* Password Input Wrapper with Eye Icon */
+        .password-wrapper { position: relative; width: 100%; margin: 15px 0; }
+        .password-wrapper input { width: 100%; padding: 10px 40px 10px 10px; border: 1px solid #ccc; border-radius: 5px; outline:none; }
+        .password-wrapper .toggle-eye { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; }
+
+        /* Professional Toast Notification (Bottom Right) */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
+        .toast {
+            min-width: 280px; background: #28a745; color: white; padding: 14px 20px;
+            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); margin-top: 10px;
+            display: flex; align-items: center; justify-content: space-between; font-weight: 500;
+            animation: slideIn 0.4s ease forwards;
+        }
+        .toast.error { background: #dc3545; }
+        .toast.info { background: #17a2b8; }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="top-nav">
+        <a class="nav-logo" href="#">MD. ROMAN ISLAM HABIB</a>
+        <div class="nav-links" id="publicNav">
+            <a href="#" onclick="showSection('publicList')">Home</a>
+            <button class="nav-btn admin-btn" onclick="openLoginModal()">Admin Login</button>
+        </div>
+        <div class="nav-links" id="adminNav" style="display:none;">
+            <button class="nav-btn" onclick="showSection('dataEntry')">Data Entry</button>
+            <button class="nav-btn" onclick="showSection('adminList')">Software List</button>
+            <button class="nav-btn btn-danger" onclick="logoutAdmin()">Logout</button>
+        </div>
+    </nav>
+</header>
+
+<main class="container">
+
+    <!-- Public Software Dashboard -->
+    <div id="publicListSection" class="card">
+        <h2>Software Download List</h2><br>
+        <input type="text" id="publicSearch" class="search-box" placeholder="🔍 সফটওয়্যার খুঁজুন..." onkeyup="filterTable('publicSearch', 'publicTable')">
+        <div class="table-container">
+            <table id="publicTable">
+                <thead>
+                    <tr><th>Serial</th><th>Software Name</th><th>Version</th><th>Download</th></tr>
+                </thead>
+                <tbody id="publicTableBody">
+                    <tr><td colspan="4">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Admin Data Entry Section -->
+    <div id="dataEntrySection" class="card" style="display:none;">
+        <h2 id="formTitle">Data Entry Form</h2><br>
+        <form id="softwareForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-group">
+                <label>Serial Number (Auto):</label>
+                <input type="text" id="swSerial" readonly placeholder="Auto Serial">
+            </div>
+            <div class="form-group">
+                <label>Software Name:</label>
+                <input type="text" id="swName" required placeholder="Enter Software Name">
+            </div>
+            <div class="form-group">
+                <label>Version (This will be the Password):</label>
+                <input type="text" id="swVersion" required placeholder="Enter Version (e.g. CS8, 2020)">
+            </div>
+            <div class="form-group">
+                <label>Google Share URL:</label>
+                <input type="url" id="swUrl" required placeholder="https://drive.google.com/...">
+            </div>
+            <button type="submit" class="btn" id="submitBtn">Save Software</button>
+            <button type="button" class="btn btn-danger" id="cancelEditBtn" style="display:none;" onclick="resetForm()">Cancel Edit</button>
+        </form>
+    </div>
+
+    <!-- Admin Software List Section -->
+    <div id="adminListSection" class="card" style="display:none;">
+        <h2>Manage Software List</h2><br>
+        <input type="text" id="adminSearch" class="search-box" placeholder="🔍 খুঁজুন..." onkeyup="filterTable('adminSearch', 'adminTable')">
+        <div class="table-container">
+            <table id="adminTable">
+                <thead>
+                    <tr><th>Serial</th><th>Software Name</th><th>Version</th><th>URL</th><th>Action</th></tr>
+                </thead>
+                <tbody id="adminTableBody">
+                    <tr><td colspan="5">Loading data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<!-- Login Modal -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <h3>🔒 Admin Login</h3><br>
+        <div class="form-group">
+            <input type="text" id="loginId" placeholder="Enter Login ID">
+        </div>
+        <div class="password-wrapper">
+            <input type="password" id="loginPass" placeholder="Enter Password">
+            <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('loginPass', this)"></i>
+        </div>
+        <button class="btn" onclick="checkLogin()">Login</button>
+        <button class="btn btn-danger" onclick="closeLoginModal()">Close</button>
+    </div>
+</div>
+
+<!-- Password Modal for Download -->
+<div class="modal" id="downloadModal">
+    <div class="modal-box">
+        <h3>🔒 Enter Password to Download</h3>
+        <div class="password-wrapper">
+            <input type="password" id="dlPassword" placeholder="Enter Password">
+            <i class="fa-solid fa-eye toggle-eye" onclick="togglePassword('dlPassword', this)"></i>
+        </div>
+        <button class="btn" onclick="confirmDownload()">Download</button>
+        <button class="btn btn-danger" onclick="closeDownloadModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzitVhnBW50o2ocpdB8-4RR9DcZDrD8JcdBjKqSZPKtbz_JGiUCt8QxQc6IUWVNgIzb/exec";
+
+    let globalData = [];
+    let activeDownloadUrl = "";
+    let activeVersionPassword = "";
+    let isEditing = false;
+
+    window.onload = function() {
+        loadData();
+    };
+
+    function showToast(message, type = "success") {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => { toast.remove(); }, 3500);
+    }
+
+    function togglePassword(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    }
+
+    function apiCall(action, payload = {}) {
+        const formData = new FormData();
+        formData.append("action", action);
+        formData.append("data", JSON.stringify(payload));
+
+        return fetch(WEB_APP_URL, {
+            method: "POST",
+            body: formData
+        }).then(res => res.json());
+    }
+
+    function loadData() {
+        apiCall("getData").then(data => {
+            globalData = data;
+            renderPublicTable(data);
+            renderAdminTable(data);
+            updateAutoSerial();
+        }).catch(err => showToast("Error connecting to server!", "error"));
+    }
+
+    function updateAutoSerial() {
+        if (!isEditing) {
+            apiCall("getNextSerial").then(res => {
+                document.getElementById('swSerial').value = res.serial;
+            });
+        }
+    }
+
+    // Convert Google Share Folder / File Link to Direct Download Format
+    function convertToDirectDownloadLink(url) {
+        let fileId = "";
+        const idMatch = url.match(/[-\w]{25,}/);
+        if (idMatch) fileId = idMatch[0];
+        
+        if (fileId) {
+            return `https://drive.google.com/uc?export=download&id=${fileId}`;
+        }
+        return url;
+    }
+
+    function renderPublicTable(data) {
+        let html = "";
+        data.forEach(row => {
+            // row: [Serial, Name, Version, DownloadURL]
+            let downloadLink = convertToDirectDownloadLink(row[3]);
+            html += `<tr>
+                <td>${row[0]}</td>
+                <td>${row[1]}</td>
+                <td>${row[2]}</td>
+                <td><button class="btn" onclick="openDownloadModal('${downloadLink}', '${row[2]}')">Download</button></td>
+            </tr>`;
+        });
+        document.getElementById('publicTableBody').innerHTML = html || "<tr><td colspan='4'>No Data Found</td></tr>";
+    }
+
+    function renderAdminTable(data) {
+        let html = "";
+        data.forEach(row => {
+            html += `<tr>
+                <td>${row[0]}</td>
+                <td>${row[1]}</td>
+                <td>${row[2]}</td>
+                <td><a href="${row[3]}" target="_blank">Link</a></td>
+                <td>
+                    <button class="btn btn-edit" onclick="editRow('${row[0]}', '${row[1]}', '${row[2]}', '${row[3]}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteRow('${row[0]}')">Delete</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('adminTableBody').innerHTML = html || "<tr><td colspan='5'>No Data Found</td></tr>";
+    }
+
+    // Login Modals
+    function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+    function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+    function checkLogin() {
+        let id = document.getElementById('loginId').value;
+        let pass = document.getElementById('loginPass').value;
+        if(id === "Roman" && pass === "209516") {
+            document.getElementById('publicNav').style.display = 'none';
+            document.getElementById('adminNav').style.display = 'flex';
+            closeLoginModal();
+            showSection('dataEntry');
+            document.getElementById('loginId').value = "";
+            document.getElementById('loginPass').value = "";
+            showToast("Login Successful!", "success");
+        } else {
+            showToast("Wrong Login ID or Password!", "error");
+        }
+    }
+
+    function logoutAdmin() {
+        document.getElementById('publicNav').style.display = 'flex';
+        document.getElementById('adminNav').style.display = 'none';
+        showSection('publicList');
+        showToast("Logged out successfully!", "info");
+    }
+
+    function showSection(section) {
+        document.getElementById('publicListSection').style.display = section === 'publicList' ? 'block' : 'none';
+        document.getElementById('dataEntrySection').style.display = section === 'dataEntry' ? 'block' : 'none';
+        document.getElementById('adminListSection').style.display = section === 'adminList' ? 'block' : 'none';
+    }
+
+    // Form Handling
+    function handleFormSubmit(e) {
+        e.preventDefault();
+        let softwareData = {
+            serial: document.getElementById('swSerial').value,
+            name: document.getElementById('swName').value,
+            version: document.getElementById('swVersion').value,
+            url: document.getElementById('swUrl').value
+        };
+
+        if (isEditing) {
+            apiCall("updateSoftware", softwareData).then(res => {
+                showToast("Software Updated Successfully!", "success");
+                resetForm();
+                loadData();
+                showSection('adminList');
+            });
+        } else {
+            apiCall("addSoftware", softwareData).then(res => {
+                showToast(`Software Saved! Serial: ${res.serial}`, "success");
+                resetForm();
+                loadData();
+            });
+        }
+    }
+
+    function editRow(serial, name, version, url) {
+        isEditing = true;
+        document.getElementById('formTitle').innerText = "Edit / Update Software";
+        document.getElementById('swSerial').value = serial;
+        document.getElementById('swName').value = name;
+        document.getElementById('swVersion').value = version;
+        document.getElementById('swUrl').value = url;
+        document.getElementById('submitBtn').innerText = "Update Software";
+        document.getElementById('cancelEditBtn').style.display = "inline-block";
+        showSection('dataEntry');
+    }
+
+    function resetForm() {
+        isEditing = false;
+        document.getElementById('formTitle').innerText = "Data Entry Form";
+        document.getElementById('softwareForm').reset();
+        document.getElementById('submitBtn').innerText = "Save Software";
+        document.getElementById('cancelEditBtn').style.display = "none";
+        updateAutoSerial();
+    }
+
+    function deleteRow(serial) {
+        if (confirm("Are you sure you want to delete " + serial + "?")) {
+            apiCall("deleteSoftware", { serial: serial }).then(res => {
+                showToast("Deleted successfully!", "info");
+                loadData();
+            });
+        }
+    }
+
+    // Download Modal Logic
+    function openDownloadModal(downloadUrl, versionPassword) {
+        activeDownloadUrl = downloadUrl;
+        activeVersionPassword = versionPassword;
+        document.getElementById('dlPassword').value = "";
+        document.getElementById('downloadModal').style.display = 'flex';
+    }
+
+    function closeDownloadModal() { 
+        document.getElementById('downloadModal').style.display = 'none'; 
+    }
+
+    function confirmDownload() {
+        let inputPass = document.getElementById('dlPassword').value.trim();
+        if(inputPass === activeVersionPassword.trim()) {
+            showToast("Password correct! Starting download...", "success");
+            window.location.href = activeDownloadUrl;
+            closeDownloadModal();
+        } else {
+            showToast("Incorrect Password!", "error");
+        }
+    }
+
+    function filterTable(inputId, tableId) {
+        let input = document.getElementById(inputId).value.toUpperCase();
+        let tr = document.getElementById(tableId).getElementsByTagName("tr");
+        for (let i = 1; i < tr.length; i++) {
+            let td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                let txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toUpperCase().indexOf(input) > -1 ? "" : "none";
+            }
+        }
+    }
+</script>
+
+</body>
+</html>
