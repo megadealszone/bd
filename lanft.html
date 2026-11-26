@@ -38,6 +38,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <main class="wrap">
 <div class="card">
 <strong>সংযোগের অবস্থা:</strong> <span class="pill" id="connection">সংযোগ বিচ্ছিন্ন</span>
+<span class="hint" id="connectionTime" style="margin-left:10px">সময়: —</span>
+<div class="actions"><button id="disconnectBtn" class="red" disabled>Disconnect Connection / সংযোগ বিচ্ছিন্ন করুন</button></div>
 <div class="status" id="globalStatus">শুরু করতে নিচের নির্দেশনা অনুসরণ করুন। দুই কম্পিউটারে এই HTML ফাইলটি Chrome বা Edge-এ খুলুন।</div>
 </div>
 
@@ -106,6 +108,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <li>Sender PC-তে “Offer তৈরি করুন” চাপুন। Offer কপি করে Receiver PC-তে পাঠান।</li>
 <li>Receiver Offer পেস্ট করে “Answer তৈরি করুন” চাপুন। Answer কপি করে Sender-কে দিন।</li>
 <li>Sender Answer পেস্ট করে “Answer গ্রহণ করে সংযোগ করুন” চাপুন।</li>
+<li>সংযোগ চালু রাখতে দুই ডিভাইসের ব্রাউজার খোলা রাখুন; কাজ শেষে Disconnect Connection চাপুন।</li>
 <li>Connected দেখালে ফাইল নির্বাচন করে পাঠান।</li>
 </ol>
 <div class="hint">Offer/Answer আদান-প্রদান USB, QR-এর বদলে স্থানীয়ভাবে কপি-পেস্ট, বা অন্য কোনো অফলাইন মাধ্যমে করা যায়। বড় Offer/Answer হলে TXT ফাইল ব্যবহার করুন।</div>
@@ -114,6 +117,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <section class="card">
 <h2>গুরুত্বপূর্ণ সীমাবদ্ধতা ও নিরাপত্তা</h2>
 <ul class="steps">
+<li>সংযোগ সফল হলে প্রতি ১০ সেকেন্ডে Heartbeat পাঠানো হয়; কোনো নির্দিষ্ট ৩০/৬০ মিনিটের টাইমআউট নেই। ব্রাউজার খোলা ও ডিভাইস সচল থাকলে সংযোগ চালু থাকবে।</li>
+<li>কম্পিউটার Sleep, Wi-Fi বিচ্ছিন্ন, ব্রাউজার বন্ধ বা অপারেটিং সিস্টেম নেটওয়ার্ক বন্ধ করলে সংযোগ টিকে থাকার নিশ্চয়তা নেই।</li>
 <li>WebRTC-তে অনেক নেটওয়ার্কে সরাসরি LAN সংযোগ সম্ভব; কিছু রাউটার/ফায়ারওয়ালে সংযোগ ব্যর্থ হতে পারে। এই সংস্করণে STUN/TURN সার্ভার ব্যবহার করা হয় না।</li>
 <li>ফোল্ডার নির্বাচন করলে তার ভেতরের ফাইলগুলো আলাদা আলাদা পাঠানো হয়; মূল ফোল্ডার কাঠামো স্বয়ংক্রিয়ভাবে ZIP আকারে তৈরি হয় না।</li>
 <li>মোবাইল ব্রাউজারে ফোল্ডার নির্বাচন ও একসঙ্গে অনেক ফাইল বাছাইয়ের সুবিধা ফোন/ব্রাউজারভেদে ভিন্ন হতে পারে।</li>
@@ -128,47 +133,115 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <script>
 (() => {
 const $ = id => document.getElementById(id);
-let pc = null, channel = null, pending = null, rx = null, rxParts = [];
+let pc = null, channel = null, rx = null, rxParts = [], role = null;
+let heartbeatTimer = null, durationTimer = null, connectedAt = 0, lastPong = 0;
 const CHUNK = 64 * 1024;
 function status(msg, type=''){ $('globalStatus').textContent=msg; $('globalStatus').className='status '+type; }
 function storageStatus(msg,type=''){ $('storageStatus').textContent=msg; $('storageStatus').className='status '+type; }
-function setConnected(yes){ $('connection').textContent=yes?'সংযুক্ত':'সংযোগ বিচ্ছিন্ন'; $('connection').style.background=yes?'#dcfce7':'#e0e7ff'; $('connection').style.color=yes?'#166534':'#3730a3'; $('sendFiles').disabled=!yes; $('sendStorage').disabled=!yes; }
+function setConnected(yes){
+ $('connection').textContent=yes?'সংযুক্ত':'সংযোগ বিচ্ছিন্ন';
+ $('connection').style.background=yes?'#dcfce7':'#e0e7ff';
+ $('connection').style.color=yes?'#166534':'#3730a3';
+ $('sendFiles').disabled=!yes; $('sendStorage').disabled=!yes;
+ $('disconnectBtn').disabled=!yes;
+}
+function startKeepAlive(){
+ stopKeepAlive(); connectedAt=Date.now(); lastPong=Date.now();
+ heartbeatTimer=setInterval(()=>{
+  if(channel&&channel.readyState==='open'){
+   try{channel.send(JSON.stringify({kind:'heartbeat',at:Date.now()}));}
+   catch(e){status('সংযোগে সমস্যা হচ্ছে; পুনরায় চেষ্টা চলছে।','err');}
+  }
+ },10000);
+ durationTimer=setInterval(()=>{
+  if(!connectedAt)return;
+  const sec=Math.floor((Date.now()-connectedAt)/1000);
+  $('connectionTime').textContent='সংযুক্ত: '+String(Math.floor(sec/3600)).padStart(2,'0')+':'+String(Math.floor(sec%3600/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+ },1000);
+}
+function stopKeepAlive(){
+ if(heartbeatTimer)clearInterval(heartbeatTimer);
+ if(durationTimer)clearInterval(durationTimer);
+ heartbeatTimer=durationTimer=null;connectedAt=0;
+ $('connectionTime').textContent='সময়: —';
+}
 function setupChannel(ch){
  channel=ch; ch.binaryType='arraybuffer';
- ch.onopen=()=>{setConnected(true);status('সংযোগ সফল! এখন ফাইল পাঠানো ও গ্রহণ করা যাবে।','ok');};
- ch.onclose=()=>{setConnected(false);status('সংযোগ বন্ধ হয়েছে।');};
+ ch.onopen=()=>{setConnected(true);startKeepAlive();status('সংযোগ সফল! সংযোগ স্বয়ংক্রিয়ভাবে ৩০/৬০ মিনিটে বন্ধ হবে না। কাজ শেষে Disconnect চাপুন।','ok');};
+ ch.onclose=()=>{setConnected(false);stopKeepAlive();status('অন্য ডিভাইসের সংযোগ বন্ধ হয়েছে। নতুন সংযোগের জন্য নতুন Offer তৈরি করুন।');};
  ch.onerror=()=>status('Data Channel-এ সমস্যা হয়েছে।','err');
  ch.onmessage=e=>handleMessage(e.data);
 }
-function newPeer(){
- if(pc) try{pc.close()}catch(e){}
- pc=new RTCPeerConnection({iceServers:[]});
- pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){setConnected(false);status('সংযোগ স্থাপন হয়নি বা বিচ্ছিন্ন হয়েছে। দুই PC একই LAN-এ আছে কি না পরীক্ষা করুন।','err');}};
+function newPeer(newRole){
+ if(pc)try{pc.close()}catch(e){}
+ pc=new RTCPeerConnection({iceServers:[]}); role=newRole;
+ pc.onconnectionstatechange=()=>{
+  const st=pc.connectionState;
+  if(st==='failed'){setConnected(false);stopKeepAlive();status('সংযোগ ব্যর্থ। দুই ডিভাইস একই LAN-এ আছে কি না এবং Wi-Fi isolation বন্ধ কি না পরীক্ষা করুন।','err');}
+  else if(st==='connected'&&channel&&channel.readyState==='open'){setConnected(true);}
+  // "disconnected" সাময়িক হতে পারে; তাই সঙ্গে সঙ্গে বন্ধ বা reset করা হচ্ছে না।
+ };
  pc.ondatachannel=e=>setupChannel(e.channel);
  return pc;
 }
 function waitIce(p){
  return new Promise(resolve=>{
-  if(p.iceGatheringState==='complete') return resolve();
-  const timeout=setTimeout(()=>{p.removeEventListener('icegatheringstatechange',check);resolve();},12000);
+  if(p.iceGatheringState==='complete')return resolve();
+  const timeout=setTimeout(()=>{p.removeEventListener('icegatheringstatechange',check);resolve();},30000);
   function check(){if(p.iceGatheringState==='complete'){clearTimeout(timeout);p.removeEventListener('icegatheringstatechange',check);resolve();}}
   p.addEventListener('icegatheringstatechange',check);
  });
 }
 function encode(obj){return JSON.stringify(obj);}
-function decode(s){const o=JSON.parse(s);if(!o||!o.type||!o.sdp)throw Error('ভুল Offer/Answer ফরম্যাট');return o;}
+function decode(s){
+ const o=JSON.parse(s);
+ if(!o||!['offer','answer'].includes(o.type)||typeof o.sdp!=='string'||!o.sdp.trim())throw Error('ভুল Offer/Answer ফরম্যাট');
+ return o;
+}
 function downloadText(name,text,mime='text/plain'){const a=document.createElement('a');const u=URL.createObjectURL(new Blob([text],{type:mime}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+function disconnect(manual=true){
+ stopKeepAlive();
+ try{if(channel&&channel.readyState!=='closed')channel.close()}catch(e){}
+ try{if(pc)pc.close()}catch(e){}
+ pc=null;channel=null;role=null;rx=null;rxParts=[];
+ setConnected(false);
+ $('offerOut').value='';$('answerOut').value='';$('offerIn').value='';$('answerIn').value='';
+ $('sendBar').style.width='0%';$('speedInfo').textContent='গতি: —';
+ if(manual)status('সংযোগ বিচ্ছিন্ন করা হয়েছে। নতুন সংযোগের জন্য নতুন Offer তৈরি করুন।','ok');
+}
+$('disconnectBtn').onclick=()=>disconnect(true);
 $('makeOffer').onclick=async()=>{
- try{status('Offer তৈরি হচ্ছে...');newPeer();setupChannel(pc.createDataChannel('file-transfer',{ordered:true}));const offer=await pc.createOffer();await pc.setLocalDescription(offer);await waitIce(pc);$('offerOut').value=encode(pc.localDescription);status('Offer তৈরি হয়েছে। এটি Receiver PC-তে পাঠান।','ok');}
- catch(e){status('Offer তৈরি করা যায়নি: '+e.message,'err');}
+ try{
+  disconnect(false);status('নতুন Offer তৈরি হচ্ছে...');
+  newPeer('sender');setupChannel(pc.createDataChannel('file-transfer',{ordered:true}));
+  const offer=await pc.createOffer();await pc.setLocalDescription(offer);await waitIce(pc);
+  if(!pc||pc.signalingState!=='have-local-offer')throw Error('Offer state সঠিক নয়; আবার চেষ্টা করুন');
+  $('offerOut').value=encode(pc.localDescription);
+  status('Offer তৈরি হয়েছে। এই Offer Receiver ডিভাইসে পাঠান।','ok');
+ }catch(e){status('Offer তৈরি করা যায়নি: '+e.message,'err');}
 };
 $('makeAnswer').onclick=async()=>{
- try{const offer=decode($('offerIn').value.trim());status('Answer তৈরি হচ্ছে...');newPeer();await pc.setRemoteDescription(offer);const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await waitIce(pc);$('answerOut').value=encode(pc.localDescription);status('Answer তৈরি হয়েছে। এটি Sender PC-তে পাঠান।','ok');}
- catch(e){status('Answer তৈরি করা যায়নি: '+e.message,'err');}
+ try{
+  const offer=decode($('offerIn').value.trim());
+  if(offer.type!=='offer')throw Error('এখানে Sender-এর Offer দিতে হবে, Answer নয়');
+  disconnect(false);status('Answer তৈরি হচ্ছে...');
+  newPeer('receiver');await pc.setRemoteDescription(offer);
+  if(pc.signalingState!=='have-remote-offer')throw Error('Offer গ্রহণের পর signaling state সঠিক হয়নি');
+  const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await waitIce(pc);
+  if(pc.signalingState!=='stable')throw Error('Answer তৈরি সম্পূর্ণ হয়নি; আবার নতুন Offer দিয়ে চেষ্টা করুন');
+  $('answerOut').value=encode(pc.localDescription);
+  status('Answer তৈরি হয়েছে। এটি Sender ডিভাইসে পাঠান।','ok');
+ }catch(e){status('Answer তৈরি করা যায়নি: '+e.message,'err');}
 };
 $('applyAnswer').onclick=async()=>{
- try{if(!pc)throw Error('আগে Sender PC-তে Offer তৈরি করুন');await pc.setRemoteDescription(decode($('answerIn').value.trim()));status('Answer গ্রহণ করা হয়েছে। সংযোগ স্থাপনের অপেক্ষায়...');}
- catch(e){status('Answer গ্রহণ করা যায়নি: '+e.message,'err');}
+ try{
+  if(!pc||role!=='sender')throw Error('এই ডিভাইসে আগে নতুন Offer তৈরি করতে হবে');
+  if(pc.signalingState!=='have-local-offer')throw Error('এই সেশনে Answer গ্রহণের অবস্থা নেই। নতুন Offer তৈরি করুন; পুরোনো Answer ব্যবহার করবেন না।');
+  const answer=decode($('answerIn').value.trim());
+  if(answer.type!=='answer')throw Error('Receiver-এর Answer পেস্ট করুন, Offer নয়');
+  await pc.setRemoteDescription(answer);
+  status('Answer গ্রহণ করা হয়েছে। সংযোগ স্থাপনের অপেক্ষায়...','ok');
+ }catch(e){status('Answer গ্রহণ করা যায়নি: '+e.message,'err');}
 };
 $('copyOffer').onclick=()=>copy($('offerOut').value);
 $('copyAnswer').onclick=()=>copy($('answerOut').value);
@@ -181,7 +254,9 @@ function send(obj){if(!channel||channel.readyState!=='open')throw Error('প্�
 function handleMessage(data){
  if(typeof data==='string'){
   let m;try{m=JSON.parse(data)}catch(e){return;}
-  if(m.kind==='file-start'){rx={name:m.name,size:m.size,type:m.type||'application/octet-stream',relativePath:m.relativePath||m.name,received:0};rxParts=[];$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.relativePath;}
+  if(m.kind==='heartbeat'){try{channel.send(JSON.stringify({kind:'heartbeat-ack',at:m.at}));}catch(e){}}
+  else if(m.kind==='heartbeat-ack'){lastPong=Date.now();}
+  else if(m.kind==='file-start'){rx={name:m.name,size:m.size,type:m.type||'application/octet-stream',relativePath:m.relativePath||m.name,received:0};rxParts=[];$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.relativePath;}
   else if(m.kind==='file-end'&&rx){const blob=new Blob(rxParts,{type:rx.type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=rx.name.split('/').pop();a.textContent='ডাউনলোড: '+rx.name+' ('+formatSize(rx.size)+')';a.title='মূল ফোল্ডার-পথ: '+rx.relativePath;const li=document.createElement('li');li.appendChild(a);if($('receivedList').querySelector('li')?.textContent==='এখনো কোনো ফাইল আসেনি।')$('receivedList').replaceChildren();$('receivedList').appendChild(li);$('sendStatus').textContent='ফাইল গ্রহণ সম্পন্ন: '+rx.relativePath;rx=null;rxParts=[];}
   else if(m.kind==='file-error'){$('sendStatus').textContent='প্রেরকের ত্রুটি: '+m.message;}
   else if(m.kind==='storage'){try{const blob=new Blob([JSON.stringify(m.payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='local-storage-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);storageStatus('অন্য PC থেকে Local Storage ব্যাকআপ এসেছে; JSON ফাইল ডাউনলোড হয়েছে। Import করতে ফাইলটি নির্বাচন করুন।','ok');}catch(e){storageStatus('ব্যাকআপ গ্রহণে সমস্যা: '+e.message,'err');}}
