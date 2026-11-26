@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Offline LAN Transfer</title>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--blue2:#1d4ed8;--green:#059669;--red:#dc2626}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Noto Sans Bengali","SolaimanLipi",sans-serif}
+header{background:linear-gradient(120deg,#10264f,#1d4ed8);color:#fff;padding:28px 18px}
+.wrap{max-width:1050px;margin:auto;padding:0 16px}
+h1{margin:0 0 8px;font-size:clamp(24px,4vw,34px)}header p{margin:0;color:#dbeafe}
+main{padding:22px 0 45px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:19px;box-shadow:0 5px 20px #0f172a0a;margin-bottom:16px}
+h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:16px 0 8px}
+p,.hint{color:var(--muted);line-height:1.6}.hint{font-size:13px}
+label{display:block;font-weight:650;margin:12px 0 6px}
+textarea,input[type=text]{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:11px;font:inherit;background:#fff;color:var(--ink)}
+textarea{min-height:120px;resize:vertical;font-family:ui-monospace,monospace;font-size:12px}
+button,.filebtn{border:0;border-radius:10px;padding:11px 15px;font:inherit;font-weight:650;cursor:pointer;background:var(--blue);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+button:hover,.filebtn:hover{background:var(--blue2)}button.secondary{background:#e8efff;color:#1e40af}button.secondary:hover{background:#dbeafe}button.green{background:var(--green)}button.red{background:var(--red)}button:disabled{opacity:.45;cursor:not-allowed}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.status{padding:11px 13px;border-radius:10px;background:#eff6ff;color:#1e40af;font-size:14px;margin-top:12px;white-space:pre-wrap}
+.status.ok{background:#ecfdf5;color:#047857}.status.err{background:#fef2f2;color:#b91c1c}
+.drop{border:2px dashed #94a3b8;border-radius:13px;padding:22px;text-align:center;background:#f8fafc}
+.progress{height:10px;background:#e2e8f0;border-radius:20px;overflow:hidden;margin:10px 0}.bar{height:100%;width:0;background:var(--green);transition:width .15s}
+.filelist{margin:12px 0 0;padding:0;list-style:none}.filelist li{padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;display:flex;justify-content:space-between;gap:10px}
+.pill{display:inline-block;background:#e0e7ff;color:#3730a3;border-radius:99px;padding:3px 9px;font-size:12px}
+.steps{padding-left:21px;color:var(--muted);line-height:1.8}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
+@media(max-width:720px){.grid{grid-template-columns:1fr}.card{padding:15px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>অফলাইন LAN ফাইল ট্রান্সফার</h1>
+<p>একই Wi-Fi / LAN নেটওয়ার্কে PC থেকে PC-তে সরাসরি ডাটা আদান-প্রদান</p>
+</div></header>
+<main class="wrap">
+<div class="card">
+<strong>সংযোগের অবস্থা:</strong> <span class="pill" id="connection">সংযোগ বিচ্ছিন্ন</span>
+<div class="status" id="globalStatus">শুরু করতে নিচের নির্দেশনা অনুসরণ করুন। দুই কম্পিউটারে এই HTML ফাইলটি Chrome বা Edge-এ খুলুন।</div>
+</div>
+
+<div class="grid">
+<section class="card">
+<h2>১. পাঠানোর কম্পিউটার (Sender)</h2>
+<p>এই কম্পিউটার থেকে Offer তৈরি করুন এবং সেটি অন্য PC-তে পাঠান।</p>
+<button id="makeOffer">Offer তৈরি করুন</button>
+<label for="offerOut">আপনার Offer</label>
+<textarea id="offerOut" readonly placeholder="Offer তৈরি হলে এখানে আসবে"></textarea>
+<div class="actions"><button class="secondary" id="copyOffer">Offer কপি</button><button class="secondary" id="downloadOffer">Offer TXT ডাউনলোড</button></div>
+<label for="answerIn">অন্য PC থেকে পাওয়া Answer এখানে পেস্ট করুন</label>
+<textarea id="answerIn" placeholder="অন্য কম্পিউটারের Answer এখানে পেস্ট করুন"></textarea>
+<button id="applyAnswer">Answer গ্রহণ করে সংযোগ করুন</button>
+</section>
+
+<section class="card">
+<h2>২. গ্রহণের কম্পিউটার (Receiver)</h2>
+<p>Sender-এর Offer এখানে পেস্ট করে Answer তৈরি করুন।</p>
+<label for="offerIn">Sender-এর Offer</label>
+<textarea id="offerIn" placeholder="Sender-এর Offer এখানে পেস্ট করুন"></textarea>
+<button id="makeAnswer">Answer তৈরি করুন</button>
+<label for="answerOut">আপনার Answer</label>
+<textarea id="answerOut" readonly placeholder="Answer তৈরি হলে এখানে আসবে"></textarea>
+<div class="actions"><button class="secondary" id="copyAnswer">Answer কপি</button><button class="secondary" id="downloadAnswer">Answer TXT ডাউনলোড</button></div>
+</section>
+</div>
+
+<section class="card">
+<h2>৩. ফাইল পাঠানো ও গ্রহণ</h2>
+<div class="drop">
+<p><strong>ফাইল নির্বাচন করুন</strong></p>
+<input type="file" id="files" multiple>
+<p class="hint">একাধিক ফাইল নির্বাচন করা যাবে। সংযোগ স্থাপিত হলে পাঠানো যাবে।</p>
+<button id="sendFiles" disabled>নির্বাচিত ফাইল পাঠান</button>
+</div>
+<div id="sendStatus" class="status">এখনো কোনো ফাইল পাঠানো হয়নি।</div>
+<div class="progress"><div class="bar" id="sendBar"></div></div>
+<h3>গ্রহণ করা ফাইল</h3>
+<ul class="filelist" id="receivedList"><li>এখনো কোনো ফাইল আসেনি।</li></ul>
+</section>
+
+<section class="card">
+<h2>৪. সফটওয়্যারের Local Storage ডাটা স্থানান্তর</h2>
+<p>এই অংশটি এই HTML পেজের নিজস্ব Origin-এর Local Storage ডাটা ব্যাকআপ/রিস্টোর করে। অন্য কোনো সফটওয়্যারের ব্রাউজার ডাটা স্বয়ংক্রিয়ভাবে পড়তে পারে না।</p>
+<div class="actions">
+<button id="exportStorage">Local Storage Export (JSON)</button>
+<button class="secondary" id="sendStorage" disabled>LAN-এ Local Storage পাঠান</button>
+</div>
+<label for="storageFile">অন্য PC-এর JSON ব্যাকআপ Import করুন</label>
+<input type="file" id="storageFile" accept=".json,application/json">
+<div class="actions"><button id="importStorage" class="green">ডাটা Import / Restore</button></div>
+<label><input type="checkbox" id="mergeStorage" checked> বিদ্যমান ডাটার সঙ্গে Merge করুন (একই Key হলে Import করা মান বসবে)</label>
+<div class="hint">Merge বন্ধ করলে এই পেজের বর্তমান Local Storage Key-গুলো মুছে ব্যাকআপের ডাটা বসানো হবে। আগে নিজের ব্যাকআপ রাখুন।</div>
+<div class="status" id="storageStatus">ডাটা Export করলে JSON ফাইল ডাউনলোড হবে।</div>
+</section>
+
+<section class="card">
+<h2>৫. কীভাবে ব্যবহার করবেন</h2>
+<ol class="steps">
+<li>দুই PC একই Wi-Fi / LAN-এ যুক্ত করুন।</li>
+<li>দুই PC-তেই এই HTML ফাইল Chrome বা Edge-এ খুলুন।</li>
+<li>Sender PC-তে “Offer তৈরি করুন” চাপুন। Offer কপি করে Receiver PC-তে পাঠান।</li>
+<li>Receiver Offer পেস্ট করে “Answer তৈরি করুন” চাপুন। Answer কপি করে Sender-কে দিন।</li>
+<li>Sender Answer পেস্ট করে “Answer গ্রহণ করে সংযোগ করুন” চাপুন।</li>
+<li>Connected দেখালে ফাইল নির্বাচন করে পাঠান।</li>
+</ol>
+<div class="hint">Offer/Answer আদান-প্রদান USB, QR-এর বদলে স্থানীয়ভাবে কপি-পেস্ট, বা অন্য কোনো অফলাইন মাধ্যমে করা যায়। বড় Offer/Answer হলে TXT ফাইল ব্যবহার করুন।</div>
+</section>
+
+<section class="card">
+<h2>গুরুত্বপূর্ণ সীমাবদ্ধতা ও নিরাপত্তা</h2>
+<ul class="steps">
+<li>WebRTC-তে অনেক নেটওয়ার্কে সরাসরি LAN সংযোগ সম্ভব; কিছু রাউটার/ফায়ারওয়ালে সংযোগ ব্যর্থ হতে পারে। এই সংস্করণে STUN/TURN সার্ভার ব্যবহার করা হয় না।</li>
+<li>ব্রাউজার ফাইল গ্রহণের পর ডাউনলোড হিসেবে সংরক্ষণ করে। ডাউনলোড অনুমতি দিতে হতে পারে।</li>
+<li>শুধু এই পেজের Local Storage পড়া যায়। অন্য HTML অ্যাপের Local Storage আলাদা Origin-এ থাকলে সেই অ্যাপ থেকেই Export করতে হবে।</li>
+<li>এই HTML ফাইলটি সরাসরি file:// থেকে খোলা হলে ব্রাউজারভেদে Local Storage-এর আচরণ আলাদা হতে পারে। স্থায়ী অ্যাপ ডাটা ব্যাকআপের জন্য সংশ্লিষ্ট অ্যাপের নিজস্ব Export সুবিধা ব্যবহার করুন।</li>
+<li>এটি কোনো ক্লাউডে ফাইল আপলোড করে না। ফাইলের ডাটা সরাসরি WebRTC Data Channel দিয়ে পাঠানো হয়।</li>
+</ul>
+</section>
+</main>
+<footer>Offline LAN Transfer • Single HTML Utility</footer>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+let pc = null, channel = null, pending = null, rx = null, rxParts = [];
+const CHUNK = 64 * 1024;
+function status(msg, type=''){ $('globalStatus').textContent=msg; $('globalStatus').className='status '+type; }
+function storageStatus(msg,type=''){ $('storageStatus').textContent=msg; $('storageStatus').className='status '+type; }
+function setConnected(yes){ $('connection').textContent=yes?'সংযুক্ত':'সংযোগ বিচ্ছিন্ন'; $('connection').style.background=yes?'#dcfce7':'#e0e7ff'; $('connection').style.color=yes?'#166534':'#3730a3'; $('sendFiles').disabled=!yes; $('sendStorage').disabled=!yes; }
+function setupChannel(ch){
+ channel=ch; ch.binaryType='arraybuffer';
+ ch.onopen=()=>{setConnected(true);status('সংযোগ সফল! এখন ফাইল পাঠানো ও গ্রহণ করা যাবে।','ok');};
+ ch.onclose=()=>{setConnected(false);status('সংযোগ বন্ধ হয়েছে।');};
+ ch.onerror=()=>status('Data Channel-এ সমস্যা হয়েছে।','err');
+ ch.onmessage=e=>handleMessage(e.data);
+}
+function newPeer(){
+ if(pc) try{pc.close()}catch(e){}
+ pc=new RTCPeerConnection({iceServers:[]});
+ pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed'||pc.connectionState==='disconnected'){setConnected(false);status('সংযোগ স্থাপন হয়নি বা বিচ্ছিন্ন হয়েছে। দুই PC একই LAN-এ আছে কি না পরীক্ষা করুন।','err');}};
+ pc.ondatachannel=e=>setupChannel(e.channel);
+ return pc;
+}
+function waitIce(p){
+ return new Promise(resolve=>{
+  if(p.iceGatheringState==='complete') return resolve();
+  const timeout=setTimeout(()=>{p.removeEventListener('icegatheringstatechange',check);resolve();},12000);
+  function check(){if(p.iceGatheringState==='complete'){clearTimeout(timeout);p.removeEventListener('icegatheringstatechange',check);resolve();}}
+  p.addEventListener('icegatheringstatechange',check);
+ });
+}
+function encode(obj){return JSON.stringify(obj);}
+function decode(s){const o=JSON.parse(s);if(!o||!o.type||!o.sdp)throw Error('ভুল Offer/Answer ফরম্যাট');return o;}
+function downloadText(name,text,mime='text/plain'){const a=document.createElement('a');const u=URL.createObjectURL(new Blob([text],{type:mime}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1500);}
+$('makeOffer').onclick=async()=>{
+ try{status('Offer তৈরি হচ্ছে...');newPeer();setupChannel(pc.createDataChannel('file-transfer',{ordered:true}));const offer=await pc.createOffer();await pc.setLocalDescription(offer);await waitIce(pc);$('offerOut').value=encode(pc.localDescription);status('Offer তৈরি হয়েছে। এটি Receiver PC-তে পাঠান।','ok');}
+ catch(e){status('Offer তৈরি করা যায়নি: '+e.message,'err');}
+};
+$('makeAnswer').onclick=async()=>{
+ try{const offer=decode($('offerIn').value.trim());status('Answer তৈরি হচ্ছে...');newPeer();await pc.setRemoteDescription(offer);const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await waitIce(pc);$('answerOut').value=encode(pc.localDescription);status('Answer তৈরি হয়েছে। এটি Sender PC-তে পাঠান।','ok');}
+ catch(e){status('Answer তৈরি করা যায়নি: '+e.message,'err');}
+};
+$('applyAnswer').onclick=async()=>{
+ try{if(!pc)throw Error('আগে Sender PC-তে Offer তৈরি করুন');await pc.setRemoteDescription(decode($('answerIn').value.trim()));status('Answer গ্রহণ করা হয়েছে। সংযোগ স্থাপনের অপেক্ষায়...');}
+ catch(e){status('Answer গ্রহণ করা যায়নি: '+e.message,'err');}
+};
+$('copyOffer').onclick=()=>copy($('offerOut').value);
+$('copyAnswer').onclick=()=>copy($('answerOut').value);
+function copy(t){if(!t)return status('কপি করার মতো তথ্য নেই।','err');if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(()=>status('কপি হয়েছে।','ok')).catch(()=>fallbackCopy(t));else fallbackCopy(t);}
+function fallbackCopy(t){const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');status('কপি হয়েছে।','ok')}catch(e){status('কপি করা যায়নি। হাতে নির্বাচন করে কপি করুন।','err')}x.remove();}
+$('downloadOffer').onclick=()=>downloadText('webrtc-offer.txt',$('offerOut').value);
+$('downloadAnswer').onclick=()=>downloadText('webrtc-answer.txt',$('answerOut').value);
+
+function send(obj){if(!channel||channel.readyState!=='open')throw Error('প্রথমে দুই PC সংযুক্ত করুন');channel.send(JSON.stringify(obj));}
+function handleMessage(data){
+ if(typeof data==='string'){
+  let m;try{m=JSON.parse(data)}catch(e){return;}
+  if(m.kind==='file-start'){rx={name:m.name,size:m.size,type:m.type||'application/octet-stream',received:0};rxParts=[];$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.name;}
+  else if(m.kind==='file-end'&&rx){const blob=new Blob(rxParts,{type:rx.type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=rx.name;a.textContent='ডাউনলোড: '+rx.name+' ('+formatSize(rx.size)+')';const li=document.createElement('li');li.appendChild(a);$('receivedList').querySelector('li')?.textContent==='এখনো কোনো ফাইল আসেনি।'&&$('receivedList').replaceChildren();$('receivedList').appendChild(li);$('sendStatus').textContent='ফাইল গ্রহণ সম্পন্ন: '+rx.name;rx=null;rxParts=[];}
+  else if(m.kind==='file-error'){$('sendStatus').textContent='প্রেরকের ত্রুটি: '+m.message;}
+  else if(m.kind==='storage'){try{const blob=new Blob([JSON.stringify(m.payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='local-storage-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);storageStatus('অন্য PC থেকে Local Storage ব্যাকআপ এসেছে; JSON ফাইল ডাউনলোড হয়েছে। Import করতে ফাইলটি নির্বাচন করুন।','ok');}catch(e){storageStatus('ব্যাকআপ গ্রহণে সমস্যা: '+e.message,'err');}}
+ }else if(rx){rxParts.push(data);rx.received+=data.byteLength;$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.name+' — '+Math.min(100,Math.round(rx.received/rx.size*100))+'%';}
+}
+function formatSize(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(2)+' MB';}
+$('sendFiles').onclick=async()=>{
+ const files=[...$('files').files];if(!files.length)return status('আগে ফাইল নির্বাচন করুন।','err');
+ try{
+  for(const f of files){
+   while(channel.bufferedAmount>4*1024*1024) await new Promise(r=>setTimeout(r,100));
+   send({kind:'file-start',name:f.name,size:f.size,type:f.type});
+   let offset=0;
+   while(offset<f.size){
+    while(channel.bufferedAmount>4*1024*1024) await new Promise(r=>setTimeout(r,80));
+    const buf=await f.slice(offset,offset+CHUNK).arrayBuffer();channel.send(buf);offset+=buf.byteLength;
+    $('sendBar').style.width=(offset/f.size*100)+'%';$('sendStatus').textContent='পাঠানো হচ্ছে: '+f.name+' — '+Math.round(offset/f.size*100)+'%';
+   }
+   send({kind:'file-end'});$('sendStatus').textContent='পাঠানো সম্পন্ন: '+f.name;
+  }
+  $('sendBar').style.width='100%';status('নির্বাচিত ফাইল পাঠানো সম্পন্ন।','ok');
+ }catch(e){$('sendStatus').textContent='ফাইল পাঠানো যায়নি: '+e.message;status('ফাইল পাঠাতে সমস্যা হয়েছে।','err');}
+};
+function exportLocal(){const data={format:'offline-lan-localstorage',version:1,createdAt:new Date().toISOString(),origin:location.origin,items:Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)]))};return data;}
+$('exportStorage').onclick=()=>{try{const d=exportLocal();downloadText('local-storage-backup.json',JSON.stringify(d,null,2),'application/json');storageStatus(Object.keys(d.items).length+'টি Local Storage Key Export হয়েছে।','ok');}catch(e){storageStatus('Export ব্যর্থ: '+e.message,'err');}};
+$('sendStorage').onclick=()=>{try{send({kind:'storage',payload:exportLocal()});storageStatus('Local Storage ডাটা LAN-এ পাঠানো হয়েছে।','ok');}catch(e){storageStatus('পাঠানো যায়নি: '+e.message,'err');}};
+let imported=null;
+$('storageFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{imported=JSON.parse(await f.text());storageStatus('JSON ফাইল পড়া হয়েছে। Import / Restore চাপুন।','ok');}catch(err){imported=null;storageStatus('JSON ফাইলটি সঠিক নয়।','err');}};
+$('importStorage').onclick=()=>{
+ try{
+  if(!imported||imported.format!=='offline-lan-localstorage'||!imported.items||typeof imported.items!=='object')throw Error('সঠিক Local Storage JSON ব্যাকআপ নির্বাচন করুন');
+  if(!$('mergeStorage').checked)localStorage.clear();
+  for(const [k,v] of Object.entries(imported.items)){if(typeof v!=='string')throw Error('ব্যাকআপে ভুল ডাটা আছে');localStorage.setItem(k,v);}
+  storageStatus(Object.keys(imported.items).length+'টি Key সফলভাবে Import হয়েছে। প্রয়োজনে পেজ Refresh করুন।','ok');
+ }catch(e){storageStatus('Import ব্যর্থ: '+e.message,'err');}
+};
+})();
+</script>
+</body></html>
