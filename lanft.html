@@ -71,11 +71,14 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <div class="drop">
 <p><strong>ফাইল নির্বাচন করুন</strong></p>
 <input type="file" id="files" multiple>
-<p class="hint">একাধিক ফাইল নির্বাচন করা যাবে। সংযোগ স্থাপিত হলে পাঠানো যাবে।</p>
-<button id="sendFiles" disabled>নির্বাচিত ফাইল পাঠান</button>
+<label for="folders">অথবা সম্পূর্ণ ফোল্ডার নির্বাচন করুন (কম্পিউটারে)</label>
+<input type="file" id="folders" webkitdirectory directory multiple>
+<p class="hint">মোবাইলে ফাইল ম্যানেজার থেকে একাধিক ফাইল নির্বাচন করুন। কম্পিউটারে ফোল্ডার নির্বাচন করলে ভেতরের ফাইলগুলো একে একে পাঠানো হবে।</p>
+<button id="sendFiles" disabled>নির্বাচিত ফাইল / ফোল্ডার পাঠান</button>
 </div>
 <div id="sendStatus" class="status">এখনো কোনো ফাইল পাঠানো হয়নি।</div>
 <div class="progress"><div class="bar" id="sendBar"></div></div>
+<div class="hint" id="speedInfo">গতি: —</div>
 <h3>গ্রহণ করা ফাইল</h3>
 <ul class="filelist" id="receivedList"><li>এখনো কোনো ফাইল আসেনি।</li></ul>
 </section>
@@ -98,7 +101,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <section class="card">
 <h2>৫. কীভাবে ব্যবহার করবেন</h2>
 <ol class="steps">
-<li>দুই PC একই Wi-Fi / LAN-এ যুক্ত করুন।</li>
+<li>কম্পিউটার ও মোবাইল—দুই ডিভাইস একই Wi-Fi / LAN-এ যুক্ত করুন। মোবাইলের Wi-Fi Hotspot চালু করে PC যুক্ত করেও চেষ্টা করা যায়; Hotspot-এ device isolation থাকলে কাজ নাও করতে পারে।</li>
 <li>দুই PC-তেই এই HTML ফাইল Chrome বা Edge-এ খুলুন।</li>
 <li>Sender PC-তে “Offer তৈরি করুন” চাপুন। Offer কপি করে Receiver PC-তে পাঠান।</li>
 <li>Receiver Offer পেস্ট করে “Answer তৈরি করুন” চাপুন। Answer কপি করে Sender-কে দিন।</li>
@@ -112,6 +115,8 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:10px}
 <h2>গুরুত্বপূর্ণ সীমাবদ্ধতা ও নিরাপত্তা</h2>
 <ul class="steps">
 <li>WebRTC-তে অনেক নেটওয়ার্কে সরাসরি LAN সংযোগ সম্ভব; কিছু রাউটার/ফায়ারওয়ালে সংযোগ ব্যর্থ হতে পারে। এই সংস্করণে STUN/TURN সার্ভার ব্যবহার করা হয় না।</li>
+<li>ফোল্ডার নির্বাচন করলে তার ভেতরের ফাইলগুলো আলাদা আলাদা পাঠানো হয়; মূল ফোল্ডার কাঠামো স্বয়ংক্রিয়ভাবে ZIP আকারে তৈরি হয় না।</li>
+<li>মোবাইল ব্রাউজারে ফোল্ডার নির্বাচন ও একসঙ্গে অনেক ফাইল বাছাইয়ের সুবিধা ফোন/ব্রাউজারভেদে ভিন্ন হতে পারে।</li>
 <li>ব্রাউজার ফাইল গ্রহণের পর ডাউনলোড হিসেবে সংরক্ষণ করে। ডাউনলোড অনুমতি দিতে হতে পারে।</li>
 <li>শুধু এই পেজের Local Storage পড়া যায়। অন্য HTML অ্যাপের Local Storage আলাদা Origin-এ থাকলে সেই অ্যাপ থেকেই Export করতে হবে।</li>
 <li>এই HTML ফাইলটি সরাসরি file:// থেকে খোলা হলে ব্রাউজারভেদে Local Storage-এর আচরণ আলাদা হতে পারে। স্থায়ী অ্যাপ ডাটা ব্যাকআপের জন্য সংশ্লিষ্ট অ্যাপের নিজস্ব Export সুবিধা ব্যবহার করুন।</li>
@@ -176,29 +181,36 @@ function send(obj){if(!channel||channel.readyState!=='open')throw Error('প্�
 function handleMessage(data){
  if(typeof data==='string'){
   let m;try{m=JSON.parse(data)}catch(e){return;}
-  if(m.kind==='file-start'){rx={name:m.name,size:m.size,type:m.type||'application/octet-stream',received:0};rxParts=[];$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.name;}
-  else if(m.kind==='file-end'&&rx){const blob=new Blob(rxParts,{type:rx.type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=rx.name;a.textContent='ডাউনলোড: '+rx.name+' ('+formatSize(rx.size)+')';const li=document.createElement('li');li.appendChild(a);$('receivedList').querySelector('li')?.textContent==='এখনো কোনো ফাইল আসেনি।'&&$('receivedList').replaceChildren();$('receivedList').appendChild(li);$('sendStatus').textContent='ফাইল গ্রহণ সম্পন্ন: '+rx.name;rx=null;rxParts=[];}
+  if(m.kind==='file-start'){rx={name:m.name,size:m.size,type:m.type||'application/octet-stream',relativePath:m.relativePath||m.name,received:0};rxParts=[];$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.relativePath;}
+  else if(m.kind==='file-end'&&rx){const blob=new Blob(rxParts,{type:rx.type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=rx.name.split('/').pop();a.textContent='ডাউনলোড: '+rx.name+' ('+formatSize(rx.size)+')';a.title='মূল ফোল্ডার-পথ: '+rx.relativePath;const li=document.createElement('li');li.appendChild(a);if($('receivedList').querySelector('li')?.textContent==='এখনো কোনো ফাইল আসেনি।')$('receivedList').replaceChildren();$('receivedList').appendChild(li);$('sendStatus').textContent='ফাইল গ্রহণ সম্পন্ন: '+rx.relativePath;rx=null;rxParts=[];}
   else if(m.kind==='file-error'){$('sendStatus').textContent='প্রেরকের ত্রুটি: '+m.message;}
   else if(m.kind==='storage'){try{const blob=new Blob([JSON.stringify(m.payload,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='local-storage-backup.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);storageStatus('অন্য PC থেকে Local Storage ব্যাকআপ এসেছে; JSON ফাইল ডাউনলোড হয়েছে। Import করতে ফাইলটি নির্বাচন করুন।','ok');}catch(e){storageStatus('ব্যাকআপ গ্রহণে সমস্যা: '+e.message,'err');}}
  }else if(rx){rxParts.push(data);rx.received+=data.byteLength;$('sendStatus').textContent='গ্রহণ করা হচ্ছে: '+rx.name+' — '+Math.min(100,Math.round(rx.received/rx.size*100))+'%';}
 }
 function formatSize(n){if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(2)+' MB';}
 $('sendFiles').onclick=async()=>{
- const files=[...$('files').files];if(!files.length)return status('আগে ফাইল নির্বাচন করুন।','err');
+ const files=[...$('files').files,...$('folders').files];
+ if(!files.length)return status('আগে ফাইল বা ফোল্ডার নির্বাচন করুন।','err');
  try{
+  $('sendFiles').disabled=true;
+  const totalBytes=files.reduce((n,f)=>n+f.size,0);let doneBytes=0;
   for(const f of files){
-   while(channel.bufferedAmount>4*1024*1024) await new Promise(r=>setTimeout(r,100));
-   send({kind:'file-start',name:f.name,size:f.size,type:f.type});
-   let offset=0;
+   while(channel.bufferedAmount>4*1024*1024) await new Promise(r=>setTimeout(r,60));
+   const relativePath=f.webkitRelativePath||f.name;
+   send({kind:'file-start',name:f.name,size:f.size,type:f.type,relativePath});
+   let offset=0,lastAt=performance.now(),lastBytes=0;
    while(offset<f.size){
-    while(channel.bufferedAmount>4*1024*1024) await new Promise(r=>setTimeout(r,80));
+    while(channel.bufferedAmount>4*1024*1024) await new Promise(r=>setTimeout(r,40));
     const buf=await f.slice(offset,offset+CHUNK).arrayBuffer();channel.send(buf);offset+=buf.byteLength;
-    $('sendBar').style.width=(offset/f.size*100)+'%';$('sendStatus').textContent='পাঠানো হচ্ছে: '+f.name+' — '+Math.round(offset/f.size*100)+'%';
+    const now=performance.now();if(now-lastAt>=500){const mbps=((offset-lastBytes)/(now-lastAt)*1000/1024/1024).toFixed(2);$('speedInfo').textContent='বর্তমান গতি: '+mbps+' MB/s';lastAt=now;lastBytes=offset;}
+    $('sendBar').style.width=(totalBytes?((doneBytes+offset)/totalBytes*100):100)+'%';
+    $('sendStatus').textContent='পাঠানো হচ্ছে: '+relativePath+' — '+(f.size?Math.round(offset/f.size*100):100)+'%';
    }
-   send({kind:'file-end'});$('sendStatus').textContent='পাঠানো সম্পন্ন: '+f.name;
+   send({kind:'file-end'});doneBytes+=f.size;$('sendStatus').textContent='পাঠানো হয়েছে: '+relativePath+' ('+formatSize(f.size)+')';
   }
-  $('sendBar').style.width='100%';status('নির্বাচিত ফাইল পাঠানো সম্পন্ন।','ok');
+  $('sendBar').style.width='100%';$('speedInfo').textContent='সব ফাইল পাঠানো সম্পন্ন।';status('নির্বাচিত '+files.length+'টি ফাইল পাঠানো সম্পন্ন।','ok');
  }catch(e){$('sendStatus').textContent='ফাইল পাঠানো যায়নি: '+e.message;status('ফাইল পাঠাতে সমস্যা হয়েছে।','err');}
+ finally{$('sendFiles').disabled=!(channel&&channel.readyState==='open');}
 };
 function exportLocal(){const data={format:'offline-lan-localstorage',version:1,createdAt:new Date().toISOString(),origin:location.origin,items:Object.fromEntries(Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)]))};return data;}
 $('exportStorage').onclick=()=>{try{const d=exportLocal();downloadText('local-storage-backup.json',JSON.stringify(d,null,2),'application/json');storageStatus(Object.keys(d.items).length+'টি Local Storage Key Export হয়েছে।','ok');}catch(e){storageStatus('Export ব্যর্থ: '+e.message,'err');}};
